@@ -1,0 +1,200 @@
+.content {margin-bottom: .45rem;}
+.project-detail{
+  float: left;
+  width: 100%;
+  background: #fff;
+}
+.project-name{
+  line-height: .4rem;
+  text-align: center;
+}
+.title-icon {  margin: -.05rem 0 .1rem;  }
+.title-icon img{  height: .14rem;  }
+.project-apr{
+  position: relative;
+  text-align: center;
+}
+.apr{  font-size: .5rem;  }
+.percent{  font-size: .2rem;  }
+.apr,.percent{  font-family: arial;  }
+.project-award{
+  position: absolute;
+  top: .1rem;
+  font-size: .2rem;
+  color: #48affb;
+}
+.project-detail-1{
+  text-align: center;
+  margin-top: .15rem;
+}
+.start-money{
+  border-right: 1px solid #DDD;
+  padding-right: .1rem;
+}
+.project-timelimit{
+  padding-left: .1rem;
+}
+.start-money,.project-timelimit{
+  color: #666;
+}
+.percent-wra{
+  width: 90%;
+  height: .04rem;
+  background: #F2F4F9;
+  float: left;
+  margin-top: .3rem;
+  margin-left: 5%;
+}
+.percent-process {
+  height: .04rem;
+  background: #f95a28;
+}
+.project-detail-2{
+  padding: 0 5%;
+  float: left;
+  width: 100%;
+  height: .6rem;
+  line-height: .6rem;
+}
+.info-left{
+  text-align: left;
+}
+.info-right{
+  text-align: right;
+  float: right;
+}
+.info-left,.info-right{
+  color: #999;
+}
+.project-list{
+  float: left;
+  width: 100%;
+  padding: 0 5%;
+  background: #fff;
+}
+.project-list li{
+  line-height: .3rem;
+  color: #999;
+}
+.project-list li img{
+  width: .18rem;
+  float: left;
+  margin:.06rem .1rem 0 0;
+}
+.project-detail-3{
+  float: left;
+  width: 100%;
+  padding: 0 5%;
+  background: #fff;
+  margin-bottom: .6rem;
+}
+.project-detail-3 li{
+  height: .5rem;
+  line-height: .5rem;
+  font-size: .15rem;
+}
+.project-detail-3 li a{
+  float: left;
+  width: 100%;
+}
+.arrow-right{
+  height: .14rem;
+  float: right;
+  margin-top: .18rem;
+}
+.border-b-e2{
+  border-color: #E2E2E2;
+}
+.border-b-d4{
+  border-color: #D4D4D4;
+}
+.project-company{
+  float: right;
+}
+.invest-btn,.invest-btn-countDown {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+}
+.invest-btn{
+  color: #fff;
+  text-align: center;
+  font-size: .18rem;
+  height: .45rem;
+  line-height: .45rem;
+  background: #f95a28;
+}
+.invest-btn.disabled {background: #DADADA;}
+.invest-btn-countDown{
+  height: .5rem;
+}
+.count-down-time{
+  width: 60%;
+  float: left;
+  height: .5rem;
+  line-height: .5rem;
+  text-align: center;
+  background: #fff;
+  font-family: arial;
+  font-size: .15rem;
+}
+.count-down-remind{
+  width: 40%;
+  height: .5rem;
+  float: left;
+  background: #f95a28;
+}
+.count-down-remind.disabled {
+  background:#ccc;
+}
+.count-down-remind.disabled .remind-number {
+  color:#fff;
+}
+.alarm-clock{
+  float: left;
+  width: 30%;
+}
+.alarm-clock img{
+  width: .25rem;
+  height: .25rem;
+  margin-top: .125rem;
+  margin-left: .1rem;
+}
+.remind{
+  float: left;
+  width: 70%;
+  height: .5rem;
+}
+.remind p{
+  text-align: left;
+  font-family: arial;
+  line-height: .2rem;
+}
+.remind-title{
+  font-size: .16rem;
+  margin-top: .06rem;
+  color: #fff;
+}
+.remind-number{
+  font-size: .13rem;
+  color: #FEE4E0;
+}
+/*icon分类*/
+.bid-icon {font-size: .11rem;  padding: 0 .05rem; display: inline-block;text-align:center; line-height: .18rem;}
+.bid-icon.aui-border:after { border-radius:.2rem;}
+/*新客*/
+.bid-icon.new {color:#F95A28!important;}
+.new.aui-border:after { border-color:#F95A28;}
+/*定向*/
+.bid-icon.dx {color:#97d1fd!important;}
+.dx.aui-border:after { border-color:#97d1fd;}
+/*可转让*/
+.bid-icon.kzr {color:#89d096!important;}
+.kzr.aui-border:after { border-color:#89d096;}
+/*vip*/
+.bid-icon.vip {color:#f9b728!important;}
+.vip.aui-border:after { border-color:#f9b728;}
+/*可变现*/
+.bid-icon.kbx {color: #ad60f9 !important;}
+.kbx.aui-border:after { border-color:#AD60F9;}

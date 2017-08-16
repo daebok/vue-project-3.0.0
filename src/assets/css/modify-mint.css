@@ -1,0 +1,20 @@
+/*.mint-cell::before {border-bottom: 0;}*/
+.mint-cell::after {border-top: 0;}
+.mint-cell-wrapper {padding: 0 .15rem!important; background-image:none!important;}
+.mint-cell-value { font-size: .13rem!important; }
+.mint-field .mint-cell-title {width: .75rem!important;font-size:.14rem;}
+.get-code .mint-field-clear { /*有获取验证码的按钮调整 x 的位置*/
+  position: absolute;
+  right: 1rem;
+  top: .15rem;
+}
+.mint-button {
+  border-radius: .03rem;
+  height: .44rem;
+}
+/*switch 按钮颜色*/
+.mint-switch-input:checked + .mint-switch-core{
+  border-color: #4CD964;
+  background: #4CD964;
+}
+
