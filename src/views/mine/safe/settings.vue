@@ -4,7 +4,7 @@
       <mt-button slot="left" icon="back" @click.native="backUrl('/mine')"></mt-button>
     </mt-header>
     <div class="pic-area aui-flex aui-flex-col aui-flex-middle aui-border-b">
-      <input type="file" accept="image/png, image/jpeg" class="photo-upload" @change="uploadAvatar">
+      <input type="file" accept="image/png, image/jpeg, image/jpg" class="photo-upload" @change="uploadAvatar">
       <div class="font-16 aui-flex-item-4">我的头像</div>
       <div class="aui-flex-item-8 ">
         <img v-if="!avatar" class="pull-right" src="../../../assets/images/me/account_pic_head.png" >

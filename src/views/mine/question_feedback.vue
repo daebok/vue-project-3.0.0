@@ -34,6 +34,10 @@
           this.$toast('请输入反馈信息');
           return;
         }
+        if (this.con.trim() == '') {
+          this.$toast('请输入反馈信息');
+          return;
+        }
         let params = {
           userId: this.$store.state.user.userId,
           __sid: this.$store.state.user.__sid,
