@@ -45,7 +45,7 @@
     </form>
   </div>
 </template>
-<script>
+<script type="text/ecmascript-6">
   import * as ajaxUrl from '../../../ajax.config'
   import * as features from '../../../features.config';
   import backUrl from '../../../mixins/backUrl'
@@ -154,8 +154,9 @@
         // reader.onload = function (evt) {console.log(evt.target.result)}
         // reader.readAsDataURL(input.files[0])
         data.append('upload', input.files[0]);
-        if (input.files[0].size > (1024 * 1024 * 5)) {
-          this.$toast('图片不能大于5M');
+        if (input.files[0].size > (1024 * 1024 * 1)) {
+          this.$toast('图片不能大于1M');
+          input.value  = '';
         } else {
           this.$indicator.open({ spinnerType: 'fading-circle' });
           this.$http.post(ajaxUrl.avatarMobile, data).then((res) => {
@@ -166,12 +167,15 @@
               if(res2.data.resMsg == '头像上传成功'){
               this.$toast(res2.data.resMsg);
               this.avatar = ajaxUrl.StaticsServer + res.data.resData.imgUrl
-            }
-          })
+              }
+            })
           }else{
             this.$toast(res.data.resMsg);
+            input.value  = '';
           }
-        })
+        },(error) => {
+            input.value  = '';
+          })
         }
 //        try{
 //          let response = await fetch(ajaxUrl.avatarMobile, {method: 'POST', body: data})

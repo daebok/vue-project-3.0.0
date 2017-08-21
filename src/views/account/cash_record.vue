@@ -45,7 +45,7 @@
         </mt-tab-container-item>
         <mt-tab-container-item id="tab-con2">
           <div class="page-loadmore-wrapper" ref="" :style="{ height: wrapperHeight + 'px' }">
-            <mt-loadmore :bottom-method="loadBottom" :bottom-all-loaded="allLoaded2" ref="loadmore2">
+            <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded2" ref="loadmore2">
               <ul class="record-list">
                 <div v-for="newItem in newList2">
                   <div class="record-date">{{newItem.timeF}}</div>

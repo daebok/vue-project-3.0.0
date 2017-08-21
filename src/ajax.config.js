@@ -1,6 +1,8 @@
-export const MobileServer = 'https://mobile.91jinjindai.com'; // 测试服务器的域名
 // export const MobileServer = 'http://10.10.1.176:8088'; // 本地调试地址
-export const StaticsServer = 'https://static.91jinjindai.com'; // 静态服务器地址
+export const MobileServer = 'https://mobile.91jinjindai.com'; // 今金贷测试服务器的域名
+export const StaticsServer = 'https://static.91jinjindai.com'; // 今金贷静态服务器地址
+//export const MobileServer = 'http://mobile.test.xinzhentech.com'; // 信真测试服务器的域名
+//export const StaticsServer = 'http://statics.test.xinzhentech.com'; // 信真静态服务器地址
 export const avatarMobile = StaticsServer + '/upload/avatarMobile.html'; //头像上传静态服务器
 export const uploadAvatar = MobileServer + '/app/member/uploadAvatar.html'; //保存头像到测试服务器
 /* S--首页--*/
@@ -26,6 +28,7 @@ export const borrowPic = MobileServer + '/app/member/project/borrowPic.html'; //
 export const borrowerDetail = MobileServer + '/app/member/project/content.html'; //借款详情
 export const realizeInfo = MobileServer + '/app/member/realize/wxContent.html'; //变现的了解项目
 export const initBond = MobileServer + '/app/member/bond/toBondInvest.html'; //转让初始化
+export const getInvestData = MobileServer + '/app/member/bond/getInvestData.html'; //受让实时计算
 export const initInvest = MobileServer + '/app/member/invest/toInvest.html'; //投资初始化
 export const doInvest = MobileServer + '/app/member/invest/doInvest.html'; //确认投资
 export const doRealizeInvest = MobileServer + '/app/member/realize/doRealizeInvest.html'; //确认投资

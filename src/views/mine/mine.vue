@@ -16,7 +16,12 @@
             <!-- 已登录未设置头像 -->
             <span v-if="!avatar" class="headImg-wrapper status-login">
               <!-- 登陆状态等级 -->
-              <img v-if="resdata.vipLevel > 0" src="./../../assets/images/me/icon_V1.png" class="grade-img">
+              <img v-if="resdata.vipLevel == 1" src="./../../assets/images/me/icon_V1.png" class="grade-img">
+              <img v-else-if="resdata.vipLevel == 2" src="./../../assets/images/me/icon_V2.png" class="grade-img">
+              <img v-else-if="resdata.vipLevel == 3" src="./../../assets/images/me/icon_V3.png" class="grade-img">
+              <img v-else-if="resdata.vipLevel == 4" src="./../../assets/images/me/icon_V4.png" class="grade-img">
+              <img v-else-if="resdata.vipLevel == 5" src="./../../assets/images/me/icon_V5.png" class="grade-img">
+              <img v-else-if="resdata.vipLevel == 6" src="./../../assets/images/me/icon_V6.png" class="grade-img">
             </span>
             <!-- 已登录已设置头像 -->
             <span v-else class="headImg-wrapper" :style="'background-image:url('+avatar+')'">

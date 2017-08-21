@@ -12,6 +12,11 @@
 <script>
   import  hideHead from '../../mixins/hideHeader'
   export default {
+    created() {
+      if(this.hideHeader) {
+        document.title = this.$route.meta.title
+      }
+    },
     mixins: [ hideHead ]
   }
 </script>

@@ -85,11 +85,12 @@
         }
         this.$http.post(ajaxUrl.getRepayCode, qs.stringify(params)).then((res) => {
           if(res.data.resMsg == '验证码已发送') {
-            this.getCodeTime(evt)
+            this.getCodeTime(evt,60)//解决倒计时发生共享
           }else{
             this.$toast(res.data.resMsg)
           }
         })
+        //this.getCodeTime(evt,60)//解决倒计时发生共享
       },
       submitAjax(){
         let params = {

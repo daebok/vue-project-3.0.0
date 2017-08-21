@@ -63,7 +63,12 @@
       <div class="operator">
         <mt-button v-show="!investMoney" size="large" type="default" disabled>确认支付 0.00元</mt-button>
         <mt-button v-show="investMoney" size="large" type="danger" @click.native.prevent="submitForm" :disabled="resdata == ''">确认支付
-          <span class="font-arial">{{ actualInvestMoney | currency('',2) }}</span>元
+          <!-- 红包返现开关 -->
+          <!-- 进行返现,投资额为实际金额 -->
+          <span v-if="features.EnableReturnCashFeature" class="font-arial">{{ investMoney | currency('',2) }}</span>
+          <!-- 不进行返现,投资额为减去使用红包后金额 -->
+          <span v-else class="font-arial">{{ actualInvestMoney | currency('',2) }}</span>
+          元
         </mt-button>
         <loading v-if="false" ></loading>
       </div>
@@ -85,6 +90,7 @@
 </template>
 <script>
   import * as ajaxUrl from '../../../ajax.config'
+  import * as features from '../../../features.config';
   import Loading from '../../../components/Loading.vue'
   import qs from 'qs'
   export default {
@@ -106,7 +112,8 @@
         popupVisible: false,
         protocolHtml: '',
         showRes: false,
-        protocolHeight: 0
+        protocolHeight: 0,
+        features: features // 将配置项features赋值给features
       }
     },
     computed: {
@@ -290,7 +297,9 @@
         // 选择加息券后
         let reqParams = Object.assign({amount: money, upApr: upApr}, this.urlParams)
         this.$http.post(ajaxUrl.interest, qs.stringify(reqParams)).then((res) => {
-          this.upAprInterest = res.data.resData.interest - this.interest
+          if(parseFloat(this.selected_upApr) > 0) {
+            this.upAprInterest = res.data.resData.addAprInterest
+          }
           this.interest = res.data.resData.interest
         })
       },
@@ -384,7 +393,7 @@
           }else{
             this.showRes = true; // 隐藏表单
             // console.log(typeof res.data)
-            // if(res.data.indexOf('系统提示信息') > 0){
+            // if(res.data.indexOf('系统提示信息') > 0 && res.data.indexOf('处理中') == -1){
               // document.querySelector('#resHtml').innerHTML = res.data
             // }else{
               document.write(res.data)

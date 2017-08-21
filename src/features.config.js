@@ -12,6 +12,7 @@ export const EnableCreditMallFeature = false;           // 积分商城
 export const EnableCreditPriseFeature = false;          // 积分抽奖
 export const EnableModifyPhoneNumberFeature = true;    // 修改手机号
 export const EnableSignFeature = true;                  // 免登签约
+export const EnableReturnCashFeature = true;            // 红包返现(默认返现)
 
 
 // 项目自定义配置

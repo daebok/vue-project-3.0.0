@@ -17,6 +17,11 @@
 <script>
   import  hideHead from '../../mixins/hideHeader'
   export default {
+    created() {
+      if(this.hideHeader) {
+        document.title = this.$route.meta.title
+      }
+    },
     methods: {
       toUrl(name) {
         if(this.hideHeader) {

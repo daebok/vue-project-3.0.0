@@ -1,7 +1,7 @@
 <!-- 邀请好友 -->
 <template>
   <div class="page">
-    <div class="share-bg hide"></div>
+    <div class="share-bg" v-show="shareBgShow" @click="cancelShare"></div>
     <div class="alert-tip hide">取消分享</div>
     <div class="content">
       <mt-header class="bar-nav" title="邀请好友">
@@ -9,18 +9,18 @@
       </mt-header>
       <div class="top text-center">
         <img src="../../assets/images/me/invite_pic.png" alt="邀请">
-        <h1 class="color-333">邀好友 赚现金</h1>
-        <p class="color-333">每成功邀请一位好友可得10元红包</p>
+        <h1 class="color-333">邀好友 赚积分</h1>
+        <p class="color-333">　</p>
         <router-link to="/mine/invite/award_rule">
           <span class="rule color-666">查看奖励规则</span>
         </router-link>
       </div>
       <div class="icon-area clearfix text-center">
-        <div class="aui-flex-item-4">
+        <div class="aui-flex-item-4" @click="openShare">
           <img src="../../assets/images/me/invite_weichat.png" alt="微信图标">
           <p>微信好友</p>
         </div>
-        <div class="aui-flex-item-4">
+        <div class="aui-flex-item-4" @click="openShare">
           <img src="../../assets/images/me/invite_QQ.png" alt="qq">
           <p>QQ好友</p>
         </div>
@@ -30,7 +30,7 @@
         </div>
       </div>
       <div class="margin-lr-15 margin-b-30">
-        <mt-button size="large" type="danger">更多邀请方式</mt-button>
+        <mt-button size="large" type="danger" @click="openShare">更多邀请方式</mt-button>
       </div>
       <div ref="qrcode"></div>
     </div>
@@ -73,7 +73,8 @@
         getParams: { // 获取当前登录用户信息
           userId: this.$store.state.user.userId,
           __sid: this.$store.state.user.__sid
-        }
+        },
+        shareBgShow: false
       };
     },
     created() {
@@ -133,6 +134,14 @@
           document.querySelector('.alert-tip').classList.add('hide');
         }
       };
+    },
+    methods: {
+      openShare() {
+        this.shareBgShow = true
+      },
+      cancelShare() {
+        this.shareBgShow = false
+      }
     }
   }
 </script>

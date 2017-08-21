@@ -123,6 +123,7 @@
     watch: {
       discountApr(value, oldVal){
         if(value != ''){
+          console.log(value)
           if(value.toString().search(/^([1-9]\d{0,1}|0)(?:\.\d{0,2})?$/)==-1){
             this.discountApr = oldVal
           }
@@ -136,10 +137,10 @@
         }
       },
       inputMoney(newV, oldV) {
-        let pattern = /^[0-9]*$/
+        let pattern = /^[0-9]*$/;
         // 只能输入数字
         if(!pattern.test(newV)){
-          this.investMoney = oldV
+          this.inputMoney = oldV
           return
         }
       }

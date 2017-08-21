@@ -150,12 +150,12 @@
           let uuid = this.$route.query.uuid || sessionStorage.init_invest_list_uuid
           //this.projectList(uuid, this.page)
           if(this.$route.query.type == '变现'){
-            this.projectList(this.$route.query.uuid, this.page, 'realize')
+            this.projectList(uuid, this.page, 'realize')
           }else if(this.$route.query.type == '转让专区'){
-            this.projectList(this.$route.query.uuid, this.page, 'bond')
+            this.projectList(uuid, this.page, 'bond')
           }
           else{
-            this.projectList(this.$route.query.uuid, this.page)
+            this.projectList(uuid, this.page)
           }
           this.$refs.loadmore.onBottom(id);
           if(this.page > this.totalPage){

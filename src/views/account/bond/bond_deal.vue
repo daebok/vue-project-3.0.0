@@ -11,7 +11,9 @@
     </div>
     <div class="form-input">
       <label>转让金额(元)</label>
-      <input type="number" v-model="bondMoney" name="" placeholder="请输入金额" class="input-text" readonly/>
+      <!-- 是否可以部分转让判断 -->
+      <input v-if="isSellAll" type="number" v-model="bondMoney" name="" placeholder="请输入金额" class="input-text" readonly/>
+      <input v-else type="number" v-model="bondMoney" name="" placeholder="请输入金额" class="input-text"/>
     </div>
     <div class="form-input">
       <label>折溢价率(%)</label>
@@ -92,13 +94,19 @@
     },
     methods: {
       showhide() {
-        this.popupVisible = !this.popupVisible;
+        //console.log(this.bondMoney);
+        //判断转让金额是否为空
+        if(this.bondMoney !== ''){
+          this.popupVisible = !this.popupVisible;
+        }else{
+          this.$toast('请输入转让金额');
+        }
       },
       confirmApr(){
         this.showhide()
         this.discountApr = !this.curApr ? '+' + bondApr_max[0] : this.curApr;
         let apr = Number(this.discountApr)
-        this.bondPrice = this.resdata.bondValue * (1 + apr/100)
+        this.bondPrice = this.bondMoney * (1 + apr/100) //转让价格
       },
       onValuesChange(picker, values) {  // mint-ui版本要更新，之前有问题
         if(this.popupVisible) {
@@ -175,7 +183,10 @@
           })
         }else{
           this.resdata = res.data.resData
-          this.bondMoney = this.resdata.bondValue
+          this.isSellAll = res.data.resData.isSellAll //是否全部转让
+          if(this.isSellAll){
+            this.bondMoney = this.resdata.bondValue //全部转让
+          }
           this.resdata.warmTips = res.data.resData.warmTips.replace(/\n/g, '<br/>')
         }
       })
@@ -217,11 +228,12 @@
         popupVisible2: false,
         protocolHtml: '',
         switch_status: false,
-        bondMoney:'',
+        bondMoney:'', //输入转让金额值
         submitData: false,
         resdata: '',
         bondPrice: '0',
         protocolHeight: 0,
+        isSellAll: true //默认全部转让
       };
     }
   }

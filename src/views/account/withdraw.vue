@@ -45,7 +45,7 @@
     </form>
     <div class="confirm-btn">
       <mt-button v-show="!inputMoney" type="default" size="large" disabled>提 现</mt-button>
-      <mt-button v-show="inputMoney" @click.native="submitAjax" type="danger" size="large" :disabled="resdata==''">提 现</mt-button>
+      <mt-button v-show="inputMoney" @click="submitAjax" type="danger" size="large" :disabled="resdata==''">提 现</mt-button>
     </div>
     <div class="form-prompt">
       <p class="prompt-title margin-b-10">温馨提示：</p>
@@ -157,6 +157,10 @@
       submitAjax(){
         if(this.resdata.todayDoCashTimes >= this.resdata.cashSingleDayTimeLimit){ //
           this.$toast('今日提现次数已达上限')
+          return
+        }
+        if(this.inputMoney == 0){ //
+          this.$toast('请输入提现金额大于零的数字')
           return
         }
         if(this.inputMoney < this.resdata.cashMinAmount){ //

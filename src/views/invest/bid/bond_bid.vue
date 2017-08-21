@@ -3,7 +3,8 @@
     <mt-header class="bar-nav" title="投资" >
       <mt-button slot="left" icon="back" @click.native="goBack"></mt-button>
     </mt-header>
-    <div class="form-invest">
+    <div v-show="showRes" class="margin-t-10" id="resHtml" data-tip="提交若有报错信息显示在这不跳页面"></div>
+    <div v-show="!showRes" class="form-invest">
       <div class="form-group margin-t-20 margin-b-10">
         <label>剩余可购金额</label>
         <span class="main-color">{{ resdata.remainMoney | currency('',2)}}元</span>
@@ -12,19 +13,23 @@
         <label>折溢价率</label>
         <span class="color-333">{{resdata.bondApr | currency('',2)}}%</span>
       </div>
-      <form :action="submitUrl" id="formData" method="post">
       <div class="form-list">
         <label>投资金额(元)</label>
-        <input ref="inputMoney" type="number" v-model.trim="investMoney" readonly />
+        <!-- 全额受让 -->
+        <input v-if="buyStyle == 1" ref="inputMoney" type="number" v-model.trim="investMoney" readonly />
+        <!-- 部分受让 -->
+        <input v-else-if="buyStyle == 0" @keyup="getInvestData()" ref="inputMoney" type="number" v-model.trim="investMoney" placeholder="请输入投资金额"/>
       </div>
       <div class="form-group margin-b-20 earnings">
         <label v-if="resdata.bondApr >= 0" style="width: 20%;">溢价金额</label>
         <label v-else="resdata.bondApr < 0" style="width: 20%;">折价金额</label>
-        <span class="main-color">{{ aprMoney | currency('',2) }}元</span>
+        <!-- <span class="main-color">{{ aprMoney | currency('',2) }}元</span> -->
+        <span class="main-color">{{ changeMoney | currency('',2) }}元</span>
       </div>
       <div class="form-group margin-b-20 earnings">
         <label style="width: 20%;">预期收益</label>
-        <span class="main-color">{{ interest | currency('',2) }}元</span>
+        <!-- <span class="main-color">{{ interest | currency('',2) }}元</span> -->
+        <span class="main-color">{{ preInterest | currency('',2) }}元</span>
       </div>
       <ul class="form-group-select">
         <li class="form-coupon">
@@ -34,20 +39,12 @@
       </ul>
       <div class="operator">
         <mt-button v-show="!investMoney" size="large" type="default" disabled>确认支付 0.00元</mt-button>
-        <mt-button v-show="investMoney" size="large" type="danger" @click.native.prevent="submitForm">确认支付
-          <span class="font-arial">{{ actualInvestMoney | currency('',2) }}</span>元
+        <mt-button v-show="investMoney" size="large" type="danger" @click.prevent="submitForm">确认支付
+          <!-- <span class="font-arial">{{ actualInvestMoney | currency('',2) }}</span>元 -->
+          <span class="font-arial">{{ realPayAmount | currency('',2) }}</span>元
         </mt-button>
         <loading v-if="false" ></loading>
       </div>
-        <input type="hidden" name="amount" :value="investMoney">
-        <input type="hidden" name="receivedAccount" :value="actualInvestMoney">
-        <input type="hidden" name="bondToken" :value="resdata.bondToken">
-        <input type="hidden" name="investId" :value="resdata.investId">
-        <input type="hidden" name="projectId" :value="resdata.projectId">
-        <input type="hidden" name="bondId" :value="$route.params.projectId">
-        <input type="hidden" name="userId" :value="$store.state.user.userId">
-        <input type="hidden" name="__sid" :value="$store.state.user.__sid">
-      </form>
       <p class="tips">
         <span>点击即同意<i class="main-color" @click="readProtocol">《投资协议》</i></span><br/>
         <i class="main-color">*</i>点击确认支付后请在<i class="main-color">{{ resdata.orderEnableTime }}</i>内完成支付，若超出时间未完成，将取消订单
@@ -71,37 +68,72 @@
     name: 'investBid',
     data(){
       return {
-        investMoney: 0,
+        investMoney: '', //受让金额
+        changeMoney: 0, //折溢价金额
+        preInterest: 0, //预期收益
+        realPayAmount: 0, //实际支付金额
+        remainMoney: 0, //最大可投金额
         aprMoney: 0,
         actualInvestMoney: 0,
         resdata: '',
+        investResdata: '',
         interest: '0.00',
-        submitUrl: ajaxUrl.doBondInvest,
+        showRes: false,
         params: {
           bondId: this.$route.params.projectId,
           userId: this.$store.state.user.userId,
           __sid: this.$store.state.user.__sid
         },
         popupVisible: false,
-        protocolHtml: ''
+        protocolHtml: '',
+        buyStyle: 0, //默认部分受让
+        sellStyle: 0 //默认部分转让
       }
     },
     created(){
       this.$http.post(ajaxUrl.initBond, qs.stringify(this.params)).then((res) => {
         this.resdata = res.data.resData
-        this.investMoney = this.resdata.remainMoney
+        this.remainMoney = res.data.resData.remainMoney //最大可投金额
+        this.buyStyle = res.data.resData.buyStyle //是否全额受让
+        this.sellStyle = res.data.resData.sellStyle //是否全额转让
+        if(this.buyStyle == 1){
+          this.investMoney = this.resdata.remainMoney //全额受让
+        }
         this.interest = this.resdata.totalInterest
         this.aprMoney = this.investMoney * Math.abs(this.resdata.bondApr) / 100
         this.actualInvestMoney = this.resdata.totalrealPayAmount
       })
     },
     methods: {
+      getInvestData(){
+        //输入金额不能大于最大可投
+        if(this.investMoney > this.remainMoney){
+          this.investMoney = this.remainMoney;
+        }
+        let investParams = {
+          amount: this.investMoney, //输入金额
+          id: this.$route.params.projectId, //债券id
+          userId: this.$store.state.user.userId,
+          __sid: this.$store.state.user.__sid
+        }
+        //受让实时计算
+        this.$http.post(ajaxUrl.getInvestData, qs.stringify(investParams)).then((res) => {
+          this.changeMoney = res.data.resData.changeMoney;
+          this.preInterest = res.data.resData.preInterest;
+          this.realPayAmount = res.data.resData.realPayAmount;
+        })
+      },
       // 点击返回
       goBack(){
         sessionStorage.investMoney = ''
         if(this.$route.query.from){
           this.$router.push('/bondDetail/'+this.$route.params.projectId+'?from=msg_result')
-        }else{
+        }else if(this.showRes){  // 点击返回显示表单 reset数据
+          this.showRes = false
+          this.investMoney = ''
+          location.reload()
+        }
+        else{
           this.$router.go(-1)
         }
       },
@@ -113,6 +145,19 @@
         })
       },
       submitForm(){
+        let lowestMoney = parseFloat(this.resdata.bondLowestMoney)
+        if (this.resdata.remainMoney < (2*lowestMoney) && this.investMoney != this.resdata.remainMoney) {
+          this.$toast('剩余债权小于2倍的最小投资金额，则需要全部受让')
+          this.investMoney = this.resdata.remainMoney
+          return
+        }
+        if( this.investMoney < lowestMoney) { //小于起投金额
+          if (this.resdata.remainMoney >= lowestMoney) { // 当剩余可投金额大于等于最小可投金额时判断
+            let str = '最低起投金额为' + lowestMoney + '元'
+            this.$toast(str)
+            return
+          }
+        }
         if(this.investMoney > this.resdata.userMoney){
           this.$messagebox({
             title: ' ',
@@ -127,10 +172,31 @@
           });
           return ;
         }
-        document.getElementById('formData').submit()
-        sessionStorage.investBidName = this.resdata.projectName
-        sessionStorage.investBidMoney = this.investMoney
-        sessionStorage.investBidId = this.$route.params.projectId
+        let params = Object.assign({}, this.params, {
+          amount: this.investMoney,
+          receivedAccount: this.realPayAmount,
+          bondToken: this.resdata.bondToken,
+          investId: this.resdata.investId,
+          projectId: this.resdata.projectId,
+        })
+        this.$indicator.open({spinnerType: 'fading-circle'}) //提示初始化加载
+        this.$http.post(ajaxUrl.doBondInvest, qs.stringify(params)).then((res) => {
+          this.$indicator.close()
+          if (res.data.resData == '') { //主要是有请勿重复提交信息提示
+            this.$toast(res.data.resMsg)
+          } else {
+            this.showRes = true; // 隐藏表单
+            console.log(res.data)
+            if(res.data.indexOf('系统提示信息') > 0 && res.data.indexOf('处理中') == -1){
+              document.querySelector('#resHtml').innerHTML = res.data
+            } else {
+              document.write(res.data)
+            }
+            sessionStorage.investBidName = this.resdata.projectName
+            sessionStorage.investBidMoney = this.investMoney
+            sessionStorage.investBidId = this.$route.params.projectId
+          }
+        })
       }
     },
     components: { Loading }

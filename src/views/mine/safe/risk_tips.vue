@@ -34,6 +34,9 @@
       }
     },
     created(){
+      if(this.hideHeader) {
+        document.title = this.$route.meta.title
+      }
       this.$indicator.open({spinnerType: 'fading-circle'}) //提示初始化加载
       this.$http.get(ajaxUrl.userRiskPapers, {params: this.getParams}).then((res) => {
         this.resdata = res.data.resData;

@@ -69,9 +69,10 @@
       onAddressChange(picker, values) {
         if(values[0] && values[1]){  // 判断是否为undefined
           picker.setSlotValues(1, address[values[0]]);
-          picker.setSlotValues(2, address[values[1]]);
+          picker.setSlotValues(2, area[values[1]]);
         } else {
           values[0] = Object.keys(address)[0]
+          values[1] = Object.keys(area)[0]
         }
         let str2 = values[2] != '' ? ',' + values[2] : values[2]
         this.zone = values[0] + ',' + values[1] + str2

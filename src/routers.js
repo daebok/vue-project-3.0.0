@@ -449,7 +449,7 @@ const router = new Router({
       name: 'riskRating',
       component: resolve => { require(['./views/mine/safe/risk_rating.vue'], resolve) },
       beforeEnter: requireAuth,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true}
     },
     { // 测评完成
       path: '/mine/safe/risk_result',
@@ -592,7 +592,7 @@ const router = new Router({
       path: '/appH5/tips/risk',
       name: 'appRisk',
       component: resolve => { require(['./views/mine/safe/risk_rating.vue'], resolve) },
-      meta: { title: '风险测评' }
+      meta: { title: '风险测评'}
     },
     { // 平台数据
       path: '/appH5/siteData',

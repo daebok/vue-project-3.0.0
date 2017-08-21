@@ -110,7 +110,7 @@
                 <ul class="info-con clearfix color-999">
                   <li class="margin-t-10">
                     <span class="color-999">应还本金(元)</span>
-                    <span class="font-arial main-color pull-right">{{item.capital | currency('', 2)}}%</span>
+                    <span class="font-arial main-color pull-right">{{item.capital | currency('', 2)}}</span>
                   </li>
                   <li class="margin-t-10">
                     <span >应还利息(元)</span>

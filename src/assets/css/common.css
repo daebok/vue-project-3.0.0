@@ -87,7 +87,7 @@
 }
 .form-area ul li:only-child {margin:0;}
 .form-area ul li b {position:absolute;right:.15rem;top:0;color:#333;}
-.form-area ul li .yzm {padding-left:.15rem;right:.15rem; top: 0;line-height: .3rem;width:auto;background:#fff;border:0;font-size:.13rem; color: #F95A28;}
+.form-area ul li .yzm {padding-left:.15rem;right:.15rem; top: 0;line-height: .3rem;width:auto;background:#fff;border:0;font-size:.13rem; color: #F95A28; outline: none;}
 .form-area ul li b img {width:.14rem;vertical-align: -.02rem;}
 /* 表单样式 */
 .form-text{

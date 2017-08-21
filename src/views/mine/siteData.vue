@@ -39,6 +39,9 @@
       };
     },
     created() {
+      if(this.hideHeader) {
+        document.title = this.$route.meta.title
+      }
       this.$http.get(ajaxUrl.siteData).then((res) => {
         if (res.data.resData !== '') {
           this.resdata = res.data.resData;

@@ -19,6 +19,9 @@
       };
     },
     created() {
+      if(this.hideHeader) {  // 给APP用的title变化
+        document.title = this.$route.meta.title
+      }
       this.$http.get(ajaxUrl.helpCenter).then((res) => {
         this.list = res.data.resData.sectionlist;
       })
