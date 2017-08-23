@@ -47,7 +47,7 @@
   import Loading from '../../components/Loading.vue'
   import RdField from '../../components/FieldInput.vue'
   import validator from '../../mixins/formValidator'
-  import getCodeTime from '../../mixins/getCodeTime'
+  import getCodeTime from '../../mixins/getRepaymentCodeTime' //引入还款倒计时
   import * as ajaxUrl from '../../ajax.config'
   import qs from 'qs'
   export default {

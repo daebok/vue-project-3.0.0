@@ -105,11 +105,7 @@
       })
     },
     methods: {
-      getInvestData(){
-        //输入金额不能大于最大可投
-        if(this.investMoney > this.remainMoney){
-          this.investMoney = this.remainMoney;
-        }
+      getrealPayAmount(){ //实时计算实际收入
         let investParams = {
           amount: this.investMoney, //输入金额
           id: this.$route.params.projectId, //债券id
@@ -122,6 +118,13 @@
           this.preInterest = res.data.resData.preInterest;
           this.realPayAmount = res.data.resData.realPayAmount;
         })
+      },
+      getInvestData(){
+        //输入金额不能大于最大可投
+        if(this.investMoney > this.remainMoney){
+          this.investMoney = this.remainMoney;
+        }
+        this.getrealPayAmount();//计算实际支付
       },
       // 点击返回
       goBack(){
@@ -148,7 +151,8 @@
         let lowestMoney = parseFloat(this.resdata.bondLowestMoney)
         if (this.resdata.remainMoney < (2*lowestMoney) && this.investMoney != this.resdata.remainMoney) {
           this.$toast('剩余债权小于2倍的最小投资金额，则需要全部受让')
-          this.investMoney = this.resdata.remainMoney
+          this.investMoney = this.resdata.remainMoney;
+          this.getrealPayAmount();//计算实际支付
           return
         }
         if( this.investMoney < lowestMoney) { //小于起投金额
@@ -186,7 +190,7 @@
             this.$toast(res.data.resMsg)
           } else {
             this.showRes = true; // 隐藏表单
-            console.log(res.data)
+            // console.log(res.data)
             if(res.data.indexOf('系统提示信息') > 0 && res.data.indexOf('处理中') == -1){
               document.querySelector('#resHtml').innerHTML = res.data
             } else {

@@ -98,6 +98,17 @@
         return this.switch_status ? 1 : 0;
       }
     },
+    mounted() {
+//      let inputstr = document.getElementById('inputHtml').innerHTML
+//      this.$messagebox({
+//        showCancelButton: true,
+//        message: inputstr
+//      })
+      let inputArr = document.getElementsByClassName('pwd')
+//      .addEventListener('focus', function(el) {
+//        console.log(1)
+//      }, false)
+    },
     created() {
       this.$http.get(ajaxUrl.registerProtocol).then((res) => {
         this.protocolList = res.data.resData.list;
