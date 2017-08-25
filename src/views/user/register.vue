@@ -24,7 +24,10 @@
               <rd-field :type="changeType" v-model="reg.pwdVal" label="登录密码" placeholder="8-16位字符，包含数字和字母" @changeEye="hideShowPwd"
                         specInput="pwdInput" switchEye :attr="{maxlength: 16}" name="pwd"></rd-field>
             </li>
-            <li>
+            <li v-if="ui">
+              <rd-field type="tel" v-model="reg.inviter" label="邀请人" placeholder="请输入邀请人手机号(选填)" name="inviter" :disableClear="true" readonly></rd-field>
+            </li>
+            <li v-else>
               <rd-field type="tel" v-model="reg.inviter" label="邀请人" placeholder="请输入邀请人手机号(选填)" name="inviter"></rd-field>
             </li>
           </ul>
@@ -82,9 +85,10 @@
           mobile: '', // 手机号
           code: '', // 手机验证码
           pwdVal: '', // 密码
-          inviter: '', // 邀请人
+          inviter: this.$route.query.ui || '', // 邀请人
           agree: 1 // 是否同意注册协议，1已同意，0不同意
         },
+        ui: this.$route.query.ui,
         changeType: 'password', // 密码输入框类型，password密码框，text文本框
         popupVisible: false, // 注册协议内容隐藏域是否显示，true显示，false不显示
         protocolList:[], // 注册协议列表
