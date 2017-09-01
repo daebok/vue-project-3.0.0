@@ -105,3 +105,32 @@ exports.cutStr = (str, cut=7) => {
   }
   return str
 };
+
+//将接口传过来的16进制颜色改成rgb格式
+exports.colorRgba = (sColor) => {
+  let a = sColor.substring(1, 3) // #号的前两位是16进制的透明度
+  a = parseInt('0x' + a) // 16进制转10进制，需要加0x
+  let transparent = (a / 256).toFixed(2)
+  let color = '#' + sColor.substring(3)
+  color = color.toLowerCase();
+  let reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
+  if(color && reg.test(color)){
+    if(color.length === 4){ // 判断3位的颜色值
+      var sColorNew = "#";
+      for(var i=1; i<4; i+=1){
+        sColorNew += color.slice(i,i+1).concat(color.slice(i,i+1));
+      }
+      color = sColorNew;
+    }
+    //处理六位的颜色值
+    var sColorChange = [];
+    for(var i=1; i<7; i+=2){
+      sColorChange.push(parseInt("0x"+color.slice(i,i+2)));
+    }
+    // 再最后放入透明度值
+    sColorChange.push(transparent)
+    return "background: rgba(" + sColorChange.join(",") + ")";
+  }else{
+    return "background:" + color;
+  }
+}

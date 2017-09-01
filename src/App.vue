@@ -1,16 +1,5 @@
 <template>
   <div >
-    <div class="modal" v-if="modal">
-      <div class="alert bounceIn animated">
-        <div class="vip">查看专属您的生日礼物</div>
-        <router-link to="/account/my_coupon?from=msg_result">
-          <div><img class="btn" src="./assets/images/finance/btn.png"></div>
-        </router-link>
-        <div class="close" @click="modal = false">
-          <div class="line"></div>
-        </div>
-      </div>
-    </div>
     <transition :name="transitionName">
       <router-view ></router-view>
     </transition>
@@ -26,8 +15,7 @@
       return {
         transitionName: 'slide-right',
         showPath: ['index', 'invest', 'account', 'mine'], // 需要显示底部footer的页面地址
-        footerShow: false,
-        modal: false
+        footerShow: false
       }
     },
     watch: {
@@ -145,40 +133,4 @@
   .mint-loadmore-bottom span.rotate
     transform: rotate(180deg)
 
-  .modal
-    position: absolute
-    width: 100%
-    height: 100%
-    z-index: 3
-    background: rgba(0, 0, 0, .35)
-    .alert
-      position: absolute
-      left: 8%
-      top: 45%
-      width: 84%
-      height: 3.4rem
-      padding-top: 1.9rem
-      margin-top: -1.7rem
-      text-align: center
-      background: url(./assets/images/finance/birth_bg.png) center/100% auto no-repeat;
-      .vip
-        line-height: .8rem
-        color: #fff
-        font-size: .18rem
-
-      .btn
-        width: auto
-        height: .45rem
-
-      .close
-        display: inline-block
-        height: .8rem
-        width: 1rem
-        margin-top: .13rem
-        background: url(./assets/images/finance/close1.png) center bottom/.29rem auto no-repeat;
-        .line
-          display: inline-block
-          width: .01rem
-          background: #dd0f22
-          height: .5rem
 </style>

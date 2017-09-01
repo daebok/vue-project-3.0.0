@@ -1,8 +1,8 @@
 // export const MobileServer = 'http://10.10.1.176:8088'; // 本地调试地址
-export const MobileServer = 'https://mobile.91jinjindai.com'; // 今金贷测试服务器的域名
-export const StaticsServer = 'https://static.91jinjindai.com'; // 今金贷静态服务器地址
-//export const MobileServer = 'http://mobile.test.xinzhentech.com'; // 信真测试服务器的域名
-//export const StaticsServer = 'http://statics.test.xinzhentech.com'; // 信真静态服务器地址
+/*export const MobileServer = 'https://mobile.91jinjindai.com'; // 今金贷测试服务器的域名
+export const StaticsServer = 'https://static.91jinjindai.com'; // 今金贷静态服务器地址*/
+export const MobileServer = 'http://mobile.test.xinzhentech.com'; // 信真测试服务器的域名
+export const StaticsServer = 'http://statics.test.xinzhentech.com'; // 信真静态服务器地址
 export const avatarMobile = StaticsServer + '/upload/avatarMobile.html'; //头像上传静态服务器
 export const uploadAvatar = MobileServer + '/app/member/uploadAvatar.html'; //保存头像到测试服务器
 /* S--首页--*/

@@ -52,13 +52,14 @@
         <div class="page-loadmore-wrapper" ref="" :style="{ height: wrapperHeight + 'px' }">
           <mt-loadmore :bottom-method="loadBottom" :bottom-all-loaded="allLoaded2" ref="loadmore2">
             <section v-for="item in list2" class="invest-am-list">
-              <router-link :to="'/investDetail/'+ item.projectId">
               <div class="invest-am-title">
+                <router-link :to="'/investDetail/'+ item.projectId">
                 <p class="am-title">
                   {{item.projectName | hideBorrowName}}
                   <i class="am-status" :class="{'color-green': item.status == 1}">{{item.statusStr}}</i>
                   <i v-if="item.investType == 1" class="invest-am-icon">自</i>
                 </p>
+                </router-link>
                 <ul class="invest-am-content">
                   <li class="invest-am-content-left margin-t-10">投资金额(元)</li>
                   <li class="invest-am-content-right margin-t-10">{{item.amount | currency('',2)}}</li>
@@ -70,7 +71,6 @@
                   <mt-button size="normal" class="plan-btn" @click.native="toPay(item.uuid)">去支付</mt-button>
                 </div>
               </div>
-              </router-link>
             </section>
           </mt-loadmore>
         </div>

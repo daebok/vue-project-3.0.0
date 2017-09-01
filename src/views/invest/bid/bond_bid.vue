@@ -55,7 +55,7 @@
           <mt-header class="bar-nav" title="投资协议" >
             <mt-button slot="right" @click.native="popupVisible = false">关闭</mt-button>
           </mt-header>
-          <div class="content" v-html="protocolHtml"></div>
+          <div class="con" :style="{ height: protocolHeight + 'px' }" v-html="protocolHtml"></div>
       </mt-popup>
     </div>
   </div>
@@ -79,6 +79,7 @@
         investResdata: '',
         interest: '0.00',
         showRes: false,
+        protocolHeight: 0,
         params: {
           bondId: this.$route.params.projectId,
           userId: this.$store.state.user.userId,
@@ -91,6 +92,9 @@
       }
     },
     created(){
+      this.$nextTick(() => {
+        this.protocolHeight = document.documentElement.clientHeight - 40;
+      })
       this.$http.post(ajaxUrl.initBond, qs.stringify(this.params)).then((res) => {
         this.resdata = res.data.resData
         this.remainMoney = res.data.resData.remainMoney //最大可投金额

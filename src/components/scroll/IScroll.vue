@@ -38,13 +38,29 @@
     },
     data() {
       return {
-        scrollWidth: 578
-        //scrollWidth: auto
+        // scrollWidth: 578
+      }
+    },
+    computed: {
+      scrollWidth() {
+        var len = this.data.length
+        var paddingPlus = 20 * len   // 每个标题padding左右为10
+        var fontWidth = 0 // 先初始字体宽为0
+        var totalW
+        for(var i = 0; i < len; i++) {
+          var name = this.data[i].typeName.toString()  // 每个标题的长度
+          fontWidth += name.length * 14
+        }
+        totalW = paddingPlus + fontWidth
+        if(totalW < document.documentElement.clientWidth){ //小于屏幕宽
+          totalW = document.documentElement.clientWidth
+        }
+        return totalW
       }
     },
     mounted() {
       //this.scrollWidth = document.documentElement.clientWidth + 350  // 先默认宽度
-      this.scrollWidth = document.documentElement.clientWidth // 先默认宽度
+      // this.scrollWidth = document.documentElement.clientWidth // 先默认宽度
       setTimeout(() => {
         this._initScroll()
       }, 20)
@@ -61,24 +77,23 @@
           click: true, //手机点击无效bug
           mouseWheel: false
         })
-        // document.getElementById(`${this.id}scroller`).style.width = this.scrollWidth + 'px'
-        this[`flag${this.id}`] = true
-        this[`scroll${this.id}`].on('beforeScrollStart', () => {
-          if(this[`flag${this.id}`]){ // 执行一次计算宽度
-            this[`flag${this.id}`] = false
-            let swipe_item = document.getElementById(`${this.id}wrapper`).querySelectorAll('.menu-item')
-            let total_w = 0
-            swipe_item.forEach( val => {
-              total_w += val.clientWidth
-            })
-            if(total_w > this.scrollWidth){
-              this.scrollWidth = total_w
-              setTimeout(() => {
-                this.refresh()
-              }, 10)
-            }
-          }
-        })
+//        this[`flag${this.id}`] = true
+//        this[`scroll${this.id}`].on('beforeScrollStart', () => {
+//          if(this[`flag${this.id}`]){ // 执行一次计算宽度
+//            this[`flag${this.id}`] = false
+//            let swipe_item = document.getElementById(`${this.id}wrapper`).querySelectorAll('.menu-item')
+//            let total_w = 0
+//            swipe_item.forEach( val => {
+//              total_w += val.clientWidth
+//            })
+//            if(total_w > this.scrollWidth){
+//              this.scrollWidth = total_w
+//              setTimeout(() => {
+//                this.refresh()
+//              }, 10)
+//            }
+//          }
+//        })
         document.getElementById(`${this.id}wrapper`).addEventListener('touchmove', function (e) {
           e.preventDefault()
         },false)

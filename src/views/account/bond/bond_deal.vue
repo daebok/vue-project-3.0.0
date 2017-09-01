@@ -94,7 +94,6 @@
     },
     methods: {
       showhide() {
-        //console.log(this.bondMoney);
         //判断转让金额是否为空
         if(this.bondMoney !== ''){
           this.popupVisible = !this.popupVisible;

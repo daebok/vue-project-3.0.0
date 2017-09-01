@@ -177,8 +177,8 @@
     color: #999!important /*投满时变灰*/
 
   .aui-flex-item-3
-    padding-top: .02rem
-    flex: 1
+    padding: 0 .1rem
+    /*flex: 1*/
     text-align: center
     &.current
       p
@@ -188,8 +188,8 @@
       display: inline-flex
       color: #333
       line-height: .2rem
-      margin: 0 .1rem
-      padding: .05rem .05rem .07rem
+      margin: 0 0
+      padding: .05rem 0 .07rem
 
   .data-info
     position: relative

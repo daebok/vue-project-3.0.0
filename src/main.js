@@ -118,12 +118,26 @@ router.beforeEach((to, from, next) => {
 // 监听浏览器返回事件
 window.addEventListener('popstate', () => {
   // 页面切换时候键盘消失
-  document.activeElement.blur()
-  // Vue.$messagebox.close(); //路由切换时解决弹框仍然存在的问题
+  document.activeElement.blur(); // 路由切换时候退出键盘
+  Vue.$messagebox.close(); // 路由切换时关闭mint-ui的messagebox提示框
 }, false)
 
-// setTimeout(() => {
-//   if(localStorage.user) {
-//     delete localStorage.user
-//   }
-// }, 20*60*1000)
+// 监听dom被插入
+document.addEventListener("DOMNodeInserted", (e) => {
+  mintToastRemove();
+});
+
+// 控制mint-ui的toast同时只显示一个
+function mintToastRemove() {
+  var domList = document.getElementsByClassName('mint-toast');
+  var length = document.getElementsByClassName('mint-toast').length;
+  if (length > 1) {
+    for (var i = 0; i < length; i++) {
+      if (i != length) {
+        if (domList[i]) {
+          domList[i].remove();
+        }
+      }
+    }
+  }
+}
