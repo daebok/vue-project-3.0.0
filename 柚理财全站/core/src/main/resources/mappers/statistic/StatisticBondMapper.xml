@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.statistic.mapper.StatisticBondMapper">
+	<resultMap type="com.rd.ifaes.core.statistic.domain.StatisticBond" id="statisticBondResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="isVouch" column="IS_VOUCH"/>
+		<result property="isMortgage" column="IS_MORTGAGE"/>
+		<result property="bondDate" column="BOND_DATE"/>
+		<result property="bondInvestId" column="BOND_INVEST_ID"/>
+		<result property="bondAmount" column="BOND_AMOUNT"/>
+		<result property="bondTimeLimit" column="BOND_TIME_LIMIT"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		IS_MORTGAGE,
+		IS_VOUCH,
+		BOND_DATE,
+		BOND_INVEST_ID,
+		BOND_AMOUNT,
+		BOND_TIME_LIMIT
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{isMortgage},
+		#{isVouch},
+		#{bondDate},
+		#{bondInvestId},
+		#{bondAmount},
+		#{bondTimeLimit}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#columnName#,'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="isMortgage != null and isMortgage != ''">and IS_MORTGAGE = #{isMortgage}</if>
+            <if test="isVouch != null and isVouch != ''">and IS_VOUCH = #{isVouch}</if>
+            <if test="bondDate != null and bondDate != ''">and BOND_DATE = #{bondDate}</if>
+            <if test="bondInvestId != null and bondInvestId != ''">and BOND_INVEST_ID = #{bondInvestId}</if>
+            <if test="bondAmount != null and bondAmount != ''">and BOND_AMOUNT = #{bondAmount}</if>
+            <if test="bondTimeLimit != null and bondTimeLimit != ''">and BOND_TIME_LIMIT = #{bondTimeLimit}</if>
+        </trim>
+    </sql>
+
+
+	<!-- 适用于主键自增类型 -->
+	<insert id="insert" parameterType="com.rd.ifaes.core.statistic.domain.StatisticBond" useGeneratedKeys="true" keyProperty="id">
+		insert into statistic_bond( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into statistic_bond( <include refid="table_columns" /> )  
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+			#{item.uuid},
+			#{item.userId},
+			#{item.isMortgage},
+			#{item.isVouch},
+			#{item.bondDate},
+			#{item.bondInvestId},
+			#{item.bondAmount},
+			#{item.bondTimeLimit}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="int">
+		delete from statistic_bond
+		where uuid = #{uuid}
+	</delete>
+
+	<update id="deleteLogic" parameterType="int">
+		update statistic_bond set is_delete = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.statistic.domain.StatisticBond">
+		update statistic_bond 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="userId != null and userId != ''">USER_ID = #{userId},</if>
+			<if test="isMortgage != null and isMortgage != ''">IS_MORTGAGE = #{isMortgage},</if>
+			<if test="isVouch != null and isVouch != ''">IS_VOUCH = #{isVouch},</if>			
+			<if test="bondDate != null and bondDate != ''">BOND_DATE = #{bondDate},</if>
+			<if test="bondInvestId != null and bondInvestId != ''">BOND_INVEST_ID = #{bondInvestId},</if>
+			<if test="bondAmount != null and bondAmount != ''">BOND_AMOUNT = #{bondAmount},</if>
+			<if test="bondTimeLimit != null and bondTimeLimit != ''">BOND_TIME_LIMIT = #{bondTimeLimit},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="statisticBondResultMap">
+        select <include refid="table_columns" />
+        from statistic_bond
+    </select>
+
+    <select id="findList" resultMap="statisticBondResultMap">
+        select <include refid="table_columns" />
+        from statistic_bond
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from statistic_bond
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="statisticBondResultMap" parameterType="int" >
+		select <include refid="table_columns" />
+		from statistic_bond
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<resultMap type="com.rd.ifaes.core.statistic.model.StatisticResultModel" id="statisticResultModelResultMap">
+		<result property="statDate" column="STAT_DATE"/>
+		<result property="totalCount" column="TOTAL_COUNT"/>
+	</resultMap>
+	
+	<!-- 根据查询类型统计数据 -->
+ 	<select id="findInvestByStatType" resultMap="statisticResultModelResultMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select <include refid="select_dateType" /> as statDate, <include refid="statistic_type" /> as totalCount
+		from statistic_bond 
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="startDate != null and startDate != ''">and <include refid="select_dateType" /> &gt;= #{startDate}</if>
+        	<if test="endDate != null and endDate != ''">and <include refid="select_dateType" /> &lt;= #{endDate}</if>
+            <include refid="queryConditionSql" />
+        </trim>
+        group by statDate
+	</select>
+	<!-- 获取起始日期前一天数值 -->
+	<select id="getCountBeforeStartDate" resultMap="statisticResultModelResultMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select <include refid="statistic_type" />
+		from statistic_bond 
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="beforeStartDate != null and beforeStartDate != ''">and <include refid="select_dateType" /> = #{beforeStartDate}</if>
+            <include refid="queryConditionSql" />
+        </trim>
+	</select>
+	<!-- 根据投资金额获取债权期限分布情况 -->
+    <select id="getTimeLimitByAmnt" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel">
+        select
+        <if test="dictList != null and dictList.size() &gt; 0">
+	        <foreach collection="dictList" item="data" separator="," >  
+	        	IFNULL(sum(case when
+	        	<trim prefixOverrides="and | or ">
+		        	<if test="data.minValue != null and data.minValue != ''">and bond_time_limit &gt;= #{data.minValue}</if>
+		        	<if test="data.maxValue != null and data.maxValue != ''">and bond_time_limit &lt;= #{data.maxValue}</if>
+	        	</trim>
+	        	then bond_amount ELSE 0 end),0) as #{data.itemName}
+	        </foreach>
+	    </if>        
+		from statistic_bond
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="startDate != null and startDate != ''">and <include refid="select_dateType" /> &gt;= #{startDate}</if>
+        	<if test="endDate != null and endDate != ''">and <include refid="select_dateType" /> &lt;= #{endDate}</if>
+            <include refid="queryConditionSql" />
+        </trim>
+	</select>
+    <!-- 根据笔数获取债权期限分布情况 -->
+    <select id="getTimeLimitByNum" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel">
+        select
+        <if test="dictList != null and dictList.size() &gt; 0">
+	        <foreach collection="dictList" item="data" separator="," >  
+	        	count(case when
+	        	<trim prefixOverrides="and | or ">
+		        	<if test="data.minValue != null and data.minValue != ''">and bond_time_limit &gt;= #{data.minValue}</if>
+		        	<if test="data.maxValue != null and data.maxValue != ''">and bond_time_limit &lt;= #{data.maxValue}</if>
+	        	</trim>
+	        	then 1 ELSE null end) as #{data.itemName}
+	        </foreach>
+	    </if>
+		from statistic_bond
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="startDate != null and startDate != ''">and <include refid="select_dateType" /> &gt;= #{startDate}</if>
+        	<if test="endDate != null and endDate != ''">and <include refid="select_dateType" /> &lt;= #{endDate}</if>
+            <include refid="queryConditionSql" />
+        </trim>
+	</select>
+	<!-- 根据投资人数获取债权期限分布情况 -->
+    <select id="getTimeLimitByUsers" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel">
+        select
+        <if test="dictList != null and dictList.size() &gt; 0">
+	        <foreach collection="dictList" item="data" separator="," >  
+	        	count(distinct user_id, case when
+	        	<trim prefixOverrides="and | or ">
+		        	<if test="data.minValue != null and data.minValue != ''">and bond_time_limit &gt;= #{data.minValue}</if>
+		        	<if test="data.maxValue != null and data.maxValue != ''">and bond_time_limit &lt;= #{data.maxValue}</if>
+	        	</trim>
+	        	then 1 ELSE null end) as #{data.itemName}
+	        </foreach>
+	    </if>        
+		from statistic_bond
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="startDate != null and startDate != ''">and <include refid="select_dateType" /> &gt;= #{startDate}</if>
+        	<if test="endDate != null and endDate != ''">and <include refid="select_dateType" /> &lt;= #{endDate}</if>
+            <include refid="queryConditionSql" />
+        </trim>
+	</select>
+	
+	<!-- 日期格式 -->
+	<sql id="select_dateType">
+	   <choose> 
+            <when test="3==dateType ">  
+                date_format(bond_date,'%X%m')  
+            </when >  
+            <when test="2==dateType ">  
+                date_format(bond_date,'%X%V')  
+            </when >  
+            <otherwise>
+                date_format(bond_date,'%Y%m%d')  
+            </otherwise> 
+	   </choose>
+	</sql>
+	
+	<!-- 查询类型 -->
+	<sql id="statistic_type">
+	   <choose> 
+            <when test="3==statType ">  
+                count(user_id) 
+            </when >  
+            <when test="2==statType ">  
+                sum(bond_amount) 
+            </when >  
+            <otherwise>
+                count(distinct user_id)
+            </otherwise> 
+	   </choose>
+	</sql>
+	<!-- 查询条件 -->
+	<sql id="queryConditionSql">
+        <if test="borrowType != null and borrowType.length &gt; 0">
+           	and (false
+	        <foreach collection="borrowTypeArr" item="type" >  
+	        	<if test="type==1">or is_mortgage = 1 </if>
+	        	<if test="type==2">or is_vouch = 1</if>
+	        	<if test="type==3">or (is_mortgage = 0 and is_vouch = 0)</if>
+	        </foreach>
+	        )
+	    </if>
+	    <if test="accountRange != null and accountRange.length &gt; 0">
+	        and ( false 
+	        <foreach collection="accountRange" item="acc"> 
+	          or (
+	          <if test="dictListTwo != null and dictListTwo.size() &gt; 0">
+	              <foreach collection="dictListTwo" item="dict" separator="," >
+	                  <if test="acc==dict.itemValue">
+	                     <trim prefixOverrides="and | or ">
+				        	<if test="dict.minValue != null and dict.minValue != ''">and bond_amount &gt;= #{dict.minValue}</if>
+				        	<if test="dict.maxValue != null and dict.maxValue != ''">and bond_amount &lt; #{dict.maxValue}</if>
+			        	 </trim>
+	                  </if>
+	              </foreach>
+	          </if>
+	          )
+	        </foreach>
+	        )
+	    </if>
+	</sql>	
+	
+</mapper>

@@ -1,0 +1,63 @@
+<div class="form-tips-content">
+  <form class="form-horizontal" action="/protocol/protocol/add.html" id="form" role="form">
+  	<ul class="form-item">
+  		<li>
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">类型：</label>
+		      <div class="input-box">
+			  <@linkage name="protocolType" id="protocolType" nid="protocolType" class="form-control"/>
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="master" class="control-label form-label">名称：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="name" id="name" maxlength="512" placeholder="" required>
+		      </div>
+		    </div>	
+  		</li>
+  		<li class="full-width">
+			<div class="form-group">
+		      	<label for="master" class="control-label form-label">内容模板：</label>
+		      	<div class="textarea-box">
+		      	<#include "../../include/ueditor.html">
+					<@showUeditor width=760 height=400 id="aggrementContent" name="content" content=""/>
+					<p style="color: red;">内容模板里的"[${r"${...}"}]"不要修改，否则会影响协议的正常使用！</p>
+				</div>
+		    </div>	
+  		</li>
+  	</ul>
+  </form>
+</div>
+<script type="text/javascript">
+$("#form").validate({
+	submitHandler: function(form) {	
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						icon: 6,
+						cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+					}, function() {
+						layer.closeAll();
+						//刷新当前页面
+						//window.location.href = window.location.href;
+						gridobj.trigger("reloadGrid"); //重新载入  
+					});
+				} else {
+					layer.alert(data.msg, {
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+})
+ 
+</script>

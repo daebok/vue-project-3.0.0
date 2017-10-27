@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>债权转让分析</title>
+<#include "include/resources.html">
+</head>
+<body class="overflowY">
+<div class="wrapper">
+    <div class="row pt20">
+      <div class="col-md-12">
+       <form class="form-horizontal">
+          <input type="hidden" name="statType" value="1" id="j-realNameStatus" />
+          <input type="hidden" name="dateType" value="1" id="dateType">
+          <div id="legend">
+            <legend>债权转让分析</legend>
+          </div>
+          <div class="col-md-16 mt20">
+            <ul id="myTab" class="nav nav-tabs">
+              <li class="active"><a  data-toggle="tab">债权投资人数</a></li>
+              <li><a  data-toggle="tab">债权转让金额</a></li>
+              <li><a  data-toggle="tab">债权转让笔数</a></li>
+              <li><a  data-toggle="tab">债权期限</a></li>
+            </ul>
+          </div>        
+          <div class="control-group">
+            <label class="control-label">日期：</label>
+            <div class="controls">
+               <label class="checkbox inline selectTime"><input type="text" name="startDate" id="startTime" class="form-control"placeholder="开始日期" value="${startDate}" readonly="readonly" style="background:#fff;"/></label><label class="checkbox inline selectTime"><input type="text" name="endDate" id="endTime" class="form-control" placeholder="结束日期" value="${endDate}" readonly="readonly" style="background:#fff;"/></label>
+            </div>
+          </div>
+          <div class="control-group">
+          <label class="control-label">借款类型：</label>
+          <div class="controls">
+            <label class='checkbox inline'><input type='checkbox' value='' checked=''>不限</label>
+            <label class="checkbox inline selectTime">
+              <input type="checkbox" name="borrowTypeArr" value="1" checked="checked">抵押借款
+            </label>
+            <label class="checkbox inline selectTime selectTime">
+              <input type="checkbox" name="borrowTypeArr" value="2" checked="checked">担保借款
+            </label>
+            <label class="checkbox inline selectTime">
+              <input type="checkbox" name="borrowTypeArr" value="3" checked="checked">其他
+            </label>                                  
+          </div>
+        </div>        
+          <div class="control-group">
+            <label class="control-label">转让金额：</label>
+            <div class="controls">
+                <@linkage name="accountRange" nid="accountRange" class="form-control" plantext="checkbox" allselect="allselect"/>
+            </div>
+          </div>
+          <div class="" style="margin-left:116px;">
+            <button type="submit" name="button" class="btn btn-primary">搜索</button>
+          </div>
+      </form>
+      </div>
+    </div>
+    <div class="lineStyle col-md-12"></div>
+    <div class="row">
+      <div class="col-md-12">
+          <div class="content pt20 ml30">
+            <h3 class="text-right">
+              <div id="timeType" class="selectTime">
+                <a href="javascript:;" id="day" class="on">日</a>
+                <a href="javascript:;" id="week">周</a>
+                <a href="javascript:;" id="month">月</a>
+              </div>
+            </h3>
+          </div>
+          <div id="j-main" class="chart-map mt20 ml30" style="width:80%;margin:50px auto 0;"></div>
+          <div class="col-md-12 col-sm-12 piearea hide">
+            <div id="j-pie-1" class="chart-col-6 mt20 ml30 " style="float:left;">
+            </div>
+            <div id="j-pie-2" class="chart-col-6 mt20 ml30 " style="float:left;">
+            </div>
+            <div id="j-pie-3" class="chart-col-6 mt20 ml30 " style="float:left;">
+            </div>
+          </div>
+      </div>
+    </div>
+</div>
+<script type="text/javascript">
+    //设置开始时间控件
+  var startTime= {
+    elem:'#startTime',
+    format: 'YYYY-MM-DD', //日期格式
+    max:$('#endTime').val(),
+    event:'focus',
+    choose: function(dates){
+        endTime.min=dates;
+        endTime.start=dates;
+    }
+  };
+  //设置发放结束时间
+  var endTime=  {
+      elem:'#endTime',
+      format: 'YYYY-MM-DD', //日期格式
+      min: $('#startTime').val(), //最小日期
+      event:'focus',
+      choose: function(dates){
+        startTime.max=dates;
+       }
+  };
+  laydate(startTime);
+  laydate(endTime);
+  var myChart = echarts.init(document.getElementById('j-main')),
+  option = {
+      title: {
+          text: '债权转让笔数',
+          left: 'center'
+      },    
+      tooltip: {
+          trigger: 'axis'
+      },
+      legend: {
+          data:['债权转让笔数','环比值'],
+          top:'50px'
+      },
+      grid:{
+          top:'25%'
+      },
+      xAxis: [
+          {
+              type: 'category',
+              data: []
+          }
+      ],
+      yAxis: [
+          {
+              type: 'value',
+              name: '笔数',
+              axisLabel: {
+                  formatter: '{value} '
+              }
+          },
+          {
+              type: 'value',
+              name: '环比值',
+              axisLabel: {
+                  formatter: '{value} %'
+              }
+          }
+      ],
+      dataZoom: [
+       {   // 这个dataZoom组件，默认控制x轴。
+           type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+           startValue :0
+       },
+
+   ],
+      series: [
+           {
+              name:'债权转让笔数',
+              type:'bar',
+              yAxisIndex: 0,
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#8266a3'
+                }
+              }
+          },{
+              name:'环比值',
+              type:'line',
+              yAxisIndex: 1,
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#afc97b'
+                }
+              }
+          }
+      ]
+  },
+  option1 = {
+      title: {
+          text: '债权投资人数',
+          left: 'center'
+      },    
+      tooltip: {
+          trigger: 'axis'
+      },
+      legend: {
+          data:['债权投资人数','环比值'],
+          top:'50px',
+      },
+      grid:{
+          top:'25%'
+      },
+      xAxis: [
+          {
+              type: 'category',
+              data: []
+          }
+      ],
+      yAxis: [
+          {
+              type: 'value',
+              name: '债权投资人数',
+              axisLabel: {
+                  formatter: '{value} '
+              }
+          },
+          {
+              type: 'value',
+              name: '环比值',
+              axisLabel: {
+                  formatter: '{value} %'
+              }
+          }
+      ],
+      dataZoom: [
+       {   // 这个dataZoom组件，默认控制x轴。
+           type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+           startValue :0
+       },
+
+   ],
+      series: [
+          {
+              name:'债权投资人数',
+              type:'bar',
+              yAxisIndex: 0,
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#8266a3'
+                }
+              }
+          },{
+              name:'环比值',
+              type:'line',
+              yAxisIndex: 1,
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#9bbb59'
+                }
+              }
+          }
+      ]
+  },option2 = {
+      title: {
+          text: '债权转让金额',
+          left: 'center'
+      },    
+      tooltip: {
+          trigger: 'axis'
+      },
+      legend: {
+          data:['债权转让金额','环比值'],
+          top:'50px',
+      },
+      grid:{
+          top:'25%'
+      },
+      xAxis: [
+          {
+              type: 'category',
+              data: []
+          }
+      ],
+      yAxis: [
+          {
+              type: 'value',
+              name: '金额',
+              axisLabel: {
+                  formatter: '{value} '
+              }
+          },
+          {
+              type: 'value',
+              name: '环比值',
+              axisLabel: {
+                  formatter: '{value} %'
+              }
+          }
+      ],
+      dataZoom: [
+       {   // 这个dataZoom组件，默认控制x轴。
+           type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+           startValue :0
+       },
+
+   ],
+      series: [
+          {
+              name:'债权转让金额',
+              type:'bar',
+              yAxisIndex: 0,
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#8266a3'
+                }
+              }
+          },{
+              name:'环比值',
+              type:'line',
+              yAxisIndex: 1,
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#9bbb59'
+                }
+              }
+          }
+      ]
+  };
+  //['#76b7f9','#f8d15c','#ef826f','#92cb8b','#c3e9e1','#ffa879','#95a3ea','#ba7dd1']
+  chartAjax($(".form-horizontal").serialize());
+
+  function chartAjax(req){
+      $.ajax({
+          url:'/statistic/bond/findInvestByType.html?'+req,
+          dataType:'json',
+          success:function(data){
+            //var timeLength=data.date.length;
+
+            //option.dataZoom[0].startValue=timeLength;
+            if($("#j-realNameStatus").val() == "1"){
+              option1.xAxis[0].data=data.chart_date;
+              option1.series[1].data=data.chart_ratio;
+              option1.series[0].data=data.chart_total;
+              myChart.setOption(option1);                           
+            }else if($("#j-realNameStatus").val() == "2"){
+              option2.xAxis[0].data=data.chart_date;
+              option2.series[1].data=data.chart_ratio;
+              option2.series[0].data=data.chart_total;
+              myChart.setOption(option2);
+            }else{
+              option.xAxis[0].data=data.chart_date;
+              option.series[1].data=data.chart_ratio;
+              option.series[0].data=data.chart_total;
+              myChart.setOption(option);
+            }
+          }
+      })
+  }
+
+
+/*图1*/
+  var pieChart1 = echarts.init(document.getElementById('j-pie-1')),
+      pieChart2 = echarts.init(document.getElementById('j-pie-2')),
+      pieChart3 = echarts.init(document.getElementById('j-pie-3'));
+  var pieOption= {
+          title : {
+              text: '',
+              left: 'center',
+              top:'80px'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : '80%',
+              y : '40%',
+              data:[]
+          },
+          toolbox: {
+              show : false
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'访问来源',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  color:['#76b7f9','#f8d15c','#ef826f','#92cb8b','#c3e9e1','#ffa879','#95a3ea','#ba7dd1'],
+                  itemStyle : {
+                      normal : {
+                          label : {
+                              position : 'inner',
+                              formatter : function (params) {
+                               return params.percent + '%'
+                              }
+                          },
+                          labelLine : {
+                              show : false
+                          }
+                      },
+                      emphasis : {
+                          label : {
+                              show : false,
+                              formatter : "{b}\n{d}%"
+                          }
+                      }
+
+                  },
+                  data:[]
+              }
+          ]
+      };
+
+  var pieOption1 = jQuery.extend(true, {}, pieOption);
+  var pieOption2 = jQuery.extend(true, {}, pieOption);
+  var pieOption3 = jQuery.extend(true, {}, pieOption);
+
+  pieChartAjax($(".form-horizontal").serialize());
+
+  function pieChartAjax(req,range){
+      $.ajax({
+          url:'/statistic/bond/getBondTimeLimit.html?'+req,
+          dataType:'json',
+          success:function(data){
+
+              var pie1 = [],legend1 = [],pie2 = [],legend2 = [],pie3 = [],legend3 = [];
+              var data1 = data.pieChart_amnt;
+              var data2 = data.pieChart_num;
+              var data3 = data.pieChart_user;
+
+              for( x in data1)
+              {
+                pie1.push({value:data1[x],name:x});
+                legend1.push(x);
+              }
+
+              for( y in data2 )
+              {
+                pie2.push({value:data2[y],name:y});
+                legend2.push(y);
+              }
+
+              for( y in data3 )
+              {
+                pie3.push({value:data3[y],name:y});
+                legend3.push(y);
+              }
+
+              pieOption1.title.text='转让金额分布率';
+              pieOption1.legend.data = legend1;
+              pieOption1.series[0].data = pie1;
+
+              pieOption2.title.text='转让项目笔数分布率';
+              pieOption2.legend.data = legend2;
+              pieOption2.series[0].data = pie2;
+
+              pieOption3.title.text='债权投资人数分布率';
+              pieOption3.legend.data = legend3;
+              pieOption3.series[0].data = pie3;
+
+              pieChart1.setOption(pieOption1);
+              pieChart2.setOption(pieOption2);
+              pieChart3.setOption(pieOption3);
+
+          }
+      })
+  }
+
+
+ $("#timeType a").on('click',function(e){
+
+    $("#timeType a").removeClass('on');
+    $(this).addClass('on')
+    
+    switch (e.target.id) {
+     case 'day':
+        $("#dateType").val(1);
+        chartAjax($(".form-horizontal").serialize())
+        break;
+     case 'week':
+        $("#dateType").val(2);
+        chartAjax($(".form-horizontal").serialize())
+        break;
+     case 'month':
+        $("#dateType").val(3);
+        chartAjax($(".form-horizontal").serialize())
+       break;
+     default:
+   }
+ });
+
+/* submit事件 */
+ $('.form-horizontal').submit(function (e) {
+   e.preventDefault()
+   chartAjax($(this).serialize());
+   pieChartAjax($(this).serialize());
+   //chartAjaxMap($('.form-horizontal').serialize());
+   if($("#j-realNameStatus").val()==4){
+      $("#j-main").addClass("hide");
+      $(".piearea").removeClass("hide");
+   }
+   else
+   {
+      $("#j-main").removeClass("hide");
+      $(".piearea").addClass("hide");
+   } 
+ });
+
+ $("#myTab li").on("click",function(){
+    $("#j-realNameStatus").val($(this).index()+1);
+    $('.form-horizontal').submit();
+    if($("#j-realNameStatus").val()==4){
+      $(".selectTime").hide();
+    }
+    else{
+      $(".selectTime").show();
+    }
+ });
+</script>
+
+<script>
+  $(".control-group").each(function(){
+    $(this).find(".controls .checkbox:eq(0) input").click(function(){
+      if($(this).attr("checked")=="checked"){
+        $(this).attr("checked",false);
+        $(this).parent().siblings().find("input").removeAttr("checked");
+      }else{
+        $(this).attr("checked",true);
+        $(this).parent().siblings().find("input").attr("checked",true);
+        $(this).parent().siblings().find("input").prop("checked",true);
+      }
+    })
+     $(this).find(".controls .checkbox:eq(0)").siblings().find("input").click(function(){
+      if($(this).attr("checked")=="checked"){
+        $(this).attr("checked",false);
+      }else{
+        $(this).attr("checked",true);
+      }
+      var len =  $(this).parent().parent().parent().find(".checkbox").length-1;
+      var j=0;
+      for (var i = 1; i <= len; i++){
+        if( $(this).parent().parent().find(".checkbox").eq(i).find("input").attr("checked")=="checked"){
+          j+=1;
+        }
+      }
+      if((j==0)||(j==len)){
+         $(this).parent().parent().find(".checkbox:eq(0) input").prop("checked",true);
+      }
+      else{
+        $(this).parent().parent().find(".checkbox:eq(0) input").prop("checked",false);
+      }
+    })
+  })
+</script>
+</body>
+</html>

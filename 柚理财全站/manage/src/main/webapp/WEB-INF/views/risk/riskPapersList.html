@@ -1,0 +1,91 @@
+<div class="row mt20">
+	<div class="col-md-12">
+		<table id="jqGrid" class="table-td-NoOverflow"></table>
+		<div id="jqGridPager"></div>
+	</div>
+</div>
+<script type="text/javascript">
+<@dictFormatter type = "papers_type" />
+<@dictFormatter type = "papersStatus" />
+	$(document).ready(function() {		
+		var url_key = url_list.substring(url_list.lastIndexOf('/')+1,url_list.indexOf('.'));
+		//表格初始化		
+		$("#jqGrid").jqTreeGrid({
+				url : url_list,
+				colModel : [
+						{
+							label : "问卷编号",
+							name : "papersNo",
+							align: "center",
+							width : 80
+						},
+						{
+							label : "问卷名称",
+							name : "papersName",
+							align: "center",
+							width : 150
+						},
+						{
+							label : "试卷类型",
+							name : "papersType",
+							width : 50,
+							align: "center",
+							formatter:papers_typeFormatter
+						},
+						/* {
+							label : "问题数量",
+							name : "questionCount",
+							align: "center",
+							formatter : function(val, options,rowObject) {
+								if(val == undefined){
+									return 0 +"个";
+								}
+								return val + "个";
+							},
+							width : 50
+						}, */
+						{
+							label : "创建时间 ",
+							name : "createTime",
+							width : 100,
+							align: "center",
+							formatter: datetimeFormatter
+						},
+						{
+							label : "问卷状态 ",
+							name : "status",
+							width : 50,
+							align: "center",
+							formatter:papersStatusFormatter
+						},{
+							label: "操作",
+							name: "cz",
+							width: 150,
+							align: "center",
+							formatter: function(val, options, rowObject){	
+								var btns = '';
+								var	id = rowObject.id;
+								btns += '<a href="javascript:;" onclick=$.fn.treeGridOptions.lineEditFun(this,"'+id+'") data-tid="jqGrid" data-url="/risk/riskAllPapersEditPage.html" data-title="编辑">编辑</a>';
+								if(rowObject.status == "1"){
+									btns += '|<a href="javascript:;" onclick=$.fn.treeGridOptions.lineDeleteFun(this,"'+id+'") data-tid="jqGrid" data-url="/risk/riskPapersDoPublish.html?publish=2" data-title="取消发布">取消发布</a>';
+								}else{
+									btns += '|<a href="javascript:;" onclick=$.fn.treeGridOptions.lineDeleteFun(this,"'+id+'") data-tid="jqGrid" data-url="/risk/riskPapersDoPublish.html?publish=1" data-title="发布">发布</a>';
+								}
+								return btns;
+							}
+							
+						} ],
+			}).jqGrid("setFrozenColumns").navGrid(
+			'#jqGridPager',
+			{
+				edit : false,
+				add : false,
+				del : false,
+				search : false,
+				refresh : true,
+				view : false,
+				position : "left",
+				cloneToTop : false
+			});
+		});
+</script>

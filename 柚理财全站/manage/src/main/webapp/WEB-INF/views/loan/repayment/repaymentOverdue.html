@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>逾期还款</title>
+		<#include "include/resources.html">
+		<script type="text/javascript">
+			var url_list = "/loan/repayment/overdueRecordList.html";
+			$(document).ready(function() {	
+				$('#keywordsSearch').attr('data-url',url_list);
+				$('#conditionSearch').attr('data-url',url_list);				
+			});
+		</script>
+		<style>
+			.showInfoSingleDiv{
+				left:-100px;
+			}
+			.layui-layer-loading .layui-layer-loading3{width:200px!important;padding-left: 66px;color: #fff;line-height: 24px;}
+		</style>
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入用户名、借款方、借款名称">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" id="keywordsSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form id="advSearchForm">
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							     <li class="input-group input-group-sm"><span>用户名</span><input type="text" class="form-control" name="userName" /></li>
+							    <li class="input-group input-group-sm"><span>借款方</span><input type="text" class="form-control" name="realName" /></li>
+							    <li class="input-group input-group-sm"><span>状态</span><@linkage name="statusStr" nid="repayStatus" noselect="全部" class="form-control"/></li>
+							    <li class="input-group input-group-sm"><span>预计还款时间</span><input type="text" name="startTime" class="form-control layer-date" id="startTime"/></li>
+							    <li class="input-group input-group-sm"><span>截止时间</span><input type="text" name="endTime" class="form-control layer-date" id="endTime"/></li>
+							    <li><button class="btn btn-sm btn-primary" type="button" id="conditionSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+							<@shiro.hasPermission name="project:borrow:overdue:export">
+							<a href="javascript:" target="_blank" class="btn btn-info" onclick="exportExcel(this)" data-title='逾期还款记录' data-url="/loan/repayment/exportOverdueRecordList.html" data-tid="jqGrid">导出</a>
+							</@shiro.hasPermission>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					</div>					
+				</div>
+			</div>
+			
+			<!-- 列表信息 -->
+			<div class="row mt20">
+			<div class="col-md-12">
+				<table id="jqGrid" class="table-td-NoOverflow"></table>
+				<div id="jqGridPager"></div>
+			</div>
+		</div>
+		<script type="text/javascript">
+
+			$(document).ready(function() {	
+				
+				//设置预计还款时间
+				var startTime= {
+					elem:'#startTime',
+					format: 'YYYY-MM-DD hh:mm:ss', //日期格式
+					istime: false, //是否开启时间选择
+					max:$('#endTime').val(),
+					event:'focus',
+					choose: function(dates){
+					    endTime.min=dates;
+					    endTime.start=dates;
+					}
+				};
+				//设置截止时间
+				var endTime=  {
+						elem:'#endTime',
+						format: 'YYYY-MM-DD 23:59:59', //日期格式
+						istime: false, //是否开启时间选择
+						min: $('#startTime').val(), //最小日期大于当前时间
+						event:'focus',
+						choose: function(dates){
+						    startTime.max=dates;
+					   }
+				};				
+				laydate(startTime);
+				laydate(endTime);
+				
+				//表格初始化		
+				$("#jqGrid").jqTreeGrid({
+						url : url_list,
+						multiselect:false,
+						colModel : [
+								{
+									label : "用户名",
+									name : "userName",
+									width : 150
+								},
+								{
+									label : "借款方",
+									name : "realName",
+									width : 100
+								},
+								{
+									label : "电话",
+									name : "mobile",
+									width : 100
+								},
+								{
+									label : "借款名称",
+									name : "projectName",
+									width : 150 ,
+									formatter: function(val, options, rowObject){	
+										var btns = '';
+										var	id = rowObject.projectId;
+										btns += '<a href="javascript:;" onclick=$.fn.treeGridOptions.checkFun(this,"'+id+'") data-tid="jqGrid" data-url="/loan/borrow/borrowView.html" data-title="借款详情">'+val+'</a>';	
+										return btns;
+									}
+								},
+								{
+									label : "期数",
+									name : "periodStr",
+									width : 80
+								},/* {
+									label : "应还款时间",
+									name : "repayTime",
+									width : 140,
+									formatter: 'date',
+									formatoptions: {
+										srcformat: 'u',
+										newformat: 'Y-m-d H:i:s'
+									}
+								}, */
+								{
+									label : "本金(元)",
+									name : "capital",
+									width : 80
+								},
+								{
+									label : "利息(元)",
+									name : "interest",
+									width : 80
+								},
+								{
+									label : "逾期天数",
+									name : "lateDays",
+									width : 80
+								},
+								{
+									label : "罚息",
+									name : "lateInterestSum",
+									width : 80
+								},
+								{
+									label : "催收次数",
+									name : "urgeRepayCount",
+									width : 80
+								},
+								{
+									label : "状态",
+									name : "statusStr",
+									width : 80
+								},{
+									label : "其他信息",
+									name : "others",
+									width : 100,
+									title : false,
+									align : "center",
+									formatter : function(value, row,index) {
+										var setpAccount = index.stepAccount ? index.stepAccount: 0;
+										var content = '<a href="javascript:void(0);" class="j-showInfo">其他信息</a>'
+												+ '<div class="showInfoSingleDiv">'
+												+ '<div class="showInfo">'
+												+ '<ul>'
+												+ '<li>'
+												+ '<span>应还金额：</span>'
+												+ index.payment
+												+ '</li>'
+												+ '<li>'
+												+ '<span>已还金额：</span>'
+												+ index.payedAmount
+												+ '</li>'
+												+ '<li>'
+												+ '<span>预计还款时间：</span>'
+												+ $.fn.page.transFormatDate(index.repayTime)
+												+ '</li>'
+												+ '<li>'
+												+ '<span>实际还款时间：</span>'
+												+ $.fn.page.transFormatDate(index.realRepayTime)
+												+ '</li>'
+												+ '<li>'
+												+ '</ul></div></div>';
+										return content;
+									}
+								},{
+									label: "操作",
+									name: "cz",
+									width: 150,
+									align: "center",
+									formatter: function(val, options, rowObject){	
+										var btns = "";
+										if(rowObject.status==0){
+											 btns = '<a href="javascript:;" onclick=$.fn.treeGridOptions.setFun(this,"'+rowObject.id+'") data-tid="jqGrid" data-url="/loan/repayment/repayUrge.html" data-title="催收">催收</a>';
+										}
+										btns+='|<a href="javascript:;" onclick=$.fn.treeGridOptions.ListShow(this) data-tid="jqGrid" data-width="50%" data-height="500px"  data-title="催收记录" data-url="/loan/repayment/repaymentUrgeLog.html?repaymentId='+rowObject.id+'" >催收记录</a>';
+										//btns+="|<a href=\"javascript:;\" onclick=$.fn.treeGridOptions.ListShow(this) data-tid=\"jqGrid\" data-title=\"催收记录\" data-url=\"/loan/repayment/repaymentUrgeLog.html?repaymentId="+rowObject.repaymentId+" >催收记录</a>";
+										if(rowObject.projectStatus!='88'){
+											btns+='|<a href="javascript:;" onclick=$.fn.treeGridOptions.lineSetFun(this,"'+rowObject.projectId+'") data-tid="jqGrid" data-title="确认设置为坏账吗?" data-url="/loan/repayment/doRepayBadDebt.html">列为坏账</a>'	
+										}
+										return btns;
+									}
+									
+								}
+								],
+					}).jqGrid("setFrozenColumns").navGrid(
+					'#jqGridPager',
+					{
+						edit : false,
+						add : false,
+						del : false,
+						search : false,
+						refresh : true,
+						view : false,
+						position : "left",
+						cloneToTop : false
+					});
+				});
+		</script>
+			
+		</div>
+	</body>
+</html>

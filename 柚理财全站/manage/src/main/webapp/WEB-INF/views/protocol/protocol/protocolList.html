@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>协议列表</title>
+		<#include "include/resources.html">
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入名称">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/protocol/protocol/list.html">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form>
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							    <li class="input-group input-group-sm"><span>名称</span><input type="text" class="form-control" name="name" /></li>
+							    <li class="input-group input-group-sm"><span>类型名称</span><@linkage name="protocolType" nid="protocolType"  noselect="全部" class="form-control"/></li>
+							    <li class="input-group input-group-sm"><span>状态</span>
+							    	<select name="status" class="form-control">
+							    		<option value="1">有效</option>
+							    		<option value="">所有</option>
+							    		<option value="0">失效</option>
+							    	</select>
+							    </li>
+							    <li><button class="btn btn-sm btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/protocol/protocol/list.html">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					    <@shiro.hasPermission name="project:protocol:tempalte:add">
+						<button type="button" class="btn btn-primary" id="j-addurlbtn" onclick="$.fn.treeGridOptions.addFun(this)"  data-tid="jqGrid" data-url="/protocol/protocol/protocolAdd.html" >添加</button>
+						</@shiro.hasPermission>
+					</div>				
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+			<@dictFormatter type = "protocolType" />
+					$(document).ready(function() {												
+						//表格初始化
+						$("#jqGrid").jqTreeGrid({
+							url: '/protocol/protocol/list.html?status=1',	
+							  multiselect : false,	
+							  colModel: [
+			                    { label: 'id', name: 'uuid', width: 65, hidden:true},
+			                    { label: '类型', name: 'protocolType',index:"protocolType",hidden:true},
+			                    { label: '名称', name: 'name',index:"name",width: 20 },
+			                    { label: '类型名称', name: 'protocolType',index:"protocolType",width: 20,formatter:protocolTypeFormatter},
+			                    { label: '添加时间', name: 'createTime',index:"create_time",width: 15,
+			                    	formatter: 'date',
+									formatoptions: {
+										srcformat: 'u',
+										newformat: 'Y-m-d'
+									}
+			                    },
+								{ label: '状态', name: 'status',index:"status", width: 15,
+									formatter : function(value, row, index) {
+										if (value == '0'){
+					  						return "失效";
+					  					} else if (value == '1'){
+					  						return "有效";
+					  					} else {
+					  						return "-";
+					  					}
+									}
+								},
+								{ label: '操作', name: '',sortable:false,width: 20,formatter:function(val, options, rowObject){	
+								   var btns = '';
+								   var id = rowObject.id;
+										btns = '<a href="javascript:;" onclick=$.fn.treeGridOptions.checkFun(this,"'+id+'") data-tid="jqGrid" data-url="/protocol/protocol/protocolView.html">预览</a>';
+							        <@shiro.hasPermission name="project:protocol:tempalte:edit">
+									        btns +='&nbsp;<a href="javascript:;" onclick=$.fn.treeGridOptions.setFun(this,"'+id+'") data-tid="jqGrid" data-title="编辑" data-url="/protocol/protocol/protocolEdit.html">编辑</a>';
+									</@shiro.hasPermission>
+									<@shiro.hasPermission name="project:protocol:tempalte:cancel">
+										if(rowObject.status == 1){
+											btns += '&nbsp;<a href="javascript:;" onclick=$.fn.treeGridOptions.lineDeleteFun(this,"'+id+'") data-tid="jqGrid" data-title="您确定要禁用该协议模板吗？" data-url="/protocol/protocol/updateStatus.html">禁用</a>';
+										}else if(rowObject.status == 0){
+											btns += '&nbsp;<a href="javascript:;" onclick=$.fn.treeGridOptions.lineDeleteFun(this,"'+id+'") data-tid="jqGrid" data-title="您确定要启用该协议模板吗？" data-url="/protocol/protocol/updateStatus.html">启用</a>';
+										}
+									</@shiro.hasPermission>
+								   return btns;
+								}}
+			                ]
+						}) ;			
+					});
+			</script>
+		</div>
+	</body>
+</html>

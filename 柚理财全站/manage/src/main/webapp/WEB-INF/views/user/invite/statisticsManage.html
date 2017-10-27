@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>客户管理</title>
+<#include "include/resources.html">
+</head>
+<body>
+<div class="wrapper">
+	<div class="row pt20">		
+		<div class="col-md-6">
+			<div class="search-form">
+				<form>
+					<div class="input-group">
+						<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入用户名/认证名称/手机号">
+						<span class="input-group-btn search-span">
+					    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/user/invite/statisticsList.html">搜索</button>
+					    </span>						    
+				    </div>
+			    </form>	
+			</div>
+			<div class="search-form-adv ml10">
+				<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="tool-btns">
+			</div>			
+		</div>
+	</div>
+	<div class="row mt20">
+		<div class="col-md-12">
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+	</div>
+    <script type="text/javascript"> 	
+    	<@dictFormatter type = "userStatus" />	
+    	<@dictFormatter type = "userType" />	
+        $(document).ready(function () {
+        	//表格初始化
+        	$("#jqGrid").jqTreeGrid({
+        		url: '/user/invite/statisticsList.html',
+        		idField:"id",
+				multiselect:false,
+                colModel: [
+                    { label: 'id', name: 'uuid', width: 10,hidden:true },
+					{ label: '用户名', name: 'inviteUserName', width: 50 },
+					{ label: '认证名称', name: 'inviteUserRealName', width: 30 },
+					{ label: '用户类型', name: 'userNature', width: 40,formatter: userTypeFormatter },
+					{ label: '手机号', name: 'inviteUserMobileShow', width: 40 },
+					{ label: '一级邀请人数', name: 'level1Count', width: 40 ,
+						formatter: function(val, options, rowObject){	
+							var btns = '<a href="javascript:;" onclick=$.fn.treeGridOptions.ListShow(this) data-tid="jqGrid" data-width="75%" data-height="75%"  data-url="/user/invite/inviteFirstManage.html?inviteUserId='+rowObject.inviteUserId+'" data-title="记录">'+val+'</a>';
+							return btns;
+					}},
+					{ label: '一级人脉投资金额', name: 'level1Invest', width: 40 },
+					{ label: '二级邀请人数', name: 'level2Count', width: 40,
+						formatter: function(val, options, rowObject){	
+							var btns = '<a href="javascript:;" onclick=$.fn.treeGridOptions.ListShow(this) data-tid="jqGrid"  data-width="75%" data-height="75%"  data-url="/user/invite/inviteSecondManage.html?inviteUserId='+rowObject.inviteUserId+'" data-title="记录">'+val+'</a>';
+							return btns;
+					}},
+					{ label: '二级人脉投资金额', name: 'level2Invest', width: 40}
+                ],
+        	}).jqGrid("setFrozenColumns").navGrid('#jqGridPager',		            
+		            { edit: false, add: false, del: false, search: false, refresh: true, view: false, position: "left", cloneToTop: false }
+		   	);
+       });
+  </script>	
+</body>
+</html>

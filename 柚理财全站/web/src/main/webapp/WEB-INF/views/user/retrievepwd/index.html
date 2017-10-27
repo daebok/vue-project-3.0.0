@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="format-detection" content="telephone=no">
+    <title>忘记密码-${web_name!""}</title>
+    <link rel="stylesheet" type="text/css" href="/themes/css/common-c82a7457f8.css"/>
+    <link rel="stylesheet" type="text/css" href="/themes/css/getpwd-c8ca07e99c.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+    <!--[if lte IE 7]> 
+    	<script>
+    		window.location = "/browserUpgrade.html"
+    	</script>
+    <![endif]-->
+<body>
+    <div class="header-title header-title-pwd">
+        <#include "/include/header-sm.html">
+    </div> 
+    
+    <div class="wrap getpwd-main">
+        <div class="header">
+            <ul>
+                <li class="on"><span>1</span><em class="iconfont solid">&#xe658;</em><em class="iconfont hollow">&#xe657;</em>验证账户信息</li>
+                <li><span>2</span><em class="iconfont solid">&#xe658;</em><em class="iconfont hollow">&#xe657;</em>设置新密码</li>
+                <li><span>3</span><em class="iconfont solid">&#xe658;</em><em class="iconfont hollow">&#xe657;</em>完全找回</li>
+            </ul>
+        </div>
+        <div class="list" id="j-pwd">
+            <div class="loading"></div>
+        </div>
+    </div>
+
+    <#include "/include/footer-sm.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/themes/js/common-0aa0729634.js"></script>
+<script src="/themes/js/getpwd-a5d2db61b4.js"></script>
+</html>

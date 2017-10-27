@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>答案管理</title>
+		<#include "include/resources.html">
+		<script type="text/javascript">
+			var url_list = "/risk/riskAnswerList.html";
+			$(document).ready(function() {	
+				$('#keywordsSearch').attr('data-url',url_list);
+				$('#conditionSearch').attr('data-url',url_list);				
+			});
+		</script>
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入答案内容">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" id="keywordsSearch">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form>
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							    <li class="input-group input-group-sm"><span>所属问卷</span><input type="text" class="form-control" name="papersName" /></li>
+							    <li class="input-group input-group-sm"><span>所属试题</span><input type="text" class="form-control" name="questionName" /></li>
+							    <li><button class="btn btn-sm btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" id="conditionSearch">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+						<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.editFun(this)" data-tid="jqGrid" data-url="/risk/riskAnswerEditPage.html">答案编辑</button>
+						<button type="button" class="btn btn-warning" onclick="$.fn.treeGridOptions.deleteFun(this)" data-tid="jqGrid" data-url="/risk/answerDelLogic.html">删除</button>						
+					</div>					
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+						<!-- 
+						<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.checkFun(this)" data-tid="jqGrid" data-url="/loan/borrow/borrowView.html" data-title="查看">查看</button>				
+						 -->
+					</div>					
+				</div>
+			</div>
+			
+			<!-- 列表信息 -->
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid" class="table-td-NoOverflow"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+				$(document).ready(function() {		
+					var url_key = url_list.substring(url_list.lastIndexOf('/')+1,url_list.indexOf('.'));
+					//表格初始化		
+					$("#jqGrid").jqTreeGrid({
+							url : url_list,
+							colModel : [
+									{
+										label : "所属问卷",
+										name : "papersName",
+										width : 150
+									},
+									{
+										label : "所属试题",
+										name : "questionName",
+										width : 200
+									},
+									{
+										label : "答案编号",
+										name : "answerNo",
+										width : 100,
+									},
+									{
+										label : "序号",
+										name : "sort",
+										width : 50,
+									},
+									{
+										label : "答案内容",
+										name : "content",
+										width : 200
+									},
+									{
+										label : "答案分值",
+										name : "score",
+										width : 50
+									},
+									{
+										label : "创建时间 ",
+										name : "createTime",
+										width : 150,
+										formatter: datetimeFormatter
+									}
+									],
+						}).jqGrid("setFrozenColumns").navGrid(
+						'#jqGridPager',
+						{
+							edit : false,
+							add : false,
+							del : false,
+							search : false,
+							refresh : true,
+							view : false,
+							position : "left",
+							cloneToTop : false
+						});
+					});
+			</script>
+			
+		</div>
+	</body>
+</html>

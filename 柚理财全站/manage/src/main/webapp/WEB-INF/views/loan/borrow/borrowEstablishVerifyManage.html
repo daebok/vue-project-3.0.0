@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>借贷管理 - 成立审核</title>
+		<#include "include/resources.html">
+		<script type="text/javascript">
+			var url_list = "/loan/borrow/borrowEstablishVerifyList.html";
+			$(document).ready(function() {	
+				$('#keywordsSearch').attr('data-url',url_list);
+				$('#conditionSearch').attr('data-url',url_list);				
+			});
+		</script>
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入借款方/借款名称">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" id="keywordsSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form>
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							     <li class="input-group input-group-sm"><span>借款方</span><input type="text" class="form-control" name="borrower" /></li>
+							    <li class="input-group input-group-sm"><span>借款名称</span><input type="text" class="form-control" name="projectName" /></li>
+							    <li class="input-group input-group-sm"><span>借款期限</span><@linkage name="timeCondition" nid="timeCondition" noselect="不限" class="form-control"/></li>
+							    <li class="input-group input-group-sm"><span>借款性质</span><@linkage name="borrowNature" nid="borrowNature" class="form-control"/></li>
+							    <li><button class="btn btn-sm btn-primary" type="button" id="conditionSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+						<!-- 
+						<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.setFun(this)" data-tid="jqGrid" data-url="/loan/borrow/borrowVerifyPage.html" data-title="审核">审核</button>				
+						<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.checkFun(this)" data-tid="jqGrid" data-url="/loan/borrow/borrowView.html" data-title="查看">查看</button>			
+						 -->
+					</div>					
+				</div>
+			</div>
+			
+			<!-- 列表信息 -->
+			<div class="row mt20">
+			<div class="col-md-12">
+				<table id="jqGrid" class="table-td-NoOverflow"></table>
+				<div id="jqGridPager"></div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			<@dictFormatter type = "borrowNature" />
+			$(document).ready(function() {		
+				//表格初始化		
+				$("#jqGrid").jqTreeGrid({
+						url : url_list,
+						multiselect : false,
+						colModel : [
+								{
+									label : "用户名",
+									name : "userName",
+									width : 200
+								},
+								{
+									label : "借款方",
+									name : "borrower",
+									width : 150
+								},
+								{
+									label : "借款名称",
+									name : "projectName",
+									width : 150
+								},
+								{
+									label : "借款金额",
+									name : "account",
+									width : 100
+								},
+								{
+									label : "年化利率",
+									name : "apr",
+									formatter : function(val, options,rowObject) {
+										return val + "%";
+									},
+									width : 100
+								},
+								{
+									label : "期限",
+									name : "timeLimit",
+									formatter : function(val, options,rowObject) {
+										return val + ""+ (rowObject.timeType == 0 ? '个月': '天');
+									},
+									width : 80
+								},
+								{
+									label : "借款性质",
+									name : "borrowNature",
+									width : 100,
+									formatter : borrowNatureFormatter
+								},
+								{
+									label : "募集期",
+									name : "raiseTimeLimit",
+									width : 80
+								},
+								{
+									label : "募集金额",
+									name : "accountYes",
+									width : 80
+								},
+								{
+									label : "募集时长",
+									name : "raiseRealDays",
+									sortable:false,
+									width : 80
+								},
+								{
+									label : "投资进度",
+									name : "scales",
+									sortable:false,
+									width : 100,
+									formatter : function(val, options,rowObject) {
+										return (val?val:0) + "%";
+									}
+								},{
+									label: "操作",
+									name: "cz",
+									sortable:false,
+									width: 100,
+									align: "center",
+									formatter: function(val, options, rowObject){	
+										var btns = '';
+										<@shiro.hasPermission name="project:borrow:ev:auditing">
+										  btns += '<a href="javascript:;" onclick=$.fn.treeGridOptions.setFun(this,"'+rowObject.id+'") data-tid="jqGrid" data-url="/loan/borrow/borrowEstablishVerifyPage.html" data-title="审核">审核</a>';
+										</@shiro.hasPermission>
+										return btns;
+									}
+									
+								} ],
+					}).jqGrid("setFrozenColumns").navGrid(
+					'#jqGridPager',
+					{
+						edit : false,
+						add : false,
+						del : false,
+						search : false,
+						refresh : true,
+						view : false,
+						position : "left",
+						cloneToTop : false
+					});
+				});
+		</script>
+			
+		</div>
+	</body>
+</html>

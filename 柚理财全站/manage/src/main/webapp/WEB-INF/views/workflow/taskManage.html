@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>待办事项</title>
+		<#include "include/resources.html">
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入模板名称或者模板标识">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/sys/logTemplate/list.html">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form>
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							    <li><button class="btn btn-sm btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/sys/logTemplate/list.html">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					    <button id="action" type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.editFun(this)" data-url="" data-tid="jqGrid">执行待办</button>
+						<!-- <button type="button" class="btn btn-info" onclick="processVerify()">推进流程</button>
+						<button type="button" class="btn btn-info" onclick="processRollBack()">流程回退</button> -->
+					</div>					
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+			//选择待办事项跳转业务操作页面
+			function processVerify(){
+				var id = $("#jqGrid").jqGrid('getGridParam', 'selrow');
+				var row = $("#jqGrid").jqGrid('getRowData', id);
+				if(!row){
+					alert("请先选择记录！");
+					return ;
+				}
+		    	//$.ajax({url:"/workflowtest/verify.html?taskId="+row.uuid,async:false})
+		    }
+			
+			/* function processRollBack(){
+		    	$.ajax({url:"/workflowtest/rollback.html?uuid=225513591022411cb409666f6175357f&taskId=137502",async:false})
+		    } */
+		    
+				$(document).ready(function() {
+					//表格初始化
+					$("#jqGrid").jqTreeGrid({
+						//url : '/workflow/queryTask.html?userId=0319e6e12698443b9f6f6a4edb2dbeeb',
+						url : '/workflow/queryTask.html?userId=0007b852817c4c1890987cb3ad6c5265',
+						idField:"uuid",
+						colModel : [ {label : "主键", name : "uuid", width : 450},
+						             {label : "标题",name : "title", width : 450},
+						             {label : "环节",name : "activityName",width : 450},
+						             {label : "创建时间",name : "createTime",width : 450}, 
+						             {label : "备注",name : "description",width : 450},
+						             {label : "待办页面",name : "formKey",width : 450},
+						             {label : "业务主键",name : "bussnissId",width : 450}],
+						             {label : "流程实例id",name : "procInstId",width : 450}],
+						             
+						 onSelectRow: function(id){   
+							 		var row = $("#jqGrid").jqGrid('getRowData', id);
+							 		$("#action").attr('data-url',row.formKey);
+					     }
+					}).jqGrid("setFrozenColumns").navGrid('#jqGridPager',
+					// the buttons to appear on the toolbar of the grid
+					{
+						edit : false,
+						add : false,
+						del : false,
+						search : false,
+						refresh : true,
+						view : false,
+						position : "left",
+						cloneToTop : false
+					});
+					
+					$("#search_btn").click(function() {
+						//此处可以添加对查询数据的合法验证  
+						var orderId = $("#search_input").val();
+						$("#jqGrid").jqGrid("setGridParam", {
+							datatype : "json",
+							postData : {
+								"orderId" : orderId
+							}, //发送数据  
+							page : 1
+						}).trigger("reloadGrid"); //重新载入  
+					});
+				});
+				
+				$.fn.treeGridOptions.editFun = function(that,fn) {
+					var self = $(that),
+						url = self.attr("data-url"),
+						tableId = "#" + self.attr("data-tid"),
+						id = $(tableId).jqGrid("getGridParam", "selarrrow");
+					
+					var rowData=$(tableId).jqGrid('getRowData',id);
+					
+					if (!id.length || id.length > 1) {
+						top.layer.alert("请选择一条记录!", {
+							icon: 5,
+							shadeClose: true
+						});
+						return false;
+					}	
+					top.gridobj = $(tableId);
+					if(fn){
+						top.editfn = fn;
+					}
+					$.ajax({
+						url: "/" + url,
+						data:{id: id[0], taskId:rowData["uuid"], bussnissId: rowData["bussnissId"]}, 
+						type: 'POST',
+						dataType: 'text'
+					})
+					.done(function(str) {
+						if(str.indexOf(exceptionPrefix) > -1){
+							top.layer.alert(str.substring(exceptionPrefix.length), {
+								icon: 5,
+								shadeClose: true
+							});
+						}else{	
+							top.layer.open({
+								title: "编辑",
+								type: 1,
+								closeBtn: 1, //不显示关闭按钮
+								shift: 0,
+								area: ['65%', '70%'],
+								content: str,
+								shadeClose: false,
+								btn: ['提交', '重置', '回退'],    //增加回退,回退和提交的url不同
+								yes: function(index, layero) {
+									top.$("#actionFlag").val("1");
+									top.$(layero['selector']).find("form").submit();
+								},
+								btn2: function(index, layero) {
+									top.$(layero['selector']).find("form")[0].reset();
+									return false;
+								},
+								btn3:function(index, layero){
+									top.$("#actionFlag").val("0");
+									top.$(layero['selector']).find("form").submit();
+								}
+							});			
+						}
+					});
+				}
+			</script>
+		</div>
+	</body>
+</html>

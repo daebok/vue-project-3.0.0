@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.credit.mapper.UserCreditMapper">
+	<resultMap type="com.rd.ifaes.core.credit.domain.UserCredit" id="userCreditResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="content" column="CONTENT"/>
+		<result property="status" column="STATUS"/>
+		<result property="account" column="ACCOUNT"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="remark" column="REMARK"/>
+		<result property="userName" column="USER_NAME"/>
+		<result property="realName" column="REAL_NAME"/>
+		<result property="deduct" column="DEDUCT"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		CONTENT,
+		STATUS,
+		ACCOUNT,
+		CREATE_TIME,
+		REMARK,
+		DEDUCT
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{content},
+		#{status},
+		#{account},
+		#{createTime},
+		#{remark},
+		#{deduct}
+	</sql>
+	
+	 <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+			<if test="account != null">and ACCOUNT = #{account}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+			<if test="remark != null">and REMARK = #{remark}</if>
+			<if test="deduct != null">and DEDUCT = #{deduct}</if>
+			 <if test="keywords != null and keywords != ''">
+	        	and (u.USER_NAME like concat('%',#{keywords},'%') 
+	        		or u.REAL_NAME like concat('%',#{keywords},'%') )
+	       </if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if>  -->
+    </sql>
+    
+    <insert id="insert" parameterType="com.rd.ifaes.core.credit.domain.UserCredit">
+		insert into user_credit( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into user_credit( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+				#{item.uuid},
+				#{item.userId},
+				#{item.content},
+				#{item.account},
+				#{item.status},
+				#{item.createTime},
+				#{item.remark},
+				#{item.deduct}
+		)
+		</foreach>
+	</insert>
+	
+	<delete id="delete" parameterType="String">
+		delete from user_credit
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="update" parameterType="com.rd.ifaes.core.credit.domain.UserCredit">
+		update user_credit 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="account != null">ACCOUNT = #{account},</if>
+			<if test="content != null">CONTENT = #{content},</if>
+			<if test="status != null">STATUS = #{status},</if>
+			<if test="remark != null">REMARK = #{remark},</if>
+			<if test="deduct != null">DEDUCT = #{deduct},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+	
+	 <select id="findAll" resultMap="userCreditResultMap">
+        select <include refid="table_columns" />
+        from user_credit
+    </select>
+    
+    <select id="findList" resultMap="userCreditResultMap">
+        select 
+        	uc.UUID,
+			uc.USER_ID,
+			uc.ACCOUNT,
+			uc.STATUS,
+			uc.CONTENT,
+			uc.CREATE_TIME,
+			uc.REMARK,
+			uc.DEDUCT,
+			u.user_name,
+			u.real_name,
+			u.mobile,
+			u.email
+        from 
+        	user_credit  uc
+        inner join 
+        	user u
+        on
+        	uc.user_id = u.uuid
+        <include refid="page_where" />
+        <if test="page == null or page.sort == null or page.sort == ''">order by uc.CREATE_TIME desc </if>
+    </select>
+    
+     <select id="getCount" resultType="int" >
+        select count(uuid) from user_credit
+        <include refid="page_where" />
+    </select>
+	
+	<select id="get" resultMap="userCreditResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_credit
+		where uuid = #{id}
+	</select>
+	
+</mapper>

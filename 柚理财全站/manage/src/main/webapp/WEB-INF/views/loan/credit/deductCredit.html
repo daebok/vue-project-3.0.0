@@ -1,0 +1,77 @@
+<!-- 
+<div class="wrapper">
+	<div class="row pt20">				
+		<div class="col-md-6">
+			<div class="tool-btns">
+				<form class="form-horizontal" action="/loan/credit/doDeductCredit.html" id="form" role="form">
+					<input type="hidden" name="userId" id="userId" value="${userId}" >
+					<span>扣除额度</span>&nbsp;&nbsp;<input type="text" name= "deduct" id="deduct"><br>
+					<label for="remark" class="control-label form-label">备注<span style="color:red;">*</span>：</label>
+					<textarea rows="" cols="50"  class="form-control" name="content" id="content" required maxLength="128"></textarea>
+				</form>
+			</div>					
+		</div>
+	</div>		
+</div> -->
+
+<div class="form-tips-content">
+ <form class="form-horizontal" action="/loan/credit/doDeductCredit.html" id="form" role="form">
+ 		<input type="hidden" name="userId" id="userId" value="${userId}" >
+  	<ul class="form-item">
+  		<li class="full-width">
+			<div class="form-group">
+		      <label for="userName" class="control-label form-label">扣除额度<span style="color:red;">*</span>：</label>
+		      <div class="input-box">
+		     		<input type="text" name="deduct" class="form-control" id="deduct" maxlength="6" required="" placeholder="请输入扣除额度" aria-required="true">
+		      </div>
+		    </div>	
+  		</li>
+  		 <li class="full-width">
+			<div class="form-group">
+		      <label for="mobile" class="control-label form-label">备注<span style="color:red;">*</span>：</label>
+		      <div class="input-box">
+		      <textarea rows="" cols="" id="content" class="form-control" name="content" required="" maxlength="50" aria-required="true"></textarea>			  
+		      </div>
+		    </div>	
+  		</li>
+  	</ul>
+<input type="hidden" name="addUserPersonToken" value="6WM9ES537MA8VAXLIU15PTUETNSC3596">  </form>
+</div>
+<script type="text/javascript">
+var dd=0;
+var content = $("#content").val().trim();
+$("#form").validate({
+	  submitHandler:function(form){
+		  dd++;
+		  if(dd>1){
+			  return false
+		  }
+			$(form).ajaxSubmit({
+				type:"post",
+				data:{"content":content},
+				dataType:"json",
+				success:function(data){
+		        	if(data.result){
+		        		layer.alert(data.msg, {
+		        			zIndex:50000,
+							icon : 6,
+							cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入
+								dd=0
+	  						}
+						}, function() {
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入
+							dd=0
+						});
+		        	}else{
+		        		layer.alert(data.msg, {zIndex:50000,icon: 5});
+						dd=0
+		        	} 			        	
+		    	}
+			});
+	    }    
+	});
+</script>
+		

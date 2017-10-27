@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.score.mapper.ScoreGoodsCategoryMapper">
+	<resultMap type="com.rd.ifaes.core.score.domain.ScoreGoodsCategory" id="scoreGoodsCategoryResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="goodsCategoryName" column="GOODS_CATEGORY_NAME"/>
+		<result property="introPic" column="INTRO_PIC"/>
+		<result property="sort" column="SORT"/>
+		<result property="remark" column="REMARK"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="operator" column="OPERATOR"/>
+		<result property="deleteFlag" column="DELETE_FLAG"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		GOODS_CATEGORY_NAME,
+		INTRO_PIC,
+		SORT,
+		REMARK,
+		CREATE_TIME,
+		OPERATOR,
+		DELETE_FLAG
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{goodsCategoryName},
+		#{introPic},
+		#{sort},
+		#{remark},
+		#{createTime},
+		#{operator},
+		#{deleteFlag}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+		<trim prefix="where" prefixOverrides="and | or ">
+			and DELETE_FLAG = 0
+			<if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+			<if test="keywords != null and keywords != ''">and GOODS_CATEGORY_NAME like '%'||#{keywords}||'%' </if>
+		</trim>
+		<choose>
+			<when test="page != null and page.sort!=null and page.sort!=''">
+				order by ${page.sort} ${page.order}
+			</when>
+			<otherwise>
+				order by sort ASC,CREATE_TIME DESC
+			</otherwise>
+		</choose>
+	</sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.score.domain.ScoreGoodsCategory">
+		insert into score_goods_category( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		BEGIN
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into score_goods_category( <include refid="table_columns" /> ) 
+		values 
+		( 
+		#{item.uuid},
+		#{item.goodsCategoryName},
+		#{item.introPic},
+		#{item.sort},
+		#{item.remark},
+		#{item.createTime},
+		#{item.operator},
+		#{item.deleteFlag}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from score_goods_category
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update score_goods_category set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update score_goods_category set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.score.domain.ScoreGoodsCategory">
+		update score_goods_category 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="goodsCategoryName !=null and goodsCategoryName !='' ">goods_category_name = #{goodsCategoryName}, </if>
+			<if test="introPic !=null and introPic !='' ">intro_pic = #{introPic}, </if>
+			<if test="sort !=null and sort !='' ">sort = #{sort}, </if>
+			<if test="remark !=null and remark !='' ">remark = #{remark}, </if>
+			<if test="deleteFlag !=null and deleteFlag !='' ">delete_flag = #{deleteflag}, </if>
+			<if test="operator !=null and operator !='' ">operator = #{operator} </if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="scoreGoodsCategoryResultMap">
+        select <include refid="table_columns" />
+        from score_goods_category 
+        where delete_flag =0 
+    </select>
+    
+    <select id="findList" resultMap="scoreGoodsCategoryResultMap">
+        select <include refid="table_columns" />  
+        from score_goods_category 
+        <include refid="page_where" />
+    </select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from score_goods_category
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="scoreGoodsCategoryResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from score_goods_category
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+
+</mapper>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="format-detection" content="telephone=no">
+    <title>订单确认-${web_name!""}</title>
+    <link rel="stylesheet" type="text/css" href="/common.css"/>
+    <link rel="stylesheet" type="text/css" href="/investOrder.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+    <!--[if lte IE 7]> 
+    	<script>
+    		window.location = "/browserUpgrade.html"
+    	</script>
+    <![endif]-->
+<body data-token="${investToken!}" data-tokenname="investToken" >
+    <#include "/include/header.html">
+    <input type="hidden" value="${amount!0.00}" id="amountInput"/>
+    <input type="hidden" id="projectId" name="projectId" value="${project.uuid!}"/>
+    <input type="hidden" value="${investTimeout!}" id="investTimeout"/>
+    <input type="hidden" value="${redEnvelopeRateMax!}" id="redEnvelopeRateMax" />
+    <input type="hidden" value="${useMoney!}" id="useMoney" />
+    <input type="hidden" value="${project.addApr!}" id="projectAddApr" />
+    <input type="hidden" value="${project.stepAccount!}" id="stepAccount" />
+    <input type="hidden" value="${project.saleStyle!}" id="projectSaleStyle" />
+    <input type="hidden" value="${project.copyAccount!}" id="copyAccount" />
+    <input type="hidden" value="${project.realizeFlag!}" id="projectRealizeFlag" />
+    <input type="hidden" id="account" name="account" value="${project.account!}"/>
+    <input type="hidden" id="accountYes" name="accountYes" value="${project.accountYes!}"/>
+    <input type="hidden" id="lowestAccount" name="lowestAccount" value="${project.lowestAccount!}"/>
+    <input type="hidden" id="mostAccount" name="mostAccount" value="${project.mostAccount!}"/>
+    <input type="hidden" id="redEnvelopeUseful" name="redEnvelopeUseful" value="${project.redEnvelopeUseful!}"/>
+    <input type="hidden" id="additionalRateUseful" name="additionalRateUseful" value="${project.additionalRateUseful!}"/>
+    <input type="hidden" id="investToken" name="investToken" value="${investToken!}"/>
+
+    <div class="wrap invest-order-main">
+        <div class="invest-order-title">投资信息</div>
+        <div class="invest-order-info" id="j-invest-order">
+            <dl class="order-item product">
+                <dt>产品选择</dt>
+                <dd>
+                    <table>
+                        <tr>
+                            <th width="<#if project.saleStyle==2>25<#else>33.33</#if>%">产品名称</th>
+                            <th width="<#if project.saleStyle==2>25<#else>33.33</#if>%">预期年化收益率</th>
+                            <th width="<#if project.saleStyle==2>25<#else>33.33</#if>%">产品期限</th>
+                           <#if project.saleStyle==2> <th width="25%">每份金额</th></#if>
+                        </tr>
+                        <tr>
+                            <td>${project.projectName!}</td>
+                            <td>${project.apr!}%<#if project.addApr?? &&project.addApr gt 0>+${project.addApr!}%</#if> </td>
+                            <td>${project.timeLimit!}<#if project.timeType==1>天<#else>个月</#if></td>
+                            <#if project.saleStyle==2>   <td>${project.copyAccount!}</td></#if>
+                        </tr>
+                    </table>
+                </dd>
+            </dl>
+            <div id="j-investOrder">
+                <div class="loading"></div>
+            </div>
+        </div>
+    </div>
+    <#include "/include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/common.js"></script>
+<script src="/investOrder.js"></script>
+</html>

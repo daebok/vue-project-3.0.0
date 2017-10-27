@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.user.mapper.UserIdentifyMapper">
+	<resultMap type="com.rd.ifaes.core.user.domain.UserIdentify" id="userIdentifyResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="realNameStatus" column="REAL_NAME_STATUS"/>
+		<result property="realNameVerifyTime" column="REAL_NAME_VERIFY_TIME"/>
+		<result property="emailStatus" column="EMAIL_STATUS"/>
+		<result property="emailVerifyTime" column="EMAIL_VERIFY_TIME"/>
+		<result property="mobilePhoneStatus" column="MOBILE_PHONE_STATUS"/>
+		<result property="mobilePhoneVerifyTime" column="MOBILE_PHONE_VERIFY_TIME"/>
+		<result property="authSignStatus" column="AUTH_SIGN_STATUS"/>
+		<result property="authSignVerifyTime" column="AUTH_SIGN_VERIFY_TIME"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		REAL_NAME_STATUS,
+		REAL_NAME_VERIFY_TIME,
+		EMAIL_STATUS,
+		EMAIL_VERIFY_TIME,
+		MOBILE_PHONE_STATUS,
+		MOBILE_PHONE_VERIFY_TIME,
+		AUTH_SIGN_STATUS,
+		AUTH_SIGN_VERIFY_TIME
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{realNameStatus},
+		#{realNameVerifyTime},
+		#{emailStatus},
+		#{emailVerifyTime},
+		#{mobilePhoneStatus},
+		#{mobilePhoneVerifyTime},
+		#{authSignStatus},
+		#{authSignVerifyTime}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="realNameStatus != null and realNameStatus != ''">and REAL_NAME_STATUS = #{realNameStatus}</if>
+			<if test="realNameVerifyTime != null">and REAL_NAME_VERIFY_TIME = #{realNameVerifyTime}</if>
+            <if test="emailStatus != null and emailStatus != ''">and EMAIL_STATUS = #{emailStatus}</if>
+			<if test="emailVerifyTime != null">and EMAIL_VERIFY_TIME = #{emailVerifyTime}</if>
+            <if test="mobilePhoneStatus != null and mobilePhoneStatus != ''">and MOBILE_PHONE_STATUS = #{mobilePhoneStatus}</if>
+			<if test="mobilePhoneVerifyTime != null">and MOBILE_PHONE_VERIFY_TIME = #{mobilePhoneVerifyTime}</if>
+        	<if test="authSignStatus != null and authSignStatus != ''">and AUTH_SIGN_STATUS = #{authSignStatus}</if>
+			<if test="authSignVerifyTime != null">and AUTH_SIGN_VERIFY_TIME = #{authSignVerifyTime}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.user.domain.UserIdentify">
+		insert into user_identify( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		BEGIN
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into user_identify( <include refid="table_columns" /> ) 
+		values 
+		( 
+			#{item.uuid},
+			#{item.userId},
+			#{item.realNameStatus},
+			#{item.realNameVerifyTime},
+			#{item.emailStatus},
+			#{item.emailVerifyTime},
+			#{item.mobilePhoneStatus},
+			#{item.mobilePhoneVerifyTime},
+			#{item.authSignStatus},
+			#{item.authSignVerifyTime}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<update id="update" parameterType="com.rd.ifaes.core.user.domain.UserIdentify">
+		update user_identify 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="realNameStatus != null and realNameStatus != ''">REAL_NAME_STATUS = #{realNameStatus},</if>
+			<if test="realNameVerifyTime != null">REAL_NAME_VERIFY_TIME = #{realNameVerifyTime},</if>
+            <if test="emailStatus != null and emailStatus != ''">EMAIL_STATUS = #{emailStatus},</if>
+			<if test="emailVerifyTime != null">EMAIL_VERIFY_TIME = #{emailVerifyTime},</if>
+            <if test="mobilePhoneStatus != null and mobilePhoneStatus != ''">MOBILE_PHONE_STATUS = #{mobilePhoneStatus},</if>
+			<if test="mobilePhoneVerifyTime != null">MOBILE_PHONE_VERIFY_TIME = #{mobilePhoneVerifyTime},</if>
+			<if test="authSignStatus != null and authSignStatus != ''">AUTH_SIGN_STATUS = #{authSignStatus},</if>
+			<if test="authSignVerifyTime != null">AUTH_SIGN_VERIFY_TIME = #{authSignVerifyTime},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+	
+	<update id="updateBatch" parameterType="java.util.List">
+		BEGIN
+		<foreach collection="list" item="item" open="" separator=";" close="">  
+			update user_identify 
+			<trim prefix="set" suffixOverrides=",">
+	            <if test="realNameStatus != null and realNameStatus != ''">REAL_NAME_STATUS = #{realNameStatus},</if>
+				<if test="realNameVerifyTime != null">REAL_NAME_VERIFY_TIME = #{realNameVerifyTime},</if>
+	            <if test="emailStatus != null and emailStatus != ''">EMAIL_STATUS = #{emailStatus},</if>
+				<if test="emailVerifyTime != null">EMAIL_VERIFY_TIME = #{emailVerifyTime},</if>
+	            <if test="mobilePhoneStatus != null and mobilePhoneStatus != ''">MOBILE_PHONE_STATUS = #{mobilePhoneStatus},</if>
+				<if test="mobilePhoneVerifyTime != null">MOBILE_PHONE_VERIFY_TIME = #{mobilePhoneVerifyTime},</if>
+				<if test="authSignStatus != null and authSignStatus != ''">AUTH_SIGN_STATUS = #{authSignStatus},</if>
+				<if test="authSignVerifyTime != null">AUTH_SIGN_VERIFY_TIME = #{authSignVerifyTime},</if>
+			</trim>
+			<where>uuid = #{uuid}</where>
+        </foreach>	
+        ; END ;
+	</update>
+
+    <select id="findAll" resultMap="userIdentifyResultMap">
+        select <include refid="table_columns" />
+        from user_identify
+    </select>
+
+    <select id="findList" resultMap="userIdentifyResultMap">
+        select <include refid="table_columns" />
+        from user_identify
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from user_identify
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="userIdentifyResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_identify
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+
+	<!-- 根据UserId查找对象-->
+    <select id="findByUserId" resultMap="userIdentifyResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_identify
+		where user_id = #{userId}
+	</select>
+	
+	<!-- 更新手机状态 -->
+	<update id="modifyMobileStatus" parameterType="com.rd.ifaes.core.user.model.UserIdentifyModel">
+	    update user_identify
+	     set mobile_phone_status = #{mobilePhoneStatus}, mobile_phone_verify_time = #{mobilePhoneVerifyTime}
+	     where user_id = #{userId} and mobile_phone_status = #{preStatus}
+	</update>
+	
+	<!-- 更新邮箱状态 -->
+	<update id="modifyEmailStatus" parameterType="com.rd.ifaes.core.user.model.UserIdentifyModel">
+	    update user_identify
+	     set email_status = #{emailStatus}, email_verify_time = #{emailVerifyTime}
+	     where user_id = #{userId} and email_status = #{preStatus}
+	</update>
+	
+	<!-- 更新授权状态 -->
+	<update id="setAuthSignStatus" >
+	    update user_identify
+	     set auth_sign_status = #{userId},auth_sign_verify_time = #{authOptionOpen}
+	     where user_id = #{date}
+	</update>
+
+</mapper>

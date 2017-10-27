@@ -1,0 +1,278 @@
+@import (reference)'../../style/common.less';
+@import '../../style/tag.less';
+.invest-detail{
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+.help-text{
+  font-size: 16px;
+  color: #fff;
+  display: block;
+  text-align: center;
+  padding: 0 0 17px;
+  .iconfont{
+    display: block;
+    color: #fff;
+    font-size: 42px;
+    margin: 0 0 0 -10px;
+  }
+}
+.invest-detail-header{
+  height:360px;
+  .invest-header-info{
+    background-color: #fff;
+    height: 360px;
+    &:extend(.fl);
+    margin: 0;
+    width: 850px;
+    padding: 0 50px;
+    .info-title{
+      line-height: 80px;
+      overflow: hidden;
+      border-bottom:solid 1px @cololr-bodybg;
+      .title-name{
+        &:extend(.fl);
+        color:@color-title;
+        font-size: 24px;
+        max-width: 500px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        position: relative;
+        .bottom-name {
+          position: absolute;
+          left: 36px;
+          top: 23px;
+          color: #999;
+          font-size: 14px;
+        }
+        .iconfont{
+          color:@color-main;
+          &:extend(.f20);
+          margin: 0 16px 0 0;
+        }
+      }
+      .protocol{
+        &:extend(.fr);
+        &:extend(.f14);
+        color: @color-main;
+        cursor: pointer;
+      }
+    }
+    .info-main{
+      height: 150px;
+      ul{
+        li{
+          &:extend(.fl);
+          margin-top:31px;
+        }
+        s{
+          text-decoration: none;
+          &:extend(.f14);
+          color:#aaa;
+          display: block;
+          margin: 0 0 0 8px;
+        }
+        .profit{
+          width: 230px;
+          font-size: 20px;
+          color:#f64040;
+          span.text{
+            font-size: 50px;
+          }
+          s{
+            margin-top: -8px;
+          }
+        }
+        .time{
+          width: 160px;
+          font-size: 14px;
+          color:@color-p;
+          margin:45px 0 0 0;
+          span.text{
+            font-size: 34px;
+          }
+        }
+        .min{
+          width: 180px;
+          font-size: 14px;
+          margin-top: 45px;
+          color:@color-p;
+          span.text{
+            font-size: 34px;
+          }
+        }
+        .pro_box{
+          width: 170px;
+          font-size: 14px;
+          color: #999;
+          margin-top: 70px;
+          .progress{
+            width: 170px;
+            height: 6px;
+            border-radius: 3px;
+            background: #eaeaea;
+            line-height: 6px;
+            em{
+              display: block;
+              height: 6px;
+              line-height: 6px;
+              background: #fc0;
+              border-radius: 3px;
+            }
+          }
+          .progress_txt{
+            margin-top: 20px;
+            p{
+              width: 50%;
+              &.fr{
+                text-align: right;
+              }
+            }
+          }
+        }
+      }
+    }
+    .info-basic{
+      padding:10px;
+      background: #fcfcfc;
+      ul{
+        overflow: hidden;
+        li{
+          line-height: 32px;
+          height:32px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          &:extend(.fl);
+          width: 240px;
+          &:extend(.f14);
+          color: @color-p;
+          span.title{
+            display: inline-block;
+            width: 68px;
+            color:@color-text;
+          }
+        }
+      }
+    }
+  }
+}
+.invest-main{
+  margin-top:20px;
+  .invest-main-nav{
+      min-height: 350px;
+      background-color: #fff;
+      .noLoginText{
+        margin: 120px auto 0;
+        text-align: center;
+        a{
+          margin: 0 5px;
+          .f16();
+          color: @color-main;
+        }
+      }
+      .ant-tabs-bar{
+        margin-bottom: 0;
+        background: #f9f9f9;
+        border-bottom: 1px solid @color-tipsbg;
+      }
+      .ant-tabs-nav .ant-tabs-tab{
+        margin-right: 0;
+        width: 150px;
+        height: 50px;
+        margin-left: -1px;
+        line-height: 35px;
+        text-align: center;
+        .ant-tabs-tab-inner{
+          color: #333;
+          .f16();
+        }
+      }
+      .account-tab();
+      .ant-tabs-tab-active{
+        background-color: #fff;
+        border-left: 1px solid @color-tipsbg;
+        border-right: 1px solid @color-tipsbg;
+      }
+      .ant-tabs-ink-bar{
+        top:0
+      }
+      .invest-detail-nav{
+        height: 50px;
+        &:extend(.fl);
+        li{
+          width: 150px;
+          text-align: center;
+          line-height:50px;
+          height: 50px;
+          cursor: pointer;
+          &:extend(.fl);
+          font-size: 16px;
+          color:@color-title;
+          border-right:solid 1px @color-tipsbg;
+          border-bottom:solid 1px @color-tipsbg;
+          &.on{
+          border-right:solid 1px @color-tipsbg;
+          border-top:solid 2px @color-main;
+          border-bottom:solid 1px #fff;
+          position: relative;
+          color: @color-main;
+          background-color: #fff;
+          }
+        }
+      }
+    }
+    .invest-main-cont{
+      table{
+        border: solid 1px #ccc;
+        td{
+          border-bottom: solid 1px #ccc;
+          border-right: solid 1px #ccc;
+          padding: 0 10px;
+        }
+      }
+      background-color: #fff;
+      min-height: 400px;
+      padding:20px 50px 0;
+      .module{
+        dt{
+          &:extend(.f18);
+          color:@color-title;
+          line-height: 60px;
+          border-bottom:solid 1px @color-tipsbg;
+        }
+        dd{
+          min-height: 100px;
+          img {
+            max-width: 1080px !important;
+          }
+        }
+      }
+    }
+}
+.detail-info {
+  padding-left: 50px;
+  label{
+    color: #999;
+    font-size: 14px;
+    float: left;
+    padding-right: 10px;
+  }
+}
+.ant-input ,.ant-input:focus, .ant-input:hover, .has-success .ant-input:not([disabled]):hover {
+    border-color: none !important;
+    line-height: normal;
+    border-radius: 4px;
+    box-shadow: none;
+    // color:#333 ;
+    // font-size: 20px;
+}
+
+.has-error .ant-input {
+    border-color: #f50;
+    box-shadow: none;
+}
+.ant-modal-body{
+  padding:16px !important;
+}

@@ -1,0 +1,23 @@
+@import (reference)'../../../style/common.less';
+@import '../../../style/account.less';
+.auto-product{
+  display: inline-block;
+  position: relative;
+  height: 18px;
+  width:1px;
+  font-size: 0;
+  text-align: center;
+  vertical-align: top;
+  left: 3px;
+  &:after{
+    display:block;
+    position: absolute;
+    width:18px;
+    height:18px;
+    border-radius: 2px;
+    content: "自";
+    color:#ecb203;
+    border:solid 1px;
+    .f12();
+  }
+}

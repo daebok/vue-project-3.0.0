@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>文章管理</title>
+<#include "include/resources.html">
+</head>
+<body data-flag="true">
+<div class="wrapper">
+<div class="row">
+	<div class="col-md-3">&nbsp;</div>
+	<div class="col-md-9">	
+			<div class="row pt20">
+		<div class="col-md-6">
+			<div class="search-form">
+				<form>
+					<div class="input-group">
+						<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入文章标题">
+						<span class="input-group-btn search-span">
+					    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/column/article/articlelist.html">搜索</button>
+					    </span>		    
+				    </div>
+			    </form>	
+		    </div>
+		    <div class="search-form-adv ml10">
+				<form id="advSearchForm">
+					<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+					  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+					  <ul class="dropdown-menu search-menu">
+					  	<li class="input-group input-group-sm"><span>文章状态</span><@linkage name="status" nid="articleStatus" noselect="不限" class="form-control"/></li>
+					    <li class="input-group input-group-sm"><span>添加时间</span><input type="text" name="startTime" class="form-control layer-date" id="startTime"/></li>
+					    <li class="input-group input-group-sm"><span>至</span><input type="text" name="endTime" class="form-control layer-date" id="endTime"/></li>
+					    <li><button class="btn btn-sm btn-primary" type="button" id="conditionSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-url="/column/article/articlelist.html" data-tid="jqGrid">查询</button></li>
+					  </ul>							  
+					</div>
+				</form>
+			</div>
+    </div>
+		<div class="col-md-6">
+			<div class="tool-btns">
+			    <@shiro.hasPermission name="set:website:article:add">
+				<button type="button" class="btn btn-primary" id="j-addurlbtn" onclick="$.fn.treeGridOptions.addFun(this)" data-tid="jqGrid" data-url="/column/article/articleAddPage.html" >新增</button>
+				</@shiro.hasPermission>
+				<@shiro.hasPermission name="set:website:article:edit">
+				<button type="button" class="btn btn-info"  onclick="$.fn.treeGridOptions.ArticleeditFun(this)" data-tid="jqGrid" data-url="/column/article/articleEditPage.html">编辑</button>
+				</@shiro.hasPermission>
+				<@shiro.hasPermission name="set:website:article:del">
+				<button type="button" class="btn btn-warning" onclick="$.fn.treeGridOptions.deleteFun(this)" data-tid="jqGrid" data-url="/column/article/articleDel.html">删除</button>
+				</@shiro.hasPermission>
+			</div>			
+		</div>
+	</div>
+	</div>
+</div>
+	<div class="row mt20">
+		<div class="col-md-3">
+			<h4  class="mt10 mb10">栏目分类栏</h4>
+			<div class="treegridbox"  id="tree"></div>
+		</div>
+		<div class="col-md-9">	
+			<div id="showtreebox">
+			
+			</div>
+		</div>
+	</div>
+</div>	
+<script type="text/javascript">
+
+	var startTime= {
+			elem:'#startTime',
+			format: 'YYYY-MM-DD', //日期格式
+			istime: false, //是否开启时间选择
+			max:$('#endTime').val(),
+			event:'focus',
+			choose: function(dates){
+			    endTime.min=dates;
+			    endTime.start=dates;
+			}
+		};
+	
+	var endTime=  {
+			elem:'#endTime',
+			format: 'YYYY-MM-DD', //日期格式
+			istime: false, //是否开启时间选择
+			min: $('#startTime').val(), //最小日期
+			event:'focus',
+			choose: function(dates){
+				startTime.max=dates;
+		   }
+	};
+	laydate(startTime);
+	laydate(endTime);
+
+
+function buildArticleTree(parentId){
+	$("#tree ul").remove();
+	var urls = "";
+	if(parentId){
+		urls = "?parentId=" + parentId;
+	}
+	$.ajax({
+	   type: "POST",
+	   url:"/column/section/getSectionTree.html"+urls,
+	   dataType:'json',
+	   success: function(tree){
+			$('#tree').treeview({
+				data: tree,   
+				icon: "glyphicon glyphicon-stop",
+				//selectedIcon: "glyphicon glyphicon-stop",
+				color: "#000000",
+				backColor: "#FFFFFF",
+				showTags:true,
+				toggleSelect:true,
+				onNodeUnselected:function(e,o){
+					//console.log(e,o);
+				},
+				onNodeSelected: function(e, o) {
+				        $("#showtreebox").html('<table id="jqGrid"></table><div id="jqGridPager"></div>');
+				        $("#jqGrid").jqTreeGrid({
+			        		url: '/column/article/articlelist.html?sectionUuid=' + o.id,		        		
+			        		postData:{sectionCode:o.code},
+			                colModel: [
+			                    { label: 'id', name: 'uuid', width: 65, hidden:true},
+			                    { label: 'parentId', name: 'parentId', width: 65, hidden:true},
+			                    { label: '文章名称', name: 'title', width: 65},
+								{ label: '排序', name: 'sort', width: 15},			
+								{ label: '描述', name: 'remark', width: 65},
+								{ label: '添加时间', name: 'createTime', width: 65,formatter: datetimeFormatter},
+								{ label: '状态', name: 'status', width: 65},
+								{ label: '操作', name: '',sortable:false,width: 50,formatter:function(val, options, rowObject){	
+									   var btns = '';
+									   var id = rowObject.id;
+									   if(rowObject.isTop=="0"){
+										   <@shiro.hasPermission name="set:website:article:edit">
+								 	    	  btns +='<a href="javascript:;" onclick=$.fn.treeGridOptions.articleRecommendFun(this,"'+id+'") data-tid="jqGrid" data-title="置顶" data-url="/column/article/articleTop.html">置顶</a>|';
+								 	       </@shiro.hasPermission>
+									    }
+									   else{
+										   <@shiro.hasPermission name="set:website:article:edit">
+								 	    	  btns +='<a href="javascript:;" onclick=$.fn.treeGridOptions.articleRecommendFun(this,"'+id+'") data-tid="jqGrid" data-title="取消置顶" data-url="/column/article/articleTop.html">取消置顶</a>|';
+								 	       </@shiro.hasPermission>
+									   }
+							 	    	if(rowObject.isRecommend == "0"){
+							 	    	 <@shiro.hasPermission name="set:website:article:edit">
+							 	    	  btns +='<a href="javascript:;" onclick=$.fn.treeGridOptions.articleRecommendFun(this,"'+id+'") data-tid="jqGrid" data-title="推荐" data-url="/column/article/articleRecommend.html">推荐</a>|';
+							 	    	 </@shiro.hasPermission>
+							 	    	}else{
+							 	    	 <@shiro.hasPermission name="set:website:article:edit">
+							 	    	  btns +='<a href="javascript:;" onclick=$.fn.treeGridOptions.articleRecommendFun(this,"'+id+'") data-tid="jqGrid" data-title="取消推荐" data-url="/column/article/articleRecommend.html">取消推荐</a>|';
+							 	    	 </@shiro.hasPermission>
+							 	    	}
+							 	    	if(rowObject.status=="待审核"){
+											   <@shiro.hasPermission name="set:website:article:edit">
+									 	    	  btns +='<a href="javascript:;" onclick=$.fn.treeGridOptions.articleRecommendFun(this,"'+id+'") data-tid="jqGrid" data-title="待审核" data-url="/column/article/articleReview.html">审核</a>';
+									 	       </@shiro.hasPermission>
+										    }
+										else if(rowObject.status=="审核通过"){
+											   <@shiro.hasPermission name="set:website:article:edit">
+									 	    	  btns +='<a href="javascript:;" onclick=$.fn.treeGridOptions.articleRecommendFun(this,"'+id+'") data-tid="jqGrid" data-title="审核发布" data-url="/column/article/articlePublish.html">发布</a>';
+									 	       </@shiro.hasPermission>
+										   }
+										else{
+											 <@shiro.hasPermission name="set:website:article:edit">
+								 	    	  btns +='<a href="javascript:;" onclick=$.fn.treeGridOptions.articleRecommendFun(this,"'+id+'") data-tid="jqGrid" data-title="撤回" data-url="/column/article/articleRevoke.html">撤回</a>';
+								 	       </@shiro.hasPermission>
+										}
+									   return btns;
+									}}
+			                ]
+			        	});
+			        	var addbtn = $("#j-addurlbtn");
+			        	addbtn.attr("data-url",addbtn.attr("data-url").split("?")[0] + "?sectionUuid=" + o.id+"&sectionCode="+o.code);
+				}
+				//return false;
+			});
+			if($("body").data("flag")){
+				$(".list-group-item").eq(0).click();
+				$("body").data("flag",false);
+			}
+	   }
+	});
+}
+buildArticleTree();
+</script>	
+</body>
+</html>

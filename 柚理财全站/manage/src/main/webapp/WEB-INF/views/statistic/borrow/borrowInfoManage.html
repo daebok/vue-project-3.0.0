@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>借款情况统计</title>
+<#include "include/resources.html">
+</head>
+<body class="overflowY">
+<div class="wrapper">
+  <div class="row pt20">
+    <div class="col-md-12">
+     <form class="form-horizontal">
+        <div id="legend" class="">
+          <legend class="">借款情况统计</legend>
+        </div>
+        <div class="control-group">
+          <label class="control-label">日期：</label>
+          <div class="controls">
+            <label class="checkbox inline selectTime"><input type="text" name="startDate" id="startTime" class="form-control" placeholder="开始日期" value="${startDate}" readonly="readonly" style="background:#fff;"/></label><label class="checkbox inline selectTime"><input type="text" name="endDate" id="endTime" class="form-control" placeholder="结束日期" value="${endDate}" readonly="readonly" style="background:#fff;"/></label><label class="checkbox inline selectTime"><input type="submit" name="button" class="btn btn-primary btn-block" value="搜索" /></label>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">报表类型：</label>
+          <div class="controls">
+            <label class="checkbox inline selectTime"><select name="statType" id="type" class="form-control valid"  onchange="changeType()" aria-invalid="false" style="width:198px">
+							<option value="3">借款笔数</option>
+							<option value="2">借款金额</option>
+						</select></label>
+          </div>
+        </div>
+    </form>
+    </div>
+    </div>
+    <div class="row pt20">
+      <div class="col-md-4">
+          <div class="chart-content mt20" id="j-pie-1"></div>
+      </div>
+      <div class="col-md-4">
+          <div class="chart-content mt20" id="j-pie-2"></div>
+      </div>
+    </div>
+    <div class="row pt20">
+      <div class="col-md-4">
+          <div class="chart-content mt20" id="j-pie-3"></div>
+      </div>
+    </div>
+</div>
+<script type="text/javascript">
+  //设置开始时间控件
+  var startTime= {
+    elem:'#startTime',
+    format: 'YYYY-MM-DD', //日期格式
+    max:$('#endTime').val(),
+    event:'focus',
+    choose: function(dates){
+        endTime.min=dates;
+        endTime.start=dates;
+    }
+  };
+  //设置发放结束时间
+  var endTime=  {
+      elem:'#endTime',
+      format: 'YYYY-MM-DD', //日期格式
+      min: $('#startTime').val(), //最小日期
+      event:'focus',
+      choose: function(dates){
+        startTime.max=dates;
+       }
+  };
+  laydate(startTime);
+  laydate(endTime);
+
+  //对比折线图
+  var myChart = echarts.init(document.getElementById('j-pie-1')),
+      myChart2 = echarts.init(document.getElementById('j-pie-2')),
+      myChart3 = echarts.init(document.getElementById('j-pie-3'));
+  var option= {
+          title : {
+              text: '',
+              subtext: '',
+              x:'60%'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : '60%',
+              y : '40%',
+              data:[]
+          },
+          toolbox: {
+              show : false
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'访问来源',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['30%', '60%'],
+                  color:['#76b7f9','#f8d15c','#ef826f','#92cb8b','#c3e9e1','#ffa879','#95a3ea','#ba7dd1'],
+                  itemStyle : {
+                      normal : {
+                          label : {
+                              position : 'inner',
+                              formatter : function (params) {
+                               return params.percent + '%'
+                              }
+                          },
+                          labelLine : {
+                              show : false
+                          }
+                      },
+                      emphasis : {
+                          label : {
+                              show : false,
+                              formatter : "{b}\n{d}%"
+                          }
+                      }
+
+                  },
+                  data:[]
+              }
+          ]
+      };
+  var option2 = jQuery.extend(true, {}, option);
+  var option3 = jQuery.extend(true, {}, option);
+chartAjax($('.form-horizontal').serialize());
+
+function chartAjax(req,range){
+    $.ajax({
+        url:'/statistic/borrow/getBorrowInfo.html?'+req,
+        dataType:'json',
+        success:function(data){
+          if($('#type').val() === "3"){
+            var pie1 = [],pie2 = [], pie3 = [],legend1 = [],legend2 = [],legend3 = [];
+            for( x in data[0] )
+            {
+              pie1.push({value:data[0][x],name:x});
+              legend1.push(x);
+            }
+
+            for( y in data[1] )
+            {
+              pie2.push({value:data[1][y],name:y});
+              legend2.push(y);
+            }
+
+            for( m in data[2] )
+            {
+              pie3.push({value:data[2][m],name:m});
+              legend3.push(m);
+            }
+
+            option.title.text='借款金额';
+            option.legend.data = legend1;
+            option.series[0].data = pie1;
+
+            option2.title.text='借款期限';
+            option2.legend.data = legend2;
+            option2.series[0].data = pie2;
+
+            option3.title.text='借款类型';
+            option3.legend.data = legend3;
+            option3.series[0].data = pie3;
+
+            myChart.setOption(option);
+            myChart2.setOption(option2);
+            myChart3.setOption(option3);
+            $("#j-pie-3").removeClass("hide");
+          }
+          else
+          {
+
+            var pie1 = [],pie2 = [],legend1 = [],legend2 = [];
+            for( x in data[0] )
+            {
+              pie1.push({value:data[0][x],name:x});
+              legend1.push(x);
+            }
+
+            for( y in data[1] )
+            {
+              pie2.push({value:data[1][y],name:y});
+              legend2.push(y);
+            }
+
+
+            option.title.text='借款期限';
+            option.legend.data = legend1;
+            option.series[0].data = pie1;
+
+            option2.title.text='借款类型';
+            option2.legend.data = legend2;
+            option2.series[0].data = pie2;
+
+
+            myChart.setOption(option);
+            myChart2.setOption(option2);
+            $("#j-pie-3").addClass("hide");
+          }
+        }
+    })
+}
+
+function changeType() {
+  $('.form-horizontal').submit();
+}
+
+ $('.form-horizontal').submit(function (e) {
+   e.preventDefault()
+   chartAjax($(this).serialize())
+ });
+
+</script>
+</body>
+</html>

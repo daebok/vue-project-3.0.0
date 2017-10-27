@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>生成协议测试页面</title>
+</head>
+<body>
+        <div class="wrap site-row " id="j-invest-detail">
+             <form  action="/invest/buildProtocol.html" >
+             生成协议<br/>
+             <input name="investId" id="investId">投资id:如045c328fca9742a988ff7fa1c1534ac1<br/>
+             <input name="userId" id="userId">用户id，可以是投资人id:如6343b22d77ef4353a86dc4f73dcdf633，也可以是借款人id:如400585a932e840f98d5355d05b8ae607<br/>
+             <input type="submit" value="生成协议">
+             </form><br/>
+             <form  action="/invest/testTokenSendCode.html" >
+             发送短信，安心签专有<br/>
+             <!--<input name="projectNo" id="projectNo">项目code:如2016071400001<br/>-->
+             <input name="investId" id="investId">投资id:如045c328fca9742a988ff7fa1c1534ac1<br/>
+             <input name="userId" id="userId">用户id，可以是投资人id:如bd416f84db604d55961d6c0ba29ffafc，也可以是借款人id:如400585a932e840f98d5355d05b8ae607<br/>
+             <input type="submit" value="发送短信">发送给注册用户的手机号，如果要修改手机号，需要把user_cache表的sign_account弄为空，需要注册即可
+             </form><br/>
+             
+             <form  action="/invest/testCheckTokenCode.html" >
+             短信验证码确认，安心签专有<br/>
+             <!--<input name="projectNo" id="projectNo">项目code:如2016071400001<br/>-->
+             <input name="investId" id="investId">投资id:如045c328fca9742a988ff7fa1c1534ac1<br/>
+             <input name="userId" id="userId">用户id，可以是投资人id:如bd416f84db604d55961d6c0ba29ffafc，也可以是借款人id:如400585a932e840f98d5355d05b8ae607<br/>
+             <input name="checkCode" id="checkCode">验证码code<br/>
+             <input type="submit" value="短信验证码确认">
+             </form><br/>
+             
+             <form  action="/invest/investProtocolTest.html" >
+             投资人下载<br/>
+             <input name="investId" id="investId">投资id:如045c328fca9742a988ff7fa1c1534ac1<br/>
+             <input name="fileName" id="fileName">下面名称:如hello.pdf<br/>
+             <input type="submit" value="下载投资人协议">
+             </form><br/>
+             
+             <form  action="/invest/borrowProtocolTest.html" >
+             借款人单份协议下载<br/>
+             <input name="projectId" id="projectId">项目id:如b005e5d3922940698925ebd9021193e7<br/>
+             <input name="userId" id="userId">借款人id:如400585a932e840f98d5355d05b8ae607<br/>
+             <input name="fileName" id="fileName">下面名称:如单份.pdf<br/>
+             <input type="submit" value="生成协议">
+             </form><br/>
+             
+             <form  action="/invest/borrowAllProtocolTest.html" >
+             借款人全部协议下载<br/>
+             <input name="projectId" id="projectId">项目id:如b005e5d3922940698925ebd9021193e7<br/>
+             <input name="fileName" id="fileName">下面名称:如全部协议.zip<br/>
+             <input type="submit" value="生成协议">
+             </form>
+        </div>
+  
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+</html>

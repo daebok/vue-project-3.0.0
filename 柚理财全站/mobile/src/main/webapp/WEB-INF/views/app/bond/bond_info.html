@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>产品3.0</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
+    <meta content="telephone=no" name="format-detection" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <link rel="stylesheet" href="https://unpkg.com/mint-ui/lib/style.css">
+    <link rel="stylesheet" type="text/css" href="${mobileUrl}/themes/app/css/common.css" />
+    <link rel="stylesheet" type="text/css" href="${mobileUrl}/themes/app/css/theme.css" />
+    <link rel="stylesheet" type="text/css" href="${mobileUrl}/themes/app/css/base.css" />
+    <script src="${mobileUrl}/themes/app/js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="${mobileUrl}/themes/app/js/get_client_width.min.js"></script>
+</head>
+<style>
+    .bond-info{
+        width: 100%;
+        padding: 0 .15rem;
+    }
+    .borrow-describe-title{
+        height: .45rem;
+        color: #666;
+    }
+    .borrow-describe-title img{
+        height: .2rem;
+        float: left;
+        margin-top: .125rem;
+        margin-right: .1rem;
+    }
+    .borrow-describe-title span{
+        line-height: .45rem;
+        float: left;
+        color: #666;
+    }
+    .bond-content p{
+        line-height: .28rem;
+    }
+    .table-list{
+        border-collapse: collapse;
+        width: 100%;
+        border: 1px solid #fff;
+    }
+    .table-list tr{
+        line-height: .35rem;
+    }
+    .td-left{
+        background: #F4F3F3;
+        text-align: center;
+        color: #666;
+    }
+    .td-right{
+        background: #F9F9F9;
+        padding-left: .1rem;
+    }
+</style>
+<body>
+<div class="page" id="describe">
+    <mt-header class="bar-nav" title="了解项目" >
+        <mt-button slot="left" icon="back"></mt-button>
+    </mt-header>
+    <div class="bond-info">
+        <div class="borrow-describe-title aui-border-b border-color margin-b-20">
+            <img src="${mobileUrl}/themes/app/images/finance/details_icon_individual.png" />
+            <span>产品介绍</span>
+        </div>
+        <div class="bond-content margin-b-20">
+            <p>
+                借款人借款用于支付购房首付款，借款人收入稳定，信用记录良好.借款人借款用于支付购房首付款，借款人收入稳定，信用记录良好
+            </p>
+        </div>
+        <div class="borrow-describe-title margin-b-20">
+            <img src="${mobileUrl}/themes/app/images/finance/details_icon_material.png" />
+            <span>产品说明</span>
+        </div>
+        <table class="table-list" border="1">
+            <tr >
+                <td class="td-left">产品名称</td>
+                <td class="td-right">互金产品009</td>
+            </tr>
+            <tr>
+                <td class="td-left">产品简介</td>
+                <td class="td-right">存取随心 出让自由</td>
+            </tr>
+            <tr>
+                <td class="td-left">安全保证</td>
+                <td class="td-right"></td>
+            </tr>
+            <tr>
+                <td class="td-left">锁定期</td>
+                <td class="td-right"></td>
+            </tr>
+            <tr>
+                <td class="td-left">投资期限</td>
+                <td class="td-right"></td>
+            </tr>
+            <tr>
+                <td class="td-left">转入规则</td>
+                <td class="td-right"></td>
+            </tr>
+            <tr>
+                <td class="td-left">转出规则</td>
+                <td class="td-right"></td>
+            </tr>
+            <tr>
+                <td class="td-left">收益计算</td>
+                <td class="td-right"></td>
+            </tr>
+            <tr>
+                <td class="td-left">费用说明</td>
+                <td class="td-right"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+</body>
+<!-- <script src="./js/light.min.js"></script> -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/mint-ui/lib/index.js"></script>
+<script>
+    new Vue({
+        el: '#describe',
+        data: {
+            
+        },
+        methods: {
+            
+        }
+    })
+</script>
+</html>

@@ -1,0 +1,72 @@
+<div class="form-tips-content">
+  <form class="form-horizontal" action="/user/userPerson/doEditAcountType.html" id="form" role="form">
+  	<ul class="form-item">
+  		<li class="full-width">
+  		    <input type="hidden" name="uuid" id="uuid" value="${user.uuid}">
+			<div class="form-group">
+		      <label for="userName" class="control-label form-label">用户名：</label>
+		       <div class="input-box-read">
+					<p>${user.userName!}</p>
+				</div>
+		    </div>	
+  		</li>
+  		<li class="full-width">
+			<div class="form-group">
+				<label for="userName" class="control-label form-label">姓名：</label>
+		       <div class="input-box-read">
+					<p>${user.realName}</p>
+				</div>
+		    </div>	
+  		</li>
+  		<li class="full-width">
+			<div class="form-group">
+				<label for="userName" class="control-label form-label">手机号码：</label>
+		       <div class="input-box-read">
+					<p>${user.mobile}</p>
+				</div>
+		    </div>	
+  		</li>
+  		<li class="full-width">
+			<div class="form-group">
+		      <label for="accountType" class="control-label form-label">账号类型<span style="color:red;">*</span>：</label>
+		      <div class="input-box">
+		      	 <select name="accountType" autocomplete="off" id="accountType" class="form-control valid" aria-invalid="false" style="display: block;" required>
+    			    <#list userAccountTypeList as accountType>
+			      			<option value="${accountType.itemValue}"   
+			      			<#if accountType.itemValue=user.accountType>selected="selected"</#if>>${accountType.itemName}</option>
+			         </#list>
+		       	</select>
+		      </div>
+		    </div>	
+  		</li>
+  	</ul>
+  </form>
+</div>
+<script>
+	$("#form").validate({
+	  submitHandler:function(form){ 
+			$(form).ajaxSubmit({
+				type:"post",
+				dataType:"json",
+				success:function(data){
+        	if(data.result){
+        		layer.alert(data.msg, {
+        			icon: 6,
+        			cancel: function(index){
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入 
+						}
+        		}, function(){	        			
+        			layer.closeAll();
+        			gridobj.trigger("reloadGrid"); //重新载入  
+        		});
+        	}
+        	else
+        	{
+        		layer.alert(data.msg, {icon: 5});
+        	}	        	
+	    	}
+			});
+	  }    
+	});
+</script>

@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>活动运营分析</title>
+<#include "include/resources.html">
+</head>
+<body class="overflowY">
+<div class="wrapper">
+    <div class="row pt20">
+      <div class="col-md-12">
+       <form class="form-horizontal">
+          <input type="hidden" name="statType" value="1" id="j-realNameStatus" />
+          <input type="hidden" name="dateType" value="1" id="dateType">
+          <div id="legend">
+            <legend>活动运营分析</legend>
+          </div>
+          <div class="col-md-16 mt20">
+            <ul id="myTab" class="nav nav-tabs">
+              <li class="active"><a  data-toggle="tab">红包统计分析</a></li>
+              <li><a  data-toggle="tab">加息券统计分析</a></li>
+              <li><a  data-toggle="tab">活动投资金额分析</a></li>
+            </ul>
+          </div>        
+          <div class="control-group">
+            <label class="control-label">日期：</label>
+            <div class="controls">
+               <label class="checkbox inline selectTime"><input type="text" name="startDate" id="startTime" class="form-control"placeholder="开始日期" value="${startDate}" readonly="readonly" style="background:#fff;"/></label><label class="checkbox inline selectTime"><input type="text" name="endDate" id="endTime" class="form-control" placeholder="结束日期" value="${endDate}" readonly="readonly" style="background:#fff;"/></label>
+            </div>
+          </div>        
+          <div class="control-group select1">
+            <label class="control-label">发放类型：</label>
+            <div class="controls">
+              <label class="checkbox inline selectTime"><input type="checkbox" value="" checked="">不限</label>
+              <label class="checkbox inline selectTime">
+                <input type="checkbox" name="typeArr" value="1" checked="checked">固定金额
+              </label>
+              <label class="checkbox inline selectTime selectTime">
+                <input type="checkbox" name="typeArr" value="2" checked="checked">固定比例
+              </label>
+              <label class="checkbox inline selectTime">
+                <input type="checkbox" name="typeArr" value="3" checked="checked">金额满返
+              </label> 
+              <label class="checkbox inline selectTime">
+                <input type="checkbox" name="typeArr" value="4" checked="checked">比例满返
+              </label>                                                                   
+            </div>
+          </div> 
+          <div class="" style="margin-left:116px;">
+            <button type="submit" name="button" class="btn btn-primary">搜索</button>
+          </div>
+      </form>
+      </div>
+    </div>
+    <div class="lineStyle col-md-12"></div>
+    <div class="row">
+      <div class="col-md-8" style="margin:0 auto;">
+          <div class="content pt20 ml30">
+            <h3 class="text-right">
+              <div id="timeType" class="selectTime">
+                <a href="javascript:;" id="day" class="on">日</a>
+                <a href="javascript:;" id="week">周</a>
+                <a href="javascript:;" id="month">月</a>
+              </div>
+            </h3>
+          </div>
+          <div id="j-main1" class="chart-map mt20 ml30" style="width:1000px;"></div>
+          <div id="j-main2" class="chart-map mt20 ml30 hide" style="width:1000px;"></div>
+          <div id="j-main3" class="chart-map mt20 ml30 hide" style="width:1000px;"></div>
+          <div class="row pt20">
+            <div class="col-md-6">
+              <div id="j-pie-1" class="chart-col-6 mt20 red" style="width:600px;">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div id="j-pie-2" class="chart-col-6 mt20 red" style="width:600px;">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div id="j-pie-3" class="chart-col-6 mt20 rate hide" style="width:600px;">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div id="j-pie-4" class="chart-col-6 mt20 rate hide" style="width:600px;">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div id="j-pie-5" class="chart-col-6 mt20 other hide" style="width:600px;">
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+</div>
+<script type="text/javascript">
+    //设置开始时间控件
+  var startTime= {
+    elem:'#startTime',
+    format: 'YYYY-MM-DD', //日期格式
+    max:$('#endTime').val(),
+    event:'focus',
+    choose: function(dates){
+        endTime.min=dates;
+        endTime.start=dates;
+    }
+  };
+  //设置发放结束时间
+  var endTime=  {
+      elem:'#endTime',
+      format: 'YYYY-MM-DD', //日期格式
+      min: $('#startTime').val(), //最小日期
+      event:'focus',
+      choose: function(dates){
+        startTime.max=dates;
+       }
+  };
+  laydate(startTime);
+  laydate(endTime);
+  var myChart = echarts.init(document.getElementById('j-main1')),
+  option = {
+      title: {
+          text: '红包发放金额（数量）统计',
+          left: 'center'
+      },    
+      tooltip: {
+          trigger: 'axis'
+      },
+      legend: {
+          data:['红包金额','红包数量'],
+          top:'50px',
+      },
+      grid:{
+          top:'25%'
+      },
+      xAxis: [
+          {
+              type: 'category',
+              data: []
+          }
+      ],
+      yAxis: [
+          {
+              type: 'value',
+              name: '金额',
+              axisLabel: {
+                  formatter: '{value} '
+              }
+          },
+          {
+              type: 'value',
+              name: '数量',
+              axisLabel: {
+                  formatter: '{value} %'
+              }
+          }
+      ],
+      dataZoom: [
+       {   // 这个dataZoom组件，默认控制x轴。
+           type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+           startValue :0
+       },
+
+   ],
+      series: [
+           {
+              name:'红包金额',
+              type:'line',
+              yAxisIndex: 0,
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#8266a3'
+                }
+              }
+          },{
+              name:'红包数量',
+              type:'line',
+              yAxisIndex: 1,
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#afc97b'
+                }
+              }
+          }
+      ]
+  };
+  //['#76b7f9','#f8d15c','#ef826f','#92cb8b','#c3e9e1','#ffa879','#95a3ea','#ba7dd1']
+  chartAjax($(".form-horizontal").serialize());
+
+  function chartAjax(req){
+      $.ajax({
+          url:'/statistic/activity/findRedByStatDate.html?'+req,
+          dataType:'json',
+          success:function(data){
+              option.xAxis[0].data=data.chart_date;
+              option.series[0].data=data.chart_amnt;
+              option.series[1].data=data.chart_num;
+              myChart.setOption(option);                           
+          }
+      })
+  }
+
+
+  var myChart2 = echarts.init(document.getElementById('j-main2')),
+  option2 = {
+      title: {
+          text: '加息券发放数量统计',
+          left: 'center'
+      },    
+      tooltip: {
+          trigger: 'axis'
+      },
+      legend: {
+          data:['加息券数量'],
+          top:'50px',
+      },
+      grid:{
+          top:'25%'
+      },
+      xAxis: [
+          {
+              type: 'category',
+              data: []
+          }
+      ],
+      yAxis: [
+          {
+              type: 'value',
+              name: '数量',
+              axisLabel: {
+                  formatter: '{value} '
+              }
+          }
+      ],
+      dataZoom: [
+       {   // 这个dataZoom组件，默认控制x轴。
+           type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+           startValue :0
+       },
+
+   ],
+      series: [
+           {
+              name:'加息券数量',
+              type:'line',
+              yAxisIndex: 0,
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#8266a3'
+                }
+              }
+          }
+      ]
+  };
+  //['#76b7f9','#f8d15c','#ef826f','#92cb8b','#c3e9e1','#ffa879','#95a3ea','#ba7dd1']
+  //chartAjax2($(".form-horizontal").serialize());
+
+  function chartAjax2(req){
+      $.ajax({
+          url:'/statistic/activity/findRateByStatDate.html?'+req,
+          dataType:'json',
+          success:function(data){
+              option2.xAxis[0].data=data.chart_date;
+              option2.series[0].data=data.chart_num;
+              myChart2.setOption(option2);                           
+          }
+      })
+  }
+
+
+  var myChart3 = echarts.init(document.getElementById('j-main3')),
+  option3 = {
+      title: {
+          text: '活动投资金额统计',
+          left: 'center'
+      },    
+      tooltip: {
+          trigger: 'axis'
+      },
+      legend: {
+          data:['活动投资金额','活动投资金额占比'],
+          top:'50px',
+      },
+      grid:{
+          top:'25%'
+      },
+      xAxis: [
+          {
+              type: 'category',
+              data: []
+          }
+      ],
+      yAxis: [
+          {
+              type: 'value',
+              name: '金额',
+              axisLabel: {
+                  formatter: '{value} '
+              }
+          },
+          {
+              type: 'value',
+              name: '比例',
+              axisLabel: {
+                  formatter: '{value} %'
+              }
+          }
+      ],
+      dataZoom: [
+       {   // 这个dataZoom组件，默认控制x轴。
+           type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+           startValue :0
+       },
+
+   ],
+      series: [
+           {
+              name:'活动投资金额',
+              type:'bar',
+              yAxisIndex: 0,
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#8266a3'
+                }
+              }
+          },{
+              name:'活动投资金额占比',
+              type:'line',
+              yAxisIndex: 1,
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#afc97b'
+                }
+              }
+          }
+      ]
+  };
+  //['#76b7f9','#f8d15c','#ef826f','#92cb8b','#c3e9e1','#ffa879','#95a3ea','#ba7dd1']
+  //chartAjax3($(".form-horizontal").serialize());
+
+  function chartAjax3(req){
+      $.ajax({
+          url:'/statistic/activity/findRealAmntByDate.html?'+req,
+          dataType:'json',
+          success:function(data){
+              option3.xAxis[0].data=data.chart_date;
+              option3.series[0].data=data.chart_amnt;
+              option3.series[1].data=data.chart_ratio;
+              myChart3.setOption(option3);                           
+          }
+      })
+  }
+
+
+
+  /*图1*/
+  var pieChart1 = echarts.init(document.getElementById('j-pie-1')),
+      pieChart2 = echarts.init(document.getElementById('j-pie-2'));
+  var pieOption= {
+          title : {
+              text: '',
+              left: 'center',
+              top:'80px'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : '70%',
+              y : '30%',
+              data:[]
+          },
+          toolbox: {
+              show : false
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'访问来源',
+                  type:'pie',
+                  radius : '35%',
+                  center: ['25%', '50%'],
+                  color:['#76b7f9','#f8d15c','#ef826f','#92cb8b','#c3e9e1','#ffa879','#95a3ea','#ba7dd1'],
+                  itemStyle : {
+                      normal : {
+                          label : {
+                              position : 'inner',
+                              formatter : function (params) {
+                               return params.percent + '%'
+                              }
+                          },
+                          labelLine : {
+                              show : false
+                          }
+                      },
+                      emphasis : {
+                          label : {
+                              show : false,
+                              formatter : "{b}\n{d}%"
+                          }
+                      }
+
+                  },
+                  data:[]
+              }
+          ]
+      };
+
+  var pieOption1 = jQuery.extend(true, {}, pieOption);
+  var pieOption2 = jQuery.extend(true, {}, pieOption);
+
+  pieChartAjax($(".form-horizontal").serialize());
+
+  function pieChartAjax(req,range){
+      $.ajax({
+          url:'/statistic/activity/findRedByStatStatus.html?'+req,
+          dataType:'json',
+          success:function(data){
+
+              var pie1 = [],legend1 = [],pie2 = [],legend2 = [];
+              var data1 = data.pieChart_amnt;
+              var data2 = data.pieChart_num;
+
+              for( x in data1)
+              {
+                pie1.push({value:data1[x],name:x});
+                legend1.push(x);
+              }
+
+              for( y in data2 )
+              {
+                pie2.push({value:data2[y],name:y});
+                legend2.push(y);
+              }
+
+              pieOption1.title.text='红包（金额）状态分析';
+              pieOption1.legend.data = legend1;
+              pieOption1.series[0].data = pie1;
+
+              pieOption2.title.text='红包（数量）状态分析';
+              pieOption2.legend.data = legend2;
+              pieOption2.series[0].data = pie2;
+
+              pieChart1.setOption(pieOption1);
+              pieChart2.setOption(pieOption2);
+
+          }
+      })
+  }
+
+
+
+  /*图2*/
+  var pieChart3 = echarts.init(document.getElementById('j-pie-3')),
+      pieChart4 = echarts.init(document.getElementById('j-pie-4'));
+  var pieOption1= {
+          title : {
+              text: '',
+              left: 'center',
+              top:'80px'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : '70%',
+              y : '40%',
+              data:[]
+          },
+          toolbox: {
+              show : false
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'访问来源',
+                  type:'pie',
+                  radius : '35%',
+                  center: ['50%', '60%'],
+                  color:['#76b7f9','#f8d15c','#ef826f','#92cb8b','#c3e9e1','#ffa879','#95a3ea','#ba7dd1'],
+                  itemStyle : {
+                      normal : {
+                          label : {
+                              position : 'inner',
+                              formatter : function (params) {
+                               return params.percent + '%'
+                              }
+                          },
+                          labelLine : {
+                              show : false
+                          }
+                      },
+                      emphasis : {
+                          label : {
+                              show : false,
+                              formatter : "{b}\n{d}%"
+                          }
+                      }
+
+                  },
+                  data:[]
+              }
+          ]
+      };
+
+  var pieOption3 = jQuery.extend(true, {}, pieOption1);
+  var pieOption4 = jQuery.extend(true, {}, pieOption1);
+
+  //pieChartAjax2($(".form-horizontal").serialize());
+
+  function pieChartAjax2(req,range){
+      $.ajax({
+          url:'/statistic/activity/findRateByStatType.html?'+req,
+          dataType:'json',
+          success:function(data){
+
+              var pie1 = [],legend1 = [],pie2 = [],legend2 = [];
+              var data1 = data.pieChart_type;
+              var data2 = data.pieChart_status;
+
+              for( x in data1)
+              {
+                pie1.push({value:data1[x],name:x});
+                legend1.push(x);
+              }
+
+              for( y in data2 )
+              {
+                pie2.push({value:data2[y],name:y});
+                legend2.push(y);
+              }
+
+              pieOption3.title.text='活动运营项分布';
+              pieOption3.legend.data = legend1;
+              pieOption3.series[0].data = pie1;
+
+              pieOption4.title.text='加息券状态分析';
+              pieOption4.legend.data = legend2;
+              pieOption4.series[0].data = pie2;
+
+              pieChart3.setOption(pieOption3);
+              pieChart4.setOption(pieOption4);
+
+          }
+      })
+  }
+
+
+   /*图3*/
+  var pieChart5 = echarts.init(document.getElementById('j-pie-5'));
+  var pieOption2= {
+          title : {
+              text: '',
+              left: 'center',
+              top:'80px'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : '70%',
+              y : '40%',
+              data:[]
+          },
+          toolbox: {
+              show : false
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'访问来源',
+                  type:'pie',
+                  radius : '35%',
+                  center: ['50%', '60%'],
+                  color:['#76b7f9','#f8d15c','#ef826f','#92cb8b','#c3e9e1','#ffa879','#95a3ea','#ba7dd1'],
+                  itemStyle : {
+                      normal : {
+                          label : {
+                              position : 'inner',
+                              formatter : function (params) {
+                               return params.percent + '%'
+                              }
+                          },
+                          labelLine : {
+                              show : false
+                          }
+                      },
+                      emphasis : {
+                          label : {
+                              show : false,
+                              formatter : "{b}\n{d}%"
+                          }
+                      }
+
+                  },
+                  data:[]
+              }
+          ]
+      };
+
+  var pieOption5 = jQuery.extend(true, {}, pieOption2);
+
+  //pieChartAjax3($(".form-horizontal").serialize());
+
+  function pieChartAjax3(req,range){
+      $.ajax({
+          url:'/statistic/activity/findRealAmntByType.html?'+req,
+          dataType:'json',
+          success:function(data){
+
+              var pie1 = [],legend1 = [],pie2 = [],legend2 = [];
+              var data1 = data.data;
+
+              for( x in data1)
+              {
+                pie1.push({value:data1[x],name:x});
+                legend1.push(x);
+              }
+
+              pieOption5.title.text='活动运营项分布';
+              pieOption5.legend.data = legend1;
+              pieOption5.series[0].data = pie1;
+
+              pieChart5.setOption(pieOption5);
+
+          }
+      })
+  }
+
+  
+
+ $("#timeType a").on('click',function(e){
+
+    $("#timeType a").removeClass('on');
+    $(this).addClass('on')
+    
+   switch (e.target.id) {
+     case 'day':
+        $("#dateType").val(1);
+        chartAjax($(".form-horizontal").serialize());
+        chartAjax1($(".form-horizontal").serialize());
+        chartAjax2($(".form-horizontal").serialize());
+        break;
+     case 'week':
+        $("#dateType").val(2);
+        chartAjax($(".form-horizontal").serialize());
+        chartAjax1($(".form-horizontal").serialize());
+        chartAjax2($(".form-horizontal").serialize());
+        break;
+     case 'month':
+        $("#dateType").val(3);
+        chartAjax($(".form-horizontal").serialize());
+        chartAjax1($(".form-horizontal").serialize());
+        chartAjax2($(".form-horizontal").serialize());
+       break;
+     default:
+   }
+ });
+
+/* submit事件 */
+ $('.form-horizontal').submit(function (e) {
+   e.preventDefault()
+   if( $("#j-realNameStatus").val() == "1" ){
+     chartAjax($(this).serialize());
+     pieChartAjax($(this).serialize()); 
+   }
+   else if($("#j-realNameStatus").val() == "2"){
+   chartAjax2($(this).serialize());
+   pieChartAjax2($(this).serialize());
+  }else{
+   chartAjax3($(this).serialize());
+   pieChartAjax3($(this).serialize()); 
+ }
+   //chartAjaxMap($('.form-horizontal').serialize());
+   
+ });
+
+ $("#myTab li").on("click",function(){
+    $("#j-realNameStatus").val($(this).index()+1);
+    //$('.form-horizontal').submit();
+    var str = "<label class='control-label'>发放类型：</label><div class='controls'><label class='checkbox inline selectTime'><input type='checkbox' value='' checked=''>不限</label><label class='checkbox inline selectTime'><input type='checkbox' name='typeArr' value='1' checked='checked'>固定金额</label><label class='checkbox inline selectTime selectTime'><input type='checkbox' name='typeArr' value='2' checked='checked'>固定比例</label><label class='checkbox inline selectTime'><input type='checkbox' name='typeArr' value='3' checked='checked'>金额满返</label> <label class='checkbox inline selectTime'><input type='checkbox' name='typeArr' value='4' checked='checked'>比例满返</label></div>";
+    if( $("#j-realNameStatus").val() == "1" ){
+    $("#j-main1").removeClass("hide");
+    $("#j-main2").addClass("hide");
+    $("#j-main3").addClass("hide");
+    $(".red").removeClass("hide");
+    $(".rate").addClass("hide");
+    $(".other").addClass("hide");
+    $(".select1").html(str);
+    $('.form-horizontal').submit();
+   }
+   else if($("#j-realNameStatus").val() == "2")
+   {
+    var str = "<label class='control-label'>发放类型：</label><div class='controls'><label class='checkbox inline selectTime'><input type='checkbox' value='' checked=''>不限</label><label class='checkbox inline selectTime'><input type='checkbox' name='typeArr' value='1' checked='checked'>固定金额</label><label class='checkbox inline selectTime selectTime'><input type='checkbox' name='typeArr' value='2' checked='checked'>金额满返</label></div>";
+    $("#j-main1").addClass("hide");
+    $("#j-main2").removeClass("hide");
+    $("#j-main3").addClass("hide");
+    $(".red").addClass("hide");
+    $(".rate").removeClass("hide");
+    $(".other").addClass("hide");
+    $(".select1").html(str);
+    $('.form-horizontal').submit();
+   } 
+   else{
+    var str ="<label class='control-label'>发放类型：</label><div class='controls'><label class='checkbox inline selectTime'><input type='checkbox' value='' checked=''>不限</label><label class='checkbox inline selectTime'><input type='checkbox' name='operateArr' value='1' checked='checked'>红包</label><label class='checkbox inline selectTime selectTime'><input type='checkbox' name='operateArr' value='2' checked='checked'>加息券</label><label class='checkbox inline selectTime'><input type='checkbox' name='operateArr' value='3' checked='checked'>产品加息</label></div>"; 
+    $("#j-main1").addClass("hide");
+    $("#j-main2").addClass("hide");
+    $("#j-main3").removeClass("hide");
+    $(".red").addClass("hide");
+    $(".rate").addClass("hide");
+    $(".other").removeClass("hide");
+    $(".select1").html(str);
+    $('.form-horizontal').submit();
+   }
+ });
+</script>
+<script>
+  $(".control-group").each(function(){
+    $(this).find(".controls .checkbox:eq(0) input").click(function(){
+      if($(this).attr("checked")=="checked"){
+        $(this).attr("checked",false);
+        $(this).parent().siblings().find("input").removeAttr("checked");
+      }else{
+        $(this).attr("checked",true);
+        $(this).parent().siblings().find("input").attr("checked",true);
+        $(this).parent().siblings().find("input").prop("checked",true);
+      }
+    })
+     $(this).find(".controls .checkbox:eq(0)").siblings().find("input").click(function(){
+      if($(this).attr("checked")=="checked"){
+        $(this).attr("checked",false);
+      }else{
+        $(this).attr("checked",true);
+      }
+      var len =  $(this).parent().parent().parent().find(".checkbox").length-1;
+      var j=0;
+      for (var i = 1; i <= len; i++){
+        if( $(this).parent().parent().find(".checkbox").eq(i).find("input").attr("checked")=="checked"){
+          j+=1;
+        }
+      }
+      if((j==0)||(j==len)){
+         $(this).parent().parent().find(".checkbox:eq(0) input").prop("checked",true);
+      }
+      else{
+        $(this).parent().parent().find(".checkbox:eq(0) input").prop("checked",false);
+      }
+    })
+  })
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.rd.ifaes</groupId>
+		<artifactId>common-parent</artifactId>
+		<version>3.0.0.0</version>
+		<relativePath>../common-parent/pom.xml</relativePath>
+	</parent>
+	<artifactId>common-generator</artifactId>
+	<packaging>jar</packaging>
+	
+	<properties>
+		<gson.version>2.2.4</gson.version>
+		<freemarker.version>2.3.20</freemarker.version>
+		<mysql-connector.version>5.1.30</mysql-connector.version>
+	</properties>
+	
+	<dependencies>	
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>${gson.version}</version>
+		</dependency>
+		<!-- freemarker engine -->
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>${freemarker.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql-connector.version}</version>
+		</dependency>
+		
+	</dependencies>
+
+</project>

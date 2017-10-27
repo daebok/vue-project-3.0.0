@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.account.mapper.FreezeTradeLogMapper">
+	<resultMap type="com.rd.ifaes.core.account.domain.FreezeTradeLog" id="freezeTradeLogResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="freezeType" column="FREEZE_TYPE"/>
+		<result property="orderNo" column="ORDER_NO"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="amount" column="AMOUNT"/>
+		<result property="projectNo" column="PROJECT_NO"/>
+		<result property="freezeNo" column="FREEZE_NO"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="remark" column="REMARK"/>
+		<result property="investId" column="INVEST_ID"/>
+		<result property="status" column="STATUS"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		FREEZE_TYPE,
+		ORDER_NO,
+		USER_ID,
+		AMOUNT,
+		PROJECT_NO,
+		FREEZE_NO,
+		CREATE_TIME,
+		REMARK,
+		INVEST_ID,
+		STATUS
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{freezeType},
+		#{orderNo},
+		#{userId},
+		#{amount},
+		#{projectNo},
+		#{freezeNo},
+		#{createTime},
+		#{remark},
+		#{investId},
+		#{status}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="freezeType != null and freezeType != ''">and FREEZE_TYPE = #{freezeType}</if>
+            <if test="orderNo != null and orderNo != ''">and ORDER_NO = #{orderNo}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+			<if test="amount != null">and AMOUNT = #{amount}</if>
+            <if test="projectNo != null and projectNo != ''">and PROJECT_NO = #{projectNo}</if>
+            <if test="freezeNo != null and freezeNo != ''">and FREEZE_NO = #{freezeNo}</if>
+            <if test="remark != null and remark != ''">and REMARK = #{remark}</if>
+            <if test="investId != null and investId != ''">and INVEST_ID = #{investId}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.account.domain.FreezeTradeLog">
+		insert into freeze_trade_log( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">	
+		BEGIN	
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into freeze_trade_log( <include refid="table_columns" /> ) 
+		values 
+		( 
+			#{item.uuid},
+			#{item.freezeType},
+			#{item.orderNo},
+			#{item.userId},
+			#{item.amount},
+			#{item.projectNo},
+			#{item.freezeNo},
+			#{item.createTime},
+			#{item.remark},
+			#{item.investId},
+			#{item.status}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<update id="update" parameterType="com.rd.ifaes.core.account.domain.FreezeTradeLog">
+		update freeze_trade_log 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="orderNo != null and orderNo != ''">ORDER_NO = #{orderNo},</if>
+			<if test="amount != null">AMOUNT = #{amount},</if>
+            <if test="projectNo != null and projectNo != ''">PROJECT_NO = #{projectNo},</if>
+            <if test="freezeNo != null and freezeNo != ''">FREEZE_NO = #{freezeNo},</if>
+            <if test="remark != null and remark != ''">REMARK = #{remark},</if>
+            <if test="investId != null and investId != ''">INVEST_ID = #{investId},</if>
+            <if test="status != null and status != ''">STATUS = #{status},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="freezeTradeLogResultMap">
+        select <include refid="table_columns" />
+        from freeze_trade_log
+    </select>
+
+    <select id="findList" resultMap="freezeTradeLogResultMap">
+        select <include refid="table_columns" />
+        from freeze_trade_log
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from freeze_trade_log
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="freezeTradeLogResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from freeze_trade_log
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+
+    <select id="findByOrderNo" resultMap="freezeTradeLogResultMap" parameterType="com.rd.ifaes.core.account.domain.FreezeTradeLog" >
+		select <include refid="table_columns" />
+		from freeze_trade_log
+		where FREEZE_TYPE = #{freezeType} and ORDER_NO = #{orderNo}
+	</select>
+	
+	 <select id="findByInvestNoAndUser" resultMap="freezeTradeLogResultMap" >
+		select <include refid="table_columns" />
+		from freeze_trade_log
+		where invest_id = #{investId} and user_id = #{userId} and status = 0 and freeze_type = '03'
+	</select>
+</mapper>

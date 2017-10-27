@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>风险评估</title>
+		<#include "include/resources.html">
+		<script type="text/javascript">
+			var url_list = "/risk/riskConfigList.html";
+			$(document).ready(function() {	
+				$('#keywordsSearch').attr('data-url',url_list);
+				$('#conditionSearch').attr('data-url',url_list);				
+			});
+		</script>
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入风险等级名称">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" id="keywordsSearch">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+						<@shiro.hasPermission name="set:riskTpl:riskLevel:add">
+						<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.addFun(this)" data-tid="jqGrid" data-url="/risk/riskConfigAddPage.html">新增</button>
+						</@shiro.hasPermission>
+						<@shiro.hasPermission name="set:riskTpl:riskLevel:edit">
+						<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.editFun(this)" data-tid="jqGrid" data-url="/risk/riskConfigEditPage.html">编辑</button>
+						</@shiro.hasPermission>
+						<@shiro.hasPermission name="set:riskTpl:riskLevel:del">
+						<button type="button" class="btn btn-warning" onclick="$.fn.treeGridOptions.deleteFun(this)" data-tid="jqGrid" data-url="/risk/delLogic.html">删除</button>						
+						</@shiro.hasPermission>
+					</div>					
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+						<!-- 
+						<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.checkFun(this)" data-tid="jqGrid" data-url="/loan/borrow/borrowView.html" data-title="查看">查看</button>				
+						 -->
+					</div>					
+				</div>
+			</div>
+			
+			<!-- 列表信息 -->
+			<#include "risk/riskConfigList.html">
+			
+		</div>
+	</body>
+</html>

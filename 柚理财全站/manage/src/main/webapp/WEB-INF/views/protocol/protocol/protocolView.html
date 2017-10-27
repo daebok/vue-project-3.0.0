@@ -1,0 +1,30 @@
+<div class="form-tips-content">
+	<form class="form-horizontal" >
+		<ul class="form-item">
+	  		<li>
+				<div class="form-group">
+			      <label for="name" class="control-label form-label">类型：</label>
+			      <div class="input-box" style="line-height:31px;width:50%;">
+			      <@linkage name="protocolType" id="protocolType" plantext="plantext" nid="protocolType" default="${protocol.protocolType}" disabled="disabled"/>
+			      </div>
+			    </div>	
+	  		</li>
+	  		<li>
+				<div class="form-group">
+			      <label for="master" class="control-label form-label">名称：</label>
+			      <div class="input-box" style="line-height:31px;">
+			      ${protocol.name!}
+			      </div>
+			    </div>	
+	  		</li>
+	  		<li class="full-width">
+				<div class="form-group">
+			      <label for="master" class="control-label form-label">内容模板：</label>
+			    </div>
+			    <div class="textarea-box" style="padding-left:150px;">
+					<!-- ${protocol.content!} -->${content!}
+				</div>	
+	  		</li>
+		</ul>
+	</form>
+</div>

@@ -1,0 +1,24 @@
+<div class="form-tips-content">
+	<div class="questionnaire-title">${papers.papersName!"默认问卷"}</div>
+	<ul class="form-item" id="questionnaire-con">
+		<#if qList??>
+			<#list qList as qItem>
+				<li>
+					<dl>
+						<dt><span style="color:blue;">(<#if qItem.isSingle == 1>单选<#else>多选</#if>)&nbsp;</span>${qItem.sort!0}.${qItem.questionName!"默认问题"}</dt>
+						<#if qItem.list??>
+							<#list qItem.list as aItem>
+								<#if aItem.questionId == qItem.uuid>
+									<dd><input type="<#if qItem.isSingle==1>radio<#else>checkbox</#if>" name="sort" value="${aItem.sort!''}">${aItem.sort!''}. ${aItem.content!"默认答案"}</dd>
+								</#if>
+							</#list>
+						</#if>
+					</dl>
+				</li>
+			</#list>
+		</#if>
+		<li>
+			<span>试卷总分：${totalScore}</span>
+		</li>
+	</ul>
+</div>

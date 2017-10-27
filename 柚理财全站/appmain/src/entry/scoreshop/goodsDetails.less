@@ -1,0 +1,209 @@
+@import '../../style/common.less';
+@import '../../style/account.less';
+
+.ant-btn-lg{
+    margin-top:19px;
+    width:200px;
+    height:40px;
+  }
+.ant-form-item{
+  margin-bottom:0;
+}
+.error-tips{
+  position: relative;
+  top: 0px;
+  color:#f95a28;
+  em{
+    color:#f95a28;
+    padding:0 10px 0 20px;
+  }
+}
+
+
+#goodsdetail{
+  width:1180px;
+  margin:30px auto 0;
+  .buyGoods{
+    margin-bottom:20px;
+    padding:30px;
+    background:#fff;
+    .left{
+      border:1px solid @cololr-bodybg;
+      height:300px;
+      width:300x;
+      float:left;
+      margin-right:50px;
+      img{
+        width:300px;
+        height:212px;
+        margin-top:44px;
+      }
+    }
+    .right{
+      float:left;
+      width:750px;
+      .ptitle{
+        span{
+          .f24();
+          color:@color-title;
+        }
+        p{
+          padding-top:10px;
+          em{
+            .f14();
+            color:@color-text;
+            padding-right:20px;
+          }
+          .icontips{
+            .f16();
+            padding-right:5px;
+          }
+        }
+      }
+      .datadetail{
+        margin-top:25px;
+        li{
+          display:inline-block;
+          width:200px;
+        }
+        .score{
+          .f26();
+          color:@color-error;
+          p{
+            .f12();
+            color:@color-text;
+          }
+        }
+        .price{
+          em{
+            .f18();
+            color:@color-p;
+            text-decoration:line-through;
+          }
+          p{
+            .f12();
+            color:@color-text;
+          }
+        }
+        .residue{
+          .f18();
+          color:@color-p;
+          p{
+            .f12();
+            color:@color-text;
+          }
+        }
+      }
+      .exchangeNum{
+        background:#fafafd;
+        padding:15px 0 15px 30px;
+        margin-top:20px;
+        .copies{
+          width:500px;
+          float:left;
+          .down{
+            float:left;
+            display:block;
+            width:40px;
+            height:42px;
+            line-height:38px;
+            border:1px solid @cololr-bodybg;
+            border-right:0;
+            text-align:center;
+            background:#f3f3f3;
+            .f20();
+            cursor: pointer;
+          }
+          .add{
+            float:left;
+            display:block;
+            width:40px;
+            height:42px;
+            line-height:42px;
+            border:1px solid @cololr-bodybg;
+            border-left:0;
+            text-align:center;
+            background:#f3f3f3;
+            .f20();
+            cursor: pointer;
+          }
+          .ant-input-wrapper{
+            width:90px;
+            float:left;
+            margin-bottom:0;
+            input{
+              border-radius:0;
+              border:1px solid #f1f1f1!important;
+              text-align:center;
+              height:42px;
+              line-height:42px;
+              width:90px;
+              box-shadow:none;
+            }
+          }
+          em{
+            line-height:42px;
+            padding-left:20px;
+            .f14();
+            color:@color-text;
+          }
+        }
+        .residueScore{
+          width:170px;
+          height:40px;
+          line-height:40px;
+          text-align:center;
+          float:right;
+          border:1px solid @cololr-bodybg;
+          border-radius:3px;
+          background:#f2f2f8;
+          color:#42425a;
+          margin-right:28px;
+          .f16();
+        }
+      }
+      .submit-btn{
+        width:200px;
+        text-align:center;
+        height:40px;
+        line-height:40px;
+        color:#fff;
+        .f14();
+        display:inline-block;
+        background:#f95a28;
+        border-radius:5px;
+        margin-top:20px;
+      }
+      .nobtn{
+        width:200px;
+        text-align:center;
+        height:40px;
+        line-height:40px;
+        color:#999;
+        .f14();
+        display:inline-block;
+        background:#f3f3f3;
+        border-radius:5px;
+        margin-top:20px;
+      }
+    }
+  }
+  .goodsDetails{
+    width:1180px;
+    margin:0 auto;
+    background:#fff;
+    .title{
+      padding-left:33px;
+      line-height:50px;
+      .f16();
+      color:@color-p;
+      background:#fafafd;
+      border-bottom:1px solid @cololr-bodybg;
+    }
+    .con{
+      min-height:400px;
+      padding:33px;
+      .f14();
+    }
+  }
+}

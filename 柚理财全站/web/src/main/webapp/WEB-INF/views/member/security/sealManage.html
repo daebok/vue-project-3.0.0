@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<#assign web_title='账户充值 - ${web_name!}'>
+<#assign web_description='账户充值，${web_name!}p2p网贷平台'> 
+<#include "../../include/resource1.html">
+<body>
+	<#assign nid="my_account">
+	<#assign flag="sealManage">
+	<#include "../../include/inc_entrance.html">
+	<#include "../../include/header.html">
+	<!--#container-->
+	<#include "../../include/member_borrow_header.html">
+	<div class="second_menu">
+		<#include "../account_menu.html">
+	</div>
+	<div id="container" class="clearfix">
+		<!--S-usermain-->
+		<div class="usermain clearfix">
+		<div class="user_right my_preferences tab_change">
+			<!--右边的内容user_right 开始-->
+			<div class="user_right">
+				<h2 class="user_title">印章管理</h2>
+				<div class="user_right_main rechargeCash tab_change">
+					<ul class="title_list">
+						<li class="hover"><h2 class="list_btn templet_seal">模板印章</h2></li>
+						<li><h2 class="list_btn freehand_seal">手绘印章</h2></li>
+				</ul>
+				</div>
+				<!-- 模板印章开始 -->
+				<div class="list_div"  id="templet_sealDiv">
+				<form action="/member/security/addTemplateSeal.html" class="addressForm" id="form2" method="post" enctype="multipart/form-data">
+				<ul class="mt20">
+					<li><label>请选择模板类型</label>
+					<select name="templateType">
+                             <option value="STAR">STAR(标准公章)</option>  
+                             <option value="OVAL">OVAL(椭圆形印章)</option> 
+					</select>
+					</li>
+					<li><label>请选择印章颜色</label>
+					<select name="color">
+					         <option value="RED">RED</option>  
+                             <option value="BLUE">BLUE</option> 
+                             <option value="BLACK">BLACK</option> 
+					</select>
+					</li>
+					<li>
+						<label>横向文</label>
+						<input type="text" name="hText" class="addressInput">
+					</li>
+					<li>
+						<label>下弦文</label>
+						<input type="text" name="qText" class="addressInput">
+					</li>
+				</ul>
+				
+			            <input type="submit" value="提交" class="addressSubmit"/>
+			     </form>
+			     <form action="/member/security/addPersonTemplateSeal.html" class="addressForm" id="form2" method="post" enctype="multipart/form-data">
+				<ul class="mt20">
+					<li><label>请选择模板类型</label>
+					<select name="templateType">
+                             <option value="SQUARE">SQUARE(正方形印章)</option>  
+                             <option value="RECTANGLE">RECTANGLE(矩形印章)</option> 
+                             <option value="FZKC">FZKC(艺术字体印章)</option> 
+                             <option value="YYGXSF">YYGXSF(艺术字体印章)</option> 
+                             <option value="HYLSF">HYLSF(艺术字体印章)</option> 
+					</select>
+					</li>
+					<li><label>请选择印章颜色</label>
+					<select name="color">
+					         <option value="RED">RED</option>  
+                             <option value="BLUE">BLUE</option> 
+                             <option value="BLACK">BLACK</option> 
+					</select>
+					</li>
+				</ul>
+				
+			            <input type="submit" value="提交" class="addressSubmit"/>
+			     </form>
+				</div>
+				<!-- 模板印章 结束 -->
+				<!-- 手绘印章 开始 -->
+					<div class="list_div addressForm"  id="freehand_sealDiv"  style="display:none;">
+						<form action="/member/security/uploadDrawEsign.html" id="form" method="post" enctype="multipart/form-data">
+					    <p style="margin-top:30px;"><input type="submit" value="上传印章" class="addressSubmit"/> <input type="file" name="esignFile" style="float_left"/></p>
+					
+				        </form>
+				       
+				        <a href="/member/security/draw.html" target="_blank"><input type="button" value="手绘印章" class="addressSubmit" style="margin-top:20px"></input></a>
+					</div>
+				<!-- 手绘印章 结束 -->
+				<!-- <form action="/member/security/saveEsign.html" id="form" method="post" enctype="multipart/form-data">
+					<input type="file" name="esignFile"/>
+					<input type="submit" value="上传签名" />
+				</form> -->
+			</div>
+		</div>
+		<!--E-usermain-->
+		</div>
+	</div>
+	<!--#container-->
+	<script>
+		seajs.use('member/redpacketss');
+	</script>
+	<#include "../../include/footer.html">

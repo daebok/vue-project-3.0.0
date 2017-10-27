@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.sys.mapper.RoleMapper">
+	<resultMap type="com.rd.ifaes.core.sys.domain.Role" id="roleResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="code" column="CODE"/>
+		<result property="roleName" column="ROLE_NAME"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="deleteFlag" column="DELETE_FLAG"/>
+		<result property="remark" column="REMARK"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		CODE,
+		ROLE_NAME,
+		CREATE_TIME,
+		DELETE_FLAG,
+		REMARK
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{code},
+		#{roleName},
+		#{createTime},
+		#{deleteFlag},
+		#{remark}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#columnName#||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+        	(DELETE_FLAG = 0 OR DELETE_FLAG IS NULL) 
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="code != null and code != ''">and CODE like '%'||#{code}||'%'</if>
+            <if test="roleName != null and roleName != ''">and ROLE_NAME like '%'||#{roleName}||'%'</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="remark != null and remark != ''">and REMARK = #{remark}</if>
+            <if test="keywords != null and keywords != ''">and ROLE_NAME like '%'||#{keywords}||'%'</if>
+        </trim>
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.sys.domain.Role">
+		insert into sys_role( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">	
+		BEGIN	
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into sys_role( <include refid="table_columns" /> ) 
+		values 
+		( 
+				#{item.uuid},
+				#{item.code},
+				#{item.roleName},
+				#{item.createTime},
+				#{item.deleteFlag},
+				#{item.remark}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String" >
+		delete from sys_role
+		where uuid = #{uuid}
+	</delete>
+	
+	<delete id="deleteChildren"  parameterType="String">
+		delete from sys_operator_role
+		where role_id in 
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>
+	</delete>
+
+	<update id="deleteLogic" parameterType="String" >
+		update sys_role set DELETE_FLAG = 1 
+		where uuid = #{uuid}
+	</update>
+	
+	<update id="deleteBatch">
+		update sys_role set DELETE_FLAG = 1 
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.sys.domain.Role">
+		update sys_role 
+		<trim prefix="set" suffixOverrides=",">
+			 <if test="code != null and code != ''">CODE = #{code},</if>
+            <if test="roleName != null and roleName != ''">ROLE_NAME = #{roleName},</if>
+			<if test="createTime != null">CREATE_TIME = #{createTime},</if>
+            <if test="deleteFlag != null and deleteFlag != ''">DELETE_FLAG = #{deleteFlag},</if>
+            <if test="remark != null and remark != ''">REMARK = #{remark},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="roleResultMap">
+        select <include refid="table_columns" />
+        from sys_role
+        where delete_flag=0
+    </select>
+
+    <select id="findList" resultMap="roleResultMap">
+        select <include refid="table_columns" />
+        from sys_role
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from sys_role
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="roleResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from sys_role
+		where uuid = #{value}
+	</select>
+	<select id="findByRoalName" resultMap="roleResultMap" parameterType="String">
+		select <include refid="table_columns" />
+		from sys_role
+		where role_name=#{RoleName}
+	</select>
+	
+	<select id="checkDefaultRole" resultType="int" parameterType="String">
+		select count(1)
+		from sys_role
+		where code in ('onlineServer','admin','agent') and uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<!-- 根据用户id获取权限名字 -->
+	<select id="findListByOperatorId" resultMap="roleResultMap" parameterType="String" >
+		select a.role_name
+		from sys_role a LEFT JOIN sys_operator_role b ON a.uuid = b.role_id 
+		where b.operator_id = #{operatorId}
+	</select>
+
+</mapper>

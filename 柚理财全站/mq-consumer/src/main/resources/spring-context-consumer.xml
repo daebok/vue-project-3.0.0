@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+	
+	<!-- 消费方应用名，用于计算依赖关系，不是匹配条件，不要与提供方一样 -->
+    <dubbo:application name="mq-consumer" owner="programmer" organization="rd"/>
+	<!-- 使用zookeeper广播注册中心暴露发现服务地址 -->
+    <dubbo:registry protocol="zookeeper" address="${zk.address}"/>
+
+    <!--uncomment this if you want to test dubbo's monitor-->
+    <!--<dubbo:monitor protocol="registry"/>-->
+	
+	<!-- 消费方用什么协议获取服务（用dubbo协议在20880端口暴露服务）
+    <dubbo:protocol port="28080"/>
+	 -->
+	<dubbo:protocol port="28084" accesslog="true" serialization="kryo" optimizer="com.rd.account.SerializationOptimizerImpl"/>    
+    
+    <!-- 把接口的声明引入到本项目中，通过jar或者maven依赖都可以 -->
+    <!-- 生成远程服务代理，可以和使用本地bean一样使用服务者提供的服务 -->
+    <!-- 
+    <dubbo:annotation package="com.rd.ifaes" /> 
+     -->
+    <dubbo:reference id="accountService" interface="com.rd.account.service.AccountService"  check="false"/>
+    <dubbo:reference id="accountLogService" interface="com.rd.account.service.AccountLogService"  check="false"/>
+
+    <!-- directly connect to provider to simulate the access to non-dubbo rest services -->
+    <!--<dubbo:reference id="anotherUserRestService" interface="com.alibaba.dubbo.demo.user.facade.AnotherUserRestService" url="rest://localhost:8888/services/"/>-->
+
+</beans>

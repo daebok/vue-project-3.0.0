@@ -1,0 +1,456 @@
+<div id="j-content">
+<div class="form-tips-content" id="con">
+	<input type="hidden" id="image_server_url" value="${image_server_url}">
+  <form class="form-horizontal" action="/product/manage/productEdit.html" id="form" role="form">
+  <h3 class="borrowFormTitle">【产品设置】</h3>
+  	<ul class="form-item">
+  		<li>
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">产品名称<span style="color:red;">*</span>：</label>
+		      <div class="input-box">
+		        <input type="hidden"  name="uuid" id="id" value="${product.uuid}"  >
+		        <input type="hidden"  name="projectId" id="projectId" value="${product.uuid}"  >
+		      <input type="text" class="form-control" name="projectName" id="projectName" value="${product.projectName!}"  maxlength="25" placeholder="产品名称" required>
+		      </div>
+		    </div>
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">风险等级<span style="color:red;">*</span>：</label>
+		      <div class="input-box">
+		      	<select name="riskLevel" id="riskLevel" class="form-control required" >
+		      		    <option value="">请选择</option>
+		      			<#if riskLevel??>
+		      				<#list riskLevel as item>
+		      				    <option value="${item.riskLevelVal}"   <#if  product.riskLevel?? && (product.riskLevel == item.riskLevelVal) > selected</#if>   > ${item.riskLevelName!''}</option>
+		      				</#list>
+		      			</#if>
+		      		</select>
+		      </div>
+		    </div>
+  		</li>
+  					<li>
+				<div class="form-group">
+					<label for="userName" class="control-label form-label">资金账户<span style="color:red;">*</span>：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" style="width: auto; display: inline-block; vertical-align: middle;" name="userName" id="userName" value="${product.userName}" placeholder="请输入资金账户" required data-msg-required="请选择" autocomplete="off" readonly>
+						<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.borrowSelect(this, borrowerSelectFn)"
+						               data-tid="jqGrid"  data-url="/loan/borrow/borrowerPage.html" data-title="资金账户选择">选择</button>
+						<div id="keyword"></div>
+						<input type="hidden" class="form-control" name="userId" value="${product.userId}" id="userId">
+					</div>
+				</div>
+			</li>
+  		<li>
+			<div class="form-group">
+		      <label for="username" class="control-label form-label">产品金额<span style="color:red;">*</span>：</label>
+		      <div class="input-box">
+      		      <input type="text" class="form-control" name="account" id="account"   value="${product.account!}" maxlength="10"
+      		                          placeholder="请输入产品金额"  data-rule-digits="true" data-msg-digits="请输入整数"
+					      		      data-rule-exactDivision2="#copyAccount, #totalCopies" data-msg-exactDivision2="产品金额必须是每份金额的整数倍"
+					      		      data-rule-rangeNumber="${borrowMinAccount}, ${borrowMaxAccount}" data-msg-rangeNumber="输入的金额必须在${borrowMinAccount}元至${borrowMaxAccount}元之间" required>
+      		      <input type="hidden" class="form-control" name="raiseAccount" id="raiseAccount" />
+      		      <input type="hidden" class="form-control" name="raiseAccount" id="raiseAccount"    value="${product.account!}" />
+		         </div>
+		    </div>
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="master" class="control-label form-label">年利率(%)<span style="color:red;">*</span>：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="apr" id="apr"  value="${product.apr!}"  maxlength="6" placeholder="请输入年利率"
+		                   data-rule-rangeNumber="1,24" data-msg-rangeNumber="输入的值在1~24之间" required>
+		      </div>
+		    </div>
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="sort" class="control-label form-label">期限类型：</label>
+		      <div class="input-checkbox-box">
+		        <input type="radio"  id="timeTypeRadio1" name="timeType" value="0" <#if product.timeType==0>checked="checked" </#if>>
+		        <label for="timeTypeRadio1">月</label>
+		        <input type="radio" id="timeTypeRadio2" name="timeType" value="1" <#if product.timeType==1>checked="checked" </#if>>
+		        <label for="timeTypeRadio2">天</label>
+		      </div>
+		    </div>
+  		</li>
+  		 <li>
+			<div class="form-group">
+		      <label for="sort" class="control-label form-label">产品期限<span style="color:red;">*</span>：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="timeLimit" id="timeLimit"   value="${product.timeLimit!}" maxlength="3" placeholder="请输入借款期限" data-rule-digits="true" data-msg-digits="请输入整数" required>
+		      </div>
+		    </div>
+  		</li>
+  			<li>
+				<div class="form-group">
+			      <label for="sort" class="control-label form-label">计息方式：</label>
+			      <div class="input-box row" style="margin:0; padding:0;">
+			      	<input name="interestStyle" id="interestStyle1" value="1" type="radio" <#if product.interestStyle == '1'>checked </#if> > 成立计息
+			      	<input name="interestStyle" id="interestStyle2" value="2" type="radio" style="margin-left:10px;" <#if product.interestStyle == '2'>checked </#if>>
+		      			<b>T</b>+<select class="tnContainer" <#if product.interestStyle == '1'>disabled="disabled"</#if> name="interestStartDays" id="interestStartDays"
+		      			data-msg-required="请选择计息起始天数"  value="${product.interestStartDays!''}" required>
+			      		<option value="">请选择</option>
+			      		<#list 0..7 as t>
+			      		   <option value="${t}" <#if t==product.interestStartDays >selected="selected"</#if>>${t}</option>
+			      		</#list>
+			      		</select> 计息  （T为交易登记日，交易登记日时间段
+		      		<select class="tnContainer" <#if product.interestStyle == '1'>disabled="disabled"</#if> name="interestTime" id="interestTime">
+		      			<#list hourList as item>
+		      			<option value="${item}" <#if product.interestTime ==  item?number>selected="selected"</#if> >${item}</option>
+			      		</#list>
+		      		</select>时+24h）
+			      </div>
+			    </div>
+	  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="sort" class="control-label form-label">还款方式<span style="color:red;">*</span>：</label>
+		      <div class="input-box appendStyle">
+		        <!-- <@linkage name="repayStyle" id="repayStyle" nid="repayStyle"  default="${product.repayStyle!}"  class="form-control  required" noselect="请选择" /> -->
+		      </div>
+		    </div>
+  		</li>
+  			<li>
+				<div class="form-group" style="height: 34px;">
+					<div class="hide" id="fixRepayDayBox">
+						<label for="fixedRepayDay" class="control-label form-label">固定还款日：</label>
+						<div class="input-box">
+							<input type="text" class="form-control" name="fixedRepayDay" id="fixedRepayDay"   value="${product.fixedRepayDay!}" placeholder="请输入固定还款日"
+							   data-rule-digits="true" data-msg-digits="请输入整数"
+							   data-rule-min="1" data-msg-min="固定还款日不小于1"
+							   data-rule-max="30" data-msg-max="固定还款日不大于30" maxLength="2">
+					    </div>
+				    </div>
+				</div>
+			</li>
+  			<li>
+			<div class="form-group">
+		      <label for="sort" class="control-label form-label">销售规则：</label>
+		      <div class="input-box">
+		        <@linkage name="saleStyle" id="saleStyle" nid="saleStyle" default="${product.saleStyle!}"  class="form-control" />
+		      </div>
+		    </div>
+  		</li>
+  		<!-- 按金额购买 -->
+  		<li class="moneyStyle">
+			<div class="form-group">
+		       <label for="sort" class="control-label form-label">最低起投金额：</label>
+		      <div class="input-box">
+		        <input  type="text" class="form-control" name="lowestAccount" id="lowestAccount" value="${product.lowestAccount!}"  maxlength="8" placeholder="请输入最低起投金额"
+			            data-rule-digits="true" data-msg-digits="请输入整数"   data-rule-min="1" data-msg-min="最低起投金额不小于1"
+			            data-rule-judgeNumber="#raiseAccount,<" data-msg-judgeNumber="最低起投金额不能高于产品总金额">
+		      </div>
+		    </div>
+  		</li>
+  		<li class="moneyStyle">
+				<div class="form-group">
+					<label for="stepAccount" class="control-label form-label">递增金额：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="stepAccount" id="stepAccount" value="${product.stepAccount!}"  placeholder="请输入递增金额" data-rule-digits="true" data-msg-digits="请输入整数"  maxlength="8" >
+					</div>
+				</div>
+			</li>
+  		 <li class="moneyStyle">
+			<div class="form-group">
+		       <label for="sort" class="control-label form-label">最高投资总额：</label>
+		      <div class="input-box">
+		        <input  type="text" class="form-control" name="mostAccount" id="mostAccount"  value="${product.mostAccount!}" maxlength="8" placeholder=" 请输入最高投资总额" data-rule-digits="true" data-msg-digits="请输入整数" data-rule-judgeNumber="#account,<=" data-msg-judgeNumber="最高投资总额不能高于产品总金额" data-rule-checkNumber="#lowestAccount,>=" data-msg-checkNumber="最高投资总额不能小于最低起投金额">
+		      </div>
+		    </div>
+  		</li>
+  		<!-- 按份数购买 -->
+  	    <li class="shareStyle">
+			<div class="form-group">
+		       <label for="sort" class="control-label form-label">总份数：</label>
+		      <div class="input-box">
+		        <input  type="text" class="form-control" name="totalCopies" id="totalCopies" value="${product.totalCopies!}" maxlength="8" disabled="disabled">
+		      </div>
+		    </div>
+  		</li>
+  		 <li class="shareStyle">
+			<div class="form-group">
+		       <label for="sort" class="control-label form-label">每份金额<span style="color:red;">*</span>：</label>
+		      <div class="input-box">
+		        <input onkeyup="value=value.replace(/[^\d]/g,'')"  type="text" class="form-control" name="copyAccount" id="copyAccount" value="${product.copyAccount!}"   maxlength="8" placeholder="请输入每份金额"  data-rule-min="1" data-msg-min="每份金额不小于1"
+		                    data-rule-digits="true" data-msg-digits="请输入整数" data-rule-exactDivision1="#account, #totalCopies" data-msg-exactDivision1="产品金额必须是每份金额的整数倍" required>
+		      </div>
+		    </div>
+  		</li>
+  		 <li class="shareStyle">
+			<div class="form-group">
+		       <label for="sort" class="control-label form-label">最低起投份数：</label>
+		      <div class="input-box">
+		        <input  type="text" class="form-control" name="lowestCopies" id="lowestCopies" value="${product.lowestCopies!}"    maxlength="8" placeholder="请输入最低起投份数"
+		             data-rule-digits="true" data-msg-digits="请输入整数" data-rule-lessThan="#totalCopies" data-msg-lessThan="最低起投份数不能高于产品总份数">
+		      </div>
+		    </div>
+  		</li>
+  		 <li class="shareStyle">
+			<div class="form-group">
+		       <label for="sort" class="control-label form-label">最高投资份数：</label>
+		      <div class="input-box">
+		        <input  type="text" class="form-control" name="mostCopies" id="mostCopies" value="${product.mostCopies!}"    maxlength="8" placeholder="请输入最高投资份数"
+					         data-rule-digits="true" data-msg-digits="请输入整数" data-rule-judgeNumber="#lowestCopies,>=" data-msg-judgeNumber="最高投资份数不能小于最低起投份数。"
+					         data-rule-lessThan="#totalCopies" data-msg-lessThan="最高投资份数不能高于产品总份数">
+		      </div>
+		    </div>
+  		<#--</li>
+  			<li>
+			<div class="form-group">
+		      <label for="sort" class="control-label form-label">利息管理费(%)：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="interestManageRate" id="interestManageRate" value="${product.interestManageRate!}" data-rule-aprval="true" data-msg-aprval="输入的值在0~100之间" maxlength="6" placeholder="请输入利息管理费" required>
+		      </div>
+		    </div>
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label   class="control-label form-label">逾期罚息利率：</label>
+		      <div class="input-box">
+		     	 <input type="text" class="form-control" style="width: auto; display: inline-block; vertical-align: middle;" data-rule-aprval="true" data-msg-aprval="输入的值在0~100之间" maxlength="6" name="overdueFeeRate" id="overdueFeeRate" value="${product.overdueFeeRate!*100}" placeholder="请输入有效的逾期罚息利率" required>&nbsp;%
+		      </div>
+		    </div>
+ 		</li>-->
+ 		<input type='hidden' name='interestManageRate' value='0'/>
+ 		<input type='hidden' name='overdueFeeRate' value='0'/>
+  			<li>
+			<div class="form-group">
+		      <label for="sort" class="control-label form-label">自动还款：</label>
+		      <div class="input-checkbox-box">
+		        <input type="radio" id="autoRepayRadio1" name="autoRepay" value="1"  <#if product.autoRepay==1>checked="checked" </#if>>
+		        <label for="autoRepayRadio1">是</label>
+		        <input type="radio"  id="autoRepayRadio2" name="autoRepay" value="0" <#if product.autoRepay==0>checked="checked" </#if> >
+		        <label for="autoRepayRadio2">否</label>
+		      </div>
+		    </div>
+  		 </li>
+		<li class="full-width">
+			<div class="form-group">
+		      <label for="sort" class="control-label form-label">产品详情<span style="color:red;">*</span>：</label>
+		      <div class="textarea-box">
+		      <#include "include/ueditor.html">
+	          <@showUeditor width=650 height=200 id="productEditor" name="content"  content="${product.content!}"/>
+		      </div>
+		    </div>
+  		</li>
+  	</ul>
+  <@token name="editProductToken"/>
+  </form>
+</div>
+</div>
+<script src="${theme_dir}/static/js/plugins/jquery.suggest.js"></script>
+<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+<script src="${theme_dir}/static/js/upload.js"></script>
+<script type="text/javascript">
+
+function fun1(){
+		switch($("input[name=timeType]:checked").attr("id")){
+		  case "timeTypeRadio1":
+			    $("#repayStyle option").show();
+					$('.appendStyle').html(' <@linkage name="repayStyle" id="repayStyle" nid="repayStyle" class="form-control required" noselect="请选择" />');
+			   break;
+		  case "timeTypeRadio2":
+			$('.appendStyle').html('<select name="repayStyle" autocomplete="off" id="repayStyle" class="form-control required" aria-required="true"><option value="" style="display: none;">请选择</option><option value="2">一次性还款</option></select>');
+			    // $("#repayStyle option").each(function(index,obj){
+			    //           if($(obj).val() == 2){
+			    //               $(obj).prop("selected", true);
+			    //           }else{
+			    //              $(obj).prop("selected", false);
+			    //              $(obj).hide();
+			    //           }
+			    //     });
+			   break;
+	       default:
+		      break;
+		 }
+
+//天标为一次性还款限制
+$("input[name=timeType]").click(function(){
+	 switch($("input[name=timeType]:checked").attr("id")){
+		  case "timeTypeRadio1":
+			    $("#repayStyle option").show();
+			    $("#repayStyle").val("");
+					$('.appendStyle').html(' <@linkage name="repayStyle" id="repayStyle" nid="repayStyle" class="form-control required" noselect="请选择" />');
+			   break;
+		  case "timeTypeRadio2":
+              $('#fixedRepayDay').val('');
+              hisShow($("#fixRepayDayBox"), false);
+							$('.appendStyle').html('<select name="repayStyle" autocomplete="off" id="repayStyle" class="form-control required" aria-required="true"><option value="" style="display: none;">请选择</option><option value="2">一次性还款</option></select>');
+			    // $("#repayStyle option").each(function(index,obj){
+			    //           if($(obj).val() == 2){
+			    //               $(obj).prop("selected", true);
+			    //           }else{
+			    //              $(obj).prop("selected", false);
+			    //              $(obj).hide();
+			    //           }
+			    //     });
+			   break;
+	       default:
+		      break;
+		 }
+ });
+
+$("#form").validate({
+	submitHandler: function(form) {
+	 var mAccount=$("#mostAccount").val();
+	   if(!mAccount){
+	        $("#mostAccount").val($("#account").val());
+	   }
+	   var con = $("#productEditor").html().replace(/<[^>].*?>/g,"");;
+ 	var conLength = con.length;
+	 if($('#stepAccount').val()!=""){
+	 	if(Number($('#stepAccount').val()) > Number($('#account').val())){
+			layer.alert('递增金额不能大于借款总金额', {
+				zIndex:100000,
+				icon: 2
+			}, function() {
+				layer.closeAll();
+				$('#stepAccount').val('')
+			});
+			return false;
+		}
+	 }
+
+	 if(conLength>2000){
+	 	layer.alert('产品详情内容必须少于2000个字符', {
+	 		zIndex:100000,
+			icon: 2
+			}, function() {
+				layer.closeAll();
+			});
+	 	return false
+	 }
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						icon: 6,
+						zIndex:100000,
+						cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入
+	  						}
+					}, function() {
+						console.log("2");
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入
+					});
+				} else {
+					layer.alert(data.msg, {
+						zIndex:100000,
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+})
+
+//借款方
+$("#userName").searchInput({
+	url:"/loan/borrow/autoCompleteBorrower.html"
+});
+
+}
+fun1();
+
+//计息方式
+function fun2(){
+$("input[name=interestStyle]").click(function(){
+	 switch($("input[name=interestStyle]:checked").attr("id")){
+		  case "interestStyle1":
+			    $(".tnContainer").prop("disabled",true)
+			   break;
+		  case "interestStyle2":
+			    $(".tnContainer").prop("disabled",false)
+			   break;
+	       default:
+		      break;
+		 }
+ });
+
+var val = $("#repayStyle").children('option:selected').val();
+if(val == 3 || val == 5){
+	hisShow($("#fixRepayDayBox"), true);
+}else{
+	$('#fixedRepayDay').val('');
+	hisShow($("#fixRepayDayBox"), false);
+}
+
+//还款方式
+$("#repayStyle").on("change", function(){
+	var val = $(this).children('option:selected').val();
+	if(val == 3 || val == 5){
+		hisShow($("#fixRepayDayBox"), true);
+	}else{
+		$('#fixedRepayDay').val('');
+		hisShow($("#fixRepayDayBox"), false);
+	}
+});
+//年利率
+$("#apr").on("keyup", function(){
+	if(!$(this).val()) return false;
+	var _this = $(this)[0];
+	_this.value = $.fn.page.decimalsNumber(_this.value);
+
+});
+//利息管理费
+$("#interestManageRate,#overdueFeeRate").on("keyup", function(){
+	if(!$(this).val()) return false;
+	var _this = $(this)[0];
+	_this.value = $.fn.page.decimalsNumber(_this.value);
+
+}).on("blur", function(){
+	var _val = $(this).val(),
+		val = (_val > 100) ? 100 : (_val <= 0) ? 0 : _val;
+	val = $.fn.page.charTwoDecimals(val);
+	$(this).val(val);
+});
+}
+fun2();
+
+
+
+//选择销售方式
+function saleStyle(){
+	var val = $("#saleStyle").children('option:selected').val(),
+		moneyStyle = $(".moneyStyle"),
+		shareStyle = $('.shareStyle');
+	if(val == 1){//按金额
+		shareStyle.hide();
+		moneyStyle.show();
+	} else if(val == 2){//按份额
+		moneyStyle.hide();
+		shareStyle.show();
+	}
+
+}
+saleStyle();
+
+function fun3(){
+	var $saleStyle = $("#saleStyle");
+	saleStyle($saleStyle);
+	$saleStyle.on("change", function(){
+		saleStyle($(this));
+	});
+}
+fun3();
+
+
+function borrowerSelectFn(id, value){
+	$("#userId").val(id);
+	$("#userName").val(value);
+}
+
+function hisShow(obj, val){
+	if(val == 0){
+		obj.removeClass("show").addClass("hide");
+	} else {
+		obj.removeClass("hide").addClass("show");
+	}
+}
+
+</script>

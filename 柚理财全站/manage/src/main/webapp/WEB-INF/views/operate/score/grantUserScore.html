@@ -1,0 +1,475 @@
+<style type="text/css">
+			.ui-jqgrid .ui-jqgrid-hdiv{
+				position: relative;
+			}
+			.ui-jqgrid .ui-jqgrid-bdiv{
+				margin-top: 0!important;
+			}
+	     	 @media (max-height: 768px){
+		        .ui-jqgrid .ui-jqgrid-bdiv {
+		            margin-top: 39px;
+		            padding-bottom: 0px;
+		            max-height: 100px!important;
+		            overflow-y: auto;
+		            overflow-x: hidden;
+		        }
+		      }
+		      .ui-jqgrid .ui-jqgrid-pager {
+		          position: relative;
+		          bottom: 0px;
+		          background: #fff;
+		          border: 1px solid #EBEBEB;
+		          border-radius: 3px;
+		          z-index: 9;
+		      } 
+		      @media (max-height: 1080px){
+		        .ui-jqgrid .ui-jqgrid-bdiv {
+		            margin-top: 39px;
+		            padding-bottom: 0px;
+		            max-height: 460px!important;
+		            overflow-y: auto;
+		            overflow-x: hidden;
+		        }
+		      }
+		      .search-form {
+		        width: auto;
+		        float: none; 
+		      }
+		      .control-label{
+		        text-align: right;
+		        padding: 7px 0 0 0;
+		      }
+		      .input-group[class*=col-] {
+		          float: none;
+		          padding-right: 15px;
+		          padding-left: 15px;
+		      }
+		      .btn-primary.active:focus, .btn-primary.active:hover,.btn-primary:hover,.btn-primary.active,.btn-primary:active,.btn-primary.active:focus{
+		          background-color: #148871;
+		          border-color:#148871;
+		        }
+		      .form-group{
+		        overflow: hidden;
+		      }
+		      .w50{
+		        width: 50%;
+		      }
+		      #jqGridPager_03_left,#jqGridPager_04_left{
+		        display: none;
+		      }    
+		      #send {
+		      	margin-top: 30px;
+		      	width: 80px;
+		      }
+		</style>
+		<div class="wrapper">
+			<div class="row pt20">
+						<div class="col-sm-12 col-md-12">
+							<div class="search-form">
+									<div class="form-group box_hide row">
+							      	<label for="redenvelopeRuleId" class="col-sm-1 col-md-1 control-label">发放积分</label>
+								      <div class="col-sm-4 col-md-4 input-box">
+										  	  <input type="text" class="form-control" name="scores" id="scores"  placeholder="发放积分">  
+									  </div>
+							    </div>
+							    <div class="row box_hide">
+									<div class="col-sm-12 col-md-12">
+										<div class="search-form">
+												<div class="form-group row">
+										      	<label for="redenvelopeRuleId" class="col-sm-1 col-md-1 control-label">备注</label>
+											      <div class="col-sm-4 col-md-4 input-box">
+													  <textarea rows="" cols="" id="remark" class="form-control" name="remark" required="" maxlength="50" aria-required="true"></textarea>			     
+												  </div>
+										    </div>
+										</div>
+									</div>
+							</div>
+					    <div class="form-group row">
+		                  <label for="redenvelopeRuleId" class="col-sm-1 col-md-1 control-label">选择用户</label>
+		                  <div class="col-sm-4 col-md-4 btn-group">
+		                    <button class="btn btn-primary w50 active">手动选择</button>
+		                    <button class="btn btn-primary w50">excel表格选择</button>
+		                  </div>
+		              </div> 
+							</div>
+						</div>
+				</div>
+				
+				<div class="row mt10" data-tab="true">		
+					<div class="col-sm-5 col-md-5 col-sm-offset-1 col-md-offset-1">
+			      <div class="search-form">
+			        <form>
+			        <div class="form-group row" style="margin:0 -15px 15px 0;">
+			          <label for="redenvelopeRuleId" class="col-sm-2 col-md-2 control-label" style="text-align: left;">可选用户</label>
+			          <div class="col-sm-10 col-md-10 input-group">
+			            <input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入用户名/认证名称/手机号码">
+			            <span class="input-group-btn search-span">
+			                <button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid_03" data-url="/operate/sendMessage/selectableSendUser.html">搜索</button>
+			              </span>
+			          </div>
+			        </div>
+			        </form>             
+			      </div>      
+						<table id="jqGrid_03"></table>
+						<div id="jqGridPager_03"></div>
+					</div>
+					<div class="col-sm-1 col-md-1 switch-btn">
+						<span class="glyphicon glyphicon-circle-arrow-right"></span>
+						<span class="glyphicon glyphicon-circle-arrow-left"></span>
+					</div>
+					
+					<div class="col-sm-5 col-md-5">
+			        <div class="search-form">
+			          <div class="form-group row" style="margin:0 -15px 15px 0;">
+			            <label class="col-sm-2 col-md-2 control-label" style="text-align: left;">已选用户</label>
+			          </div>           
+			        </div>
+							<table id="jqGrid_04"></table>
+			        <form class="form-horizontal" action="/operate/score/doGrantScore.html" id="form" role="form">
+							<@token name="grantScoreToken"/> 
+			        </form>				
+					</div>	
+				</div>
+				 <div class="row mt10" style="display:none" data-tab="true">
+			    <div class="col-sm-6 col-md-6 col-sm-offset-1 col-md-offset-1">
+			      <p class="mb10">请下载 <a href="${image_server_url!}/data/excel/user_score_template.xls" target="_blank">Excel用户信息模板</a>，并按规范填写完成后，上传excel文件。</p>
+			      <div class="mb10">
+			        <span class="upload-excel">点击上传<input type="file" name="file"  class="upload-excel-btn" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="uploadFileInput" id="upload_excel" onchange="return UploadUserExcel('upload_excel','/operate/score/userExcel.html');" title="点击上传excel" /></span>
+			      </div>
+			      <div class="excel-list" style="display:none" id="j-upload-error">
+			        <h5  class="f14 lh24">用户验证失败</h5>
+			        <h6 class="f14 lh24">以下手机号不是平台有效用户，请修改Excel文件后重新上传！</h6>
+			        <p></p>
+			      </div>
+			      <div class="excel-list" style="display:none" id="j-upload-ok">
+			        <h5  class="f14 lh24">用户验证成功</h5>
+			        <h6 class="f14 lh24">所有手机号，均为平台有效用户</h6>
+			      </div>      
+			    </div>
+			  </div>
+			</div>
+			<input type="hidden" name="userIds"  id="userIds"  />
+			<input type="hidden" id="userExcelIds"  />
+			<input type="hidden" id="userExcelScores"  />
+			<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+			<script type="text/javascript">
+				
+			Array.prototype.indexOf = function(val) {
+	            for (var i = 0; i < this.length; i++) {
+	                if (this[i] == val) return i;
+	            }
+				            return -1;
+				};
+			
+				Array.prototype.remove = function(val) {
+				    var index = this.indexOf(val);
+				    if (index > -1) {
+				        this.splice(index, 1);
+				    }
+				};
+			
+				var upType = 0; 
+			
+				function UploadUserExcel(sId, _url) {
+				  $.ajaxFileUpload({
+				    url: _url,
+				    secureuri: false,
+				    fileElementId: sId,
+				    dataType: 'json',
+				    success: function(data) {
+				       $(".excel-list").hide();
+				      if(data.result){        
+				        $("#j-upload-ok").show();
+				        $("#userExcelIds").val(data.userIds);
+				        $("#userExcelScores").val(data.scores);
+				      }else{       
+				        $("#j-upload-error").show();
+				        $("#j-upload-error p").html(data.errorMobile);
+				      }     
+				    },
+				    error:function(){
+			
+				    }
+				  });
+				}
+				
+				$(document).ready(function() {
+				
+				    if( $(".search-form form").length ){
+				      $(".search-form form").submit(function() {
+				
+				        $(".search-form form").find(".search-span button").click();
+				        return false;
+				
+				      });
+				    }
+				
+				    $(".w50").off("click").click(function(event) {
+					      $('.w50').removeClass('active');
+					      $(this).addClass('active');
+					      var index = $('.w50').index($(this));
+					      upType = index;
+					      $("[data-tab]").hide();
+					      $("[data-tab]").eq(index).css('display',"");
+					      if(index == 1){
+					      	$(".box_hide").hide();
+					      }else{
+					      	$(".box_hide").show();
+					      }
+					    });
+				    
+				      //表单提交
+				  $("#form").submit(function(){   
+				    var ids = $('#jqGrid_04').jqGrid('getDataIDs');
+				    $("input[name='userIds']").val(ids.join(","));
+				    //是否选择群发途径
+				    
+				    var scores = "" ;
+				    	if(upType == 0) {
+					    	scores = $("#scores").val().trim();
+					    	if(!scores){
+						      top.layer.alert("请输入发放积分!", {
+						        icon: 5,
+						        shadeClose: true
+						      });
+						      return false;
+						    }
+				    	}else {
+				    		scores = $("#userExcelScores").val().trim();
+					    	if(!scores){
+						      top.layer.alert("请上传发放积分!", {
+						        icon: 5,
+						        shadeClose: true
+						      });
+						      return false;
+						    }
+				    	}
+
+				    	if(upType == 0) {
+				    		var remark = $("#remark").val().trim();
+						    if(!remark) {
+						    	top.layer.alert("请输入备注", {
+							          icon: 5,
+							          shadeClose: true
+							        });
+							        return false;
+						    }
+				    	}
+					    
+					
+					    var userIds = "";
+					
+					    if(upType == 0){
+					      userIds=$('#userIds').val();
+					      if(!userIds){
+					        top.layer.alert("请选择批量发放积分的用户", {
+					          icon: 5,
+					          shadeClose: true
+					        });
+					        return false;
+					      }
+					    } else {
+					    	userIds=$('#userExcelIds').val();
+						      if(!userIds){
+						        top.layer.alert("请上传用户信息", {
+						          icon: 5,
+						          shadeClose: true
+						        });
+						        return false;
+						      }
+					    }
+					    
+					   
+				      $("#form").ajaxSubmit({
+				        type:"POST",
+				        dataType:"json",
+				        data: {scores:scores,userIds:userIds,remark:remark},
+				        success:function(resultMsg){
+				              if(resultMsg.result){
+				                layer.alert(resultMsg.msg, {
+				                  icon: 6,
+				                  cancel: function(index){
+							              layer.closeAll();
+							              gridobj.trigger("reloadGrid"); //重新载入 
+							              //window.location.href = window.location.href;
+				             		 }
+				                }, function(){
+					                  gridobj.trigger("reloadGrid"); //重新载入 
+					                  //window.location.href = window.location.href;
+					                  layer.closeAll();                 
+				                });
+				              }
+				              else
+				              {
+				                layer.alert(resultMsg.msg, {icon: 5});
+				              }                 
+				             }
+				    }); 
+				    return false;
+				  }); 
+				
+				    var GridArray=[];
+				    var span_right = $(".switch-btn span:first"),
+				      span_left = $(".switch-btn span:last");
+				      span_right.click(function(){//添加
+				        var ids = $('#jqGrid_03').jqGrid('getGridParam','selarrrow'),
+				          jqGrid_04_datas = $('#jqGrid_04').jqGrid("getDataIDs");
+				        $.each(ids, function(k,v) {
+				          var flag = true,
+				            thisuuid = "";
+				          thisuuid = $('#jqGrid_03').getRowData(v).id;
+				          $.each(jqGrid_04_datas, function(key,vl) {
+				            if(thisuuid === vl){
+				              flag = false;
+				            }
+				          });
+				          if(flag){
+				            $("#jqGrid_04").jqGrid('addRowData', thisuuid, $('#jqGrid_03').getRowData(v));
+				          }
+				        });
+				      });
+				    span_left.click(function(){
+				      var ids = $('#jqGrid_04').jqGrid('getGridParam','selarrrow'),
+				      len = ids.length;
+				      for(var i = len-1;i>=0 ;i--) {
+				        $("#jqGrid_04").jqGrid("delRowData", ids[i]);
+				      }
+				    });
+				
+				Array.prototype.indexOf = function(val) {
+				            for (var i = 0; i < this.length; i++) {
+				                if (this[i] == val) return i;
+				            }
+				            return -1;
+				};
+				
+				Array.prototype.remove = function(val) {
+				    var index = this.indexOf(val);
+				    if (index > -1) {
+				        this.splice(index, 1);
+				    }
+				};
+				
+				  var url = '/operate/sendMessage/selectableSendUser.html';
+				  //表格初始化
+				
+				  $("#jqGrid_03").jqTreeGrid({
+				    url: url,
+				    height: $(window).height()*0.8*0.55,
+				    multiselect: true,
+				    pager: "#jqGridPager_03",
+				    colModel: [{
+				      label: '用户名',
+				      name: 'userName',
+				      width: 30
+				    },{
+				      label: '认证名称',
+				      name: 'realName',
+				      width: 30
+				    }, {
+				      label: '手机号码',
+				      name: 'mobile',
+				      width: 30
+				    }, {
+				      label: '用户类型',
+				      name: 'userNatureStr',
+				      width: 30
+				    },{
+				      label: 'id',
+				      name: 'id',
+				      width: 10,
+				      hidden:true
+				    }],
+				    beforeSelectRow: function (rowid, e) {
+				        var $myGrid = $(this),
+				            i = $.jgrid.getCellIndex($(e.target).closest('td')[0]),
+				            cm = $myGrid.jqGrid('getGridParam', 'colModel');
+				        return (cm[i].name === 'cb');
+				    },
+				    ondblClickRow: function(rowid,iRow,iCol,e) {
+				      span_right[0].click();
+				    },loadComplete: function (xhr) {
+				      var gridModel=xhr.gridModel;
+				      if (GridArray.length > 0) {
+				        $.each(GridArray, function (i, item) {
+				            $("#jqg_jqGrid_03_" + item).click();
+				        });
+				      }
+				    },onSelectAll:function (aRowids,status) {
+				      if(status){
+				        if(GridArray.length!=0){
+				
+				          $.each(aRowids,function(index, el) {
+				            if(GridArray.indexOf(el)=='-1'){
+				              GridArray.push(el);
+				            }
+				          });
+				
+				        }else{
+				          $.each(aRowids,function(index, el) {            
+				              GridArray.push(el);            
+				          });
+				        }
+				      }else {
+				        //var ret=$("#jqGrid_03").jqGrid('getRowData',aRowids);
+				          $.each(aRowids,function(index, el) {            
+				              GridArray.remove(el);            
+				          });
+				      }
+				    },onSelectRow:function (aRowids,status) {
+				      if(status){
+				        if(GridArray.length!=0){
+				          if(GridArray.indexOf(aRowids)=='-1'){
+				            GridArray.push(aRowids)
+				          }
+				        }else{
+				            GridArray.push(aRowids)
+				        }
+				      }else {
+				        //var ret=$("#jqGrid_03").jqGrid('getRowData',aRowids);
+				        GridArray.remove(aRowids)
+				      }
+				    }
+				  }).jqGrid("setFrozenColumns").navGrid('#jqGridPager_03',
+				                // the buttons to appear on the toolbar of the grid
+				          { edit: false, add: false, del: false, search: false, refresh: false, view: false, position: "left", cloneToTop: false }
+				        );
+				
+				  $("#jqGrid_04").jqTreeGrid({
+				    url:'/operate/sendMessage/selectedSendUser.html?userIds=${userIds!}',
+				    loadonce: true,
+				    height: $(window).height()*0.8*0.7,
+				    //datatype: "local",
+				    rowNum: 500000,
+				    colModel: [{
+				      label: '用户名',
+				      name: 'userName',
+				      width: 50
+				    },{
+				      label: '认证名称',
+				      name: 'realName',
+				      width: 30
+				    }, {
+				      label: '手机号码',
+				      name: 'mobile',
+				      width: 30
+				    }, {
+				      label: '用户类型',
+				      name: 'userNatureStr',
+				      width: 30
+				    },{
+				      label: 'id',
+				      name: 'id',
+				      width: 10,
+				      hidden:true
+				    }],
+				    ondblClickRow: function(rowid,iRow,iCol,e) {
+				      span_left[0].click();
+				    }
+				  });
+				  $(window).bind('resize', function() {
+				    $("#jqGrid_03").setGridHeight($(window).height()*0.8*0.55);
+				    $("#jqGrid_04").setGridHeight($(window).height()*0.8*0.7);
+				  });
+				});
+			</script>

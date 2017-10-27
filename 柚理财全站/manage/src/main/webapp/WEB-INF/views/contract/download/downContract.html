@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>合同管理</title>
+		<#include "include/resources.html">
+		<script type="text/javascript">
+			var url_list = "/contract/download/downContractList.html";
+			$(document).ready(function() {	
+				$('#keywordsSearch').attr('data-url',url_list);
+				$('#conditionSearch').attr('data-url',url_list);				
+			});
+		</script>
+		<style>
+		.layui-layer-loading .layui-layer-loading3{width:200px!important;padding-left: 66px;color: #fff;line-height: 24px;}
+		</style>
+	</head>
+	<body>
+	<style>
+		.showInfoSingleDiv{
+			left:-100px;
+		}
+	</style>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入用户名/借款方/借款名称">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" id="keywordsSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form id="advSearchForm">
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							     <li class="input-group input-group-sm"><span>借款方</span><input type="text" class="form-control" name="borrower" /></li>
+							    <li class="input-group input-group-sm"><span>借款名称</span><input type="text" class="form-control" name="projectName" /></li>
+ 								<li class="input-group input-group-sm"><span>借款期限</span><@linkage name="timeCondition" nid="timeCondition" noselect="不限" class="form-control"/></li>							   
+							    <li class="input-group input-group-sm"><span>还款方式</span><@linkage name="repayStyle" nid="repayStyle" noselect="全部" class="form-control"/></li>
+							    <li class="input-group input-group-sm"><span>借款性质</span><@linkage name="borrowNature" nid="borrowNature" noselect="全部" class="form-control"/></li>
+							    <li><button class="btn btn-sm btn-primary" type="button" id="conditionSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					</div>					
+				</div>
+			</div>
+			
+			<!-- 列表信息 -->
+			<div class="row mt20">
+			<div class="col-md-12">
+				<table id="jqGrid" class="table-td-NoOverflow"></table>
+				<div id="jqGridPager"></div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			<@dictFormatter type = "borrowNature" />
+			<@dictFormatter type = "repayStyle" />
+			<@dictFormatter type = "borrowStatus" />
+
+			var webUrl = "${webUrl}";
+			$(document).ready(function() {		
+				//表格初始化		
+				$("#jqGrid").jqTreeGrid({
+						url : url_list,
+						multiselect : false,
+						colModel : [
+								{
+									label : "用户名",
+									name : "userName",
+									width : 150
+								},
+								{
+									label : "借款方",
+									name : "borrower",
+									align : "center" ,
+									width : 150
+								},
+								{
+									label : "借款名称",
+									name : "projectName",
+									align : "center" ,
+									width : 150,
+			                    	formatter: function(val, options, rowObject){	
+										var btns = '';
+										var	id = rowObject.id;
+										btns += '<a href="javascript:;" onclick=$.fn.treeGridOptions.checkFun(this,"'+id+'") data-tid="jqGrid" data-url="/loan/borrow/borrowView.html" data-title="借款详情">'+val+'</a>';	
+										return btns;
+									}
+								},
+								{
+									label : "借款金额",
+									name : "account",
+									align : "center" ,
+									width : 100
+								},
+								{
+									label : "进度",
+									name : "scales",
+									align : "center" ,
+									width : 100,
+									formatter : function(val, options,rowObject) {
+										return (val?val+"%":0);
+									}
+								},
+								{
+									label : "年化利率",
+									name : "apr",
+									align : "center" ,
+									formatter : function(val, options,rowObject) {
+										return val+"%" ;
+									},
+									width : 100
+								},
+								{
+									label : "借款期限",
+									name : "timeLimitStr",
+									align : "center" ,
+									width : 80
+								},
+								{
+									label : "状态",
+									name : "status",
+									align : "center" ,
+									width : 100,
+									formatter : borrowStatusFormatter
+								},
+								{
+									label : "还款方式",
+									name : "repayStyle",
+									align : "center" ,
+									width : 100,
+									formatter : repayStyleFormatter
+								},
+								{
+									label : "借款性质",
+									name : "borrowNature",
+									align : "center" ,
+									width : 100 ,
+									formatter : borrowNatureFormatter
+								},
+								{
+									label : "剩余金额",
+									name : "notRepayTotal",
+									align : "center" ,
+									width : 100
+								},
+								{
+									label : "成立时间",
+									name : "reviewTime",
+									align : "center" ,
+									width : 100 ,
+									formatter : function(val, options,index) {
+										return $.fn.page.transFormatDate(index.reviewTime);
+									}
+								},
+								{
+									label: "操作",
+									name: "cz",
+									width: 100,
+									align: "center",
+									formatter: function(val, options, rowObject){	
+										var btns = '<a href="/loan/borrow/downloadProjectProtocol.html?projectId='+rowObject.projectId+'">下载</a>&nbsp;|&nbsp;'
+													+'<a href="javascript:;" onclick=$.fn.treeGridOptions.checkFun(this,"") data-tid="jqGrid" data-url="/protocol/protocol/getProtocolView.html?projectId='+rowObject.projectId+'" data-title="查看">查看</a>';
+										return btns;
+									}
+									
+								} ],
+					}).jqGrid("setFrozenColumns").navGrid(
+					'#jqGridPager',
+					{
+						edit : false,
+						add : false,
+						del : false,
+						search : false,
+						refresh : true,
+						view : false,
+						position : "left",
+						cloneToTop : false
+					});
+				});
+		</script>
+			
+		</div>
+	</body>
+</html>

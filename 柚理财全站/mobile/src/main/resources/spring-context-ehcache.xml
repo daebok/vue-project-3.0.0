@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/cache
+           http://www.springframework.org/schema/cache/spring-cache.xsd"
+            default-lazy-init="true">
+
+	<description>spring-ehcache Configuration</description>
+	
+	<!-- 加载配置属性文件 -->
+	<context:property-placeholder ignore-unresolvable="true" location="classpath:config.properties" />
+	
+    <context:annotation-config/>
+    <bean id="ehcacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" >
+        <property name="configLocation" value="classpath:${ehcache.configFile}"/>
+    </bean>
+
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager" >
+        <property name="cacheManager" ref="ehcacheManager"/>
+        <property name="transactionAware" value="true"/>
+    </bean>
+    
+	
+	<!-- 启用缓存注解功能，这个是必须的，否则注解不会生效，另外，该注解一定要声明在spring主配置文件中才会生效 -->
+	<cache:annotation-driven cache-manager="cacheManager" proxy-target-class="true" key-generator="rdKeyGenerator"/>
+	<!-- 自定义主键生成策略 -->
+	<bean id="rdKeyGenerator" class="com.rd.ifaes.common.jedis.RdKeyGenerator"/>
+
+</beans>

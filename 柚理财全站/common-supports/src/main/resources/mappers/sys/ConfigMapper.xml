@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.sys.mapper.ConfigMapper">
+	<resultMap type="com.rd.ifaes.core.sys.domain.Config" id="configResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="code" column="CODE"/>
+		<result property="configName" column="CONFIG_NAME"/>
+		<result property="configValue" column="CONFIG_VALUE"/>
+		<result property="configType" column="CONFIG_TYPE"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="status" column="STATUS"/>
+		<result property="remark" column="REMARK"/>
+		<result property="editEnable" column="edit_enable"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		CODE,
+		CONFIG_NAME,
+		CONFIG_VALUE,
+		CONFIG_TYPE,
+		CREATE_TIME,
+		STATUS,
+		REMARK,
+		edit_enable
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{code},
+		#{configName},
+		#{configValue},
+		#{configType},
+		#{createTime},
+		#{status},
+		#{remark},
+		#{editEnable}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+        	and edit_enable = 1 
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="code != null and code != ''">and CODE like concat('%',#{code},'%')</if>
+            <if test="configName != null and configName != ''">and CONFIG_NAME like concat('%',#{configName},'%')</if>
+            <if test="configValue != null and configValue != ''">and CONFIG_VALUE like concat('%',#{configValue},'%') </if>
+            <if test="configType != null and configType != ''">and CONFIG_TYPE = #{configType}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+            <if test="remark != null and remark != ''">and REMARK = #{remark}</if>
+			<if test="keywords != null and keywords != ''">and ( CODE like concat('%',#{keywords},'%')  OR CONFIG_NAME like concat('%',#{keywords},'%')  OR CONFIG_TYPE like concat('%',#{keywords},'%') )</if>
+        </trim>
+        <if test="page!=null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+          <if test="page == null or page.sort == null or page.sort == ''">
+        	order by CONFIG_TYPE asc,CODE asc,CREATE_TIME desc
+        </if>
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.sys.domain.Config">
+		insert into sys_config( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into sys_config( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+				#{item.uuid},
+				#{item.code},
+				#{item.configName},
+				#{item.configValue},
+				#{item.configType},
+				#{item.createTime},
+				#{item.status},
+				#{item.remark},
+				'1'
+		)
+		</foreach>
+	</insert>
+
+	<update id="delete" parameterType="String">
+		update sys_config set status = 0
+		where uuid = #{uuid}
+	</update>
+	
+	<update id="deleteBatch">
+		update sys_config set status = 0
+		where uuid in
+		<foreach collection="array" item="ids" open="(" separator="," close=")">  
+            #{ids} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update sys_config set set status = 0
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.sys.domain.Config">
+		update sys_config 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="code != null and code != ''">CODE = #{code},</if>
+            <if test="configName != null and configName != ''">CONFIG_NAME = #{configName},</if>
+            <if test="configValue != null and configValue != ''">CONFIG_VALUE = #{configValue},</if>
+            <if test="configType != null and configType != ''">CONFIG_TYPE = #{configType},</if>
+            <if test="status != null and status != ''">STATUS = #{status},</if>
+            <if test="remark != null and remark != ''">REMARK = #{remark},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="configResultMap">
+        select <include refid="table_columns" />
+        from sys_config where edit_enable = 1
+    </select>
+
+    <select id="findList" resultMap="configResultMap">
+        select <include refid="table_columns" />
+        from sys_config
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from sys_config
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="configResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from sys_config
+		where uuid = #{id} and edit_enable = 1
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<!-- 校验code是否重复 -->
+	<select id="checkCode" resultType="int">
+		select count(UUID) from sys_config where CODE = #{code} and edit_enable = 1
+		<if test="uuid != null and uuid != ''"> and UUID != #{uuid}</if>
+	</select>
+	
+	<select id="getByCode" resultMap="configResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from sys_config
+		where code = #{code}
+	</select>
+
+
+</mapper>

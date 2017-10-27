@@ -1,0 +1,127 @@
+<div class="form-tips-content">
+<input type="hidden" id="image_server_url" value="${image_server_url}">
+  <form class="form-horizontal" action="/column/article/articleAdd.html" id="form" role="form">
+  	<ul class="form-item">
+  		<li>
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">文章名称：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="title" id="title" maxlength="32" placeholder="请输入文章名称" required>
+		      </div>
+		    </div>	
+  		</li>
+  		 <li>
+			<div class="form-group">
+		      <label for="sort" class="control-label form-label">排序值：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="sort" id="sort" maxlength="10" placeholder="请输入排序值" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" 
+				onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'0')}else{this.value=this.value.replace(/\D/g,'')}">
+		      </div>
+		    </div>	
+  		</li>
+  		 <li>
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">文章链接：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="url" id="url" maxlength="255" placeholder="请输入链接">
+		      </div>
+		    </div>	
+  		</li>
+  		 <li>
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">简介：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="remark" id="remark" maxlength="512" placeholder="请输入简介" required>
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="username" class="control-label form-label">所属类别：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" readonly="readonly" name="sectionName" id="sectionName" onclick="$.fn.treeGridOptions.treeselect(this)" data-url="/column/section/sectionTreePage.html?parentId=${parentId}" placeholder="请选择父级菜单" value="${sectionName}" />
+		      <input type="hidden" name="sectionUuid" id="sectionUuid" value="${sectionUuid}"/>
+		      <input type="hidden" name="sectionCode" id="sectionCode" value="${sectionCode}"/>
+		      </div>
+		    </div>	
+  		</li>
+  		<li class="full-width">
+  			<div class="form-group">
+		      <label for="name" class="control-label form-label">图片：</label>
+		       <div class="">
+					<div id="uploadArticle" class="uploadWrap" data-arr="picPath">
+						  <ul id="articlePagePic" class="photoUpload" style="overflow:hidden">
+					        	<li class="addFileBtn">
+					            	<input type="file" name="articlePicPath"  accept="image/gif, image/jpeg,image/png" class="uploadFileInput" id="articlePicPath" onchange="return ajaxFileUpload('articlePicPath','/imageUp.jsp?editorid=article','picPath');" title="点击上传图片" />
+					            </li>
+					      </ul>
+					</div>
+				</div>
+		    </div>	
+		</li>
+		<li class="full-width">
+				<div class="form-group">
+					<label for="remark" class="control-label form-label">文章详情：</label>
+					<div class="textarea-box">
+					<#include "include/ueditor.html">
+              		<@showUeditor width=650 height=200 id="articleEditor" name="content" content="" readOnly=false />
+					</div>
+				</div>
+			</li>
+  	</ul>
+  	 <input type="hidden" name="deleteFlag" id="deleteFlag" value="0"/>
+  	<@token/>
+  </form>
+</div>
+<script src="${theme_dir}/static/js/plugins/jquery.suggest.js"></script>
+<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+<script src="${theme_dir}/static/js/upload.js"></script>
+
+<script type="text/javascript">
+
+$(".photoUpload a:first").fancybox();
+
+var dd=0;
+
+$("#form").validate({
+  submitHandler:function(form){
+	  dd++;
+	  if(dd>1){
+		  return false
+	  }
+		$(form).ajaxSubmit({
+			type:"post",
+			dataType:"json",
+			success:function(data){
+	        	if(data.result){
+	        		layer.alert(data.msg, {
+	        			zIndex:100000,
+						icon : 6,
+						cancel: function(index){
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入
+							dd=0
+  						}
+					}, function() {
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入
+						dd=0
+					});
+	        	}else{
+	        		layer.alert(data.msg, {zIndex:100000,icon: 5});
+					dd=0
+	        	} 			        	
+	    	}
+		});
+    }    
+});
+//点击添加按钮时，判断图片上传数量
+$('#uploadArticle').find('.addFileBtn').click(function(){
+	var num = $('#uploadArticle').find('li.addFileBtn').siblings().length;
+	if(num == 1){
+		alert("上传文件数量不能超过1张");
+		return false;
+	}
+	
+});
+</script>

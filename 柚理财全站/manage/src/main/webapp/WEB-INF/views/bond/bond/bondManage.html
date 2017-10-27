@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>债权记录</title>
+		<#include "include/resources.html">
+		<script type="text/javascript">
+			var url_list = "/bond/bond/bondList.html";
+			$(document).ready(function() {	
+				$('#keywordsSearch').attr('data-url',url_list);
+				$('#conditionSearch').attr('data-url',url_list);				
+			});
+		</script>
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入债权名称或出让人名称">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" id="keywordsSearch">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>
+					</div>
+					<div class="search-form-adv ml10">
+						<form>
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+								<li class="input-group input-group-sm"><span>债权名称</span><input type="text" class="form-control search-input" name="bondName" id="bondName" placeholder="请输入债权名称"></li>
+							    <li class="input-group input-group-sm"><span>状态</span><@linkage name="status" nid="bondStatus" noselect="不限" class="form-control"/> </li>							    
+							    <li><button class="btn btn-sm btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/bond/bond/bondList.html">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>					
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					</div>					
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					</div>					
+				</div>
+			</div>
+			
+			<!-- 列表信息 -->
+			<#include "/bond/bond/bondList.html">
+			
+		</div>
+	</body>
+</html>

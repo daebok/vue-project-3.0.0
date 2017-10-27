@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.user.mapper.UserAuthSignLogMapper">
+	<resultMap type="com.rd.ifaes.core.user.domain.UserAuthSignLog" id="userAuthSignLogResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="authOption" column="AUTH_OPTION"/>
+		<result property="serviceTypes" column="SERVICE_TYPES"/>
+		<result property="orderNo" column="ORDER_NO"/>
+		<result property="respDesc" column="RESP_DESC"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="addIp" column="ADD_IP"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		AUTH_OPTION,
+		SERVICE_TYPES,
+		ORDER_NO,
+		RESP_DESC,
+		CREATE_TIME,
+		ADD_IP
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{authOption},
+		#{serviceTypes},
+		#{orderNo},
+		#{respDesc},
+		#{createTime},
+		#{addIp}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="authOption != null and authOption != ''">and AUTH_OPTION = #{authOption}</if>
+            <if test="serviceTypes != null and serviceTypes != ''">and SERVICE_TYPES = #{serviceTypes}</if>
+            <if test="orderNo != null and orderNo != ''">and ORDER_NO = #{orderNo}</if>
+            <if test="respDesc != null and respDesc != ''">and RESP_DESC = #{respDesc}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="addIp != null and addIp != ''">and ADD_IP = #{addIp}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.user.domain.UserAuthSignLog">
+		insert into user_auth_sign_log( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">
+		BEGIN		
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into user_auth_sign_log( <include refid="table_columns" /> ) 
+		values 
+		( 
+		#{item.uuid},
+				#{item.userId},
+				#{item.authOption},
+				#{item.serviceTypes},
+				#{item.orderNo},
+				#{item.respDesc},
+				#{item.createTime},
+				#{item.addIp}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from user_auth_sign_log
+		where uuid = #{uuid}
+	</delete>
+
+	<update id="update" parameterType="com.rd.ifaes.core.user.domain.UserAuthSignLog">
+		update user_auth_sign_log 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="userId != null and userId != ''">USER_ID = #{userId},</if>
+            <if test="authOption != null and authOption != ''">AUTH_OPTION = #{authOption},</if>
+            <if test="serviceTypes != null and serviceTypes != ''">SERVICE_TYPES = #{serviceTypes},</if>
+            <if test="orderNo != null and orderNo != ''">ORDER_NO = #{orderNo},</if>
+            <if test="respDesc != null and respDesc != ''">RESP_DESC = #{respDesc},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="userAuthSignLogResultMap">
+        select <include refid="table_columns" />
+        from user_auth_sign_log
+    </select>
+
+    <select id="findList" resultMap="userAuthSignLogResultMap">
+        select <include refid="table_columns" />
+        from user_auth_sign_log
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from user_auth_sign_log
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="userAuthSignLogResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_auth_sign_log
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<!-- 更新结果状态 -->
+	<update id="updateRespDescByOrder" parameterType="com.rd.ifaes.core.user.domain.UserAuthSignLog">
+	    update user_auth_sign_log
+	    set resp_desc = #{respDesc} 
+	    where order_no = #{orderNo}
+	</update>
+
+</mapper>

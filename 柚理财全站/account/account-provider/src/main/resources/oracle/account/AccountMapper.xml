@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.account.mapper.AccountMapper">
+	<resultMap type="com.rd.account.domain.Account" id="accountResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="accountCode" column="ACCOUNT_CODE"/>
+		<result property="accountType" column="ACCOUNT_TYPE"/>
+		<result property="parentCode" column="PARENT_CODE"/>
+		<result property="total" column="TOTAL"/>
+		<result property="useMoney" column="USE_MONEY"/>
+		<result property="noUseMoney" column="NO_USE_MONEY"/>
+		<result property="status" column="STATUS"/>
+		<result property="createTime" column="CREATE_TIME"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		ACCOUNT_CODE,
+		ACCOUNT_TYPE,
+		PARENT_CODE,
+		TOTAL,
+		USE_MONEY,
+		NO_USE_MONEY,
+		STATUS,
+		CREATE_TIME
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{accountCode},
+		#{accountType},
+		#{parentCode},
+		#{total},
+		#{useMoney},
+		#{noUseMoney},
+		#{status},
+		#{createTime}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="accountCode != null and accountCode != ''">and ACCOUNT_CODE = #{accountCode}</if>
+            <if test="accountType != null and accountType != ''">and ACCOUNT_TYPE = #{accountType}</if>
+            <if test="parentCode != null and parentCode != ''">and PARENT_CODE = #{parentCode}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+            <if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.account.domain.Account">
+		insert into account( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		BEGIN	
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into account( <include refid="table_columns" /> ) 
+		values 
+		( 
+			#{item.uuid},
+			#{item.userId},
+			#{item.accountCode},
+			#{item.accountType},
+			#{item.parentCode},
+			#{item.total},
+			#{item.useMoney},
+			#{item.noUseMoney},
+			#{item.status},
+			#{item.createTime}
+		)
+		</foreach>
+		; END ;
+	</insert>
+	
+	<update id="delete" parameterType="String">
+		update account set status = '0'
+		where uuid = #{uuid}
+	</update>
+	
+	<update id="deleteBatch">
+		update account set status = '0'
+		where uuid in
+		<foreach collection="array" item="uuid" open="(" separator="," close=")">  
+            #{uuid} 
+        </foreach>		
+	</update>
+
+	<update id="updateAccount" parameterType="com.rd.account.model.AccountModel">
+		update account  set  total =total+ #{useMoney}+#{noUseMoney},
+			   use_money=use_money + #{useMoney} ,
+			   no_use_money = no_use_money + #{noUseMoney}
+         where  user_id = #{userId}
+             and account_code = #{accountCode}
+             and use_money+ #{useMoney} &gt;= 0
+             and no_use_money+#{noUseMoney} &gt;= 0
+	</update>
+
+    <select id="findAll" resultMap="accountResultMap">
+        select <include refid="table_columns" />
+        from account
+    </select>
+
+    <select id="findList" resultMap="accountResultMap">
+        select <include refid="table_columns" />
+        from account
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from account
+        <include refid="page_where" />
+    </select>
+
+    <select id="get" resultMap="accountResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from account
+		where uuid = #{uuid}
+	</select>
+	
+	<select id="getByUserId" resultType="String" parameterType="com.rd.account.model.AccountModel">
+        select uuid
+        from account
+        where user_id = #{userId}
+        and account_code = #{accountCode}
+    </select>
+    
+	<select id="getMoneyByUserId" resultMap="accountResultMap" parameterType="com.rd.account.model.AccountModel">
+        select use_money, no_use_money
+        from account
+        where user_id = #{userId}
+        and account_code = #{accountCode}
+    </select>
+	<!-- 其他自定义SQL -->
+	<!-- 获取起始日期前一天数值 -->
+	<select id="getTotalUseMoney" resultType="BigDecimal" >
+		select sum(use_money)
+		from account 
+	</select>
+	
+</mapper>

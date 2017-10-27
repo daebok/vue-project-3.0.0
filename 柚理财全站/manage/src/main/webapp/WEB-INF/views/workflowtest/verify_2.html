@@ -1,0 +1,65 @@
+<div class="form-tips-content">
+  <form class="form-horizontal" action="/workflowtest/verify_1.html" id="form" role="form">
+  	<input  type="hidden" id="taskId" name="taskId" value="${taskId}" />
+	<input  type="hidden" id="processId" name="processId" value="${processTest.processId}" />
+	<input  type="hidden" id="actionFlag" name="actionFlag" />
+  	<ul class="form-item">
+  		<li>
+			<div class="form-group">
+		      <label for="uuid" class="control-label form-label">UUID：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="uuid" id="uuid" value="${processTest.uuid}" maxlength="50" placeholder="请输入" required minlength="2">
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="title" class="control-label form-label">标题：</label>
+		      <div class="input-box">
+		      <textarea rows="" cols="" class="form-control" name="title" maxlength="200" id="title">${processTest.title}</textarea>
+		      </div>
+		    </div>	
+  		</li>
+  		历史办理意见列表
+  		
+  		<li>
+			<div class="form-group">
+		      <label for="remark" class="control-label form-label">办理意见填写：</label>
+		      <div class="input-box">
+		      <textarea rows="3" cols="4" class="form-control" name="notionContent" maxlength="200" id="notion_remark"></textarea>
+		      </div>
+		    </div>	
+  		</li>	
+  	</ul>
+  	<@token/>
+  </form>
+</div>
+<script>
+$("#form").validate({
+	ignore: ".ignore",
+	submitHandler:function(form){ 
+		$(form).ajaxSubmit({
+			type:"post",
+			dataType:"json",
+			success:function(data){
+    	if(data.result){
+    		layer.alert(data.msg, {
+    			icon: 6,
+    			cancel: function(index){
+					layer.closeAll();
+					gridobj.trigger("reloadGrid"); //重新载入 
+					}
+    		}, function(){
+    			layer.closeAll();
+				gridobj.trigger("reloadGrid"); //重新载入  
+    		});
+    	}
+    	else
+    	{
+    		layer.alert(data.msg, {icon: 5});
+    	} 			        	
+	    }
+		});
+	}    
+});
+</script>

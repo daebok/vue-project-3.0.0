@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.statistic.mapper.StatisticRepayInfoMapper">
+	<resultMap type="com.rd.ifaes.core.statistic.domain.StatisticRepayInfo" id="statisticRepayInfoResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="recordDate" column="RECORD_DATE"/>
+		<result property="waitTotal" column="WAIT_TOTAL"/>
+		<result property="biggestOne" column="BIGGEST_ONE"/>
+		<result property="biggestOneRatio" column="BIGGEST_ONE_RATIO"/>
+		<result property="biggestTen" column="BIGGEST_TEN"/>
+		<result property="biggestTenRatio" column="BIGGEST_TEN_RATIO"/>
+		<result property="overdueNum" column="OVERDUE_NUM"/>
+		<result property="overdueRatio" column="OVERDUE_RATIO"/>
+		<result property="overdueAccount" column="OVERDUE_ACCOUNT"/>
+		<result property="overdueAccountRatio" column="OVERDUE_ACCOUNT_RATIO"/>
+		<result property="oldOverdueAccount" column="OLD_OVERDUE_ACCOUNT"/>
+		<result property="oldOverdueRatio" column="OLD_OVERDUE_RATIO"/>
+		<result property="commutationNum" column="COMMUTATION_NUM"/>
+		<result property="commutationAccount" column="COMMUTATION_ACCOUNT"/>
+		<result property="overdueBorrower" column="OVERDUE_BORROWER"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		RECORD_DATE,
+		WAIT_TOTAL,
+		BIGGEST_ONE,
+		BIGGEST_ONE_RATIO,
+		BIGGEST_TEN,
+		BIGGEST_TEN_RATIO,
+		OVERDUE_NUM,
+		OVERDUE_RATIO,
+		OVERDUE_ACCOUNT,
+		OVERDUE_ACCOUNT_RATIO,
+		OLD_OVERDUE_ACCOUNT,
+		OLD_OVERDUE_RATIO,
+		COMMUTATION_NUM,
+		COMMUTATION_ACCOUNT,
+		OVERDUE_BORROWER
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{recordDate},
+		#{waitTotal},
+		#{biggestOne},
+		#{biggestOneRatio},
+		#{biggestTen},
+		#{biggestTenRatio},
+		#{overdueNum},
+		#{overdueRatio},
+		#{overdueAccount},
+		#{overdueAccountRatio},
+		#{oldOverdueAccount},
+		#{oldOverdueRatio},
+		#{commutationNum},
+		#{commutationAccount},
+		#{overdueBorrower}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+			<if test="recordDate != null">and RECORD_DATE = #{recordDate}</if>
+			<if test="waitTotal != null">and WAIT_TOTAL = #{waitTotal}</if>
+			<if test="biggestOne != null">and BIGGEST_ONE = #{biggestOne}</if>
+			<if test="biggestOneRatio != null">and BIGGEST_ONE_RATIO = #{biggestOneRatio}</if>
+			<if test="biggestTen != null">and BIGGEST_TEN = #{biggestTen}</if>
+			<if test="biggestTenRatio != null">and BIGGEST_TEN_RATIO = #{biggestTenRatio}</if>
+			<if test="overdueNum != null">and OVERDUE_NUM = #{overdueNum}</if>
+			<if test="overdueRatio != null">and OVERDUE_RATIO = #{overdueRatio}</if>
+			<if test="overdueAccount != null">and OVERDUE_ACCOUNT = #{overdueAccount}</if>
+			<if test="overdueAccountRatio != null">and OVERDUE_ACCOUNT_RATIO = #{overdueAccountRatio}</if>
+			<if test="oldOverdueAccount != null">and OLD_OVERDUE_ACCOUNT = #{oldOverdueAccount}</if>
+			<if test="oldOverdueRatio != null">and OLD_OVERDUE_RATIO = #{oldOverdueRatio}</if>
+			<if test="commutationNum != null">and COMMUTATION_NUM = #{commutationNum}</if>
+			<if test="commutationAccount != null">and COMMUTATION_ACCOUNT = #{commutationAccount}</if>
+			<if test="overdueBorrower != null">and OVERDUE_BORROWER = #{overdueBorrower}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.statistic.domain.StatisticRepayInfo">
+		insert into statistic_repay_info( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">	
+		BEGIN	
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into statistic_repay_info( <include refid="table_columns" /> ) 
+		values 
+		( 
+			#{item.uuid},
+			#{item.recordDate},
+			#{item.waitTotal},
+			#{item.biggestOne},
+			#{item.biggestOneRatio},
+			#{item.biggestTen},
+			#{item.biggestTenRatio},
+			#{item.overdueNum},
+			#{item.overdueRatio},
+			#{item.overdueAccount},
+			#{item.overdueAccountRatio},
+			#{item.oldOverdueAccount},
+			#{item.oldOverdueRatio},
+			#{item.commutationNum},
+			#{item.commutationAccount},
+			#{item.overdueBorrower}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from statistic_repay_info
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update statistic_repay_info set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update statistic_repay_info set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.statistic.domain.StatisticRepayInfo">
+		update statistic_repay_info 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="recordDate != null">RECORD_DATE = #{recordDate},</if>
+			<if test="waitTotal != null">WAIT_TOTAL = #{waitTotal},</if>
+			<if test="biggestOne != null">BIGGEST_ONE = #{biggestOne},</if>
+			<if test="biggestOneRatio != null">BIGGEST_ONE_RATIO = #{biggestOneRatio},</if>
+			<if test="biggestTen != null">BIGGEST_TEN = #{biggestTen},</if>
+			<if test="biggestTenRatio != null">BIGGEST_TEN_RATIO = #{biggestTenRatio},</if>
+			<if test="overdueNum != null">OVERDUE_NUM = #{overdueNum},</if>
+			<if test="overdueRatio != null">OVERDUE_RATIO = #{overdueRatio},</if>
+			<if test="overdueAccount != null">OVERDUE_ACCOUNT = #{overdueAccount},</if>
+			<if test="overdueAccountRatio != null">OVERDUE_ACCOUNT_RATIO = #{overdueAccountRatio},</if>
+			<if test="oldOverdueAccount != null">OLD_OVERDUE_ACCOUNT = #{oldOverdueAccount},</if>
+			<if test="oldOverdueRatio != null">OLD_OVERDUE_RATIO = #{oldOverdueRatio},</if>
+			<if test="commutationNum != null">COMMUTATION_NUM = #{commutationNum},</if>
+			<if test="commutationAccount != null">COMMUTATION_ACCOUNT = #{commutationAccount},</if>
+			<if test="overdueBorrower != null">OVERDUE_BORROWER = #{overdueBorrower},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="statisticRepayInfoResultMap">
+        select <include refid="table_columns" />
+        from statistic_repay_info
+    </select>
+
+    <select id="findList" resultMap="statisticRepayInfoResultMap">
+        select <include refid="table_columns" />
+        from statistic_repay_info
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from statistic_repay_info
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="statisticRepayInfoResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from statistic_repay_info
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<select id="getRepayList" resultType="BigDecimal" >
+		select capital from(
+			select sum(pr.capital) from project_repayment pr 
+			INNER JOIN borrow b on pr.project_id = b.project_id 
+			where pr.status = 0 
+			GROUP BY pr.user_id ORDER BY sum(pr.capital) DESC
+		) where ROWNUM &lt;= 10
+	</select>
+
+	<select id="getRepayTotal" resultType="BigDecimal"  >
+		select sum(pr.capital) from project_repayment pr 
+		INNER JOIN borrow b on pr.project_id = b.project_id 
+		where pr.status = 0 
+	</select>
+	
+	<resultMap type="com.rd.ifaes.core.statistic.domain.StatisticRepayInfo" id="repayInfoExpandResultMap">
+		<result property="overdueNum" column="OVERDUE_NUM"/>
+		<result property="overdueAccount" column="OVERDUE_ACCOUNT"/>
+		<result property="oldOverdueAccount" column="OLD_OVERDUE_ACCOUNT"/>
+		<result property="commutationNum" column="COMMUTATION_NUM"/>
+		<result property="commutationAccount" column="COMMUTATION_ACCOUNT"/>
+		<result property="overdueBorrower" column="OVERDUE_BORROWER"/>
+		<result property="totalAccount" column="TOTAL_ACCOUNT"/>
+		<result property="totalCount" column="TOTAL_COUNT"/>
+		<result property="waitAccount" column="WAIT_ACCOUNT"/>
+		<result property="waitNum" column="WAIT_NUM"/>
+	</resultMap>
+	
+	<select id="getOverdueInfo" resultMap="repayInfoExpandResultMap" >
+		select
+		nvl(sum(pr.capital),0) as totalAccount,																	<!-- 总金额 -->
+		count(DISTINCT pr.project_id) as totalCount,																<!-- 总项目数 -->
+		nvl(sum(case when pr.status = '0' then pr.capital ELSE 0 end),0) as waitAccount,   						<!-- 待偿总额 -->
+		count(DISTINCT pr.project_id,case when pr.status = '0' then 1 ELSE null end) as waitNum, 				 	<!-- 待偿项目数 -->
+		count(DISTINCT pr.project_id,case when pr.status = '0' and late_days &gt; 0 then 1 ELSE null end) as overdueNum,<!-- 逾期项目数 -->
+		nvl(sum(case when pr.status = '0' and pr.late_days &gt; 0 then pr.capital ELSE 0 end),0) as overdueAccount,	<!-- 逾期项目金额 -->
+		nvl(sum(case when pr.late_days &gt; 0 then pr.capital ELSE 0 end),0) as oldOverdueAccount,						<!-- 历史逾期金额 -->
+		nvl(sum(case when pr.late_days &gt; 0 and pr.repay_type in (2,3) then pr.capital ELSE 0 end),0) as commutationAccount,<!-- 累计逾期代偿金额 -->
+		count(DISTINCT pr.project_id,case when pr.late_days &gt; 0 and pr.repay_type in (2,3) then 1 ELSE null end) as commutationNum,<!-- 累计逾期代偿笔数 -->
+		count(DISTINCT pr.user_id,case when pr.late_days &gt; 0 then 1 ELSE null end) as overdueBorrower					<!-- 逾期人数 -->
+		from project_repayment pr 
+		INNER JOIN borrow b on pr.project_id = b.project_id
+	</select>
+	
+	<select id="getRepayInfoByDate" resultMap="statisticRepayInfoResultMap">
+		select <include refid="table_columns" />
+		from statistic_repay_info where record_date = #{recordDate}
+	</select>
+	
+</mapper>

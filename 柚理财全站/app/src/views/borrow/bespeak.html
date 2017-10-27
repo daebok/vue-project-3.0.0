@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<#assign pageFlag="bespeak">
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>借款</title>
+    <link rel="stylesheet" type="text/css" href="/common.css"/>
+    <link rel="stylesheet" type="text/css" href="/bespeak.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+<script type="text/javascript">
+
+        // var areajson = [{"value":"110000","label":"北京市","children":[{"value":"110100","label":"东城区"},{"value":"110200","label":"西城区"},{"value":"110500","label":"朝阳区"},{"value":"110600","label":"丰台区"},{"value":"110700","label":"石景山区"},{"value":"110800","label":"海淀区"},{"value":"110900","label":"门头沟区"},{"value":"111100","label":"房山区"},{"value":"111200","label":"通州区"},{"value":"111300","label":"顺义区"},{"value":"111400","label":"昌平区"},{"value":"111500","label":"大兴区"},{"value":"111600","label":"怀柔区"},{"value":"111700","label":"平谷区"},{"value":"112800","label":"密云县"},{"value":"112900","label":"延庆县"}]},];
+        // var bespeakTimeList = [{"createTime":null,"dateType":"","dateTypeTime":"","dictType":"bespeakLimitTime","endTime":"","exportTitle":"","expression":"","fields":[],"hearders":[],"itemName":"1-3个月","itemValue":"1","keywords":"","newRecord":false,"page":null,"remark":"","sort":1,"startTime":"","status":"1","uuid":"53eb1e8cfc504117a5285d2cd551b5c7"},{"createTime":null,"dateType":"","dateTypeTime":"","dictType":"bespeakLimitTime","endTime":"","exportTitle":"","expression":"","fields":[],"hearders":[],"itemName":"3-6个月","itemValue":"2","keywords":"","newRecord":false,"page":null,"remark":"","sort":2,"startTime":"","status":"1","uuid":"7967ed2cb87442799c36556c68fce246"},{"createTime":null,"dateType":"","dateTypeTime":"","dictType":"bespeakLimitTime","endTime":"","exportTitle":"","expression":"","fields":[],"hearders":[],"itemName":"6-12个月","itemValue":"3","keywords":"","newRecord":false,"page":null,"remark":"","sort":3,"startTime":"","status":"1","uuid":"e77da6295c504261afaf0c2424546dc6"},{"createTime":null,"dateType":"","dateTypeTime":"","dictType":"bespeakLimitTime","endTime":"","exportTitle":"","expression":"","fields":[],"hearders":[],"itemName":"12个月以上","itemValue":"4","keywords":"","newRecord":false,"page":null,"remark":"","sort":4,"startTime":"","status":"1","uuid":"d9bb42c9f897479084edbcee3b924f2a"}];
+        // var borrowMinAccount = 300;      
+        // var borrowMaxAccount = 5000000;
+
+        var areajson = ${areaJson};
+        var bespeakTimeList = ${bespeakTimeList};      
+        var borrowMinAccount = ${borrowMinAccount};      
+        var borrowMaxAccount = ${borrowMaxAccount};      
+    </script>
+
+</head>
+<body>
+    <#include "/include/header.html">
+    <div class="bespeak-header">
+        <div class="site-row bespeak-content">
+            <div class="site-col-8 site-col-offset-16 bespeak-form" id="j-bespeakForm">
+                <div class="loading"></div>
+            </div>
+        </div>
+        <ul class="wrap flow">
+            <li><em class="iconfont">&#xe633;</em>提交申请</li>
+            <li><em class="iconfont">&#xe635;</em>审核材料</li>
+            <li><em class="iconfont">&#xe655;</em>签署协议</li>
+            <li><em class="iconfont">&#xe652;</em>发布借款</li>
+            <li class="last"><em class="iconfont">&#xe674;</em>借款成功</li>
+        </ul>        
+    </div>
+    <div class="wrap bespeak-index-main">
+        <div class="showlink">
+            <div class="title">借款产品</div>
+            <div class="number">${account!0}</div>
+            <div class="text">截止目前已为平台借款人提供借款（元）</div>
+            <a href="/borrow/qualification.html" class="btn">立即申请</a>
+        </div>
+        <div class="list">
+            <ul>
+                <li>
+                    <dl>
+                        <dt>
+                            <em class="iconfont">&#xe675;</em>担保贷
+                        </dt>
+                        <dd class="introduce">
+                            <span class="title">产品介绍</span>是由担保机构为借款人提供担保后发布的借款产品。平台合作的担保机构根据借款人扫描上传的资料进行审核，审核通过后为借款人提供担保，若借款人有逾期则由担保机构进行代偿。
+                        </dd>
+                        <dd>
+                            <span class="title">申请要求</span><span class="text">年龄：21-55岁，<br/>拥有担保机构做担保，无不良信用记录。</span>
+                        </dd>
+                    </dl>
+                </li>
+                <li>
+                    <dl>
+                        <dt>
+                            <em class="iconfont" style="font-size:26px;">&#xe676;</em>抵押贷
+                        </dt>
+                        <dd class="introduce">
+                            <span class="title">产品介绍</span>抵押贷是借款人在办理好资产抵押、质押等手续后发布的借款产品。平台对抵押物进行有效监管，抵押借款逾期后， 将由合作企业进行回购并处理后续事宜。
+                        </dd>
+                        <dd>
+                            <span class="title">申请要求</span><span class="text">年龄：21-55岁，<br/>拥有抵押物，无不良信用记录。</span>
+                        </dd>
+                    </dl>
+                </li>
+                <li>
+                    <dl>
+                        <dt>
+                            <em class="iconfont">&#xe677;</em>信用贷
+                        </dt>
+                        <dd class="introduce">
+                            <span class="title">产品介绍</span>信用贷的借款人无需抵押也无需担保，通过上传资料，经平台审核后，取得信用借款。是一种免抵押、免担保、纯信用的小额个人信用借款产品。
+                        </dd>
+                        <dd>
+                            <span class="title">申请要求</span><span class="text">年龄：21-55岁，<br/>拥有借款所需信用证明，无不良信用记录。</span>
+                        </dd>
+                    </dl>
+                </li>                                
+            </ul>
+        </div>
+    </div>
+    <#include "/include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/common.js"></script>
+<script src="/bespeak.js"></script>
+</html>

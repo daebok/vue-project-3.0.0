@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <title>渤海银行提现跳转中......</title>
+	    <meta http-equiv="content-Type" content="hidden/html; charset=utf-8" />
+	</head>
+	
+	<body>
+	    <div>渤海银行提现跳转中,请您不要关闭页面......</div>
+	    <form action="${apiCash.cbhbSubmitUrl!}" method="post" id="frm1" style="display: none;">
+	        <input type="hidden" name="char_set" value="${apiCash.charSet!}" />       	         
+			<input type="hidden" name="partner_id" value="${apiCash.partnerId!}" />
+			<input type="hidden" name="version_no" value="${apiCash.versionNo!}" />
+			<input type="hidden" name="biz_type" value="${apiCash.bizType!}" />
+			<input type="hidden" name="sign_type" value="${apiCash.signType!}" />
+			<input type="hidden" name="MerBillNo" value="${apiCash.merBillNo!}" />
+	        <input type="hidden" name="PlaCustId" value="${apiCash.plaCustId!}" />
+	        <input type="hidden" name="TransAmt" value="${apiCash.transAmt!}" />
+	        <input type="hidden" name="FeeType" value="${apiCash.feeType!}" />
+	        <input type="hidden" name="MerFeeAmt" value="${apiCash.merFeeAmt!}" />
+	        <input type="hidden" name="PageReturnUrl" value="${apiCash.pageReturnUrl!}" />
+	        <input type="hidden" name="BgRetUrl" value="${apiCash.bgRetUrl!}" />
+	        <input type="hidden" name="MerPriv" value="${apiCash.merPriv}" />
+	        <input type="hidden" name="mac" value="${apiCash.mac!}" />
+	     <!--    <input type="areahidden" name="merchantCert" value="${apiCash.merchantCert!}" /> -->
+	        <input type="submit" value="提交">
+	    </form>
+	
+	    <script type="text/javascript">
+ 	    	document.getElementById("frm1").submit();
+	    </script>
+	</body>
+</html>

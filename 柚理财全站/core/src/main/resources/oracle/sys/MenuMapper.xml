@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.sys.mapper.MenuMapper">
+	<resultMap type="com.rd.ifaes.core.sys.domain.Menu" id="menuResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="code" column="CODE"/>
+		<result property="menuName" column="MENU_NAME"/>
+		<result property="url" column="URL"/>
+		<result property="parentId" column="PARENT_ID"/>
+		<result property="parentIds" column="PARENT_IDS"/>
+		<result property="iconCss" column="ICON_CSS"/>
+		<result property="sort" column="SORT"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="deleteFlag" column="DELETE_FLAG"/>
+		<result property="remark" column="REMARK"/>
+		<result property="isLeaf" column="IS_LEAF"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		CODE,
+		MENU_NAME,
+		URL,
+		PARENT_ID,
+		PARENT_IDS,
+		ICON_CSS,
+		SORT,
+		CREATE_TIME,
+		DELETE_FLAG,
+		REMARK,
+		IS_LEAF
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{code},
+		#{menuName},
+		#{url},
+		#{parentId},
+		#{parentIds},
+		#{iconCss},
+		#{sort},
+		#{createTime},
+		#{deleteFlag},
+		#{remark},
+		#{isLeaf}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+        	and (DELETE_FLAG = 0 OR DELETE_FLAG IS NULL) 
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="code != null and code != ''">and CODE like '%'||#{code}||'%'</if>
+            <if test="menuName != null and menuName != ''">and MENU_NAME like '%'||#{menuName}||'%'</if>
+            <if test="url != null and url != ''">and URL = #{url}</if>
+            <if test="parentId != null and parentId != ''">and PARENT_ID = #{parentId}</if>
+            <if test="parentIds != null and parentIds != ''">and PARENT_IDS = #{parentIds}</if>
+            <if test="iconCss != null and iconCss != ''">and ICON_CSS = #{iconCss}</if>
+			<if test="sort != null">and SORT = #{sort}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="remark != null and remark != ''">and REMARK = #{remark}</if>
+            <if test="isLeaf != null and isLeaf != ''">and IS_LEAF = #{isLeaf}</if>
+            <if test="keywords != null and keywords != ''">and (CODE like '%'||#{keywords}||'%'  or MENU_NAME '%'||#{keywords}||'%'  )</if>
+        </trim>
+         <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by SORT </if> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.sys.domain.Menu">
+		insert into sys_menu( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		BEGIN
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into sys_menu( <include refid="table_columns" /> ) 
+		values 
+		( 
+				#{item.uuid},
+				#{item.code},
+				#{item.menuName},
+				#{item.url},
+				#{item.parentId},
+				#{item.parentIds},
+				#{item.iconCss},
+				#{item.sort},
+				#{item.createTime},
+				#{item.deleteFlag},
+				#{item.remark},
+				#{item.isLeaf}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		update sys_menu set delete_flag = 1
+		where uuid = #{uuid} 
+	</delete>
+	
+	<delete id="deleteBatch">
+		update sys_menu set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="ids" open="(" separator="," close=")">  
+            #{ids} 
+        </foreach>		
+	</delete>
+
+	<update id="deleteLogic" parameterType="String">
+		update sys_menu set set delete_flag = 1
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.sys.domain.Menu">
+		update sys_menu 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="code != null and code != ''">CODE = #{code},</if>
+            <if test="menuName != null and menuName != ''">MENU_NAME = #{menuName},</if>
+            <if test="url != null and url != ''">URL = #{url},</if>
+            <if test="parentId != null and parentId != ''">PARENT_ID = #{parentId},</if>
+            <if test="parentIds != null and parentIds != ''">PARENT_IDS = #{parentIds},</if>
+            <if test="iconCss != null and iconCss != ''">ICON_CSS = #{iconCss},</if>
+			<if test="sort != null">SORT = #{sort},</if>
+			<if test="createTime != null">CREATE_TIME = #{createTime},</if>
+            <if test="deleteFlag != null and deleteFlag != ''">DELETE_FLAG = #{deleteFlag},</if>
+            <if test="remark != null and remark != ''">REMARK = #{remark},</if>
+            <if test="isLeaf != null and isLeaf != ''">IS_LEAF = #{isLeaf},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="menuResultMap">
+        select <include refid="table_columns" />
+        from sys_menu
+    </select>
+
+    <select id="findList" resultMap="menuResultMap">
+        select <include refid="table_columns" />
+        from sys_menu
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from sys_menu
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="menuResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from sys_menu
+		where uuid = #{id} and (DELETE_FLAG = 0 OR DELETE_FLAG IS NULL)
+	</select>
+	
+	<!-- 其他自定义SQL -->	
+	<!-- 用户授权菜单 -->
+<!-- 	<select id="getMenuUseList" resultMap="menuResultMap">
+		select m.* from sys_menu m , s_permission p, s_role_permission rp, s_operator_role sor
+		where sor.operator_id= #{operatorId} and p.operation_id is null and m.is_delete=0
+		<if test="parentId != null and parentId != ''">and m.parent_id = #{parentId}</if>		
+		and m.id = p.menu_id and p.id = rp.permission_id and rp.role_id = sor.role_id
+	</select> -->
+	
+	<!-- 菜单组织树 -->
+	<select id="getMenuTree" resultMap="menuResultMap" parameterType="String" >
+        select <include refid="table_columns" />
+        from sys_menu where (DELETE_FLAG = 0 OR DELETE_FLAG IS NULL)
+        <if test="value != null and value != ''">and (parent_id = #{uuid} or uuid = #{uuid})</if>
+        order by parent_ids, sort
+	</select>
+	
+	<select id="getCurrMenu" resultMap="menuResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from sys_menu where (DELETE_FLAG = 0 OR DELETE_FLAG IS NULL)
+		<if test="value == null or value == ''">
+			and (PARENT_ID IS NULL OR PARENT_ID ='')
+		</if>
+		<if test="value != null and value != ''">
+			and uuid = #{value}
+		</if>	
+		order by sort	
+	</select>
+	
+	 <select id="findChildren" resultMap="menuResultMap" parameterType="String" >
+        select <include refid="table_columns" />
+        from sys_menu where (DELETE_FLAG = 0 OR DELETE_FLAG IS NULL) 
+        <if test="value == null or value == ''">
+			and (PARENT_ID IS NULL OR PARENT_ID ='')
+		</if>
+		<if test="value != null and value != ''">
+        	and PARENT_ID = #{parentId} 
+        </if>
+        order by sort
+	</select>
+	
+    <!--校验唯一标识-->
+    <select id="getCountByCode" resultType="int"  parameterType="com.rd.ifaes.core.sys.domain.Menu">
+        select count(uuid) from sys_menu where delete_flag != 1
+        <if test="uuid != null and uuid != ''">and UUID != #{uuid}</if>
+	    <if test="code != null and code != ''">and CODE = #{code}</if>
+    </select>
+    
+    <select id="findAuthMeun" resultMap="menuResultMap">
+        select distinct m.* 
+        from sys_menu m, 
+             sys_permission a,
+             sys_role_permission b, 
+             sys_operator_role c
+		where c.operator_id= #{operatorId} 
+		  <if test="parentId != null and parentId != ''">and  ( m.parent_id IN (SELECT UUID FROM sys_menu t WHERE t.parent_id = #{parentId}) OR (m.uuid IN (SELECT UUID FROM sys_menu t WHERE t.parent_id = #{parentId})))</if>	
+		  and m.uuid = a.menu_id 
+		  and a.uuid = b.permission_id 
+		  and b.role_id = c.role_id
+		  and delete_flag = 0 
+		order by m.sort
+	</select>
+	
+	<select id="findAuthModel" resultMap="menuResultMap">
+		SELECT DISTINCT t2.* 
+		FROM sys_menu t, sys_menu t2 
+		WHERE (t.parent_id = t2.uuid OR t2.uuid = t.uuid)	  
+		  AND t2.parent_id IS NULL 
+		  and t.uuid IN (
+			SELECT m.parent_id
+			    FROM sys_menu m, 
+                   sys_permission a,
+                   sys_role_permission b, 
+                   sys_operator_role c
+				WHERE c.operator_id=  #{operatorId}
+				  AND m.uuid = a.menu_id 
+				  AND a.uuid = b.permission_id 
+				  AND b.role_id = c.role_id
+				  AND delete_flag = 0 ) 
+		order by t2.sort
+	</select>
+	
+</mapper>

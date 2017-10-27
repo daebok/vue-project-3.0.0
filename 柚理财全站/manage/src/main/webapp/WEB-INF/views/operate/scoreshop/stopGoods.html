@@ -1,0 +1,173 @@
+<div class="form-tips-content">
+	<input type="hidden" id="image_server_url" value="${image_server_url}">
+	<form class="form-horizontal" action="/operate/scoreshop/updateGoods.html" id="form" role="form">
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label for="goodsName" class="control-label form-label">商品名称：</label>
+					<div class="input-box-read">
+						<p>${scoreGoods.goodsName!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="goodsCategoryName" class="control-label form-label">商品类别：</label>
+					<div class="input-box-read">
+						<p>${scoreGoods.goodsCategoryName!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="exchangeLimit" class="control-label form-label">限购数量：</label>
+					<div class="input-box-read">
+						<p>${scoreGoods.exchangeLimit!}</p>					
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="" class="control-label form-label">商品状态：</label>
+					<div class="input-box-read">	
+						<input type="hidden" name="status" id="status" value="4">					
+						<p>已上架</p>						
+					</div>
+				</div>
+			</li>			
+			<li>
+				<div class="form-group">
+					<label for="createTime" class="control-label form-label">添加时间：</label>
+					<div class="input-box-read">
+						<p><#if scoreGoods.createTime??> ${scoreGoods.createTime?string("yyyy-MM-dd HH:mm:ss")}</#if></p>
+					</div>
+				</div>
+			</li>
+			<!-- <li>
+				<div class="form-group">
+				<input type="hidden" name="createOperatorId" id="createOperatorId" value=>
+					<label for="apr" class="control-label form-label">添加人员：</label>
+					<div class="input-box-read">
+						<p>${scoreGoods.createOperatorId!}</p>						
+					</div>					
+				</div>
+			</li>	 -->		
+			<li>
+				<div class="form-group">
+					<label for="updateTime" class="control-label form-label">修改时间：</label>
+					<div class="input-box-read">
+						<p><#if scoreGoods.updateTime??> ${scoreGoods.updateTime?string("yyyy-MM-dd HH:mm:ss")}</#if></p>
+					</div>
+				</div>
+			</li>
+			<!-- <li>
+				<div class="form-group">
+				<input type="hidden" name="updateOperatorId" id="updateOperatorId" value=>
+					<label for="lowestAccount" class="control-label form-label">修改人员：</label>
+					<div class="input-box-read">
+						<p>${scoreGoods.updateOperatorId!}</p>
+					</div>					
+				</div>
+			</li> -->
+			<#if scoreGoods.isVirtual == 0>
+				<li>
+					<div class="form-group">
+						<label for="costPrice" class="control-label form-label">采购价格：</label>
+						<div class="input-box-read">
+							<p>${scoreGoods.costPrice!} 元</p>
+						</div>					
+					</div>
+				</li>
+				<li>
+					<div class="form-group">
+						<label for="marketPrice" class="control-label form-label">市场价：</label>
+						<div class="input-box-read">
+							<p>${scoreGoods.marketPrice!} 元</p>
+						</div>
+					</div>
+				</li>
+			</#if>
+			<li>
+				<div class="form-group">
+					<label for="score" class="control-label form-label">所需积分：</label>
+					<div class="input-box-read"><p>${scoreGoods.score!}</p>
+					</div>					
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="content" class="control-label form-label">商品详情：</label>
+					<div class="input-box-read">
+						<p>${scoreGoods.content!}</p>
+					</div>					
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="isVirtual" class="control-label form-label">是否虚拟物品：</label>
+					<div class="input-box-read">
+						<p>
+							<#if scoreGoods.isVirtual == 1>
+								是
+							<#else>
+								否
+							</#if>
+						</p>
+					</div>					
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="recommend" class="control-label form-label">是否推荐：</label>
+					<div class="input-box-read">
+						<p>
+							<#if scoreGoods.recommend == 1>
+								是
+							<#else>
+								否
+							</#if>
+						</p>
+					</div>	
+				</div>
+			</li>
+	  		<li>
+				<div class="form-group">
+			      <label for="remark" class="control-label form-label">备注：</label>
+			      <div class="input-box-read">
+			      	<p>${scoreGoods.remark!}</p>
+			      </div>
+			    </div>	
+	  		</li>
+	 	<input type="hidden" name="uuid" id="uuid" value=${scoreGoods.uuid}>						
+	</form>
+</div>
+<script type="text/javascript">
+$("#form").validate({
+	submitHandler: function(form) {	
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						zIndex:100000,
+						icon: 6,
+						cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+					}, function() {						
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入  
+					});
+				} else {
+					layer.alert(data.msg, {
+						zIndex:100000,
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+});
+</script>

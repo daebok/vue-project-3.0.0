@@ -1,0 +1,63 @@
+<div class="form-tips-content">
+  <form class="form-horizontal" action="/account/merchant/merchantCbhbCash.html" id="form" role="form" target="_blank">
+  	<div class="valBox w750" style="padding-top:30px;">
+        <div class="val clearfix">
+        	<div class="clearfix account" style="padding:0 38px" >
+	            <label for="">请输入提现金额：</label>
+                <div style="position: relative;display: inline-block;width: 300px;">
+	            <input type="text" name="money" id="money"  maxlength="8" autocomplete="off" class="easyui-numberbox easyui-validatebox adminUserTxt" data-options="required: true"/>
+                <span style="color:red">*</span>
+                </div>
+	         </div>
+        </div>
+    </div>
+  </form>
+</div>
+
+<script>
+    $("#form").validate({
+        rules: {
+            money:{
+                required:true,
+                moneyArea:true
+            }
+        },
+        messages:{
+            money:{
+                required:'金额不能为空',
+                moneyArea:'请输入范围为大于等于0.01小于100000000的数值'
+            }
+        },
+        submitHandler: function(form) {
+        	$(form).ajaxSubmit({
+	    		type:"post",
+	    		dataType:"json",
+	    		success:function(data){
+					if (data.result) {
+						layer.alert(data.msg, {
+							icon: 6,
+							cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+						}, function() {
+							layer.closeAll();
+							//刷新当前页面
+							//window.location.href = window.location.href;
+							gridobj.trigger("reloadGrid"); //重新载入  
+						});
+					} else {
+						layer.alert(data.msg, {
+							icon: 5
+						}, function() {
+							layer.closeAll();
+							//刷新当前页面
+							//window.location.href = window.location.href;
+							gridobj.trigger("reloadGrid"); //重新载入  
+						});
+					} 			        	
+		    	}
+	    	});
+        }
+    });
+</script>

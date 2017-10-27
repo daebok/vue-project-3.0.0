@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>用户积分页面</title>
+		<#include "include/resources.html">
+	</head>
+	<body>
+		<style>
+			.layui-layer-loading .layui-layer-loading3{width:200px!important;padding-left: 66px;color: #fff;line-height: 24px;}
+		</style>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="用户名">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/operate/score/userScoreList.html">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						    <@shiro.hasPermission name="oper:score:userScore:export">
+						    <a href="javascript:" class="btn btn-info" onclick="exportExcel(this)" data-title='用户积分信息' data-url="/operate/score/exportUserScore.html" data-tid="jqGrid">导出</a>
+					        </@shiro.hasPermission>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+						 <@shiro.hasPermission name="oper:score:userScore:score_grant">
+						<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.grantCoupon(this)" data-tid="jqGrid" data-title="发放积分" data-url="/operate/score/grantUserScore.html">发放积分</button>
+						 </@shiro.hasPermission>
+					</div>					
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+					$(document).ready(function() {												
+						//表格初始化
+						$("#jqGrid").jqTreeGrid({
+							url: '/operate/score/userScoreList.html',	
+							  multiselect : false,	
+							  colModel: [
+			                    { label: 'id', name: 'uuid', width: 45, hidden:true},
+			                    { label: '用户名', name: 'userName',index:"user_name",width: 30,align:"center"},
+			                    { label: '用户姓名', name: 'realName',index:"real_name",width: 30,align:"center"},
+			                    { label: '总积分', name: 'totalScore',index:"total_score",width: 15,align:"center"},
+			                    { label: '有效积分', name: 'useScore',index:"use_score",width: 15,align:"center"},
+			                    { label: '冻结积分', name: 'noUseScore',index:"no_use_score",width: 15,align:"center"},
+			                    { label: '消费积分', name: 'expenseScore',index:"expense_score",width: 15,align:"center"},
+			                    { 
+									label: '操作', 
+								  	name: 'cz', 
+								  	width: 20,
+								  	align:"center",
+								  	formatter: function(val, options, rowObject){	
+										var btns = '<a href="javascript:;" onclick=$.fn.treeGridOptions.addFun(this,"") data-tid="jqGrid" data-width="500px" data-height="300px" data-url="/loan/score/scoreByHand.html?userId='+rowObject.userId+'" data-title="发放">发放</a>'+
+													'&nbsp;|&nbsp;<a href="javacript:;" onclick=$.fn.treeGridOptions.addFun(this,"") data-tid="jqGrid" data-url="/loan/score/establishScore.html?userId='+rowObject.userId+'" data-width="500px" data-height="300px" data-title="审核">审核</a>';
+										return btns;
+									}
+								}
+			                ]
+						}) ;			
+					});
+			</script>
+		</div>
+	</body>
+</html>

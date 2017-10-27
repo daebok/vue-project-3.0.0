@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>借款笔数统计</title>
+<#include "include/resources.html">
+<link href="${theme_dir}/static/css/plugins/trirand/ui.jqgrid-bootstrap.css" rel="stylesheet">
+</head>
+<body class="overflowY">
+<div class="wrapper">
+  <div class="row pt20">
+    <div class="col-md-12">
+     <form class="form-horizontal">
+        <input type="hidden" name="statType" value="3">
+        <input type="hidden" name="dateType" value="1" id="dateType">
+        <div id="legend" class="">
+          <legend class="">借款笔数统计</legend>
+        </div>
+        <div class="control-group">
+          <label class="control-label">日期：</label>
+          <div class="controls">
+            <label class="checkbox inline selectTime"><input type="text" name="startDate" id="startTime" class="form-control"placeholder="开始日期" value="${startDate}" readonly="readonly" style="background:#fff;"/></label><label class="checkbox inline selectTime"><input type="text" name="endDate" id="endTime" class="form-control" placeholder="结束日期" value="${endDate}" readonly="readonly" style="background:#fff;"/></label>
+          </div>
+          <label class="control-label selectTime"><input type="checkbox" id="j-dataCheck"> 对比时间段：</label>
+          <div class="controls hide" id="j-dataCheckBox">
+            <label class="checkbox inline selectTime"><input type="text" name="contrastDate" id="check-startTime" class="form-control"placeholder="结束日期" value="${endDate}" readonly="readonly" style="background:#fff;"/></label>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">借款类型：</label>
+          <div class="controls">
+            <label class="checkbox inline"><input type="checkbox" value="" checked="">不限</label>
+            <label class="checkbox inline selectTime">
+              <input type="checkbox" name="borrowTypeArr" checked value="1">抵押借款
+            </label>
+            <label class="checkbox inline selectTime selectTime">
+              <input type="checkbox" name="borrowTypeArr" checked value="2">担保借款
+            </label>
+            <label class="checkbox inline selectTime">
+              <input type="checkbox" name="borrowTypeArr" checked value="3">其他
+            </label>                                  
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">借款金额：</label>
+          <div class="controls">
+            <label class="checkbox inline"><input type="checkbox" value="" checked="">不限</label>
+            <label class="checkbox inline selectTime">
+              <input type="checkbox" name="account" checked value="1">1万以下
+            </label>
+            <label class="checkbox inline selectTime selectTime">
+              <input type="checkbox" name="account" checked value="2">1-5万
+            </label>
+            <label class="checkbox inline selectTime">
+              <input type="checkbox" name="account" checked value="3">5-10万
+            </label>
+            <label class="checkbox inline selectTime">
+              <input type="checkbox" name="account" checked value="4">10万-20万
+            </label>
+             <label class="checkbox inline selectTime">
+              <input type="checkbox" name="account" checked value="5">20万-50万
+            </label>
+            <label class="checkbox inline selectTime">
+              <input type="checkbox" name="account" checked value="6">50万以上
+            </label>                                   
+          </div>
+        </div>        
+        <div class="control-group">
+          <label class="control-label">借款性质：</label>
+          <div class="controls">
+            <label class="checkbox inline"><input type="checkbox" value="" checked="">不限</label>
+            <label class="checkbox inline selectTime">
+              <input type="checkbox" name="borrowNatureArr" checked value="1">个人借款
+            </label>
+            <label class="checkbox inline selectTime">
+              <input type="checkbox" name="borrowNatureArr" checked value="2">企业借款
+            </label>
+          </div>
+        </div>
+        <div class="" style="margin-left:116px;">
+          <button type="submit" name="button" class="btn btn-primary">搜索</button>
+        </div>
+    </form>
+    </div>
+    <div class="lineStyle col-md-12"></div>
+    <div class="col-md-12">
+        <div class="content pt20">
+            <h3 class="text-right">          
+              <div id="timeType" class="selectTime">
+                <a href="javascript:;" id="day" class="on">日</a>
+                <a href="javascript:;" id="week">周</a>
+                <a href="javascript:;" id="month">月</a>
+              </div>
+            </h3>
+        </div>
+        <div id="j-main" class="chart-map mt20" style="width:80%;margin:50px auto 0;"></div>
+    </div>
+    <div class="col-md-12 hide">
+      <div id="j-line" class="chart-map mt20 pt20">
+
+      </div>
+    </div>
+    <div class="col-md-12 mt20">
+        <div class="page-header">
+            <h3>借款笔数明细
+                <small id="j-total"></small>
+                <@shiro.hasPermission name="statistic:borrow:borrowNum:export">
+                	<a onclick="exportExcel(this)" target="_blank" class="tool-btns">导出</a>
+                </@shiro.hasPermission>
+            </h3>
+        </div>
+        <div class="col-md-12" id="j-tableContent">
+          <table id="jqGrid" class="table-td-NoOverflow"></table>
+          <div id="jqGridPager"></div>
+        </div>
+    </div>    
+  </div>
+</div>
+<script type="text/javascript">
+    //设置开始时间控件
+  var startTime= {
+    elem:'#startTime',
+    format: 'YYYY-MM-DD', //日期格式
+    max:$('#endTime').val(),
+    event:'focus',
+    choose: function(dates){
+        endTime.min=dates;
+        endTime.start=dates;
+    }
+  };
+  //设置发放结束时间
+  var endTime=  {
+      elem:'#endTime',
+      format: 'YYYY-MM-DD', //日期格式
+      min: $('#startTime').val(), //最小日期
+      event:'focus',
+      choose: function(dates){
+        startTime.max=dates;
+       }
+  };
+  laydate(startTime);
+  laydate(endTime);
+
+  var check_startTime= {
+    elem:'#check-startTime',
+    format: 'YYYY-MM-DD', //日期格式
+    event:'focus'
+  };
+
+  laydate(check_startTime);
+
+  var myChart = echarts.init(document.getElementById('j-main'));
+  var option = {
+      title:{
+        text:"借款笔数及环比值",
+        left: 'center'
+      },
+      tooltip: {
+          trigger: 'axis'
+      },
+      legend: {
+          data:['担保借款','抵押借款','其他','总计','环比值'],
+          top:'50px'
+      },
+      grid:{
+          top:'25%'
+      },
+      xAxis: [
+          {
+              type: 'category',
+              data: []
+          }
+      ],
+      yAxis: [
+          {
+              type: 'value',
+              name: '借款笔数',
+              axisLabel: {
+                  formatter: '{value} '
+              }
+          },
+          {
+              type: 'value',
+              name: '环比',
+              axisLabel: {
+                  formatter: '{value} %'
+              }
+          }
+      ],
+      dataZoom: [
+       {   // 这个dataZoom组件，默认控制x轴。
+           type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+           startValue :0
+       },
+
+   ],
+      series: [
+          {
+              name:'担保借款',
+              type:'bar',
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#66bef5'
+                }
+              }
+          },
+          {
+              name:'抵押借款',
+              type:'bar',
+              itemStyle:{
+                normal:{
+                  color:'#c0504d'
+                }
+              },
+              data:[]
+          },
+          {
+              name:'其他',
+              type:'bar',
+              itemStyle:{
+                normal:{
+                  color:'#b3cb80'
+                }
+              },
+              data:[]
+          },
+          {
+              name:'总计',
+              type:'line',
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#0075a9'
+                }
+              }
+          },{
+              name:'环比值',
+              type:'line',
+              yAxisIndex: 1,
+              lineStyle:{
+                normal:{
+                  color:'#8064a2'
+                }
+              },
+              data:[]
+          }
+      ]
+  };
+
+  //myChart.setOption(option);
+
+  chartAjax($(".form-horizontal").serialize());
+
+  function chartAjax(req){
+      $.ajax({
+          url:'/statistic/borrow/getBorrowNum.html?'+req,
+          dataType:'json',
+          success:function(data){
+            option.xAxis[0].data=data.date;
+            option.series[1].data=data.mortgage;
+            option.series[0].data=data.vouch;
+            option.series[2].data=data.other;
+            option.series[3].data=data.total;
+            option.series[4].data=data.ratio;
+            myChart.setOption(option);
+          }
+      })
+  }
+
+//对比折线图
+  var myChart_line = echarts.init(document.getElementById('j-line'));
+  var option_line = {
+    title: {
+        text: '',
+        left: 'center'
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        data:['对比','原数据'],
+        top:'30%',
+        orient:'vertical',
+        right:'0%'
+    },
+    grid: {
+        left: '10%',
+        right: '20%',
+        containLabel: true
+    },
+    toolbox: {
+        feature: {
+            saveAsImage: {}
+        }
+    },
+    xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: []
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [
+        {
+            name:'对比',
+            type:'line',
+            itemStyle:{
+                normal:{
+                  color:'#9bbb59'
+                }
+              },
+            data:[]
+        },
+        {
+            name:'原数据',
+            type:'line',
+            itemStyle:{
+                normal:{
+                  color:'#8064a2'
+                }
+              },
+            data:[]
+        }
+    ]
+};
+
+  chartAjax_line($(".form-horizontal").serialize());
+
+  function chartAjax_line(req){
+      $.ajax({
+          url:'/statistic/borrow/compareData.html?'+req,
+          dataType:'json',
+          success:function(data){
+            option_line.xAxis.data=data.compare_date_select;
+            option_line.series[0].data=data.contrast;
+            option_line.series[1].data=data.select;
+            myChart_line.setOption(option_line);
+          }
+      })
+  }
+
+
+var exportTitle = '借款人数明细';
+      function getFieldsAndHearders(){
+        var hearders = '', fields = '';
+        var colModel = $("#jqGrid").jqGrid("getGridParam","colModel");        
+        $.each(colModel,function(index,obj){
+          if(obj.colmenu && !obj.hidden){//自定义非隐藏列
+            hearders += obj.label+",";
+            fields  += obj.name+",";
+          }
+        });   
+        return '&hearders='+hearders+"&fields="+fields;
+      } 
+
+var exportData;
+ function progress(){
+        var url = "/statistic/borrow/exportBorrowAccountExcel.html";
+        $.ajax({
+                  type: "POST",
+                  url:"/sys/export/progress.html",
+                  data:{'exportUrl':url},
+                  async: false,
+                  error: function(request) {
+                       clearTimeout(exportData)  
+                  },
+                  success: function(data) {
+                    exportData=setTimeout("progress()",2000);
+                     if(data.msg==100){
+                       layer.closeAll('loading')
+                       clearTimeout(exportData)
+                     }
+                  }
+              });
+      }
+
+   function exportExcel(){
+        var params = '?exportTitle=' + exportTitle + getFieldsAndHearders();
+        params += '&'+$('.form-horizontal').serialize();       
+        var url = "/statistic/borrow/exportBorrowAccountExcel.html";
+        var hrefval = url + params;
+        window.location.href=hrefval;
+        layer.load(3,{
+          shade: 0.5,
+          content:'<span>请等待，正在导出中...</span>'
+        });
+        progress();
+      }
+
+
+
+ $('.form-horizontal').submit(function (e) {
+   e.preventDefault();
+   $("#j-tableContent").html('<table id="jqGrid" class="table-td-NoOverflow"></table><div id="jqGridPager"></div>');
+   chartAjax($(this).serialize());
+   jqGridSet();
+   chartAjax_line($(".form-horizontal").serialize());
+ });
+
+ $("#timeType a").on('click',function(e){
+    $("#timeType a").removeClass('on');
+    $(this).addClass('on')
+    
+    switch (e.target.id) {
+     case 'day':
+        $("#dateType").val(1);
+        chartAjax($(".form-horizontal").serialize())
+        break;
+     case 'week':
+        $("#dateType").val(2);
+        chartAjax($(".form-horizontal").serialize())
+        break;
+     case 'month':
+        $("#dateType").val(3);
+        chartAjax($(".form-horizontal").serialize())
+       break;
+     default:
+   }
+
+ });
+
+ $("#j-dataCheck").click(function(){
+   if( $(this).is(':checked') ){
+     myChart_line.setOption(option_line);
+     $("#j-dataCheckBox").addClass("show");
+     $("#j-line").parent().addClass('show');
+     $("#j-main").parent().addClass('hide');
+   }
+   else{
+     $("#j-dataCheckBox").removeClass("show");
+     $("#j-line").parent().removeClass('show');
+     $("#j-main").parent().removeClass('hide');     
+   }
+ });
+
+
+//表格初始化
+function jqGridSet(){
+
+  $.ajax({
+    url: '/statistic/borrow/getBorrowList.html',
+    type: 'POST',
+    dataType: 'json',
+    data:$(".form-horizontal").serialize(),
+  })
+  .done(function(data){
+
+       $("#j-total").html('&nbsp;&nbsp;（总计：'+ data.total +'笔）');
+       $("#jqGrid").html("");
+       $("#jqGridPager").html("");
+       $("#jqGrid").jqTreeGrid({
+            data:data.rows,
+            datatype : 'local',
+            multiselect: false,
+            height:500,
+            colModel : [
+                {
+                  label : "日期",
+                  name : "statDate",
+                  width : 100
+                },{
+                  label : "抵押借款",
+                  name : "mortgageCount",
+                  width : 100
+                },{
+                  label : "担保借款",
+                  name : "vouchCount",
+                  width : 100
+                },{
+                  label : "其他",
+                  name : "otherCount",
+                  width : 100
+                },{
+                  label : "总计",
+                  name : "totalCount",
+                  width : 100
+                }],
+          }).jqGrid("setFrozenColumns").navGrid(
+          '#jqGridPager',
+          {
+            edit : false,
+            add : false,
+            del : false,
+            search : false,
+            refresh : true,
+            view : false,
+            position : "left",
+            cloneToTop : false
+          });
+ 
+  });  
+
+    
+}
+
+jqGridSet(); 
+
+</script>
+
+<script>
+  $(".control-group").each(function(){
+    $(this).find(".controls .checkbox:eq(0) input").click(function(){
+      if($(this).attr("checked")=="checked"){
+        $(this).attr("checked",false);
+        $(this).parent().siblings().find("input").removeAttr("checked");
+      }else{
+        $(this).attr("checked",true);
+        $(this).parent().siblings().find("input").attr("checked",true);
+        $(this).parent().siblings().find("input").prop("checked",true);
+      }
+    })
+     $(this).find(".controls .checkbox:eq(0)").siblings().find("input").click(function(){
+      if($(this).attr("checked")=="checked"){
+        $(this).attr("checked",false);
+      }else{
+        $(this).attr("checked",true);
+      }
+      var len =  $(this).parent().parent().parent().find(".checkbox").length-1;
+      var j=0;
+      for (var i = 1; i <= len; i++){
+        if( $(this).parent().parent().find(".checkbox").eq(i).find("input").attr("checked")=="checked"){
+          j+=1;
+        }
+      }
+      if((j==0)||(j==len)){
+         $(this).parent().parent().find(".checkbox:eq(0) input").prop("checked",true);
+      }
+      else{
+        $(this).parent().parent().find(".checkbox:eq(0) input").prop("checked",false);
+      }
+    })
+  })
+</script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<div class="form-tips-content">
+	<form class="form-horizontal" action="/user/customer/doEdit.html"
+		id="form" >
+		<ul class="form-item form-items">
+			<li>
+				<div class="form-group">
+					<label for="userName" class="control-label form-label">用户名：</label>
+					<span style="position:relative;top:7px;">${customer.userName!}</span>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="realName" class="control-label form-label">认证名称：</label>
+					<span style="position:relative;top:7px;">${customer.realName!}</span>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="userNature" class="control-label form-label">客户类型：</label>
+					<span style="position:relative;top:7px;" id="userNature">${customer.userNature!}</span>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="mobile" class="control-label form-label">客户手机号：</label><span style="position:relative;top:7px;">${customer.mobile!}</span>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="remark" class="control-label form-label">备注：</label>
+					<div class="input-box">
+						<!-- <input type="text" class="form-control" name="remark" id="remark"
+							maxlength="200" placeholder="请输入备注"  value="${customer.remark!}" > -->
+						<textarea name="remark" id="remark" rows="4"  class="text" maxlength="256" placeholder="请输入备注" style="width:100%;border:1px solid #e5e6e7" required>${customer.remark!}</textarea>
+					</div>
+				</div>
+			</li>
+			 <input type="hidden" name="uuid" id="uuid" value="${customer.uuid}">
+		</ul>
+ 		<@token name="editOperatorCustomerToken"/>
+</form>
+</div>
+<script>
+
+<@dictFormatter type = "userNature" />	
+ var text = $("#userNature").text();
+ $("#userNature").text(userNatureFormatter(text));
+$("#form").validate({
+	ignore: ".ignore",
+	submitHandler:function(form){ 
+		$(form).ajaxSubmit({
+			type:"post",
+			dataType:"json",
+			success:function(data){
+    	if(data.result){
+    		layer.alert(data.msg, {
+    			icon: 6,
+    			cancel: function(index){
+					layer.closeAll();
+					gridobj.trigger("reloadGrid"); //重新载入 
+					}
+    		}, function(){
+    			layer.closeAll();
+					gridobj.trigger("reloadGrid"); //重新载入  
+    		});
+    	}
+    	else
+    	{
+    		layer.alert(data.msg, {icon: 5});
+    	} 			        	
+	    }
+		});
+	}    
+});
+</script>

@@ -1,0 +1,209 @@
+@import (reference)'../../../style/common.less';
+@import '../../../style/account.less';
+.ant-slider{
+  height: 14px;
+}
+.ant-slider-handle{
+  border-width:1px;
+}
+.account-content{
+  .setinfo{
+    li{
+      &:extend(.fl,.pl20);
+      clear: both;
+      width:100%;
+      border-bottom:solid 1px @color-tipsbg;
+      height: 112px;
+      line-height: 112px;
+      font-size: 14px;
+      color:@color-text;
+      .name{
+        display: inline-block;
+        width: 205px;
+        .f16();
+        color: @color-p;
+        font-weight: bold;
+        em{
+          color: @color-right;
+          margin: 0 30px 0 0;
+          font-weight: normal;
+          .f20();
+        }
+        em.error{
+          color: #c2c2c2;
+        }
+      }
+      .text{
+        color:@color-p;
+        font-size: 14px;
+      }
+      a.link{        
+        &:extend(.fr);
+        margin: 42px 50px 0 0;
+        padding: 0 10px;
+        min-width: 78px;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        color: #999;
+        border: 1px solid #d2d2d2;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+      }
+    }
+  }
+}
+.baseinfo{
+  .baseinfo-header{
+    width: 100%;
+    height: 170px;    
+    overflow: hidden;
+    .userpic{
+      width: 100px;
+      height: 100px;
+      float: left;
+      margin: 30px 25px 0 0;
+      position: relative;
+      img{
+        width: 90px;
+        height: 90px;
+        -webkit-border-radius:90px;
+        -moz-border-radius:90px;
+        border-radius:90px;
+      }
+      .a-link{
+        width: 90px;
+        height: 90px;        
+        position: absolute;
+        left: 0;
+        top: 0px;
+        text-align: center;
+        font-size: 14px;
+        color: #fff;
+        span{
+          display: block;
+          width: 28px;
+          margin: 25px auto 0;
+        }
+      }
+    }
+
+    .user-grade{
+      margin-top: 30px;
+      float: left;      
+      width: 750px;
+      h3{font-size: 16px; color: #333;}
+      .class3 .ant-slider-track{background-color: #66bef5 !important;}
+      .class2 .ant-slider-track{background-color: #ffba00 !important;}
+      .class1 .ant-slider-track{background-color: #f95a28 !important;}
+      dd{       
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+        .ant-slider{float:left; margin: 16px 0 0;width: 50%;}
+
+        .ant-slider-track{height: 6px;}
+        .text{float: left; margin: 14px 0 0 20px; font-size: 14px; color: #ccc;}
+        .timer{font-size: 14px; color: #aaa;}
+        &:after{
+          position: absolute;
+          content: " ";
+          display: block;
+          height:30px; 
+          width:750px;
+          z-index: 10;
+        }
+      }
+    }
+  }
+  .baseinfo-content{
+    .ant-tabs-bar{margin-bottom: 0;}
+    .certificateInfo-table{
+      thead tr{
+        th{
+          font-size: 14px;
+          font-weight: normal;
+          &.th-listUpfile{
+            text-align: left;
+          }
+        }     
+      }
+      tbody tr{
+        height: 112px;       
+        td{
+          text-align: center;
+          .ant-upload-list-picture-card .ant-upload-list-item{
+            width: 72px;
+            height: 72px;
+            margin: 0 8px 0 0;
+          }
+          .ant-upload.ant-upload-select-picture-card{
+            width: 72px;
+            height: 72px;
+             margin: 0;
+          }
+          .ant-upload-select-picture-card{
+            i{
+              font-size: 18px;
+            }
+            .ant-upload-text{
+              margin-top: 3px;
+            }
+          }
+          .checkbtn{
+            color: @color-main;
+            cursor: pointer;
+          } 
+          &.td-listUpfile{
+            text-align: left;
+          }         
+        }
+      }
+    }
+  }
+}
+.ant-upload-list-picture-card .ant-upload-list-item-info:before{
+  left: 0;
+}
+/*.ant-upload-list-picture-card .ant-upload-list-item-info .anticon-delete {
+    left: 25%;
+    margin-left: 6px;
+}
+.ant-upload-list-picture-card .ant-upload-list-item-info .anticon-eye-o{
+  display: none;
+}
+.ant-upload-list-picture-card .ant-upload-list-item-info:before{
+  left:0;
+}*/
+
+.redflag{
+  display: block;
+}
+.user-tip{
+  color: #dbdbdb;
+  font-size: 16px;
+  margin:0 0 0 5px;
+  position: relative;
+  top: 2px;
+}
+
+.ant-select-lg .ant-select-selection--single {
+    height: 36px;
+}
+
+.ant-select-lg .ant-select-selection--single .ant-select-selection__rendered {
+    line-height: 36px;
+}
+form .ant-input, form .ant-input-group .ant-input, form .ant-input-group .ant-input-group-addon {
+    padding: 6px 7px;
+    height: 36px;
+}
+
+.baseinfo .baseinfo-header .user-grade dd .ant-slider{
+  cursor: default;
+}
+.ant-slider-disabled .ant-slider-dot, .ant-slider-disabled .ant-slider-handle {
+  cursor: default;
+}

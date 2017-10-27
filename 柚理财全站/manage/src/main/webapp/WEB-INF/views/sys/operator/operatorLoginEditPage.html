@@ -1,0 +1,341 @@
+<#include "include/resources.html">
+	<style>
+		label.error{
+			bottom: -23px;
+			background: none;
+			left: 10px;
+		}
+		.old {
+			line-height: 34px;
+		}
+		.new {
+			display: none;
+		}
+		.account-content .invite-link {
+			zoom:1;_height: 1px;
+			display: block;
+			margin: 0 0 45px
+		}
+
+		.account-content .invite-link:after {
+			content: ".";
+			display: block;
+			height: 0;
+			clear: both;
+			visibility: hidden
+		}
+
+		.account-content .invite-link dl {
+			padding-top: 50px;
+			float: left
+		}
+
+		.account-content .invite-link dl dt {
+			overflow: hidden;
+			font-size: 14px;
+			color: #999
+		}
+
+		.account-content .invite-link dl dt em {
+			font-size: 24px;
+			color: #f95b29
+		}
+
+		.account-content .invite-link .qrcode {
+			width: 155px;
+			margin-right: 140px
+		}
+
+		.account-content .invite-link .qrcode dt em {
+			float: left;
+			font-size: 28px;
+			position: relative;
+			top: -5px;
+			margin-right: 10px
+		}
+
+		.account-content .invite-link .qrcode dt .text {
+			line-height: 17px;
+			float: left;
+			width: 115px
+		}
+
+		.account-content .invite-link .qrcode dd {
+			padding: 0 0 0 10px
+		}
+
+		.account-content .invite-link .link {
+			width: 182px;
+			margin-right: 123px
+		}
+
+		.account-content .invite-link .link dt em {
+			margin: 0 10px 0 0
+		}
+
+		.account-content .invite-link .link dd {
+			padding: 33px 0 0 5px
+		}
+
+		.account-content .invite-link .link dd em {
+			font-size: 36px;
+			margin-right: 33px
+		}
+
+		.account-content .invite-link .link dd .weibo {
+			color: #f23f53
+		}
+
+		.account-content .invite-link .link dd .qq {
+			color: #169bff
+		}
+
+		.account-content .invite-link .link dd .qzone {
+			color: #ffa944
+		}
+
+		.account-content .invite-link .copylink dd {
+			padding: 21px 0 0
+		}
+
+		.account-content .invite-link .copylink dt em {
+			margin-right: 12px
+		}
+
+		.account-content .invite-link .copylink input {
+			display: block;
+			border: 1px solid #eaeaea;
+			font-size: 14px;
+			color: #999;
+			width: 240px;
+			height: 40px;
+			line-height: 40px;
+			padding: 0 0 0 10px
+		}
+
+		.account-content .invite-link .copylink .copy {
+			color: #fff;
+			display: inline-block;
+			text-align: center;
+			border-radius: 3px;
+			cursor: pointer;
+			margin: 10px 0 0 50px;
+			background-color: #f95b29;
+			border-color: #f95b29;
+			font-size: 14px;
+			line-height: 36px;
+			width: 130px;
+			padding: 0
+		}
+		.share a span{
+			margin-right: 20px;
+		}
+	</style>
+<div class="form-tips-content ">
+<h2 class="title">个人信息</h2>
+  <form class="form-horizontal" action="/sys/operator/operatorLoginEdit.html" method="post" id="form" role="form">
+  	<div class="form-item">
+  		<div class="row col-sm-9">
+			<div class="form-group col-sm-6">
+		      <label class="control-label col-sm-4">我的角色：</label>
+				<div class="col-sm-8" style="line-height: 34px;">
+		      <#list roleList as item>
+		      ${item.roleName}&nbsp;&nbsp;&nbsp;
+		      </#list>
+				</div>
+		    </div>	
+  		</div>
+  		<div class="row col-sm-9">
+			<div class="form-group col-sm-6">
+		      <label  class="control-label col-sm-4">用户名：</label>
+				<div class="col-sm-8" style="line-height: 34px;">
+		     	 ${operator.loginName}
+				</div>
+		    </div>
+			<div class="form-group col-sm-6">
+				<label for="realName" class="control-label col-sm-4">姓名<span style="color:red;">*</span>：</label>
+				<div class="col-sm-8 new">
+				<input type="text" class="form-control " name="realName" id="realName" value="${operator.realName}" maxlength="50" placeholder="请输入姓名" required minlength="2">
+				</div>
+				<div class="col-sm-8 old">
+					${operator.realName}
+				</div>
+				</div>
+		</div>
+  		<div class="row col-sm-9">
+			<div class="form-group col-sm-6">
+		      	<label for="empNo" class="control-label col-sm-4">工号：</label>
+				<div class="col-sm-8 new">
+		      	<input type="text" class="form-control" name="empNo" id="empNo" value="${operator.empNo}" placeholder="请输入工号" maxlength="20" minlength="2" >
+				</div>
+				<div class="col-sm-8 old">
+					${operator.empNo}
+				</div>
+		     </div>
+			<div class="form-group col-sm-6">
+		    	<label  class="control-label col-sm-4">组织机构：</label>
+				<div class="col-sm-8" style="line-height: 34px;">
+		       	${operator.orgName}
+				</div>
+		    </div>
+		</div>
+  		<div class="row col-sm-9">
+			<div class="form-group col-sm-6">
+		      <label for="telephone" class="control-label col-sm-4">电话：</label>
+				<div class="col-sm-8 new">
+		      <input type="text" class="form-control" name="telephone" id="telephone" value="${operator.telephone}" maxlength="13"  placeholder="请输入电话号码" data-rule-fixNumber="true" data-msg-fixNumber="请输入正确的电话号码">      
+		   		</div>
+				<div class="col-sm-8 old">
+					${operator.telephone}
+				</div>
+		     </div>
+			<div class="form-group col-sm-6">
+		      <label for="mobile" class="control-label col-sm-4">手机<span style="color:red;">*</span>：</label>
+				<div class="col-sm-8 new">
+				<input type="text" class="form-control" name="mobile" id="mobile"  value="${operator.mobile}" maxlength="11" placeholder="请输入手机号码" data-rule-isMobile="true" data-msg-isMobile="请输入正确的手机号码" required minlength="11" >
+		    	</div>
+				<div class="col-sm-8 old">
+					${operator.mobile}
+				</div>
+			</div>
+
+		</div>
+  		<div class="row col-sm-9">
+			<div class="form-group col-sm-6">
+		      <label for="qq" class="control-label col-sm-4">QQ：</label>
+				<div class="col-sm-8 new">
+		      <input type="text" class="form-control" name="qq" id="qq"  value="${operator.qq}" maxlength="12"  placeholder="请输入QQ号码">
+				</div>
+				<div class="col-sm-8 old">
+					${operator.qq}
+				</div>
+		     </div>
+			<div class="form-group col-sm-6">
+		      <label for="email" class="control-label col-sm-4">邮箱：</label>
+		      <div class="col-sm-8 new">
+				<input type="text" class="form-control" name="email" id="email" value="${operator.email}" maxlength="32" email="true" placeholder="请输入邮箱" >
+			  </div>
+				<div class="col-sm-8 old">
+					${operator.email}
+				</div>
+		     </div>
+
+		</div>
+  		<div class="row col-sm-9">
+			<div class="form-group col-sm-6">
+		      <label class="control-label col-sm-4">备注：</label>
+				<div class="col-sm-8 new">
+		      <textarea rows="" cols="" class="form-control" name="remark" maxlength="100" id="remark">${operator.remark}</textarea>
+				</div>
+				<div class="col-sm-8 old">
+					${operator.remark}
+				</div>
+		     </div>
+  		</div>
+  		<div class="row col-sm-9">
+			<div class="form-group">
+		      <div class="input-box input-checkbox-box text-center">
+		      	<input type="button" class="btn btn-primary showEdit" value="修改">
+		      	<input type="submit" class="btn btn-primary Edit" style="display: none" value="确认修改">
+		      </div>
+		    </div>	
+  		</div>
+  		<@shiro.hasPermission name="set:operator:login:view">
+  		<div class="row col-sm-9 account-content" style="margin-left: 100px;">
+			<div class="row invite-link clearfix">
+				<dl class="qrcode">
+					<dt><em class="iconfont">&#xe623;</em><span class="text"><p>微信“扫一扫”</p>分享好友或朋友圈</span></dt>
+					<dd><div id="output" width="130" height="130"></div></dd>
+				</dl>
+				<dl class="link">
+					<dt><em class="iconfont">&#xe63b;</em>通过社交网站推荐好友</dt>
+					<dd class="share">
+						<!-- JiaThis Button BEGIN -->
+						<div class="jiathis_style_32x32">
+						<a class="jiathis_button_tsina"></a>
+						<a class="jiathis_button_cqq"></a>
+						<a class="jiathis_button_qzone"></a>
+						</div>
+						<script type="text/javascript" >
+						var jiathis_config={
+							url:"${web_url}/user/register.html?ui=${operator.uuid}",
+							summary:"${web_url}/user/register.html?ui=${operator.uuid}",
+							title:"好友推荐网址",
+							shortUrl:false,
+							hideMore:false
+						}
+						</script>
+						<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+						<!-- JiaThis Button END -->
+					</dd>
+				</dl>
+				<dl class="copylink">
+					<dt><em class="iconfont">&#xe63a;</em>复制链接推荐给好友</dt>
+					<dd>
+						<input type="text" value="${web_url}/user/register.html?ui=${operator.uuid}">
+						<span class="copy">一键复制</span>
+					</dd>
+				</dl>
+				<input id="j-copy" type="hidden" value="${web_url}/user/register.html?ui=${operator.uuid}">
+			</div>
+  		</div>
+  		</@shiro.hasPermission>
+  	</ul>
+  	<input name="uuid" value="${operator.uuid}" type="hidden"/>
+  </form>
+</div>
+	<script src="/static/js/zclip/jquery.zclip.min.js"></script>
+	<script src="/static/js/jquery/jquery.qrcode.min.js"></script>
+
+<script>
+jQuery(function(){
+	jQuery('#output').qrcode({  
+        text: $('#j-copy').val(),  
+        width: 130,  
+        height: 130  
+    });
+})
+</script>
+	<script>
+	$('.showEdit').click(function () {
+		$(this).hide();
+		$('.Edit').show();
+		$('.old').hide();
+		$('.new').show();
+	})
+
+		$(".copy").zclip({
+			path:'/static/js/zclip/ZeroClipboard.swf',
+			copy: function () { return $('#j-copy').val(); }
+		});
+
+
+	$("#form").validate({
+		submitHandler: function(form) {
+			$(form).ajaxSubmit({
+						type: "post",
+						dataType: "json",
+						success: function(data) {
+							if (data.result) {
+								layer.alert(data.msg, {
+									icon: 6,
+									cancel: function(index){
+										window.location.href = window.location.href;
+										layer.closeAll();
+									}
+								}, function() {
+									window.location.href = window.location.href;
+									layer.closeAll();
+								});
+							} else {
+								layer.alert(data.msg, {
+									icon: 5
+								});
+							}
+						}
+					});
+
+
+		}
+	});
+</script>

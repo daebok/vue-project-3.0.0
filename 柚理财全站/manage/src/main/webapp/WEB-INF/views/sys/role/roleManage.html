@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>角色管理</title>
+<#include "include/resources.html">
+</head>
+<body>
+<div class="wrapper">
+	<div class="row pt20">		
+		<div class="col-md-6">
+			<div class="row">		
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入角色名">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid_01" data-url="/sys/role/list.html">搜索</button>
+							    </span>						    
+						    </div>
+					    </form>	
+					</div>
+					<div class="search-form-adv ml10">
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+						<@shiro.hasPermission name="set:sys:role:add">
+						<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.addFun(this)" data-tid="jqGrid_01" data-url="/sys/role/roleAddPage.html">新增</button>
+						</@shiro.hasPermission>
+						<@shiro.hasPermission name="set:sys:role:edit">
+						<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.editFun(this)" data-tid="jqGrid_01" data-url="/sys/role/roleEditPage.html">编辑</button>
+						</@shiro.hasPermission>
+						<@shiro.hasPermission name="set:sys:role:auth">
+						<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.authorize(this)" data-tid="jqGrid_01" data-url="/sys/role/rolePermsPage.html" data-title="授权">授权</button>
+						</@shiro.hasPermission>
+						<@shiro.hasPermission name="set:sys:role:del">
+						<button type="button" class="btn btn-warning" onclick="$.fn.treeGridOptions.deleteFun(this)" data-tid="jqGrid_01" data-url="/sys/role/roleDel.html">删除</button>
+						</@shiro.hasPermission>
+					</div>			
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="row">		
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入用户名/姓名">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid_02" data-url="/sys/operator/findRoleOperators.html?roleEq=1" id="RoleOperatorsearchBtn">搜索</button>
+							    </span>						    
+						    </div>
+					    </form>	
+					</div>
+					<div class="search-form-adv ml10">
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+						<@shiro.hasPermission name="set:sys:role:user:mgr">
+						<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.manageFun(this)" data-tid="jqGrid_01" data-url="/sys/role/roleOperatorsPage.html">管理</button>
+						</@shiro.hasPermission>
+						<@shiro.hasPermission name="set:sys:role:user:del">
+						<button type="button" class="btn btn-warning" id="roleUserDelBtn" onclick="$.fn.treeGridOptions.deleteFun(this)" data-tid="jqGrid_02" data-url="/sys/operator/deleteSelected.html">删除</button>
+						</@shiro.hasPermission>
+					</div>			
+				</div>
+			</div>		
+		</div>
+	</div>
+	<div class="row mt20">
+		<div class="col-md-6">
+			<table id="jqGrid_01"></table>
+			<div id="jqGridPager_01"></div>
+		</div>
+		<div class="col-md-6">
+			<table id="jqGrid_02"></table>
+			<div id="jqGridPager_02"></div>
+		</div>
+	</div>
+    <script type="text/javascript"> 			    	
+        $(document).ready(function () {
+        	var operatorRoleDelUrl ="/sys/operator/deleteSelected.html";
+        	var operatorRoleSearchUrl = "/sys/operator/findRoleOperators.html?roleEq=1";
+        	var jqGrid_02_flag = true;
+        	//表格初始化
+        	$("#jqGrid_01").jqTreeGrid({
+        		url: '/sys/role/list.html',
+        		
+        		multiselect : true,
+        		multiboxonly: true,
+        		pager: "#jqGridPager_01",
+                colModel: [
+                	{ label: 'id', name: 'id', hidden: true},
+					{ label: '角色名', name: 'roleName', width: 100},
+					{ label: '备注', name: 'remark', width: 250 }			
+                ],
+                beforeSelectRow:function(rowid, e){
+                	var uuid = $("#jqGrid_01").getRowData(rowid).id;
+                	greattable(uuid);
+                	$('#roleUserDelBtn').attr("data-url",operatorRoleDelUrl + "?id="+uuid);                	
+                	$('#RoleOperatorsearchBtn').attr("data-url",operatorRoleSearchUrl + "&roleId="+uuid);            	
+                },
+                loadComplete:function(){
+                	if($("#jqGrid_01 tr").length > 1){
+                		$("#jqGrid_01 tr").eq(1)[0].click();
+                	}
+		        }
+        	}).jqGrid("setFrozenColumns").navGrid('#jqGridPager_01',		            
+		            { edit: false, add: false, del: false, search: false, refresh: true, view: false, position: "left", cloneToTop: false }
+		   	);		   	
+		   	function greattable(rowid){
+		   		var url = '/sys/operator/findRoleOperators.html?roleEq=1&roleId='+rowid; //roleEq=0查无此角色,roleEq=1相反		   		
+		   		if(jqGrid_02_flag){		   			
+			   		$("#jqGrid_02").jqTreeGrid({
+		        		url: url,
+		        		
+		        		multiselect : true,
+		        		pager: "#jqGridPager_02",
+		                colModel: [
+		                	{ label: 'id', name: 'id', hidden:true},
+							{ label: '用户名', name: 'loginName', width: 100},
+							{ label: '姓名', name: 'realName', width: 150}			
+		                ],
+		                beforeSelectRow:function(rowid, e){
+		                	
+		                },
+		                loadComplete:function(){
+		                	jqGrid_02_flag = false;
+		                }
+		        	}).jqGrid("setFrozenColumns").navGrid('#jqGridPager_02',				            
+				            { edit: false, add: false, del: false, search: false, refresh: true, view: false, position: "left", cloneToTop: false }
+				   	);	
+		   		}
+		   		else
+		   		{		   				   		
+				   	$("#jqGrid_02").jqGrid('setGridParam',{url: url,page:1}).trigger("reloadGrid");
+		   		}
+		   	}
+       });
+  </script>	
+</body>
+</html>

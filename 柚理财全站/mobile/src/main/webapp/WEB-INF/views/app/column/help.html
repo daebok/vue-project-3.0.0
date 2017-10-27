@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>帮助中心</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
+    <meta content="telephone=no" name="format-detection" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <!-- <link rel="stylesheet" type="text/css" href="../css/light.css" /> -->
+    <link rel="stylesheet" href="https://unpkg.com/mint-ui/lib/style.css">
+    <link rel="stylesheet" type="text/css" href="${mobileUrl}/themes/app/css/common.css" />
+    <link rel="stylesheet" type="text/css" href="${mobileUrl}/themes/app/css/theme.css" />
+    <link rel="stylesheet" type="text/css" href="${mobileUrl}/themes/app/css/base.css" />
+    <script type="text/javascript" src="${mobileUrl}/themes/app/js/get_client_width.min.js"></script>
+	<script type="text/javascript" src="${mobileUrl}/themes/app/js/jquery-3.1.1.min.js"></script>
+</head>
+<style>
+    body{
+        background: #F5F5F5;
+        font-family: arial;
+    }
+    .about-list{
+        padding: 0 .15rem;
+        background: #fff;
+    }
+    .about-list li{
+        height: .48rem;
+        line-height: .48rem;
+    }
+    .about-list li a{
+    	display: block;
+    	width: 100%;
+    }
+    .about-list li a label{
+        font-size: .16rem;
+        color: #333;
+    }
+    .about-list li a span{
+        float: right;
+        color: #999;
+        font-size: .13rem;
+    }
+    .right-go{
+        width: .14rem;
+        float: right;
+        margin-top: .17rem;
+    }
+</style>
+<body>
+    <div class="page" id="about">
+        <mt-header class="bar-nav aui-border-b" title="帮助中心" >
+            <mt-button slot="left" icon="back"></mt-button>
+        </mt-header>
+        <div class="about">
+            <ul class="about-list margin-t-10">
+				<#if sectionlist?? && (sectionlist?size > 0) >
+					<#list sectionlist as item>
+						<li class="aui-border-b">
+							<a href="/app/open/column/helpCenterDetail.html?sectionCode=${item.sectionCode!''}&User-Agent=micromessenger">
+							<label>${item.sectionName!''}</label>
+							<img src="${mobileUrl}/themes/app/images/public/arrow_right.png" class="right-go"/>
+						</li>
+					</#list>
+				</#if>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

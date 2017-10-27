@@ -1,0 +1,238 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+    <title>注册</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
+    <meta content="telephone=no" name="format-detection" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <link rel="stylesheet" href="https://unpkg.com/mint-ui/lib/style.css">
+    <link rel="stylesheet" type="text/css" href="${mobileUrl}/themes/app/css/common.css" />
+    <link rel="stylesheet" type="text/css" href="${mobileUrl}/themes/app/css/theme.css" />
+    <link rel="stylesheet" type="text/css" href="${mobileUrl}/themes/app/css/base.css" />
+	<script src="${mobileUrl}/themes/app/js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="${mobileUrl}/themes/app/js/jquery-validation-1.13.0/jquery.validate.js"></script>
+	<script type="text/javascript" src="${mobileUrl}/themes/app/js/jquery-validation-1.13.0/messages_zh.js"></script>
+	<script type="text/javascript" src="${mobileUrl}/themes/app/js/jquery-validation-1.13.0/additional-methods.js"></script>
+	<script type="text/javascript" src="${mobileUrl}/themes/app/js/jquery.form.js"></script>
+    <script type="text/javascript" src="${mobileUrl}/themes/app/js/layer-mobile/layer.m.js"></script>
+	<script type="text/javascript" src="${mobileUrl}/themes/app/js/inputLimit.js"></script>
+    <script type="text/javascript" src="${mobileUrl}/themes/app/js/get_client_width.min.js"></script>
+</head>
+<style>
+	body{
+		background: #F5F5F5;
+	}
+	.form_reg{
+		height: 100%;
+		width: 100%;
+		margin-top: .2rem;
+	}
+	.reg_ul{
+		width: 100%;
+		display: block;
+	}
+	.reg_ul li{
+		display: block;
+		height: .45rem;
+		line-height: .45rem;
+		border-bottom: 1px solid #E6E6E6;
+		background: #fff;
+		padding: 0 5%;
+		margin-bottom: .05rem;
+	}
+	.reg_ul li label{
+		width: 25%;
+		display: block;
+		float: left;
+	}
+	.reg_ul li input{
+		width: 70%;
+		height: .3rem;
+		line-height: .3rem;
+		margin-top: .075rem;
+		border:none;
+		outline: none;
+	}
+	.valid_input{
+		display: inline-block;
+		width: 45% !important;
+		float: left;
+	}
+	.valid_btn{
+		width: 30% !important;
+		color: #F6923C;
+		text-align: center;
+		display: inline-block;
+		height: .43rem !important;
+		line-height: .45rem !important;
+		margin-top: 0 !important;
+		background: #fff;
+		border-bottom: 1px solid #EFEFEF;
+		-webkit-appearance: none;
+	}
+	.reg_protocol{
+		height: .3rem;
+		line-height: .3rem;
+	}
+	.pro_img{
+		margin-left: 5%;
+		height: .15rem;
+		width: .15rem;
+		vertical-align: middle;
+	}
+	.reg_protocol span{
+		margin-top: 0!important;
+		display: inline;
+		color: #666;
+		font-size: .12rem;
+	}
+	.protocol{
+		font-size: .12rem;
+		color: #F49D59;
+	}
+	.next_btn{
+		height: .45rem;
+		line-height: .45rem;
+		width: 90%;
+		margin-left: 5%;
+		border: none;
+		outline: none;
+		color: #fff;
+		font-size: .2rem;
+		border-radius: .05rem;
+		-webkit-appearance: none;
+	}
+	.validCode{
+		width: 40%!important;
+	}
+	.validImg{
+		float: right;
+	}
+</style>
+<script>
+		function toast(str,fn){
+			mobile_layer.open({
+				content:str,
+				shadeClose: false,
+				time:2.5,
+				style:'top:-100px;color:#fff;background-color: rgba(0, 0, 0, 0.59);',
+				end:fn
+			})
+			$('.laymshade').hide();
+		}
+		//一个按钮的方法
+		function layer_alert(str,fn){
+			mobile_layer.open({
+				title:'提示',
+				content:str,
+				shadeClose: false,
+				style:'width:90%;',
+				btn:['确定'],
+				end:fn
+			})
+			$('.layermend').hide().siblings('h3').css({
+				padding:0,
+				border:0
+			})
+			$('.layermcont').css({color:'#a2a2a2',padding:'0 10px 20px'})
+		};
+		//两个按钮的方法
+		function layer_btns(str,btn1,btn2,fn1,fn2){
+			mobile_layer.open({
+				title:'提示',
+				content:str,
+				shadeClose: false,
+				style:'width:90%;',
+				btn:[btn1,btn2],
+				yes:fn1,
+				no:fn2
+			})
+			$('.layermend').hide().siblings('h3').css({
+				padding:0,
+				border:0
+			})
+			$('.layermcont').css({color:'#a2a2a2',padding:'0 10px 20px'})
+		}
+	</script>
+<body>
+	<div class="page" id="pageDetail">
+		<div class="form_reg">
+			<!--注册表单第一步-->
+			<form action="/app/open/user/registerFirst.html" type="post" id="regFirstForm" class="reg_content_1" >
+				<ul class="reg_ul">
+					<li>
+						<label>手机号码</label>
+						<input type="tel" placeholder="请输入手机号" id="mobilePhone" name="mobile" maxlength="11" 
+							onkeydown="if(event.keyCode==32){return false;}" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"/>
+					</li>
+					
+					<li>
+						<label>登录密码</label>
+						<input type="password" placeholder="请输入登录密码" id="password" name="pwd" maxlength="16" onpaste="return false" onkeydown="if(event.keyCode==32){return false;}" />
+					</li>
+					<li>
+						<label>确认密码</label>
+						<input type="password" placeholder="请再次输入密码" id="confirmPassword" name="confirmPassword" maxlength="16" onpaste="return false" onkeydown="if(event.keyCode==32){return false;}" />
+					</li>
+					<#if ui??>
+						<li>
+							<label>邀请人</label>
+							<input type="tel" placeholder="请输入邀请人手机号(选填)" id="invite_username" name="inviter" maxlength="15" value="${ui!}" autocomplete="off" onkeydown="if(event.keyCode==32){return false;}" />
+						</li>
+					</#if>
+					<li>
+						<label>验证码</label>
+						<input type="text" maxlength="4" name="validCode" id="validCode" class="validCode" placeholder="请输入验证码"/>
+						<img src="/app/open/validimg.html" class="validImg" onclick="this.src='/app/open/validimg.html?t=' + Math.random();"/>
+					</li>
+				</ul>
+				<div class="reg_protocol">
+					<img src="${mobileUrl}/themes/app/images/me/protocol_s.png" id="dianji" class="pro_img agree"/>
+					<span>我已阅读并同意</span>
+					<span id="service_contract">
+						
+					</span>
+					<input type="hidden" name="agree" value="1" id="agree"/>
+				</div>
+				
+				<!--信息提示-->
+				<div style="display: none;" class="showErrorTips">
+					<label class="errorTips"><b></b></label>
+				</div>	
+				
+				<div class="operator margin-t-20">
+					<input type="submit" value="下一步" class="next_btn main-btn-bg form-btn" />
+				</div>
+			</form>
+			<!--注册表单第二步-->
+			<form action="/app/open/user/doRegister.html" type="post" id="regSecondForm" class="reg_content_2" style="display:none;">
+				<ul class="reg_ul">
+					<li>
+						<label>手机号码</label>
+						<input type="tel" id="regPhone" readonly="readonly" />			
+					</li>			
+					<li>
+						<label>验证码</label>
+						<input type="tel" class="valid_input" placeholder="请输入手机验证码" name="code" id="code" maxlength="6" onkeydown="if(event.keyCode==32){return false;}" />
+						<input type="button" name="" class="valid_btn" id="getPhoneCode" value="获取验证码" />
+					</li>
+				</ul>
+				<!--信息提示-->
+				<div style="display: none;" class="showErrorTips">
+					<label class="errorTips"><b></b></label>
+				</div>	
+				
+				<!--隐藏表单域-->
+				<input type="hidden" value="" name="__sid" id="sid" />
+				
+				<!--下一步按钮-->
+				<input type="submit" class="form-btn next_btn main-btn-bg margin-t-20" value="下一步" />	
+			</form>
+		</div>
+	</div>
+</body>
+</html>
+<script type="text/javascript" src="${mobileUrl}/themes/app/js/jquery.base64.js"></script>
+<script type="text/javascript" src="${mobileUrl}/themes/app/js/register.js"></script>

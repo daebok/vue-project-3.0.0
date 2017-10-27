@@ -1,0 +1,158 @@
+<div class="form-tips-content">
+  <form class="form-horizontal" action="/user/userQualification/doAudit.html" id="form" role="form">
+  	<ul class="form-item">
+  		<li>
+  		    <input type="hidden" name="uuid" id="uuid" value="${apply.uuid}">
+		    <div class="form-group">
+		        <label class="control-label form-label">用户名：</label>
+		        <div class="input-box-read">
+					<p>${user.userName!}</p>
+				</div>
+		    </div>	
+  		</li>
+  		 <li>
+			<div class="form-group">
+		       <label class="control-label form-label">手机号码：</label>
+		       <div class="input-box-read"><p>${user.mobile!}</p></div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		       <label class="control-label form-label">真实姓名：</label>
+		       <div class="input-box-read"><p>${user.realName}</p></div>
+		    </div>	
+  		</li>
+  		 <li>
+			<div class="form-group">
+		       <label class="control-label form-label">身份证号：</label>
+		       <div class="input-box-read"><p>${userCache.idNo}</p></div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+			   <label class="control-label form-label">学历：</label>
+		       <div class="input-box-read">			
+		      	  <p><@linkage id="education" nid="educationLevel" default="${userBaseInfo.education}" plantext="plantext" /></p>
+		       </div>
+		    </div>	
+  		</li>
+  		 <li>
+			<div class="form-group">
+		       <label class="control-label form-label">绑定邮箱：</label>
+		       <div class="input-box-read"><p>${user.email}</p></div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		       <label class="control-label form-label">所在地区：</label>
+		       <div class="input-box-read"><p>${userCache.provinceStr}${userCache.cityStr}${userCache.areaStr}${userCache.address}</p></div>			
+		    </div>	
+  		</li>
+  		 <li>
+			<div class="form-group">
+			   <label class="control-label form-label">婚姻状况：</label>
+		       <div class="input-box-read">			
+		      	  <p><@linkage id="maritalStatus" nid="maritalStatus" default="${userBaseInfo.maritalStatus}" plantext="plantext" /></p>
+		       </div>			
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+			   <label class="control-label form-label">工作年限：</label>
+		       <div class="input-box-read">			
+		      	  <p><@linkage id="workExperience" nid="workExperience" default="${userBaseInfo.workExperience}" plantext="plantext" /></p>
+		       </div>				
+		    </div>	
+  		</li>
+  		 <li>
+			<div class="form-group">
+			   <label class="control-label form-label">年收入：</label>
+		       <div class="input-box-read">			
+		      	  <p><@linkage id="monthIncomeRange" nid="salaryRange" default="${userBaseInfo.monthIncomeRange}" plantext="plantext" /></p>
+		       </div>			
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+			   <label class="control-label form-label">车产：</label>
+		       <div class="input-box-read">			
+		      	  <p><@linkage id="carStatus" nid="carStatus" default="${userBaseInfo.carStatus}" plantext="plantext" /></p>
+		       </div>				
+		    </div>	
+  		</li>
+  		 <li>
+			<div class="form-group">
+			   <label class="control-label form-label">房产：</label>
+		       <div class="input-box-read">			
+		      	  <p><@linkage id="houseStatus" nid="houseStatus" default="${userBaseInfo.houseStatus}" plantext="plantext" /></p>
+		       </div>				
+		    </div>	
+  		</li>
+		<li class="full-width">
+			<div class="form-group">
+				<label for="pwd" class="control-label form-label">认证资料：</label>
+				<div class="">
+					<div id="uploadGuaranteeBox2" class="uploadWrap" data-arr="uploadFile2">
+				    	<ul id="borrowPagePic2" class="photoUpload1">					        						            
+				            <#if picList??>
+					            <#list picList as item>
+					            <li data-mum="${item.uuid!}">
+					               <a class="imgs" rel="group" href="${image_server_url}${item.filePath!}" target="_blank"><img src="${image_server_url}${item.filePath!}"/></a>
+					           	</li>
+								</#list>
+							</#if>	
+				        </ul>
+				    </div>
+				</div>
+			</div>
+		</li>
+  		</li>
+		<li class="full-width">
+			<div class="form-group">
+				<label for="status" class="control-label form-label">审核状态：</label>
+				<div class="input-checkbox-box">
+					<input type="radio" name="status" value="1" checked><label for="">审核通过</label>
+					<input type="radio" name="status" value="2"><label for="">审核不通过</label>
+				</div>
+			</div>
+		</li>
+		<li class="full-width">
+			<div class="form-group">
+				<label for="remark" class="control-label form-label">审核备注：</label>
+				<div class="input-box">
+					<textarea rows="" cols=""  class="form-control" name="verifyRemark" maxlength="200"  required></textarea>
+				</div>
+			</div>
+		</li>
+  	</ul>
+  	<@token/>
+  </form>
+</div>
+<script>
+	$("#form").validate({
+	  submitHandler:function(form){ 
+			$(form).ajaxSubmit({
+				type:"post",
+				dataType:"json",
+				success:function(data){
+        	if(data.result){
+        		layer.alert(data.msg, {
+        			icon: 6,
+        			cancel: function(index){
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入 
+						}
+        		}, function(){	        			
+        			layer.closeAll();
+        			gridobj.trigger("reloadGrid"); //重新载入  
+        		});
+        	}
+        	else
+        	{
+        		layer.alert(data.msg, {icon: 5});
+        	}	        	
+	    	}
+			});
+	  }    
+	});
+</script>

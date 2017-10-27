@@ -1,0 +1,367 @@
+<div class="form-tips-content">
+<input type="hidden" id="image_server_url" value="${image_server_url}">
+	<form class="form-horizontal" action="/user/userVouch/doAdd.html"
+		id="form" role="form">
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label for="userName" class="control-label form-label">用户名：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="userName" id="userName" value="${userName}"
+						    maxlength="20" readonly="readonly" required>
+					   <input type="hidden" name="userNo" id="userNo" value="${userNo}" readonly="readonly">
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="email" class="control-label form-label">默认密码：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="pwd" id="pwd"
+							value="${defalutPwd}" readonly="readonly">
+						<div class="msg_tip"></div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="loginName" class="control-label form-label">联系人手机号<span style="color:red;">*</span>：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="mobile" id="mobile"
+							maxlength="11" placeholder="请输入联系人手机号" >
+						<div class="msg_tip"></div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="loginName" class="control-label form-label">联系人姓名：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="contacts" id="contacts"
+						   maxlength="11" placeholder="请输入联系人姓名" >
+						<div class="msg_tip"></div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="email" class="control-label form-label">联系邮箱：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="email" id="email" 
+						    maxlength="30" placeholder="请输入联系邮箱">
+						<div class="msg_tip"></div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="email" class="control-label form-label">企业名称<span style="color:red;">*</span>：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="companyName" id="companyName" 
+						    maxlength="40" placeholder="请输入企业名称" required>
+						<div class="msg_tip"></div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="tppUserCustId" class="control-label form-label">第三方商户号：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="tppUserCustId" id="tppUserCustId"
+							maxlength="20" placeholder="第三方商户号已线下开通，可为空" style="width: 60%; display: inline-block; vertical-align: middle;" />
+							<button type="button" class="btn btn-primary" id="search_CustId">查询</button>
+						<div class="msg_tip"></div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="name" class="control-label form-label">企业logo：</label>
+					<div class="">
+						<div id="uploadLogo" class="uploadWrap" data-arr="logo">
+							  <ul id="logoPagePic" class="photoUpload">
+						        	<li class="addFileBtn">
+						            	<input type="file" name="logoPicPath"  accept="image/gif, image/jpeg,image/png" class="uploadFileInput"
+						            	 id="logoPicPath" onchange="return ajaxFileUpload('logoPicPath','/imageUp.jsp?editorid=article','logo');" title="点击上传图片" />
+						            </li>
+						      </ul>
+						</div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+			      <label for="companyName" class="control-label form-label">法定代表：</label>
+			      <div class="input-box">
+			      <input type="text" class="form-control" name="legalDelegate" id="legalDelegate" 
+			          maxlength="10" placeholder="请输入法定代表">
+			      <div class="msg_tip"></div>
+			      </div>
+			    </div>	
+  			</li>
+  			<li>
+				<div class="form-group">
+			      <label for="companyName" class="control-label form-label">法定代表身份证号：</label>
+			      <div class="input-box">
+			      <input type="text" class="form-control" name="certNo" id="certNo"
+			        maxlength="18" placeholder="请输入法定代表身份证号">
+			      <div class="msg_tip"></div>
+			      </div>
+			    </div>	
+	  		</li>  
+			<li>
+				<div class="form-group">
+					<label for="email" class="control-label form-label">是否三证合一：</label>
+					<div class="input-box" style="position: relative; top: 7px;">
+						<input type="radio" value="1" class="checkstatus" name="threeCertificate" />是
+			     		<input type="radio" value="0" class="checkstatus"  name="threeCertificate" checked="checked"/>否
+					</div>
+				</div>
+			</li>
+			<li class="codes"  style="display:none;">
+				<div class="form-group">
+					<label for="email" class="control-label form-label">统一社会信用代码：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="creditCode" id="creditCode"
+						   maxlength="18" placeholder="请输入统一社会信用代码">
+						<div class="msg_tip"></div>
+					</div>
+				</div>
+			</li>
+			<li class="code">
+				<div class="form-group">
+					<label for="email" class="control-label form-label">营业执照注册号：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="bussinessCode" id="bussinessCode"
+						    maxlength="15" placeholder="请输入营业执照注册号">
+						<div class="msg_tip"></div>
+					</div>
+				</div>
+			</li>
+			<li class="code">
+				<div class="form-group">
+					<label for="email" class="control-label form-label">组织机构代码：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="orgCode" id="orgCode" 
+							maxlength="9" placeholder="请输入组织机构代码">
+						<div class="msg_tip"></div>
+					</div>
+				</div>
+			</li>
+			<li class="code">
+				<div class="form-group">
+					<label for="email" class="control-label form-label">税务登记证号：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="taxRegNo" id="taxRegNo"
+						    maxlength="15" placeholder="请输入税务登记证号">
+						<div class="msg_tip"></div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="email" class="control-label form-label">企业固定电话：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="telephone" id="telephone"
+						    maxlength="12" placeholder="请输入企业固定电话">
+						<div class="msg_tip"></div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div id="city" class="adminUserMuti form-group">
+					<label class="control-label form-label">公司地区：</label>
+					<select class="prov" name="province"><option value="请选择">请选择</option></select>  
+				    <select class="city" name="city" disabled="disabled"><option value="请选择">请选择</option></select> 
+				    <select class="dist" name="area" disabled="disabled"><option value="">请选择</option></select> 
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="email" class="control-label form-label">企业地址：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="address" id="address" 
+							maxlength="50" placeholder="请输入企业地址">
+						<div class="msg_tip"></div>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<b style="color:#cc5965;padding-left:95px;">备注：商户号、法定代表信息、企业证照信息将用于绑定托管账户和生成电子签章，提交后即不允许修改！</b>
+		<@token name="addUserVouchToken"/>
+	</form>
+</div>
+<script src="${theme_dir}/static/js/plugins/jquery.suggest.js"></script>
+<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+<script src="${theme_dir}/static/js/upload.js"></script>
+<script src="${theme_dir}/static/js/jquery-citySelect/jquery.cityselect.js"></script>
+<script>
+
+$("#tppUserCustId").on("input",function(){
+	if($(this).val()!=""){
+		$("#companyName,#legalDelegate,#certNo,#orgCode,#bussinessCode,#creditCode").attr("required",true)
+	}
+	else{
+		$("#companyName,#legalDelegate,#certNo,#orgCode,#bussinessCode,#creditCode").removeAttr("required")
+	}
+})
+
+$('input[name="threeCertificate"]').click(function(){
+	if($(this).val()==1){
+		$(".codes").css("display","block");
+		$(".code").css("display","none")
+	}
+	else{
+		$(".codes").css("display","none");
+		$(".code").css("display","block")
+	}
+})
+
+$("#search_CustId").click(function(){
+	$.ajax({
+		url: '/user/userCompany/doQuery.html?accountId='+ $("#tppUserCustId").val(),
+		type: 'POST',
+		dataType: 'json'
+	})
+	.done(function(data) {
+		if(data.result==false){
+			top.layer.alert("无该账户，请核对第三方商户号", {
+				icon: 5,
+				shadeClose: true
+			});
+		}else{
+			$("#mobile").val(data.mobile);
+			$("#companyName").val(data.name);
+			if(data.idType==20){
+				$("input[name='threeCertificate']:eq(1)").prop("checked",true);
+				$(".codes").css("display","none");
+				$(".code").css("display","block")
+				$("#orgCode").val(data.idNo);
+				$("#bussinessCode").val(data.busId);
+				$("#taxRegNo").val(data.taxId);
+			}else{
+				$("input[name='threeCertificate']:eq(0)").prop("checked",true);
+				$(".codes").css("display","block");
+				$(".code").css("display","none");
+				$("#creditCode").val(data.idNo);
+			}
+		}
+	})
+})
+
+
+$("#city").citySelect({
+		url:"${theme_dir}/static/js/jquery-citySelect/city.json",
+		prov:"请选择", //省份 
+	    city:"请选择", //城市 
+	    dist:"请选择", //区县 
+	    required:true,
+	    nodata:"none" //当子集无数据时，隐藏select 
+	}); 
+
+//点击添加按钮时，判断图片上传数量
+$('#logoPagePic').find('.addFileBtn').click(function(){
+	var num = $('#logoPagePic').find('li.addFileBtn').siblings().length;
+	if(num == 1){
+		alert("上传文件数量不能超过1张");
+		return false;
+	}
+	
+});
+	$("#form").validate({
+		rules: {
+				  	mobile:{
+				  		required:true,
+						isMobile:true
+					},
+					pwd:{
+						required:true
+					},
+					email: {
+						email:true
+				   	},
+				   	creditCode: {
+						credittest:true
+				   	},
+				   	bussinessCode:{
+				   		islengthval:true
+				   	},
+			   		orgCode: {
+			   			orgCodetest:true,
+						rangelength:[9,9]
+			   		},
+			   		taxRegNo: {
+						islengthval:true
+			   		},
+			   		telephone: {
+						fixNumber: true
+			   		}
+				},
+		messages:{
+			   		mobile:{
+						required:"请输入手机号码",
+						isMobile:"手机号码格式错误"
+				   	},
+				   	pwd:{
+				   		required:"请输入默认密码"
+				   	},
+				   	email: {
+						email: "请输入正确的email地址"
+					},
+					creditCode: {
+						credittest:"请输入18位数字或大写英文字母"
+				   	},
+				   	bussinessCode: {
+				   		islengthval:"请输入15位的数字"
+				   	},
+					orgCode: {
+						orgCodetest:"请输入组织机构代码，格式XXXXXXXXX",
+						islengthval:"请输入组织机构代码，格式XXXXXXXXX"
+					},
+					taxRegNo: {
+						
+						islengthval:"请输入15位的数字"
+					},
+					telephone: {
+						fixNumber: "请正确输入您的电话号码（11/12位，以区号开头）"
+					},
+				},
+		errorPlacement:function(error, element){
+		  	element.parents("li").find(".msg_tip").html(error);	
+		},
+		success:function(element){
+			element.parents("li").find(".msg_tip").html('');
+		},
+		submitHandler : function(form) {
+			var index = layer.load(1, {
+		    shade: [0.1,'#fff'], //0.1透明度的白色背景
+		    time: 4000,
+		    end: function(){
+			}
+			});
+			$(form).ajaxSubmit({
+					type:"post",
+					dataType:"json",
+					success:function(data){
+						layer.close(index);
+						    if(data.result){
+				        		layer.alert(data.msg, {
+				        			icon: 6,
+				        			cancel: function(index){
+										layer.closeAll();
+										gridobj.trigger("reloadGrid"); //重新载入 
+					  				}
+				        		}, function(){	        			
+				        			layer.closeAll();
+				        			gridobj.trigger("reloadGrid"); //重新载入  
+				        		});
+				        	}else{
+				        		layer.alert(data.msg, {icon: 5});
+				        	}	       	
+			    	}
+			}); 
+
+	  }    
+	});
+
+</script>

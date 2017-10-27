@@ -1,0 +1,157 @@
+@import (reference)'../../../style/common.less';
+@import '../../../style/account.less';
+@import '../../../style/tips.less';
+.orderPayModal .modal-content i{
+  margin-left: 40px;
+  font-size: 35px;
+  margin-top: 5px;
+}
+.orderPayModal .modal-content p{
+  font-size: 18px;
+  padding-top: 18px;
+}
+.account-content{
+  .selectcard-title{
+    .f16();
+    color:@color-text;
+    padding:21px 0 25px 0;
+  }
+  .selectcard{
+    padding-left: 30px;
+  }
+  .cardlist{
+    position: relative;
+    z-index: 2;
+    .clearfix();
+    li{
+      width: 200px;
+      height: 90px;
+      border:solid 1px @color-tipsbg;
+      .fl();
+      margin: 0 30px 30px 0;
+      cursor: pointer;
+      position: relative;
+      border-radius: 3px;
+      padding: 14px 0 0 14px;
+      &.on{
+        border-color:@color-main;
+      }
+      s{
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: inline-block;
+        border:12px solid;
+        border-color:#e8e8e8 #e8e8e8 #fff #fff;
+        text-decoration: none;
+        width: 0;
+        height: 0;
+        line-height: 0;
+        em{
+          .f12();
+          color: #fff;
+          position: relative;
+          top: -4px;
+        }
+      }
+      &.on{
+        s{
+          border-color: @color-main @color-main #fff #fff;
+        }
+      }
+      .bankname{
+        display: block;
+        .f14();
+        color: @color-p;
+        font-weight: bold;
+        margin-bottom: 14px;
+        img{
+          width: 24px;
+          height: 24px;
+          vertical-align:middle;
+          margin-right: 10px;
+        }
+      }
+      .cardnumber{
+        display: block;
+        margin-right: 14px;
+        border-top:dashed 1px #f0f0f0;
+        .f12();
+        color: @color-text;
+        line-height: 35px;
+      }
+      &.addcard{
+        text-align: center;
+        line-height: 90px;
+        background: none;
+        border:dashed 1px @color-tipsbg;
+        border-radius: 3px;
+        padding: 0;
+        a{
+          .f14();
+          color: @color-text;
+          display: block;
+          height: 90px;
+          width: 100%;
+        }
+        em{
+          font-size: 20px;
+          vertical-align: middle;
+          margin: 0 10px 0 0;
+        }
+        &:hover{
+          border-color:@color-main;
+          a{
+            color: @color-main;
+          }
+        }
+      }
+    }
+  }
+  .form-themes{
+    margin-bottom: 40px;
+  }
+  .subbutton{
+    .form-button(@padding: 0px,@width: 280px,@fontsize: 18px,@lineheight:40px);
+    background-image:-webkit-linear-gradient(to right, #ff794e, #ffb131);
+      background-image:linear-gradient(to right,#ff794e, #ffb131);
+      border: none;
+      border-radius: 5px;
+  }
+  .ant-form-item{
+    margin-bottom: 10px;
+  }
+  .form-text{
+    em{
+      font-size: 20px;
+      font-style: initial;
+    }          
+  }
+  .star{
+    color: #ff0000;
+  }
+}
+.account-content .main-title {
+    margin: 30px 0 0;
+}
+.ant-form-extra{
+  .f14();
+}
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+  color:#ccc !important;
+  font-weight: normal;
+  font-size: 14px !important;
+}
+
+.countdown-btn {
+    width: 130px;
+    height: 40px;
+    border: 1px solid #eaeaea;
+    background-color: #fafafa;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+

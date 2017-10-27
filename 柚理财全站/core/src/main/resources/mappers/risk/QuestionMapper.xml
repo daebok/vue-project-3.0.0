@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.risk.mapper.QuestionMapper">
+	<resultMap type="com.rd.ifaes.core.risk.domain.Question" id="questionResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="papersId" column="PAPERS_ID"/>
+		<result property="questionNo" column="QUESTION_NO"/>
+		<result property="questionName" column="QUESTION_NAME"/>
+		<result property="sort" column="SORT"/>
+		<result property="score" column="SCORE"/>
+		<result property="isSingle" column="IS_SINGLE"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="deleteFlag" column="DELETE_FLAG"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		PAPERS_ID,
+		QUESTION_NO,
+		QUESTION_NAME,
+		SORT,
+		SCORE,
+		IS_SINGLE,
+		CREATE_TIME,
+		DELETE_FLAG
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{papersId},
+		#{questionNo},
+		#{questionName},
+		#{sort},
+		#{score},
+		#{isSingle},
+		#{createTime},
+		#{deleteFlag}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="papersId != null and papersId != ''">and PAPERS_ID = #{papersId}</if>
+            <if test="questionNo != null and questionNo != ''">and QUESTION_NO = #{questionNo}</if>
+            <if test="questionName != null and questionName != ''">and QUESTION_NAME = #{questionName}</if>
+			<if test="sort != null">and SORT = #{sort}</if>
+			<if test="score != null">and SCORE = #{score}</if>
+			<if test="isSingle != null ">and IS_SINGLE = #{isSingle}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+			<if test="deleteFlag != null">and DELETE_FLAG = #{deleteFlag}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+     	<if test="page == null or page.sort == null or page.sort == ''">order by sort asc </if> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.risk.domain.Question">
+		insert into risk_question( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into risk_question( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+				#{item.uuid},
+				#{item.papersId},
+				#{item.questionNo},
+				#{item.questionName},
+				#{item.sort},
+				#{item.score},
+				#{item.isSingle},
+				#{item.createTime},
+				#{item.deleteFlag}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from risk_question
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update risk_question set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="uuid" open="(" separator="," close=")">  
+            #{uuid} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update risk_question set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.risk.domain.Question">
+		update risk_question 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="papersId != null and papersId != ''">PAPERS_ID = #{papersId},</if>
+            <if test="questionName != null and questionName != ''">QUESTION_NAME = #{questionName},</if>
+			<if test="sort != null">SORT = #{sort},</if>
+			<if test="score != null">SCORE = #{score},</if>
+			<if test="isSingle != null">IS_SINGLE = #{isSingle},</if>
+			<if test="deleteFlag != null">DELETE_FLAG = #{deleteFlag}</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="questionResultMap">
+        select <include refid="table_columns" />
+        from risk_question
+    </select>
+
+    <select id="findList" resultMap="questionResultMap">
+        select q.uuid,q.papers_id,q.question_no,q.question_name,q.sort,q.is_single,q.create_time,q.score,
+        q.delete_flag,p.papers_name as papersName  
+        from risk_question q left join risk_papers p on p.uuid = q.papers_id 
+       	 <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and q.UUID = #{uuid}</if>
+            <if test="papersId != null and papersId != ''">and q.PAPERS_ID = #{papersId}</if>
+            <if test="questionName != null and questionName != ''">and q.QUESTION_NAME like concat('%',#{questionName},'%')</if>
+			<if test="sort != null">and q.SORT = #{sort}</if>
+			<if test="score != null">and q.SCORE = #{score}</if>
+			<if test="isSingle != null and isSingle != '' ">and q.IS_SINGLE = #{isSingle}</if>
+			<if test="createTime != null">and q.CREATE_TIME = #{createTime}</if>
+			<if test="deleteFlag != null">and q.DELETE_FLAG = #{deleteFlag}</if>
+			<if test="papersName != null and papersName!= ''">and p.PAPERS_NAME = #{papersName}</if>
+			<if test="isSingleSet != null and isSingleSet != ''">
+	        	and q.IS_SINGLE in 
+	        	<foreach collection="isSingleSet" item="isSingleSetTemp" open="(" separator="," close=")">#{isSingleSetTemp}</foreach>
+	        </if>
+	     </trim>
+	     <if test="page != null and page.sort!=null and page.sort!=''">order by q.sort asc </if>
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from risk_question 
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="questionResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from risk_question 
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<!-- 根据试卷UUID查询该试卷已经有多少未删除的问题了   -->
+	<select id="getQuestionNumByPapersId" resultType="Integer" >
+		select count(uuid) 
+		from risk_question
+		where papers_id = #{papersId} and delete_flag = #{deleteFlag}
+	</select>
+	
+	<!-- 根据组合属性查询问题列表 -->
+	<select id="findListByProperties"  resultMap="questionResultMap"  parameterType="com.rd.ifaes.core.risk.domain.Question">
+		select <include refid="table_columns" />
+		from risk_question 
+		<trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="papersId != null and papersId != ''">and PAPERS_ID = #{papersId}</if>
+            <if test="questionNo != null and questionNo != ''">and QUESTION_NO = #{questionNo}</if>
+            <if test="questionName != null and questionName != ''">and QUESTION_NAME = #{questionName}</if>
+			<if test="sort != null">and SORT = #{sort}</if>
+			<if test="score != null">and SCORE = #{score}</if>
+			<if test="isSingle != null ">and IS_SINGLE = #{isSingle}</if>
+			<if test="deleteFlag != null">and DELETE_FLAG = #{deleteFlag}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+	</select>
+	<!-- 获取某一个试卷的总分  -->
+	<select id="getPapersTotalScore"  resultType="Integer">
+		select sum(score) as sum
+		from risk_question 
+		where papers_id = #{papersId} and delete_flag = #{deleteFlag}
+	</select>
+	
+	<!-- 根据题号查询存在的问题数量 -->
+	<select id="getQuestionNumBySort"  resultType="Integer"  parameterType="com.rd.ifaes.core.risk.domain.Question">
+		select count(uuid)
+		from risk_question 
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="deleteFlag != null">and DELETE_FLAG = #{deleteFlag}</if>
+			<if test="sort != null">and SORT = #{sort}</if>
+			<if test="papersId != null">and papers_id = #{papersId}</if>
+		</trim>
+	</select>
+</mapper>

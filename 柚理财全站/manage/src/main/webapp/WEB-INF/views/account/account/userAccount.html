@@ -1,0 +1,71 @@
+<style>
+.popShow li{padding-bottom: 10px;}
+.popShow span {display: inline-block;width: 200px;color:red;}
+table tr,table th,table td{
+		border:1px solid #ccc;
+		line-height: 35px;
+		padding-left: 30px;
+	}
+</style>
+<div class="popShow" style="margin: 20px;">
+	<table border="0" cellpadding="3" cellspacing="1" width="100%" align="center">
+       <tbody>
+       	<tr class="datagrid-header-row">
+       		<td field="id" class=""></td>
+       		<td field="id" class="">平台账户</td>
+       		<td field="id" class="">托管账户</td>
+       		<td field="id" class="">差额</td>
+       	</tr>
+        <tr>
+        	<td>账户总额</td>
+        	<td class="pTtotal">${(account.total)?string("0.00")}元</td>
+        	<#if data??>
+        		<td class="tGtotal">${((data.acctBal)!)?replace(',','')}元</td>
+        	<#else>
+        		<td class="tGtotal">0</td>
+        	</#if>
+        	<td class="cZtotal"></td>
+        </tr>
+        <tr>
+        	<td>可用余额</td>
+        	<td class="pTbalance">${(account.useMoney)?string("0.00")}元</td>
+        	<#if data??>
+        		<td class="tGbalance">${((data.avlBal)!)?replace(',','')}元</td>
+        	<#else>
+        		<td class="tGbalance">0</td>
+        	</#if>
+        	<td class="cZbalance"></td>
+        </tr>
+      	<tr>
+      		<td>冻结金额</td>
+        	<td class="pTfrozen">${(account.noUseMoney)?string("0.00")}元</td>
+        	<#if data??>
+        		<td class="tGfrozen">${((data.frzBal)!)?replace(',','')}元</td>
+        	<#else>
+        		<td class="tGfrozen">0</td>
+        	</#if>
+        	<td class="cZfrozen"></td>
+	    </tr>
+    </tbody>
+</table>
+</div>
+<script>
+	var cZtotalval = (parseFloat($(".pTtotal").html())-parseFloat($(".tGtotal").html())).toFixed(2);
+	if(cZtotalval==0){
+		$(".cZtotal").html("0")	
+	}else{
+		$(".cZtotal").html("<span>"+cZtotalval+"</span>")
+	}
+	var cZbalanceval = (parseFloat($(".pTbalance").html())-parseFloat($(".tGbalance").html())).toFixed(2);
+	if(cZbalanceval==0){
+		$(".cZbalance").html("0")	
+	}else{
+		$(".cZbalance").html("<span>"+cZbalanceval+"</span>")
+	}
+	var cZfrozenval = (parseFloat($(".pTfrozen").html())-parseFloat($(".tGfrozen").html())).toFixed(2);
+	if(cZfrozenval==0){
+		$(".cZfrozen").html("0")	
+	}else{
+		$(".cZfrozen").html("<span>"+cZfrozenval+"</span>")
+	}
+</script>

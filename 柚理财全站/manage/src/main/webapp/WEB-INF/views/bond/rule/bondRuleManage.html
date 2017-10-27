@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>转让规则</title>
+		<#include "include/resources.html">
+		<script type="text/javascript">
+			var url_list = "/bond/rule/bondRuleList.html";
+			$(document).ready(function() {	
+				$('#keywordsSearch').attr('data-url',url_list);
+				$('#conditionSearch').attr('data-url',url_list);				
+			});
+		</script>
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+					</div>					
+					<div class="search-form-adv ml10">
+						<form>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					  <@shiro.hasPermission name="project:bond:bondRule:add">
+						<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.addFun(this)" data-tid="jqGrid" data-url="/bond/rule/bondRuleAddPage.html">新增</button>
+					  </@shiro.hasPermission>
+					   <@shiro.hasPermission name="project:bond:bondRule:query">
+					  	<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.checkFun(this)" data-tid="jqGrid" data-url="/bond/rule/bondRuleQuery.html" data-title="规则查看">规则查看</button>
+					   </@shiro.hasPermission>
+					</div>					
+				</div>
+			</div>
+			
+			<!-- 列表信息 -->
+			<#include "/bond/rule/bondRuleList.html">
+			
+		</div>
+	</body>
+</html>

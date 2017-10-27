@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<#assign pageFlag="realize">
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="format-detection" content="telephone=no">
+    <title>变现介绍-${web_name!""}</title>
+    <link rel="stylesheet" type="text/css" href="/common.css"/>
+    <link rel="stylesheet" type="text/css" href="/cashIntroduced.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+    <!--[if lte IE 7]> 
+    	<script>
+    		window.location = "/browserUpgrade.html"
+    	</script>
+    <![endif]-->
+<body>
+    <#include "/include/header.html">    
+    <div class="wrap-full cashIntroduced-wrap1">
+        <div class="wrap cashIntroduced-steps cashIntroduced-step1">
+            <#if session_user_cache?exists && session_user_cache.userNature == '3'><#else><a href="/member/myRealize/list.html" class="btn">查看我的变现</a></#if>
+        </div>
+    </div>
+    <div class="wrap-full cashIntroduced-wrap2">
+        <div class="wrap cashIntroduced-steps cashIntroduced-step2">            
+            <div class="text">
+                <h3>哪些产品可以变现？</h3>
+                <p><em>1</em>购买时，带有“可变现”标志的产品</p>
+                <p><em>2</em>所持资产距离到期${rule.remainDays!}个自然日（含）以上                    
+                </p>
+                <p><em>3</em>所持资产金额为1000元（含）以上</p>
+            </div>
+        </div>
+    </div>
+        <div class="wrap-full cashIntroduced-wrap2">
+        <div class="wrap cashIntroduced-steps cashIntroduced-step3">            
+            <div class="text">
+                <h3>如何设置变现利率？</h3>
+                <p>变现的融资利率由变现申请人自行填写</p>
+            </div>
+        </div>
+    </div>
+    <div class="wrap-full cashIntroduced-wrap2">
+        <div class="wrap cashIntroduced-steps cashIntroduced-step4">            
+            <div class="text">
+                <h3>变现后钱去哪儿了？</h3>
+                <p>变现成功后，变现借款资金自动打款至账户余额，请<br/>注意查验。</p>
+            </div>
+        </div>
+    </div>
+    <div class="wrap-full cashIntroduced-wrap2">
+        <div class="wrap cashIntroduced-steps cashIntroduced-step5">            
+            <div class="text">
+                <h3>变现的借款如何还款？</h3>
+                <p>变现是变现人发起的个人借款，变现到期日自动还款，无需<br/>手工操作，省心省力。</p>
+            </div>
+        </div>
+    </div>
+    <#include "/include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/common.js"></script>
+<script src="/cashIntroduced.js"></script>
+</html>

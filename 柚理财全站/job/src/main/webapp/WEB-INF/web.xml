@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+	<display-name>job</display-name>
+
+	<!-- Context ConfigLocation -->
+	<!--
+	 dev：开发环境； pro:生产环境；test：测试环境；
+	  注意：该配置修改后，请同步修改com.rd.ifaes.common.util.PropertiesUtils 第28行的 config-xxx.properties
+	<context-param>  
+	    <param-name>spring.profiles.active</param-name>  
+	    <param-value>dev</param-value>  
+	</context-param>
+	-->
+	
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:/spring-context.xml</param-value>
+	</context-param>
+	<!-- 上下文加载监听 -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	 
+	 <!-- DruidStatView -->
+	<servlet>
+		<servlet-name>DruidStatView</servlet-name>
+		<servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
+		<init-param>
+			<!-- 允许清空统计数据 -->
+			<param-name>resetEnable</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<!-- 用户名 -->
+			<param-name>loginUsername</param-name>
+			<param-value>erongdu</param-value>
+		</init-param>
+		<init-param>
+			<!-- 密码 -->
+			<param-name>loginPassword</param-name>
+			<param-value>erongdu</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DruidStatView</servlet-name>
+		<url-pattern>/druid/*</url-pattern>
+	</servlet-mapping>
+  
+	<welcome-file-list>
+		<welcome-file>/index.html</welcome-file>
+	</welcome-file-list>
+</web-app>

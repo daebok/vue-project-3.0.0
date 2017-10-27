@@ -1,0 +1,740 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.project.mapper.ProjectInvestMapper">
+	<resultMap type="com.rd.ifaes.core.project.domain.ProjectInvest" id="projectInvestResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="status" column="STATUS"/>
+		<result property="money" column="MONEY"/>
+		<result property="amount" column="AMOUNT"/>
+		<result property="realAmount" column="REAL_AMOUNT"/>
+		<result property="payment" column="PAYMENT"/>
+		<result property="interest" column="INTEREST"/>
+		<result property="raiseInterest" column="RAISE_INTEREST"/>
+		<result property="repayedAmount" column="REPAYED_AMOUNT"/>
+		<result property="repayedInterest" column="REPAYED_INTEREST"/>
+		<result property="waitAmount" column="WAIT_AMOUNT"/>
+		<result property="waitInterest" column="WAIT_INTEREST"/>
+		<result property="investType" column="INVEST_TYPE"/>
+		<result property="investChannel" column="INVEST_CHANNEL"/>
+		<result property="investOrderNo" column="INVEST_ORDER_NO"/>
+		<result property="freezeNo" column="FREEZE_NO"/>
+		<result property="userFirstInvest" column="USER_FIRST_INVEST"/>
+		<result property="realizeFlag" column="REALIZE_FLAG"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="addIp" column="ADD_IP"/>
+		<result property="bondFlag" column="BOND_FLAG"/>
+		<result property="investNo" column="INVEST_NO"/>
+		<result property="investDate" column="INVEST_DATE"/>
+		<result property="originInvestId" column="ORIGIN_INVEST_ID"/>
+		<result property="investStyle" column="INVEST_STYLE"/>
+		<result property="realizeAmount" column="REALIZE_AMOUNT"/>
+		<result property="realizeInterest" column="REALIZE_INTEREST"/>
+		<result property="freezeInterest" column="FREEZE_INTEREST"/>
+		<result property="freezeCapital" column="FREEZE_CAPITAL"/>
+		<result property="interestDate" column="INTEREST_DATE"/>
+		<result property="endDate" column="END_DATE"/>
+		<result property="periods" column="PERIODS"/>
+		<result property="realizeId" column="REALIZE_ID"/>
+		<result property="waitRaiseInterest" column="WAIT_RAISE_INTEREST"/>
+	</resultMap>
+	
+	<resultMap type="com.rd.ifaes.core.project.domain.ProjectInvest" id="projectInvestList" 
+		extends="com.rd.ifaes.core.project.mapper.ProjectInvestMapper.projectInvestResultMap">
+		<result property="userName" column="USER_NAME"/>
+		<result property="realName" column="REAL_NAME"/>
+		<result property="projectName" column="PROJECT_NAME"/>
+		<result property="mobile" column="mobile"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		PROJECT_ID,
+		STATUS,
+		MONEY,
+		AMOUNT,
+		REAL_AMOUNT,
+		PAYMENT,
+		INTEREST,
+		RAISE_INTEREST,
+		REPAYED_AMOUNT,
+		REPAYED_INTEREST,
+		WAIT_AMOUNT,
+		WAIT_INTEREST,
+		INVEST_TYPE,
+		INVEST_CHANNEL,
+		INVEST_ORDER_NO,
+		FREEZE_NO,
+		USER_FIRST_INVEST,
+		REALIZE_FLAG,
+		CREATE_TIME,
+		ADD_IP,
+		BOND_FLAG,
+		INVEST_NO,
+		INVEST_DATE,
+		ORIGIN_INVEST_ID,
+		INVEST_STYLE,
+		REALIZE_AMOUNT,
+		REALIZE_INTEREST,
+		FREEZE_INTEREST,
+		FREEZE_CAPITAL,
+		INTEREST_DATE,
+		END_DATE,
+		REALIZE_ID,
+		WAIT_RAISE_INTEREST
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{projectId},
+		#{status},
+		#{money},
+		#{amount},
+		#{realAmount},
+		#{payment},
+		#{interest},
+		#{raiseInterest},
+		#{repayedAmount},
+		#{repayedInterest},
+		#{waitAmount},
+		#{waitInterest},
+		#{investType},
+		#{investChannel},
+		#{investOrderNo},
+		#{freezeNo},
+		#{userFirstInvest},
+		#{realizeFlag},
+		#{createTime},
+		#{addIp},
+		#{bondFlag},
+		#{investNo},
+		#{investDate},
+		#{originInvestId},
+		#{investStyle},
+		#{realizeAmount},
+		#{realizeInterest},
+		#{freezeInterest},
+		#{freezeCapital},
+		#{interestDate},
+		#{endDate},
+		#{realizeId},
+		#{waitRaiseInterest}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="projectId != null and projectId != ''">and PROJECT_ID = #{projectId}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+			<if test="money != null">and MONEY = #{money}</if>
+			<if test="amount != null">and AMOUNT = #{amount}</if>
+			<if test="realAmount != null">and REAL_AMOUNT = #{realAmount}</if>
+			<if test="payment != null">and PAYMENT = #{payment}</if>
+			<if test="interest != null">and INTEREST = #{interest}</if>
+			<if test="repayedAmount != null">and REPAYED_AMOUNT = #{repayedAmount}</if>
+			<if test="repayedInterest != null">and REPAYED_INTEREST = #{repayedInterest}</if>
+			<if test="waitAmount != null">and WAIT_AMOUNT = #{waitAmount}</if>
+			<if test="waitInterest != null">and WAIT_INTEREST = #{waitInterest}</if>
+            <if test="investType != null and investType != ''">and INVEST_TYPE = #{investType}</if>
+            <if test="investChannel != null and investChannel != ''">and INVEST_CHANNEL = #{investChannel}</if>
+            <if test="investOrderNo != null and investOrderNo != ''">and INVEST_ORDER_NO = #{investOrderNo}</if>
+            <if test="freezeNo != null and freezeNo != ''">and FREEZE_NO = #{freezeNo}</if>
+            <if test="userFirstInvest != null and userFirstInvest != ''">and USER_FIRST_INVEST = #{userFirstInvest}</if>
+            <if test="realizeFlag != null and realizeFlag != ''">and REALIZE_FLAG = #{realizeFlag}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="addIp != null and addIp != ''">and ADD_IP = #{addIp}</if>
+			<if test="bondFlag != null">and BOND_FLAG = #{bondFlag}</if>
+            <if test="investNo != null and investNo != ''">and INVEST_NO = #{investNo}</if>
+            <if test="investDate != null and investDate != ''">and INVEST_DATE = #{investDate}</if>
+            <if test="originInvestId != null and originInvestId != ''">and ORIGIN_INVEST_ID = #{originInvestId}</if>
+             <if test="investStyle != null and investStyle != ''">and INVEST_STYLE = #{investStyle}</if>
+            <if test="exceptStatus != null and exceptStatus != ''">and STATUS != #{exceptStatus}</if>
+            <if test="startTime != null and startTime != ''">and  create_time &gt;= to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')</if>
+		    <if test="endTime != null and endTime != ''">and  create_time  &lt;= to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')</if>
+		    <if test="realizeAmount != null">and REALIZE_AMOUNT = #{realizeAmount}</if>
+			<if test="realizeInterest != null">and REALIZE_INTEREST = #{realizeInterest}</if>
+			<if test="freezeInterest != null">and FREEZE_INTEREST = #{freezeInterest}</if>
+			<if test="freezeCapital != null">and FREEZE_CAPITAL = #{freezeCapital}</if> 
+			<if test="interestDate != null">and INTEREST_DATE = #{interestDate}</if>
+			<if test="endDate != null">and END_DATE = #{endDate}</if>
+			<if test="realizeId != null and realizeId != ''">and REALIZE_ID = #{realizeId}</if>
+			<if test="waitRaiseInterest != null">and WAIT_RAISE_INTEREST = #{waitRaiseInterest}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.project.domain.ProjectInvest">
+		insert into project_invest( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		BEGIN
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into project_invest( <include refid="table_columns" /> ) 
+		values 
+		( 
+				#{item.uuid},
+				#{item.userId},
+				#{item.projectId},
+				#{item.status},
+				#{item.money},
+				#{item.amount},
+				#{item.realAmount},
+				#{item.payment},
+				#{item.interest},
+				#{item.raiseInterest},
+				#{item.repayedAmount},
+				#{item.repayedInterest},
+				#{item.waitAmount},
+				#{item.waitInterest},
+				#{item.investType},
+				#{item.investChannel},
+				#{item.investOrderNo},
+				#{item.freezeNo},
+				#{item.userFirstInvest},
+				#{item.realizeFlag},
+				#{item.createTime},
+				#{item.addIp},
+				#{item.bondFlag},
+				#{item.investNo},
+				#{item.investDate},
+				#{item.originInvestId},
+				#{item.investStyle},
+				#{item.realizeAmount},
+				#{item.realizeInterest},
+				#{item.freezeInterest},
+				#{item.freezeCapital},
+				#{item.interestDate},
+				#{item.endDate},
+				#{item.realizeId},
+				#{item.waitRaiseInterest}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from project_invest
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="update" parameterType="com.rd.ifaes.core.project.domain.ProjectInvest">
+		update project_invest 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="status != null and status != ''">STATUS = #{status},</if>
+			<if test="payment != null">PAYMENT = #{payment},</if>
+			<if test="interest != null">INTEREST = #{interest},</if>
+			<if test="raiseInterest != null and raiseInterest != 0 ">RAISE_INTEREST = #{raiseInterest},</if>
+			<if test="repayedAmount != null">REPAYED_AMOUNT = #{repayedAmount},</if>
+			<if test="repayedInterest != null">REPAYED_INTEREST = #{repayedInterest},</if>
+			<if test="waitAmount != null">WAIT_AMOUNT = #{waitAmount},</if>
+			<if test="waitInterest != null">WAIT_INTEREST = #{waitInterest},</if>
+            <if test="investOrderNo != null and investOrderNo != ''">INVEST_ORDER_NO = #{investOrderNo},</if>
+            <if test="freezeNo != null and freezeNo != ''">FREEZE_NO = #{freezeNo},</if>
+            <if test="userFirstInvest != null and userFirstInvest != ''">USER_FIRST_INVEST = #{userFirstInvest},</if>
+            <if test="realizeFlag != null and realizeFlag != ''">REALIZE_FLAG = #{realizeFlag},</if>
+            <if test="investNo != null and investNo != ''">INVEST_NO = #{investNo},</if>
+            <if test="investDate != null and investDate != ''">INVEST_DATE = #{investDate},</if>
+            <if test="originInvestId != null and originInvestId != ''">ORIGIN_INVEST_ID = #{originInvestId},</if>
+            <if test="investStyle != null and investStyle != ''">INVEST_STYLE = #{investStyle},</if>
+            <if test="realizeAmount != null">REALIZE_AMOUNT = #{realizeAmount},</if>
+			<if test="realizeInterest != null">REALIZE_INTEREST = #{realizeInterest},</if>
+			<if test="freezeInterest != null">FREEZE_INTEREST = #{freezeInterest},</if>
+			<if test="freezeCapital != null">FREEZE_CAPITAL = #{freezeCapital},</if>
+			<if test="bondFlag != null">BOND_FLAG = #{bondFlag},</if>
+			<if test="interestDate != null">INTEREST_DATE = #{interestDate},</if>
+			<if test="endDate != null">END_DATE = #{endDate},</if>
+			<if test="realizeId != null and realizeId != ''">REALIZE_ID = #{realizeId},</if>
+			<if test="waitRaiseInterest != null">WAIT_RAISE_INTEREST = #{waitRaiseInterest},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+	
+	
+	<update id="updateBatch" parameterType="java.util.List">
+		BEGIN
+		<foreach collection="list" item="item" open="" separator=";" close="">
+			update project_invest 
+			<trim prefix="set" suffixOverrides=",">
+	            <if test="item.status != null and item.status != ''">STATUS = #{item.status},</if>
+				<if test="item.payment != null">PAYMENT = #{item.payment},</if>
+				<if test="item.interest != null">INTEREST = #{item.interest},</if>
+				<if test="item.raiseInterest != null and item.raiseInterest != 0">RAISE_INTEREST = #{item.raiseInterest},</if>
+				<if test="item.repayedAmount != null">REPAYED_AMOUNT = #{item.repayedAmount},</if>
+				<if test="item.repayedInterest != null">REPAYED_INTEREST = #{item.repayedInterest},</if>
+				<if test="item.waitAmount != null">WAIT_AMOUNT = #{item.waitAmount},</if>
+				<if test="item.waitInterest != null">WAIT_INTEREST = #{item.waitInterest},</if>
+	            <if test="item.investOrderNo != null and item.investOrderNo != ''">INVEST_ORDER_NO = #{item.investOrderNo},</if>
+	            <if test="item.freezeNo != null and item.freezeNo != ''">FREEZE_NO = #{item.freezeNo},</if>
+	            <if test="item.userFirstInvest != null and item.userFirstInvest != ''">USER_FIRST_INVEST = #{item.userFirstInvest},</if>
+	            <if test="item.realizeFlag != null and item.realizeFlag != ''">REALIZE_FLAG = #{item.realizeFlag},</if>
+	            <if test="item.investNo != null and item.investNo != ''">INVEST_NO = #{item.investNo},</if>
+	            <if test="item.investDate != null and item.investDate != ''">INVEST_DATE = #{item.investDate},</if>
+	            <if test="item.originInvestId != null and item.originInvestId != ''">ORIGIN_INVEST_ID = #{item.originInvestId},</if>
+	            <if test="item.investStyle != null and item.investStyle != ''">INVEST_STYLE = #{item.investStyle},</if>
+	            <if test="item.realizeAmount != null">REALIZE_AMOUNT = #{item.realizeAmount},</if>
+				<if test="item.realizeInterest != null">REALIZE_INTEREST = #{item.realizeInterest},</if>
+				<if test="item.freezeInterest != null">FREEZE_INTEREST = #{item.freezeInterest},</if>
+				<if test="item.freezeCapital != null">FREEZE_CAPITAL = #{item.freezeCapital},</if>
+				<if test="item.bondFlag != null">BOND_FLAG = #{item.bondFlag},</if>
+				<if test="item.realizeId != null and item.realizeId != ''">REALIZE_ID = #{item.realizeId},</if>
+				<if test="item.waitRaiseInterest != null">WAIT_RAISE_INTEREST = #{item.waitRaiseInterest},</if>
+			</trim>
+			<where>uuid = #{item.uuid}</where>
+		</foreach>
+		; END ;
+	</update>
+	
+	
+    <select id="findAll" resultMap="projectInvestResultMap">
+        select <include refid="table_columns" />
+        from project_invest
+    </select>
+	
+	<sql id="findListWhere">
+		<trim prefix="where" prefixOverrides="and | or ">
+			 <choose>
+		         <when test="status != null and status == 11">
+		          <![CDATA[ and pi.status='1' and (p.status='4' or p.status='5') ]]> 
+		        </when>
+		        <when test="status != null and status == 10">
+		        	  and pi.status='1'
+		        </when>
+		        <when test="status != null and status == 1">
+		          <![CDATA[ and pi.status='1' and p.status!='4' and p.status!='5' ]]> 
+		        </when>
+		       <when test="status != null and status != ''">
+		              and pi.status = #{status}
+		        </when>
+		        <otherwise>
+		          <![CDATA[ and pi.status <> '4' and pi.status <> '6' ]]> 
+		        </otherwise>
+		   </choose>
+		    <if test="projectStatus != null and projectStatus != ''">and p.status = #{projectStatus}</if>
+		    <if test="projectStatusSet != null and projectStatusSet != ''">and p.status in 
+        		<foreach collection="projectStatusSet" item="projectStatus" open="(" separator="," close=")">#{projectStatus}</foreach>
+       		</if>
+			<if test="projectId != null and projectId != ''">and p.uuid = #{projectId}</if>
+			<if test="startTime != null and startTime != ''">and pi.create_time &gt;= to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')</if>
+			<if test="endTime != null   and endTime != ''">and pi.create_time &lt;= to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')</if>
+			<if test="projectName != null and projectName != ''">and p.project_name like '%'|| #{projectName}||'%'</if>
+			<if test="userName != null and userName != ''">and u.user_name like '%'|| #{userName}||'%'</if>
+	        <if test="realName != null and realName != ''">and u.real_name like '%'||#{realName}||'%'</if>
+			<if test="keywords != null and keywords != ''">
+	        	and (p.project_name like '%'||#{keywords}||'%' 
+	        		or u.user_name like '%'||#{keywords}||'%' 
+	        		or u.real_name like '%'||#{keywords}||'%'  )
+	       </if>
+	        <if test="statusSet != null and statusSet != ''">and pi.status in 
+        		<foreach collection="statusSet" item="status" open="(" separator="," close=")">#{status}</foreach>
+       		</if>
+	        <if test="investStyle != null and investStyle != ''">and  pi.invest_style != #{investStyle}</if>
+	       <if test="investStyleSet != null and investStyleSet != ''">
+		        	and pi.invest_style in 
+		        	<foreach collection="investStyleSet" item="investStyleSetTemp" open="(" separator="," close=")">#{investStyleSetTemp}</foreach>
+		    </if>
+	        </trim>
+	</sql>
+	
+    <select id="findList" resultMap="projectInvestResultMap">
+        select u.user_name, u.real_name real_name,u.mobile, p.project_name, p.status as project_status,p.total_period periods, 
+			        pi.uuid,pi.user_id,pi.project_id,pi.money,pi.amount,pi.real_amount,pi.payment,pi.interest,
+			        pi.raise_interest,pi.repayed_amount,pi.repayed_interest,pi.wait_amount,pi.wait_interest,pi.wait_raise_interest,
+			        pi.invest_type,pi.invest_channel,pi.invest_order_no,pi.freeze_no,pi.user_first_invest,pi.realize_flag,
+			        pi.create_time,pi.add_ip,pi.bond_flag,pi.invest_no, pi.invest_date,pi.origin_invest_id,pi.realize_id,
+			        pi.invest_style,pi.realize_amount,pi.realize_interest,pi.freeze_interest,pi.freeze_capital,pi.interest_date,pi.end_date,
+			        (case when pi.status='1' and (p.status='4' or p.status='5') then '11' else pi.status end ) status
+		from project_invest pi 
+			inner join project p on pi.project_id = p.uuid  <if test="borrowFlag != null and borrowFlag != ''">and p.borrow_flag = #{borrowFlag}</if>
+			inner join users u on pi.user_id = u.uuid
+			<include refid="findListWhere" />
+			<if test="page != null and page.sort!=null and page.sort!=''">
+	        	order by ${page.sort} ${page.order}
+	        </if>
+	        <if test="page == null or page.sort == null or page.sort == ''">order by pi.CREATE_TIME desc </if>
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(pi.uuid) from project_invest pi
+        	inner join project p on pi.project_id = p.uuid  <if test="borrowFlag != null and borrowFlag != ''">and p.borrow_flag = #{borrowFlag}</if>
+			inner join users u on pi.user_id = u.uuid
+        <include refid="findListWhere" />
+    </select>
+
+    <select id="get" resultMap="projectInvestResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from project_invest
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+    <select id="getInvestByOrderNo" resultMap="projectInvestResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from project_invest
+		where  invest_order_no=#{invest_order_no}
+	</select>
+	<!-- 根据订单号和债权标识查询投资记录 -->
+	<select id="getInvestByOrderNoAndBondFlag" resultType="com.rd.ifaes.core.project.domain.ProjectInvest" >
+		select <include refid="table_columns" />
+		from project_invest
+		where status = '1' and invest_order_no=#{invest_order_no} and bond_flag = #{bondFlag} 
+	</select>
+
+
+      <select id="getInvestByFreezeNo" resultMap="projectInvestResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from project_invest
+		where  freeze_no=#{freezeNo}
+	</select>
+
+	<!-- 根据用户id获取用户当日自动投资总额度 -->
+	<select id="getDayInvestMoney" resultType="java.math.BigDecimal" parameterType="String" >
+		select sum(amount)
+		from project_invest
+		where status='1' and invest_type='1' and user_id=#{userId}  
+		AND CREATE_TIME >= TRUNC(SYSDATE) AND CREATE_TIME &lt; TRUNC(SYSDATE+1)		
+	</select>
+	
+	<!-- 可变现列表 -->
+	<select id="findRealizeAbleList" resultMap="realizeAbleResultMap" parameterType="com.rd.ifaes.core.project.model.ProjectInvestModel">
+     	select p.project_no, (case when p.realize_flag ='0' then pt.type_name||'-'||p.project_no else p.project_name end) as project_name,i.uuid,i.user_id,i.project_id,i.status,i.money,i.amount,i.real_amount,i.payment,i.interest,i.repayed_amount,i.repayed_interest,i.wait_amount,
+		i.wait_interest,i.wait_raise_interest,p.realize_flag,bc.next_repay_time,bc.last_repay_time
+        from project_invest i
+        inner join project p on i.project_id = p.uuid
+        inner join project_type pt on p.project_type_id = pt.uuid
+        inner join (SELECT pc.project_id ,MIN(pc.repay_time) as next_repay_time,MAX(pc.repay_time) AS last_repay_time,MAX(pc.late_days) as late_days from project_collection pc where pc.status=0 GROUP BY pc.project_id) bc on i.project_id = bc.project_id 
+        left join product pd on pd.project_id = p.uuid
+       <trim prefix="where" prefixOverrides="and | or ">
+	        <if test="userId != null and userId != ''">and i.user_id =#{userId}</if>
+	        <if test="status != null and status != ''">and p.status = #{status}</if>
+       		and p.status in ('6','8')<!-- 状态为还款中 -->
+       		and i.status = '1'<!-- 投资成功 -->
+       		and bc.late_days = 0<!-- 未逾期 -->
+	        and (pd.realize_useful = 1 or p.realize_flag = 1) <!-- 可变现产品或者变现标的 -->
+	        and (i.wait_amount - wait_raise_interest - i.realize_amount + i.freeze_interest) &gt; 1 <!-- 剩余可转让金额要大于1 -->
+	        <if test="sellStyle != null and sellStyle ==1 " >and i.realize_amount = 0</if>
+	        <if test="sellAmountMin != null">and (i.wait_amount - wait_raise_interest - i.realize_amount + i.freeze_interest) >= #{sellAmountMin}</if>
+	        <if test="holdDays != null and holdDays &gt; 0">and ((p.interest_style = 1 and ROUND (TO_NUMBER (sysdate-p.review_time) ) > #{holdDays}) or (p.interest_style = 2 and ROUND (TO_NUMBER (sysdate-i.create_time) ) >  #{holdDays}))</if>
+	        <if test="periodRemainDays != null and periodRemainDays &gt; 0">and ROUND (TO_NUMBER (bc.next_repay_time - sysdate) ) > #{periodRemainDays}</if>
+	        <if test="remainDays != null and remainDays &gt; 0">and ROUND (TO_NUMBER (bc.last_repay_time - sysdate) ) > #{remainDays}</if>
+	        <if test="projectName != null and projectName != ''">and p.project_name  like '%'||#{projectName}||'%'   </if>
+	        <if test="dateTypeTime != null and dateTypeTime != ''">and bc.next_repay_time &gt; #{dateTypeTime}</if>
+        	<if test="dateType == null or dateType == ''">
+			     <if test="startTime != null and startTime != ''">and bc.next_repay_time &gt;= to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')</if>
+			     <if test="endTime != null and endTime != ''">and bc.next_repay_time &lt;= to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')</if>        
+         	</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by bc.next_repay_time asc </if>
+	</select>
+	
+	<resultMap type="com.rd.ifaes.core.project.model.ProjectInvestModel" id="realizeAbleResultMap" 
+		extends="com.rd.ifaes.core.project.mapper.ProjectInvestMapper.projectInvestResultMap">
+		<result property="projectName" column="PROJECT_NAME"/>
+		<result property="projectStatus" column="PROJECT_STATUS"/>
+		<result property="lastRepayTime" column="LAST_REPAY_TIME"/>
+		<result property="nextRepayTime" column="NEXT_REPAY_TIME"/>
+		<result property="nextRepayDate" column="NEXT_REPAY_DATE"/>
+		<result property="bondUseful" column="bond_useful"/>
+		<result property="reviewTime" column="review_time"/>
+		<result property="interestStyle" column="interest_style"/>
+		<result property="interestStartDays" column="interest_start_days"/>
+		<result property="bondMaxTurn" column="bond_max_turn"/>
+		<result property="repayStyle" column="repay_style"/>
+	</resultMap>
+	
+	<!-- 根据projectInvestId 查询 转让次数 等参数 -->
+	<select id="getProjectInvestModel" resultMap="realizeAbleResultMap">
+		select pi.uuid,pi.project_id,b.bond_max_turn as bond_max_turn,pi.create_time,pi.amount,pi.bond_flag
+		from project_invest pi
+		inner join borrow b on b.project_id = pi.project_id  where pi.uuid = #{projectInvestId}
+	</select>
+	<!-- 查询可转让列表 -->
+	<select id="findAbleBondList" resultMap="realizeAbleResultMap">
+		select pi.create_time,pi.uuid,pi.amount, pt.type_name||'-'||p.project_no as project_name<!-- 产品名称=产品最小类别+产品编号组成 -->
+		,pi.project_id,p.apr as apr,p.next_repay_time as next_repay_time,p.repay_style as repay_style,
+		p.last_repay_time as last_repay_time,pi.repayed_amount,pi.repayed_interest,pi.RAISE_INTEREST,b.bond_max_turn as bond_max_turn  
+		from project_invest pi  
+		inner join project p  on p.uuid = pi.project_id 
+		inner join borrow b on b.project_id = p.uuid 
+		inner join project_type pt on pt.uuid = p.project_type_id
+		<where>
+			 and p.next_repay_time &gt; sysdate
+			 <if test="userId != null and userId != ''">and pi.user_id =#{userId}</if>
+			 and pi.status = '1'
+	         and pi.INVEST_STYLE in (0,2)
+	         and pi.REALIZE_FLAG = 0
+	         and pi.BOND_FLAG = 0
+	         and p.status = 8
+	         and b.bond_useful = 1
+	         <if test="dateTypeTime != null and dateTypeTime != ''">and p.next_repay_time &gt; #{dateTypeTime}</if>
+	         <if test="dateType == null or dateType == ''">
+			     <if test="startTime != null and startTime != ''">and p.next_repay_time &gt;= to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')</if>
+			     <if test="endTime != null and endTime != ''">and p.next_repay_time &lt;= to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')</if>        
+	         </if>
+       </where>  
+         <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+         </if>
+         <if test="page == null or page.sort == null or page.sort == ''">order by pi.CREATE_TIME desc </if>
+	</select>
+	<!-- 指定用户在指定项目上投资总额 -->
+	<select id="countUserInvestProject"  resultType="java.math.BigDecimal"  >
+	    select nvl(sum(amount),0)
+	    from project_invest
+	    where project_id=#{projectId} 
+	     and user_id=#{userId}
+	     and status in (0,1)
+	</select>
+	
+	<!-- 更新债权标识和投资类型  -->
+	<update id="updateBondFlagAndInvestStyle">
+		update project_invest set bond_flag = #{bondFlag},invest_style = #{investStyle}
+		where uuid = #{uuid}
+	</update>
+	<!-- 统计投资  -->
+    <select id="sumInvest" resultType="java.math.BigDecimal" parameterType="com.rd.ifaes.core.project.domain.ProjectInvest" >
+		select sum(amount)
+		from project_invest
+	   <include refid="page_where" />
+	</select>
+	<!-- 更新投资记录状态  -->
+	<update id="updateStatus">
+		update  project_invest set status = #{status}  
+		where uuid = #{uuid} and status = #{preStatus}
+	</update>
+
+	<resultMap type="com.rd.ifaes.core.project.model.ProjectInvestRecord" id="projectInvestRecordResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="status" column="STATUS"/>
+		<result property="money" column="MONEY"/>
+		<result property="amount" column="AMOUNT"/>
+		<result property="realAmount" column="REAL_AMOUNT"/>
+		<result property="investType" column="INVEST_TYPE"/>
+		<result property="investChannel" column="INVEST_CHANNEL"/>
+		<result property="userFirstInvest" column="USER_FIRST_INVEST"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="investStyle" column="INVEST_STYLE"/>
+		<result property="userName" column="USER_NAME"/>
+		<result property="redenvelopeAmount" column="REDENVELOPE_AMOUNT"/>
+		<result property="rateCouponVal" column="RATE_COUPON_VAL"/>
+		
+	</resultMap>
+	
+	<select id="findListForDetail" resultMap="projectInvestRecordResultMap">
+        select u.user_name ,   pi.*,(pi.amount- pi.real_amount) REDENVELOPE_AMOUNT ,nvl(r.up_apr,0) RATE_COUPON_VAL
+		from project_invest pi 
+	    	inner join users u on pi.user_id = u.uuid
+			left join user_rate_coupon r on pi.uuid = r.tender_id
+		<trim prefix="where" prefixOverrides="and | or ">
+			 <if test="statusSet != null and statusSet != ''">and pi.status in 
+        		<foreach collection="statusSet" item="status" open="(" separator="," close=")">#{status}</foreach>
+       		</if>
+			<if test="investStyle != null and investStyle != ''">and pi.invest_style != #{investStyle}</if>
+			<if test="projectId != null and projectId != ''">and pi.PROJECT_ID = #{projectId}</if>
+			and  ( pi.invest_style = 0   or  (pi.invest_style = 1 and pi.origin_invest_id is null)  ) <!--  受让投资不显示,转让投资若是再次转让的或者拆分的不显示 -->
+	     </trim>
+			<if test="page != null and page.sort!=null and page.sort!=''">
+	        	order by ${page.sort} ${page.order}
+	        </if>
+	        <if test="page == null or page.sort == null or page.sort == ''">order by pi.CREATE_TIME desc </if>
+	</select>
+	
+	<update  id="investTimeoutHandle"   >
+		update project_invest  set status=#{status}    where status=#{preStatus}   and  uuid in (${investUuids})
+	</update>
+	<!-- 超时订单查询 -->
+	<resultMap type="com.rd.ifaes.core.project.model.OutTimeProjectInvest" id="outTimeProjectInvestResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="projectNo" column="PROJECT_NO"/>
+		<result property="status" column="STATUS"/>
+		<result property="amount" column="AMOUNT"/>
+		<result property="realAmount" column="REAL_AMOUNT"/>
+		<result property="investOrderNo" column="INVEST_ORDER_NO"/>
+		<result property="createTime" column="CREATE_TIME"/>
+	</resultMap>
+   <select id="getTimeOutInvest"  resultMap="outTimeProjectInvestResultMap"  >
+	     	select  pi.uuid,pi.project_id,pi.user_id,p.project_no,pi.status,pi.amount,pi.create_time,pi.invest_order_no,pi.real_amount
+        	from project_invest  pi,project p
+        	where pi.project_id = p.uuid
+        	and pi.status='0' and floor(to_number(pi.create_time-sysdate)*24*60) >  #{minutes}
+   </select>
+   
+	<!-- 账户中心 我的投资列表 -->
+	<resultMap type="com.rd.ifaes.core.project.model.MyProjectInvestModel" id="myProjectInvestResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="projectName" column="PROJECT_NAME"/>
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="projectStatus" column="PROJECT_STATUS"/>
+		<result property="type" column="TYPE"/>
+		<result property="status" column="STATUS"/>
+		<result property="amount" column="AMOUNT"/>
+		<result property="payment" column="PAYMENT"/>
+		<result property="repayedAmount" column="REPAYED_AMOUNT"/>
+		<result property="interest" column="INTEREST"/>
+		<result property="repayedInterest" column="REPAYED_INTEREST"/>
+		<result property="interestDate" column="INTEREST_DATE"/>
+		<result property="endDate" column="END_DATE"/>
+		<result property="waitAmount" column="WAIT_AMOUNT"/>
+		<result property="waitInterest" column="WAIT_INTEREST"/>
+		<result property="waitRaiseInterest" column="WAIT_RAISE_INTEREST"/>
+		<result property="investType" column="INVEST_TYPE"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="repayStartDate" column="REPAY_START_DATE"/>
+		<result property="repayEndDate" column="REPAY_END_DATE"/>
+		<result property="nextRepayDate" column="NEXT_REPAY_DATE"/>
+		<result property="soldInterest" column="SOLD_INTEREST"/>
+	</resultMap>
+	
+	<!-- 账户中心 我的投资列表 -->
+	<select id="getMyProjectInvestList" resultMap="myProjectInvestResultMap">
+		select	p.realize_flag,(case when p.realize_flag ='0' then pt.type_name||'-'||p.project_no else p.project_name end) AS project_name,p.status as project_status,pi.invest_type,pi.uuid,pi.project_id,pi.amount,pi.create_time,
+		(case when p.status !='4' and pi.status ='0' then '5' else pi.status end) status
+		<!-- type为1 持有中 2 申请 3 结束 -->
+		<if test="type != null and type == 1">,pi.payment,pi.repayed_amount,pi.interest,pi.raise_interest,pi.repayed_interest,pi.wait_amount,pi.wait_interest,pi.wait_raise_interest,p.next_repay_time as next_repay_date</if>
+		<if test="type != null and type == 3">,pi.repayed_interest,pi.interest_date,pi.end_date</if>
+		from project_invest pi
+		inner join project p on pi.project_id = p.uuid
+    	inner join project_type  pt on p.project_type_id = pt.uuid
+    	left join bond_invest bi ON bi.invest_id = pi.uuid
+    	<trim prefix="where" prefixOverrides="and | or ">
+			<if test="status != null and status != ''">and pi.status = #{status}</if>
+			<if test="statusSet != null and statusSet.length &gt; 0">and pi.status in
+				<foreach collection="statusSet" item="status" open="(" separator="," close=")">#{status}</foreach>
+			</if>
+			<if test="userId != null and userId != ''">and pi.user_id = #{userId}</if>
+			<if test="projectId != null and projectId != ''">and pi.project_id = #{projectId}</if>
+		     <if test="type != null and type == 1">AND EXISTS (  select 1 from project_collection c where pi.uuid =c.invest_id and c.status = '0' )</if>
+		     <if test="type != null and type == 2">AND NOT EXISTS (  select 1 from project_collection c where pi.uuid =c.invest_id  )</if>
+		      <if test="type != null and type ==3">AND NOT EXISTS (  select 1 from project_collection c where pi.uuid =c.invest_id and c.status = '0'  )</if>
+			<if test="projectStatusSet != null and projectStatusSet != '' and type != null and type != 1">
+				and ((p.status in 
+        		<foreach collection="projectStatusSet" item="projectStatus" open="(" separator="," close=")">#{projectStatus}</foreach>)   
+        		<if test="type != null and type == 3">or (p.status = 8 and pi.bond_flag = 1 and bi.status = 1)</if>)
+       		</if>
+			<if test="status == null or status == ''">and pi.status != 6 </if>
+	         and  ( pi.invest_style = 0   or  (pi.invest_style = 1 and pi.origin_invest_id is null)  ) <!--  受让投资不显示,转让投资若是再次转让的或者拆分的不显示 -->
+	        <if test="type != null and type == 1">and (bi.status is null || bi.status != 1) <!-- 已转让的并且未转让完成的显示在持有中 --></if>
+	        <if test="type != null and (type == 1 || type == 2) ">
+		        <if test="dateTypeTime != null and dateTypeTime != ''">and pi.create_time &gt; #{dateTypeTime}</if>
+		        <if test="dateType == null or dateType == ''">
+				     <if test="startTime != null and startTime != ''">and pi.create_time &gt;= to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')</if>
+				     <if test="endTime != null and endTime != ''">and pi.create_time &lt;= to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')</if>        
+		        </if>
+	        </if>
+	        <if test="type != null and type == 3">
+		        <if test="dateTypeTime != null and dateTypeTime != ''">and pi.end_date &gt; #{dateTypeTime} and pi.end_date &lt; sysdate</if>
+		        <if test="dateType == null or dateType == ''">
+				     <if test="startTime != null and startTime != ''">and pi.end_date &gt;= to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')</if>
+				     <if test="endTime != null and endTime != ''">and pi.end_date &lt;= to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')</if>        
+		        </if>
+	        </if>
+        </trim>
+	    <if test="page == null or page.sort == null or page.sort == ''">order by pi.create_time desc </if>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+    </select>
+	
+	<update id="updateOriginalInvest">
+		update project_invest set 
+		realize_amount = realize_amount + #{realizeAmount},
+		realize_interest = realize_interest + #{realizeInterest}
+		<if test="flag != null and flag == 0">, realize_id = null, realize_flag = #{flag}</if>
+		where uuid = #{uuid}
+	</update>
+	
+	<!-- 审核不成立，投资记录状态改为退款中 -->
+	<update id="refundByProject">
+	  update project_invest set status='3',user_first_invest ='0'  where project_id=#{projectId}  and  status = '1' 
+	</update>
+	
+	<!-- 根据父ID和本身ID来查询债权拆分的另一个原始标投资记录 -->
+	<select id="getInvestByOriIdAndUuid" resultMap="projectInvestResultMap">
+		 select <include refid="table_columns" />  from project_invest  where ORIGIN_INVEST_ID = #{oriId} and uuid != #{uuid} and status = '1' 
+	</select>
+	
+	<!-- 查询当前债权标的所有的债权投资记录下对应的原始标下的投资记录 -->
+	<select id="findListByBondId" resultMap="projectInvestResultMap" parameterType="String">
+		select 
+		p1.UUID,
+		p1.USER_ID,
+		p1.PROJECT_ID,
+		p1.STATUS,
+		p1.MONEY,
+		p1.AMOUNT,
+		p1.REAL_AMOUNT,
+		p1.PAYMENT,
+		p1.INTEREST,
+		p1.RAISE_INTEREST,
+		p1.REPAYED_AMOUNT,
+		p1.REPAYED_INTEREST,
+		p1.WAIT_AMOUNT,
+		p1.WAIT_INTEREST,
+		p1.INVEST_TYPE,
+		p1.INVEST_CHANNEL,
+		p1.INVEST_ORDER_NO,
+		p1.FREEZE_NO,
+		p1.USER_FIRST_INVEST,
+		p1.REALIZE_FLAG,
+		p1.CREATE_TIME,
+		p1.ADD_IP,
+		p1.BOND_FLAG,
+		p1.INVEST_NO,
+		p1.INVEST_DATE,
+		p1.ORIGIN_INVEST_ID,
+		p1.INVEST_STYLE,
+		p1.REALIZE_AMOUNT,
+		p1.REALIZE_INTEREST,
+		p1.FREEZE_INTEREST,
+		p1.INTEREST_DATE,
+		p1.END_DATE
+		from project_invest p1 left join bond_invest p2 on p2.invest_order_no = p1.invest_order_no
+		where p2.status = 1 and p1.status = 1 and p2.bond_id = #{bondId}
+	</select>
+	
+	 <!--  投资成功的投资记录-->
+	<select id="findSuccessInvest"  resultMap="projectInvestResultMap">
+        select <include refid="table_columns" />
+        from project_invest
+		where project_id  = #{projectId}
+		    and  status='1' 
+	      order by create_time asc
+	</select>
+	
+	<!-- 供协议的查询语句 -->
+	<select id="findSuccessInvestForProtocol" resultMap="projectInvestResultMap">
+		 select <include refid="table_columns" />
+		 from project_invest
+		 where project_id = #{projectId}
+			AND STATUS IN ('1','4')
+			AND invest_style != '1'
+			ORDER BY  CREATE_TIME DESC
+	</select>
+	
+	<update id="updateRealizeFreeze">
+		update project_invest set freeze_capital = freeze_capital + #{freezeCapital},freeze_interest = freeze_interest + #{freezeInterest}
+		where uuid = #{investId}
+	</update>
+	
+	<select id="findByInvestDate" resultMap="projectInvestResultMap">
+		 select <include refid="table_columns" />
+		 from project_invest
+		 where invest_date = #{investDate}
+			AND STATUS IN ('1','4')
+			ORDER BY CREATE_TIME DESC
+	</select>
+</mapper>

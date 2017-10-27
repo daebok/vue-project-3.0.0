@@ -1,0 +1,77 @@
+@import (reference)'../../../style/common.less';
+.invest-detail-list{
+    background-color: #fff;
+    padding: 30px;
+    .noText{
+      margin: 100px 0;
+      text-align: center;
+      .pic{
+        display: inline-block;
+        width: 52px;
+        height: 52px;
+        background: url(../../../style/images/noInvestRecord-pic.png) no-repeat;
+      }
+      p{
+        .f16();
+        margin-top: 15px;
+        color: #999;
+      }
+    }
+    .sort{
+      background-color: #fafafd;
+      height: 40px;
+      line-height: 40px;
+      border-bottom: solid 1px @color-tipsbg;
+      ul{
+        li{
+          &:extend(.fl);          
+          height: 40px;
+          span{
+            position:relative;
+            font-size: 14px;
+            display: inline-block;
+            cursor: pointer;
+            em{
+              color: #c8c8c8;
+              font-size: 20px;
+              &.desc,&.asc{
+                color:@color-main;
+              }
+            }
+          }
+          &.w1{width: 240px;padding-left: 50px;}
+          &.w2{width: 190px;}
+          &.w3{width: 290px;}
+          &.w4{width: 200px;}
+        }
+      }
+    }
+    .result{
+      ul{
+        width:100%;
+        .fl();        
+        li{
+          .fl(); 
+          width: 100%;
+          dl{
+            dt,dd{
+              .fl(); 
+              height: 60px;
+              line-height: 60px;
+              font-size: 14px;
+              color:@color-text;
+            }
+            dt{
+              padding-left: 20px;
+              width: 210px;              
+            }
+            .dd1{width: 240px;padding-left: 50px;}
+            .dd2{width: 190px;}
+            .dd3{width: 290px;}
+            .dd4{width: 200px;}
+          }
+          border-bottom: solid 1px @color-tipsbg;
+        }
+      }
+    }
+  }

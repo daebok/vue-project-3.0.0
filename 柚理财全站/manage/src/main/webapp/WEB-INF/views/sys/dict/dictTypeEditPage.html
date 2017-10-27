@@ -1,0 +1,59 @@
+<div class="form-tips-content">
+  <form class="form-horizontal" action="/sys/dict/dictTypeEdit.html" id="form" role="form">
+  	<ul class="form-item">
+  		<li>
+			<div class="form-group">
+		      <label for="typeName" class="control-label form-label">类型名称：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="typeName" id="typeName" maxLength="40" value="${dict.typeName}" placeholder="请输入名称">
+		      </div>
+		    </div>	
+  		</li>
+   		<li>
+			<div class="form-group">
+		      <label for="type" class="control-label form-label">类型标识：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="dictType" id="dictType" maxLength="64" value="${dict.dictType}" placeholder="请输入标识"  disabled="disabled">
+		      </div>
+		    </div>	
+  		</li>
+  		<li class="full-width">
+			<div class="form-group">
+		      <label for="description" class="control-label form-label">描述信息：</label>
+		      <div class="input-box">
+		      <textarea rows="" cols="" class="form-control" name="remark" id="remark" maxLength="512">${dict.remark}</textarea>
+		      </div>
+		    </div>	
+  		</li>  		
+  		<input type="hidden" id="uuid" name="uuid" value="${dict.uuid}">		
+  	</ul>
+  	<@token/>
+  </form>
+</div>
+<script>
+	$("#form").submit(function(){
+		$(this).ajaxSubmit({
+			type:"post",
+			dataType:"json",
+			success:function(data){
+				if (data.result) {
+					layer.alert(data.msg, {
+						icon: 6,
+						cancel: function(index){
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入 
+  						}
+					}, function() {
+						gridobj.trigger("reloadGrid");//重新载入
+						layer.closeAll();							  
+					});
+				} else {
+					layer.alert(data.msg, {
+						icon: 5
+					});
+				}			        	
+	    	}
+		});
+		return false;
+	});
+</script>

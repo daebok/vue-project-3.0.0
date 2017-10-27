@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>申请额度</title>
+		<#include "include/resources.html">
+		<script type="text/javascript">
+			var url_list = "/loan/credit/doCreditList.html";
+			$(document).ready(function() {	
+				$('#keywordsSearch').attr('data-url',url_list);
+			});
+		</script>
+		<style>
+		.layui-layer-loading .layui-layer-loading3{width:200px!important;padding-left: 66px;color: #fff;line-height: 24px;}
+		</style>
+	</head>
+	<body>
+	<style>
+		.showInfoSingleDiv{
+			left:-100px;
+		}
+	</style>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入用户名/用户姓名">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" id="keywordsSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form id="advSearchForm">
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					</div>					
+				</div>
+			</div>
+			
+			<!-- 列表信息 -->
+			<div class="row mt20">
+			<div class="col-md-12">
+				<table id="jqGrid" class="table-td-NoOverflow"></table>
+				<div id="jqGridPager"></div>
+			</div>
+		</div>
+		<script type="text/javascript">
+
+			$(document).ready(function() {		
+				//表格初始化		
+				$("#jqGrid").jqTreeGrid({
+						url : url_list,
+						multiselect : false,
+						colModel : [
+								{
+									label : "用户名",
+									name : "userName",
+									width : 160,
+									align:"center"
+								},
+								{
+									label : "用户姓名",
+									name : "realName",
+									width : 150 ,
+									align:"center"
+								},
+								{
+									label : "电话号码",
+									name : "mobile",
+									width : 100, 
+									align:"center"
+								},
+								{
+									label : "邮箱",
+									name : "email",
+									width : 100, 
+									align:"center"
+								},
+								{
+									label : "总额度(元)",
+									name : "totalCredit",
+									width : 100, 
+									align:"center"
+								},
+								{
+									label : "可用额度(元)",
+									name : "useCredit",
+									width : 100, 
+									align:"center"
+								},
+								{
+									label: "操作",
+									name: "cz",
+									width: 100,
+									formatter: function(val, options, rowObject){	
+										var btns = '<a href="javascript:;" onclick=$.fn.treeGridOptions.addFun(this,"") data-tid="jqGrid" data-width="600px" data-height="50%" data-url="/loan/credit/deductCredit.html?userId='+rowObject.userId+'" data-title="扣除">扣除</a>';
+										return btns;
+									}
+									
+								} ],
+					}).jqGrid("setFrozenColumns").navGrid(
+					'#jqGridPager',
+					{
+						edit : false,
+						add : false,
+						del : false,
+						search : false,
+						refresh : true,
+						view : false,
+						position : "left",
+						cloneToTop : false
+					});
+				});
+		</script>
+			
+		</div>
+	</body>
+</html>

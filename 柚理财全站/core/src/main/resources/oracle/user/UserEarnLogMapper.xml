@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.user.mapper.UserEarnLogMapper">
+	<resultMap type="com.rd.ifaes.core.user.domain.UserEarnLog" id="userEarnLogResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="earnDate" column="EARN_DATE"/>
+		<result property="earn" column="EARN"/>
+		<result property="total" column="TOTAL"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		EARN_DATE,
+		EARN,
+		TOTAL
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{earnDate},
+		#{earn},
+		#{total}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+			<if test="earnDate != null">and EARN_DATE = #{earnDate}</if>
+			<if test="earn != null">and EARN = #{earn}</if>
+			<if test="total != null">and TOTAL = #{total}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.user.domain.UserEarnLog">
+		insert into user_earn_log( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		BEGIN
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into user_earn_log( <include refid="table_columns" /> ) 
+		values 
+		( 
+			#{item.uuid},
+			#{item.userId},
+			#{item.earnDate},
+			#{item.earn},
+			#{item.total}
+		)
+		</foreach>
+		; END ;
+	</insert>
+	
+	<update id="update" parameterType="com.rd.ifaes.core.user.domain.UserEarnLog">
+		update user_earn_log 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="earnDate != null">EARN_DATE = #{earnDate},</if>
+			<if test="earn != null">EARN = #{earn},</if>
+			<if test="total != null">TOTAL = #{total}</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="userEarnLogResultMap">
+        select <include refid="table_columns" />
+        from user_earn_log
+    </select>
+
+    <select id="findList" resultMap="userEarnLogResultMap">
+        select <include refid="table_columns" />
+        from user_earn_log
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from user_earn_log
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="userEarnLogResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_earn_log
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+    <!-- 统计所有的收益金额-->
+    <select id="getAllEarnAmount" resultType="BigDecimal" parameterType="com.rd.ifaes.core.user.domain.UserEarnLog" >
+		select sum(earn) from user_earn_log  
+		<if test="userId != null and userId != ''">where user_id = #{userId}</if>
+	</select>
+	<!-- 统计指定日期所有的收益金额-->
+    <select id="getAllEarnAmountByDate" resultType="BigDecimal" parameterType="String" >
+		select sum(earn) from user_earn_log  
+		where to_char(earn_date,'yyyy-mm-dd') = to_char(#{earnDate},'yyyy-mm-dd')
+	</select>
+	
+	<!-- 查询用户指定日期的收益金额-->
+	<select id="getUserEarnAmountByDate" resultType="BigDecimal" parameterType="com.rd.ifaes.core.user.domain.UserEarnLog" >
+		select earn from user_earn_log
+		where user_id = #{userId} and to_char(earn_date,'yyyy-mm-dd') = to_char(#{earnDate},'yyyy-mm-dd')
+	</select>
+	
+	<!-- 查询最近一次的收益记录-->
+	<select id="getLastLog" resultMap="userEarnLogResultMap" parameterType="String" >
+		SELECT * FROM (
+			SELECT ROW_NUMBER() OVER( order by earn_date desc) RN, <include refid="table_columns" /> 
+			from user_earn_log
+			where user_id = #{userId}
+		) WHERE RN = 1
+	</select>
+</mapper>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="format-detection" content="telephone=no">
+    <title>资费说明-${web_name!""}</title>
+    <link rel="stylesheet" type="text/css" href="/themes/css/common-c82a7457f8.css"/>
+    <link rel="stylesheet" type="text/css" href="/themes/css/helpCenter-b1edf09ddd.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+    <!--[if lte IE 7]> 
+    	<script>
+    		window.location = "/browserUpgrade.html"
+    	</script>
+    <![endif]-->
+<body>
+    <#include "/include/header.html">
+    <div class="wrap help-wrap clearfix">
+        <div class="help-side">
+        <h3><span class="iconfont">&#xe637;</span><a href="/column/helpCenter.html?sectionCode=help" style="color:#999">帮助中心</a></h3>
+            <ul class="help-side-list">
+                 <#if sectionList?exists>
+					<#list sectionList as item>
+						<li <#if sectionCode==item.sectionCode> class="active"</#if> ><a href="/column/helpCenter.html?sectionCode=${item.sectionCode}">${item.sectionName}</a></li>
+					</#list>
+				 </#if>
+            </ul>
+        </div>
+        <div class="help-main">
+			        <#if isLeaf??&&isLeaf==1&&article??>
+              <h2>${sectionName!''}</h2>
+        		 <ul class="help-main-list" id="helpMainList">
+			                    <div class="cont">
+			                        <div class="text">
+			                            ${article.content!''}
+			                        </div>
+			                    </div>
+
+               </ul>
+         <#else>
+             <h2>${sectionName!''}</h2>
+              <ul class="help-main-list" id="helpMainList">
+                    <#if articleList?exists>
+	                	<#list articleList as item>
+	                	   <li  <#if item_index ==0>class="on" </#if>>
+			                    <h3 class="tab"><span class="arrow"></span>${item.title!''}</h3>
+			                    <div class="cont">
+			                        <div class="text">
+			                            ${item.content!''}
+			                        </div>
+			                    </div>
+                           </li>
+	                   </#list>
+	                </#if>
+               </ul>
+        </#if>
+        </div>
+    </div>
+    <#include "/include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/themes/js/common-0aa0729634.js"></script>
+<script src="/themes/js/helpCenter-2e7d1c951d.js"></script>
+</html>

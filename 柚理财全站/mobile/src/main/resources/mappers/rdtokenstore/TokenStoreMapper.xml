@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.mobile.rdtokenstore.mapper.TokenStoreMapper">
+	<resultMap type="com.rd.ifaes.mobile.rdtokenstore.domain.TokenStore" id="TokenStoreResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="oauthToken" column="OAUTH_TOKEN"/>
+		<result property="refreshToken" column="REFRESH_TOKEN"/>
+		<result property="expiresIn" column="EXPIRES_IN"/>
+		<result property="clientId" column="CLIENT_ID"/>
+		<result property="bindingId" column="BINDING_ID"/>
+		<result property="addTime" column="ADD_TIME"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		OAUTH_TOKEN,
+		REFRESH_TOKEN,
+		EXPIRES_IN,
+		CLIENT_ID,
+		BINDING_ID,
+		ADD_TIME
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{oauthToken},
+		#{refreshToken},
+		#{expiresIn},
+		#{clientId},
+		#{bindingId},
+		#{addTime}
+	</sql>
+
+
+	<insert id="insert" parameterType="com.rd.ifaes.mobile.rdtokenstore.domain.TokenStore">
+		insert into token_store( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+		<!-- 更新登录密码 -->
+	<update id="updatePwd" parameterType="com.rd.ifaes.core.user.model.UserModel">
+	    update user set pwd = #{newLoginPwd} where uuid = #{uuid}
+	</update>
+	
+		<delete id="removeOldToken" parameterType="String">
+		delete from token_store
+		where BINDING_ID = #{bindingId}
+	</delete>
+	
+		<select id="getOauthTokenStore"  resultMap="TokenStoreResultMap"  parameterType="String" >
+		select *
+		from token_store
+	    where OAUTH_TOKEN = #{oauthToken}
+	</select>
+		<select id="getOauthTokenStoreByUserId"  resultMap="TokenStoreResultMap"  parameterType="java.util.Map" >
+		select *
+		from token_store
+	    where BINDING_ID = #{bindingId} and CLIENT_ID= #{clientId} and OAUTH_TOKEN = #{oauthToken}
+	</select>
+	<select id="getRefreshTokenStore"  resultMap="TokenStoreResultMap"  parameterType="java.util.Map" >
+		select *
+		from token_store
+	    where BINDING_ID = #{bindingId} and REFRESH_TOKEN= #{refreshToken}
+	</select>
+	<!-- 其他自定义SQL -->
+	
+</mapper>

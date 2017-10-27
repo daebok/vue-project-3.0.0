@@ -1,0 +1,72 @@
+@import (reference)'../../../style/common.less';
+@import '../../../style/account.less';
+.account-content{
+  .listbutton{
+    .form-button(@padding: 0px,@width: 280px,@fontsize: 16px,@lineheight:40px);
+  }
+  .card-list{
+    padding: 50px 0 0;
+    width: 1000px;
+    li{
+      &:extend(.fl);
+      background: url(../../../style/images/bankcardbg.png) no-repeat; 
+      width: 280px;
+      height: 160px;
+      margin: 0 30px 30px 0;
+      padding: 18px 0 0 20px;
+      .bankname{
+        display: block;
+        .f16();
+        color: @color-p;
+        margin-bottom: 14px;
+        img{
+          width: 32px;
+          height: 32px;
+          margin-right: 10px;
+          vertical-align: middle;
+          font-weight: bold;
+        }
+      }
+      .cardnumber{
+        display: block;
+        .f22();
+        color: @color-text;
+      }
+      .del{
+        padding:22px 0 0;
+        line-height: 40px;
+        text-align: center;
+        display: block;
+        margin: 0 20px 0 0;
+        a{
+          .f14();
+          color: #aaa;
+        }
+      }      
+      &.addcard{
+        text-align: center;
+        padding: 0;
+        background: none;
+        border:dashed 1px @color-tipsbg;
+        border-radius: 3px;
+        &:hover{
+          border-color:@color-main;
+        }
+        a{
+          .f16();
+          color: @color-text;
+          display: block;
+          line-height: 160px;
+          &:hover{
+            color:@color-main;
+          }
+        }
+        em{
+          font-size: 26px;
+          vertical-align: middle;
+          margin: 0 10px 0 0;          
+        }
+      }
+    }
+  }
+}

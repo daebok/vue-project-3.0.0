@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.operate.mapper.UserGiftMapper">
+	<resultMap type="com.rd.ifaes.core.operate.domain.UserGift" id="userGiftResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="giftName" column="GIFT_NAME"/>
+		<result property="giftType" column="GIFT_TYPE"/>
+		<result property="redenvelopeRuleId" column="REDENVELOPE_RULE_ID"/>
+		<result property="rateCouponRuleId" column="RATE_COUPON_RULE_ID"/>
+		<result property="remark" column="REMARK"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="updateTime" column="UPDATE_TIME"/>
+		<result property="deleteFlag" column="DELETE_FLAG"/>
+		
+	     
+	    <result property="rateName" column="RATE_NAME"/>
+		<result property="redName" column="RED_NAME"/>		
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		GIFT_NAME,
+		GIFT_TYPE,
+		REDENVELOPE_RULE_ID,
+		RATE_COUPON_RULE_ID,
+		REMARK,
+		CREATE_TIME,
+		UPDATE_TIME,
+		DELETE_FLAG
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{giftName},
+		#{giftType},
+		#{redenvelopeRuleId},
+		#{rateCouponRuleId},
+		#{remark},
+		#{createTime},
+		#{updateTime},
+		#{deleteFlag}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="giftName != null and giftName != ''">and GIFT_NAME = #{giftName}</if>
+            <if test="giftType != null and giftType != ''">and GIFT_TYPE = #{giftType}</if>
+            <if test="redenvelopeRuleId != null and redenvelopeRuleId != ''">and REDENVELOPE_RULE_ID = #{redenvelopeRuleId}</if>
+            <if test="rateCouponRuleId != null and rateCouponRuleId != ''">and RATE_COUPON_RULE_ID = #{rateCouponRuleId}</if>
+            <if test="remark != null and remark != ''">and REMARK = #{remark}</if>
+            <if test="deleteFlag != null and deleteFlag != ''">and DELETE_FLAG = #{deleteFlag}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.operate.domain.UserGift">
+		insert into user_gift( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into user_gift( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+		#{item.uuid},
+				#{item.giftName},
+				#{item.giftType},
+				#{item.redenvelopeRuleId},
+				#{item.rateCouponRuleId},
+				#{item.remark},
+				#{item.createTime},
+				#{item.updateTime},
+				#{item.deleteFlag}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from user_gift
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update user_gift set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update user_gift set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.operate.domain.UserGift">
+		update user_gift 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="giftName != null and giftName != ''">GIFT_NAME = #{giftName},</if>
+            <if test="giftType != null and giftType != ''">GIFT_TYPE = #{giftType},</if>
+            <if test="redenvelopeRuleId != null ">REDENVELOPE_RULE_ID = #{redenvelopeRuleId},</if>
+            <if test="rateCouponRuleId != null ">RATE_COUPON_RULE_ID = #{rateCouponRuleId},</if>
+            <if test="remark != null and remark != ''">REMARK = #{remark},</if>
+			UPDATE_TIME = now(),
+            <if test="deleteFlag != null and deleteFlag != ''">DELETE_FLAG = #{deleteFlag},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="userGiftResultMap">
+        select <include refid="table_columns" />
+        from user_gift
+    </select>
+
+    <select id="findList" resultMap="userGiftResultMap">
+       select 
+            gift.UUID,
+			gift.GIFT_NAME,
+			gift.GIFT_TYPE,
+			gift.REDENVELOPE_RULE_ID,
+			gift.RATE_COUPON_RULE_ID,
+			gift.REMARK,
+			gift.CREATE_TIME,
+			gift.UPDATE_TIME,
+			gift.DELETE_FLAG,
+            redrule.rule_name red_name,
+            raterule.rule_name rateName  
+        from user_gift gift 
+		LEFT JOIN   redenvelope_rule redrule on  redrule.uuid=gift.redenvelope_rule_id
+		LEFT JOIN   rate_coupon_rule raterule on  raterule.uuid =  gift.rate_coupon_rule_id
+        <include refid="find_list_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from user_gift
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="userGiftResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_gift
+		where uuid = #{uuid}
+	</select>
+	
+	<sql id="find_list_where">
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="giftType != null and giftType != ''">and gift.GIFT_TYPE = #{giftType}</if>
+			<if test="deleteFlag != null and deleteFlag != ''">and gift.DELETE_FLAG = #{deleteFlag}</if>
+			<if test="giftName != null and giftName != ''">and gift.GIFT_NAME like concat('%',#{giftName},'%')</if>
+			<if test="keywords != null and keywords != ''">
+				and gift.GIFT_NAME like concat('%',#{keywords},'%')
+			</if>
+		</trim>
+		<if test="page != null and page.sort!=null and page.sort!=''">
+			order by ${page.sort} ${page.order}
+		</if>
+		<if test="page == null or page.sort == null or page.sort == ''">order by update_time desc</if>
+	</sql>
+	<!-- 其他自定义SQL -->
+
+
+</mapper>

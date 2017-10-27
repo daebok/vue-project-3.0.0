@@ -1,0 +1,49 @@
+@import (reference)'../../style/common.less';
+@import '../../style/tips.less';
+.investRecharge-wrap{
+    background-color: #fff;
+    overflow: hidden;
+    .title{
+        height: 60px;
+        line-height: 60px;
+        text-indent: 30px;
+        .f16();
+        font-weight: 100;
+        border-bottom: 1px solid @color-tipsbg;
+    }
+    .investRecharge-form{
+        margin:50px 0 0 240px;
+        .row{
+            margin-bottom: 15px;
+        }
+        .ant-form-item{
+            margin-bottom: 0;
+        }
+        .remind{
+            em{
+                margin-right: 5px;
+                color:@color-main;
+                vertical-align: middle;
+            }
+        }
+    }
+    .help{
+        width: 1020px;
+        padding: 15px 30px;
+        margin: 60px auto 40px;
+        background-color: #fafafd; 
+        .help-title{
+            margin-bottom: 10px;
+            .f14();
+            color: #5ba7c8;
+            em{
+                .f14();
+                color: #5ba7c8;
+                margin-right: 5px;               
+            }
+        }
+        p{
+            line-height: 25px;
+        }
+    }
+}

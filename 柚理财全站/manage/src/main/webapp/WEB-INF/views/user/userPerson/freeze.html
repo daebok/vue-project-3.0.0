@@ -1,0 +1,76 @@
+<div class="form-tips-content">
+  <form class="form-horizontal" action="/user/userPerson/doFreeze.html" id="form" role="form">
+  	<ul class="form-item">
+  		 <li>
+  		    <input type="hidden" name="uuid" id="uuid" value="${uuid}">
+			<div class="form-group">
+		      <label for="realName" class="control-label form-label">用户名：</label>
+		      <div class="checked-box">${userName}</div>
+		    </div>	
+  		</li> 
+  		<li class="full-width">
+			<div class="form-group">
+		      <label for="remark" class="control-label form-label">功能冻结：</label>
+		      <div class="checked-box">
+	      		<#list freezeOperationList as oper>
+					<span>
+				     <input type="checkbox" name="operation" value="${oper.itemValue}" 
+					 <#if userFreezeList?seq_contains(oper.itemValue)>checked="checked" </#if>/>
+					    ${oper.itemName}
+					</span>		    
+				</#list>		      	
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="idNo" class="control-label form-label">账户冻结：</label>
+		      <div class="checked-box">
+		          <#if status=='-1'>
+		              <input type="checkbox" name="status" id="status" checked="checked" />
+		          <#else>
+		              <input type="checkbox" name="status" id="status"/>
+		          </#if>
+		      </div>
+		    </div>	
+  		</li> 
+        <li class="full-width">
+			<div class="form-group">
+		      <label for="remark" class="control-label form-label">备注：</label>
+		      <div class="textarea-box">
+		      <textarea rows="" cols="" class="form-control" name="lockRemark" maxlength="200" id="lockRemark">${lockRemark}</textarea>
+		      </div>
+		    </div>	
+  		</li> 
+  	</ul>
+  	<@token/>
+  </form>
+</div>
+<script>
+	$("#form").validate({
+	  submitHandler:function(form){ 
+			$(form).ajaxSubmit({
+				type:"post",
+				dataType:"json",
+				success:function(data){
+        	if(data.result){
+        		layer.alert(data.msg, {
+        			icon: 6,
+        			cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+        		}, function(){	        			
+        			layer.closeAll();
+        			gridobj.trigger("reloadGrid"); //重新载入  
+        		});
+        	}
+        	else
+        	{
+        		layer.alert(data.msg, {icon: 5});
+        	}	        	
+	    	}
+			});
+	  }    
+	});
+</script>

@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>注册用户分析</title>
+<#include "include/resources.html">
+</head>
+<body class="overflowY">
+<div class="wrapper">
+  <div class="row pt20">
+    <div class="col-md-12">
+     <form class="form-horizontal">
+        <div id="legend" class="">
+          <legend class="">条件查询</legend>
+        </div>
+        <div class="control-group">
+          <label class="control-label">日期：</label>
+          <div class="controls">
+            <label class="checkbox inline selectTime"><input type="text" name="startTime" id="startTime" class="form-control"placeholder="开始日期" readonly="readonly" style="background:#fff;"/></label><label class="checkbox inline selectTime"><input type="text" name="endTime" id="endTime" class="form-control" placeholder="结束日期" readonly="readonly" style="background:#fff;"/></label>
+          </div>
+          <label class="control-label"><input type="checkbox" id="j-dataCheck"> 对比时间段：</label>
+          <div class="controls hide" id="j-dataCheckBox">
+            <label class="checkbox inline selectTime"><input type="text" name="check-startTime" id="check-startTime" class="form-control"placeholder="结束日期" value="${endDate}" readonly="readonly" style="background:#fff;"/></label>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">用户类型：</label>
+          <div class="controls">
+            <label class="checkbox inline">
+              <input type="checkbox" checked name="type1" value="1">不限
+            </label>
+            <label class="checkbox inline">
+              <input type="checkbox" name="type1" value="2">个人
+            </label>
+            <label class="checkbox inline">
+              <input type="checkbox" name="type1" value="3">企业
+            </label>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">借款金额：</label>
+          <div class="controls">
+            <label class="checkbox inline">
+              <input type="checkbox" checked name="type2" value="1">全部
+            </label>
+            <label class="checkbox inline">
+              <input type="checkbox" name="type2" value="1">1万以下
+            </label>
+            <label class="checkbox inline">
+              <input type="checkbox" name="type2" value="2">1-5万
+            </label>
+            <label class="checkbox inline">
+              <input type="checkbox" name="type2" value="3">5-10万
+            </label>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">借款性质：</label>
+          <div class="controls">
+            <label class="checkbox inline">
+              <input type="checkbox" checked name="sex" value="1">全部
+            </label>
+            <label class="checkbox inline">
+              <input type="checkbox" name="sex" value="1">个人借款
+            </label>
+            <label class="checkbox inline">
+              <input type="checkbox" name="sex" value="2">企业借款
+            </label>
+          </div>
+        </div>
+        <div class="" style="margin-left:116px;">
+          <button type="submit" name="button" class="btn btn-primary">搜索</button>
+        </div>
+    </form>
+    </div>
+    <div class="col-md-12">
+        <div class="content pt20">
+          <h3 class="text-center" style="width:1000px;">
+            借款人数及环比值
+            <div id="timeType">
+              <a href="javascript:;" id="day">日</a>
+              <a href="javascript:;" id="week">周</a>
+              <a href="javascript:;" id="month">月</a>
+            </div>
+        </div>
+        <div id="j-main" class="chart-content mt20"></div>
+    </div>
+    <div class="col-md-12">
+      <div id="j-line" class="chart-content mt20">
+
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+    //设置开始时间控件
+  var startTime= {
+    elem:'#startTime',
+    format: 'YYYY-MM-DD', //日期格式
+    max:$('#endTime').val(),
+    event:'focus',
+    choose: function(dates){
+        endTime.min=dates;
+        endTime.start=dates;
+    }
+  };
+  //设置发放结束时间
+  var endTime=  {
+      elem:'#endTime',
+      format: 'YYYY-MM-DD', //日期格式
+      min: $('#startTime').val(), //最小日期
+      event:'focus',
+      choose: function(dates){
+        startTime.max=dates;
+       }
+  };
+  laydate(startTime);
+  laydate(endTime);
+  var myChart = echarts.init(document.getElementById('j-main'));
+  var option = {
+      title: {
+          text: '待还金额及环比值',
+          left: 'center'
+      },    
+      tooltip: {
+          trigger: 'axis'
+      },
+      legend: {
+          data:['担保借款','抵押借款','其他','总计','环比值']
+      },
+      xAxis: [
+          {
+              type: 'category',
+              data: []
+          }
+      ],
+      yAxis: [
+          {
+              type: 'value',
+              name: '借款人数',
+              axisLabel: {
+                  formatter: '{value} '
+              }
+          },
+          {
+              type: 'value',
+              name: '环比',
+              axisLabel: {
+                  formatter: '{value} %'
+              }
+          }
+      ],
+      dataZoom: [
+       {   // 这个dataZoom组件，默认控制x轴。
+           type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+           startValue :0
+       },
+
+   ],
+      series: [
+          {
+              name:'担保借款',
+              type:'bar',
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#66bef5'
+                }
+              }
+          },
+          {
+              name:'抵押借款',
+              type:'bar',
+              data:[]
+          },
+          {
+              name:'其他',
+              type:'bar',
+              data:[]
+          },
+          {
+              name:'总计',
+              type:'line',
+              yAxisIndex: 1,
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#0075a9'
+                }
+              },
+              lineStyle:{
+                normal:{
+                  color:'#0075a9'
+                }
+              }
+          },{
+              name:'环比值',
+              type:'line',
+              yAxisIndex: 1,
+              data:[]
+          }
+      ]
+  };
+//myChart.setOption(option);
+  chartAjax()
+  function chartAjax(req,range){
+      $.ajax({
+          url:'/statistic/borrow/getBorrowerNum.html?'+req,
+          dataType:'json',
+          success:function(data){
+            var timeLength=data.date.length;
+            if(!range){
+              timeLength = 0
+            }else{
+              timeLength = timeLength-range
+            }
+            option.dataZoom[0].startValue=timeLength;
+            option.xAxis[0].data=data.date;
+            option.series[0].data=data.danbao;
+            option.series[1].data=data.diya;
+            option.series[2].data=[234234,234,234234,234,234,234];
+            option.series[3].data=[324,32,1,12,2,1,1];
+            option.series[4].data=[4,3,2,23,234,3,2];
+            myChart.setOption(option);
+          }
+      })
+  }
+
+//对比折线图
+  //var myChart = echarts.init(document.getElementById('j-line'));
+  var option_line = {
+    title: {
+        text: '折线图堆叠'
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        data:['邮件营销','联盟广告','视频广告','直接访问','搜索引擎']
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    toolbox: {
+        feature: {
+            saveAsImage: {}
+        }
+    },
+    xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: ['周一','周二','周三','周四','周五','周六','周日']
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [
+        {
+            name:'邮件营销',
+            type:'line',
+            stack: '总量',
+            data:[120, 132, 101, 134, 90, 230, 210]
+        },
+        {
+            name:'联盟广告',
+            type:'line',
+            stack: '总量',
+            data:[220, 182, 191, 234, 290, 330, 310]
+        },
+        {
+            name:'视频广告',
+            type:'line',
+            stack: '总量',
+            data:[150, 232, 201, 154, 190, 330, 410]
+        },
+        {
+            name:'直接访问',
+            type:'line',
+            stack: '总量',
+            data:[320, 332, 301, 334, 390, 330, 320]
+        },
+        {
+            name:'搜索引擎',
+            type:'line',
+            stack: '总量',
+            data:[820, 932, 901, 934, 1290, 1330, 1320]
+        }
+    ]
+};
+
+
+function randomData() {
+    return Math.round(Math.random()*1000);
+}
+
+var option3 = {
+    title: {
+        text: 'iphone销量',
+        subtext: '纯属虚构',
+        left: 'center'
+    },
+    tooltip: {
+        trigger: 'item',
+        formatter: function(params) {
+              var res = params.name+'<br/>';
+
+              var myseries = option3.series;
+
+              for (var i = 0; i < myseries.length; i++) {
+
+
+                  for(var j=0;j<myseries[i].data.length;j++){
+                    if(myseries[i].data[j].name==params.name ){
+                        res+= myseries[i].name;
+                        res+=' : '+myseries[i].data[j].value+'</br>';
+                    }
+
+                  }
+              }
+              return res;
+        }
+    },
+    legend: {
+        orient: 'vertical',
+        left: 'left',
+        data:['iphone3','iphone4','iphone5']
+    },
+    visualMap: {
+        min: 0,
+        max: 2500,
+        left: 'left',
+        top: 'bottom',
+        text: ['高','低'],           // 文本，默认为数值文本
+        calculable: true
+    },
+    toolbox: {
+        show: true,
+        orient: 'vertical',
+        left: 'right',
+        top: 'center',
+        feature: {
+            dataView: {readOnly: false},
+            restore: {},
+            saveAsImage: {}
+        }
+    },
+    series: [
+        {
+            name: 'iphone3',
+            type: 'map',
+            mapType: 'china',
+            roam: false,
+            label: {
+                normal: {
+                    show: true
+                },
+                emphasis: {
+                    show: true
+                }
+            },
+            data:[
+                {name: '北京',value: randomData() },
+                {name: '天津',value: randomData() },
+                {name: '上海',value: randomData() },
+                {name: '重庆',value: randomData() },
+                {name: '河北',value: randomData() },
+                {name: '河南',value: randomData() },
+                {name: '云南',value: randomData() },
+                {name: '辽宁',value: randomData() },
+                {name: '黑龙江',value: randomData() },
+                {name: '湖南',value: randomData() },
+                {name: '安徽',value: randomData() },
+                {name: '山东',value: randomData() },
+                {name: '新疆',value: randomData() },
+                {name: '江苏',value: randomData() },
+                {name: '浙江',value: randomData() },
+                {name: '江西',value: randomData() },
+                {name: '湖北',value: randomData() },
+                {name: '广西',value: randomData() },
+                {name: '甘肃',value: randomData() },
+                {name: '山西',value: randomData() },
+                {name: '内蒙古',value: randomData() },
+                {name: '陕西',value: randomData() },
+                {name: '吉林',value: randomData() },
+                {name: '福建',value: randomData() },
+                {name: '贵州',value: randomData() },
+                {name: '广东',value: randomData() },
+                {name: '青海',value: randomData() },
+                {name: '西藏',value: randomData() },
+                {name: '四川',value: randomData() },
+                {name: '宁夏',value: randomData() },
+                {name: '海南',value: randomData() },
+                {name: '台湾',value: randomData() },
+                {name: '香港',value: randomData() },
+                {name: '澳门',value: randomData() }
+            ]
+        },
+        {
+            name: 'iphone4',
+            type: 'map',
+            mapType: 'china',
+            label: {
+                normal: {
+                    show: true
+                },
+                emphasis: {
+                    show: true
+                }
+            },
+            data:[
+                {name: '北京',value: randomData() },
+                {name: '天津',value: randomData() },
+                {name: '上海',value: randomData() },
+                {name: '重庆',value: randomData() },
+                {name: '河北',value: randomData() },
+                {name: '安徽',value: randomData() },
+                {name: '新疆',value: randomData() },
+                {name: '浙江',value: randomData() },
+                {name: '江西',value: randomData() },
+                {name: '山西',value: randomData() },
+                {name: '内蒙古',value: randomData() },
+                {name: '吉林',value: randomData() },
+                {name: '福建',value: randomData() },
+                {name: '广东',value: randomData() },
+                {name: '西藏',value: randomData() },
+                {name: '四川',value: randomData() },
+                {name: '宁夏',value: randomData() },
+                {name: '香港',value: randomData() },
+                {name: '澳门',value: randomData() }
+            ]
+        },
+        {
+            name: 'iphone5',
+            type: 'map',
+            mapType: 'china',
+            label: {
+                normal: {
+                    show: true
+                },
+                emphasis: {
+                    show: true
+                }
+            },
+            data:[
+                {name: '北京',value: randomData() },
+                {name: '天津',value: randomData() },
+                {name: '上海',value: randomData() },
+                {name: '广东',value: randomData() },
+                {name: '台湾',value: randomData() },
+                {name: '香港',value: randomData() },
+                {name: '澳门',value: randomData() }
+            ]
+        }
+    ]
+};
+
+var myChart3 = echarts.init(document.getElementById('j-line'));
+myChart3.setOption(option3);
+
+ $('.form-horizontal').submit(function (e) {
+   e.preventDefault()
+   chartAjax($(this).serialize())
+ });
+
+ $("#timeType").on('click',function(e){
+   switch (e.target.id) {
+     case 'day':
+        chartAjax('type=day',7)
+        break;
+     case 'week':
+        chartAjax('type=week')
+        break;
+     case 'month':
+        chartAjax('type=month')
+       break;
+     default:
+
+   }
+ });
+
+ $("#j-dataCheck").click(function(){
+   console.log($(this).is(':checked'));
+   if( $(this).is(':checked') ){
+     $("#j-dataCheckBox").addClass("show");
+   }
+   else{
+     $("#j-dataCheckBox").removeClass("show");
+   }
+ });
+
+</script>
+</body>
+</html>

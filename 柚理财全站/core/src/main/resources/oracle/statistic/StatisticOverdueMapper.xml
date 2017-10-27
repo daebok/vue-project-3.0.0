@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.statistic.mapper.StatisticOverdueMapper">
+	<resultMap type="com.rd.ifaes.core.statistic.domain.StatisticOverdue" id="statisticOverdueResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="recordDate" column="RECORD_DATE"/>
+		<result property="statType" column="STAT_TYPE"/>
+		<result property="totalCount" column="TOTAL_COUNT"/>
+		<result property="firstSeries" column="FIRST_SERIES"/>
+		<result property="secondSeries" column="SECOND_SERIES"/>
+		<result property="thirdSeries" column="THIRD_SERIES"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		RECORD_DATE,
+		STAT_TYPE,
+		TOTAL_COUNT,
+		FIRST_SERIES,
+		SECOND_SERIES,
+		THIRD_SERIES
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{recordDate},
+		#{statType},
+		#{totalCount},
+		#{firstSeries},
+		#{secondSeries},
+		#{thirdSeries}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+			<if test="recordDate != null">and RECORD_DATE = #{recordDate}</if>
+            <if test="statType != null and statType != ''">and STAT_TYPE = #{statType}</if>
+			<if test="totalCount != null">and TOTAL_COUNT = #{totalCount}</if>
+			<if test="firstSeries != null">and FIRST_SERIES = #{firstSeries}</if>
+			<if test="secondSeries != null">and SECOND_SERIES = #{secondSeries}</if>
+			<if test="thirdSeries != null">and THIRD_SERIES = #{thirdSeries}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.statistic.domain.StatisticOverdue">
+		insert into statistic_overdue( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		BEGIN
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into statistic_overdue( <include refid="table_columns" /> ) 
+		values 
+		( 
+			#{item.uuid},
+			#{item.recordDate},
+			#{item.statType},
+			#{item.totalCount},
+			#{item.firstSeries},
+			#{item.secondSeries},
+			#{item.thirdSeries}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from statistic_overdue
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update statistic_overdue set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update statistic_overdue set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.statistic.domain.StatisticOverdue">
+		update statistic_overdue 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="recordDate != null">RECORD_DATE = #{recordDate},</if>
+            <if test="statType != null and statType != ''">STAT_TYPE = #{statType},</if>
+			<if test="totalCount != null">TOTAL_COUNT = #{totalCount},</if>
+			<if test="firstSeries != null">FIRST_SERIES = #{firstSeries},</if>
+			<if test="secondSeries != null">SECOND_SERIES = #{secondSeries},</if>
+			<if test="thirdSeries != null">THIRD_SERIES = #{thirdSeries},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="statisticOverdueResultMap">
+        select <include refid="table_columns" />
+        from statistic_overdue
+    </select>
+
+    <select id="findList" resultMap="statisticOverdueResultMap">
+        select <include refid="table_columns" />
+        from statistic_overdue
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from statistic_overdue
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="statisticOverdueResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from statistic_overdue
+		where uuid = #{id}
+	</select>
+	<!-- 其他自定义SQL -->
+	
+	<sql id="queryConditionSql">
+		from project_repayment pr 
+		INNER JOIN borrow b on pr.project_id = b.project_id
+		<trim prefix="where" prefixOverrides="and | or ">
+			and pr.status = '0' 
+			and pr.late_days &gt; 0
+		</trim>
+	</sql>
+	<!-- 逾期项目金额 -->
+	<select id="sumOverdueAccount" resultMap="statisticOverdueResultMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select 
+		nvl(sum(pr.capital),0) as totalCount,
+		nvl(sum(case when pr.late_days &lt; 90 then pr.capital ELSE 0 end),0) as firstSeries,
+		nvl(sum(case when pr.late_days &gt;= 90 and pr.late_days &lt; 180 then pr.capital ELSE 0 end),0) as secondSeries,
+		nvl(sum(case when pr.late_days &gt;= 180 then pr.capital ELSE 0 end),0) as thirdSeries
+		 <include refid="queryConditionSql" />
+	</select>
+	<!-- 逾期项目笔数 -->
+	<select id="countOverdueNum" resultMap="statisticOverdueResultMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select 
+		count(pr.uuid) as totalCount,
+		count(case when pr.late_days &lt; 90 then 1 ELSE null end) as firstSeries,
+		count(case when pr.late_days &gt;= 90 and pr.late_days &lt; 180 then 1 ELSE null end) as secondSeries,
+		count(case when pr.late_days &gt;= 180 then 1 ELSE null end) as thirdSeries
+		<include refid="queryConditionSql" />
+	</select>
+	<!-- 逾期人数量 -->
+	<select id="countOverdueBorrower" resultMap="statisticOverdueResultMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select 
+		count(DISTINCT pr.user_id) as totalCount,
+		count(DISTINCT pr.user_id,case when pr.late_days &lt; 90 then 1 ELSE null end) as firstSeries,
+		count(DISTINCT pr.user_id,case when pr.late_days &gt;= 90 and pr.late_days &lt; 180 then 1 ELSE null end) as secondSeries,
+		count(DISTINCT pr.user_id,case when pr.late_days &gt;= 180 then 1 ELSE null end) as thirdSeries
+		<include refid="queryConditionSql" />
+	</select>
+	
+	<resultMap type="com.rd.ifaes.core.statistic.model.StatisticResultModel" id="statisticResultModelResultMap">
+		<result property="statDate" column="STAT_DATE"/>
+		<result property="totalCount" column="TOTAL_COUNT"/>
+	</resultMap>
+	
+	<!-- 获取逾期数据 -->
+	<select id="getOverdueCount" resultMap="statisticResultModelResultMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select to_char(record_date,'yyyymmdd') as statDate, sum(total_count)  as totalCount
+		from statistic_overdue 
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="statType != null and statType != ''">and stat_type = #{statType}</if>
+			<if test="startDate != null and startDate != ''">and record_date &gt;= to_date(#{startDate},'yyyy-mm-dd hh24:mi:ss')</if>
+        	<if test="endDate != null and endDate != ''">and record_date &lt;= to_date(#{endDate},'yyyy-mm-dd hh24:mi:ss')</if>
+        </trim>
+        group by to_char(record_date,'yyyymmdd')
+	</select>
+	
+	<!-- 获取起始日期前一天数值 -->
+	<select id="getLastOverdue" resultType="BigDecimal" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select sum(total_count)  as totalCount
+		from statistic_overdue
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="beforeStartDate != null and beforeStartDate != ''">and to_char(record_date,'yyyymmdd')  = #{beforeStartDate}</if>
+        </trim>
+	</select>
+
+	<!-- 获取逾期率数据 -->
+	<select id="getOverdueRate" resultMap="statisticOverdueResultMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select <include refid="table_columns" />
+		from statistic_overdue
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="statType != null and statType != ''">and stat_type = #{statType}</if>
+        	<if test="endDate != null and endDate != ''">and record_date = #{endDate}</if>
+        </trim>
+	</select>
+	
+	<!-- 用户逾期地区  -->
+	<select id="getBorrowOverdueArea" resultType="map" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select su.area as area,count(DISTINCT pr.user_id) as totalCount
+		from project_repayment pr
+		inner join statistic_user su on su.user_id = pr.user_id
+		<trim prefix="where" prefixOverrides="and | or ">
+			and pr.late_days &gt; 0 and su.area is not null
+			<if test="endDate != null and endDate != ''">and pr.repay_time &lt;= to_date(#{endDate},'yyyy-mm-dd hh24:mi:ss')</if>
+			<if test="startDate != null and startDate != ''">and (pr.real_repay_time is null or pr.real_repay_time &gt; to_date(#{startDate},'yyyy-mm-dd hh24:mi:ss')) </if>
+		</trim>
+        group by su.area
+	</select>
+	
+</mapper>

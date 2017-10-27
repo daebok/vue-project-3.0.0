@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>债权投资收银台</title>
+</head>
+<body>
+		<form action="/member/myBond/doBondInvest.html" method="post">
+			<table>
+				<tr>
+					<td>产品选择</td>
+					<td>产品名称</td>
+					<td>预期年化收益率</td>
+					<td>折溢价率</td>
+					<td>产品期限</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>${bond.bondName}</td>
+					<td>${project.apr}</td>
+					<td>${bond.bondApr}</td>
+					<td>${project.timeLimit}月</td>
+				</tr>
+				<tr>
+					<td>投资金额</td><td><input name="amount" value="${model.amount!''}" /></td>
+				</tr>
+				<tr>
+					<td>投资金额</td><td><input name="receivedAccount" value="${model.receivedAccount!''}" /></td>
+				</tr>
+				<input type="hidden" name="projectId" value="${project.uuid!''}" />
+				<input type="hidden" name="bondId" value="${bond.uuid!''}" />
+				<input type="hidden" name="investId" value="${bond.investId}" />
+				<input type="submit"  value="去支付" />
+			</table>
+		</form>
+</body>
+</html>

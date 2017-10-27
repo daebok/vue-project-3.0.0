@@ -1,0 +1,54 @@
+@import (reference) 'common.less';
+.upload_btn{
+  width: 72px;
+  height: 72px;
+  border:1px dashed @color-main;
+  text-align: center;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.filelist{
+  display: inline;
+}
+.filelist li{
+  display: inline-block;
+  width: 72px;
+  height: 72px;
+  margin: 0 8px 8px 0;
+  border: 1px solid #d9d9d9;
+  position: relative;
+  border-radius: 5px;
+  padding: 8px;
+  text-align: center;
+  img{
+    width: 54px;
+    height: 54px;
+  }
+  .operation{
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    height: 54px;
+    width: 54px;
+    text-align: center;
+    color: #fff;
+    background-color:rgba(0, 0, 0, 0.34902);
+    display: none;
+    i{
+      display: inline-block;
+      width: 27px;
+      margin:16px 0 0 0;
+      cursor: pointer;
+      .f18();
+    }
+  }
+  &:hover{
+    .operation{
+      display: block;
+    }
+  }  
+}
+.uploadify{
+  display: inline-block;
+  vertical-align: top;
+}

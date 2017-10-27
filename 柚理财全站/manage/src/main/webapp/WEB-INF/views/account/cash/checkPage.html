@@ -1,0 +1,112 @@
+<div class="form-tips-content">
+	<form class="form-horizontal" action="/account/cash/doCheck.html" id="form" role="form">
+		<ul class="form-item">
+		<li>
+			<div class="form-group">
+		       <label for="name" class="control-label form-label">用户名：</label>
+		       <div class="input-box-read"><p>${cash.userName}</p></div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		       <label for="name" class="control-label form-label">认证名称：</label>
+		       <div class="input-box-read"><p>${cash.realName}</p></div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		       <label for="name" class="control-label form-label">用户类型：</label>
+		       <div class="input-box-read"><p>
+		         <@linkage name="userNature" nid="userNature" class="form-control" default="${cash.userNature}" plantext="plantext"/>
+		       </p></div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		       <label for="name" class="control-label form-label">提现金额：</label>
+		       <div class="input-box-read"><p>${cash.amount}元</p></div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		       <label for="name" class="control-label form-label">到账金额：</label>
+		       <div class="input-box-read"><p>${cash.realAmount}元</p></div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		       <label for="name" class="control-label form-label">手续费：</label>
+		       <div class="input-box-read"><p>${cash.fee}元</p></div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		       <label for="name" class="control-label form-label">银行账号：</label>
+		       <div class="input-box-read"><p>${cash.cardId}</p></div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		       <label for="name" class="control-label form-label">所属银行：</label>
+		       <div class="input-box-read"><p>
+		       <@linkage name="bankCode" nid="accountBank" class="form-control" default="${cash.bankCode}" plantext="plantext"/>
+		       </p></div>
+		    </div>	
+  		</li>
+		 <li>
+			<div class="form-group">
+		       <label for="name" class="control-label form-label">交易流水号：</label>
+		       <div class="input-box-read"><p>${cash.orderNo}</p></div>
+		    </div>	
+  		</li>
+  		<li class="full-width">
+			<div class="form-group">
+		       <label for="name" class="control-label form-label">核查原因：</label>
+		       <div class="input-box-read"><p>${cash.handleReason}</p></div>
+		    </div>
+		</li>
+		<li class="full-width">
+			<div class="form-group">
+				<label for="status" class="control-label form-label">是否已处理：</label>
+				<div class="input-checkbox-box">
+					<input type="radio" name="manHandle" value="1" checked><label for="">未处理</label>
+					<input type="radio" name="manHandle" value="2"><label for="">已处理</label>
+				</div>
+			</div>
+		</li>
+		</ul>
+		<input type="hidden" name="uuid" value="${cash.uuid}"/>
+		<@token/>
+	</form>
+</div>
+<script src="${theme_dir}/static/js/plugins/jquery.suggest.js"></script>
+<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+<script src="${theme_dir}/static/js/upload.js"></script>
+<script>
+$("#form").validate({
+	submitHandler: function(form) {	
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						icon: 6,
+						cancel: function(index){
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入 
+  						}
+					}, function() {						
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入  
+					});
+				} else {
+					layer.alert(data.msg, {
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+})
+</script>

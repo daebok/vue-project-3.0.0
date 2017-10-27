@@ -1,0 +1,197 @@
+<div class="form-tips-content">
+  <form class="form-horizontal" action="/user/userCompany/doEdit.html" id="form" role="form">
+  	<ul class="form-item">
+  		<li>
+			<div class="form-group">
+			  <input type="hidden" name="uuid" id="uuid" value="${user.uuid}">
+		      <label for="userName" class="control-label form-label">用户名：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="userName" id="userName" value="${user.userName}"  maxlength="20", readonly="readonly", required>
+		      <input type="hidden" name="userNo" id="userNo" value="${userNo}", readonly="readonly">
+		      </div>
+		    </div>	
+  		</li>
+  		 <li>
+			<div class="form-group">
+		      <label for="mobile" class="control-label form-label">联系人手机号码<span style="color:red;">*</span>：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="mobile" id="mobile" value="${user.mobile}" maxlength="11",
+		         placeholder="请输入手机号码", required <#if user.tppUserCustId != null && user.tppUserCustId != ''>readonly="readonly"</#if>>
+		      </div>
+		    </div>	
+  		</li>
+  		 <li>
+			<div class="form-group">
+		      <label for="tppUserCustId" class="control-label form-label">第三方商户号：</label>
+		      <div class="input-box">
+		      <input class="form-control" name="tppUserCustId" id="tppUserCustId" value="${user.tppUserCustId}"
+		       maxlength="20"  placeholder="第三方商户号已线下开通，可为空" <#if user.tppUserCustId != null && user.tppUserCustId != ''>readonly="readonly"</#if>/>
+		      </div>
+		    </div>	
+  		</li> 
+  		<li>
+			<div class="form-group">
+		      <label for="companyName" class="control-label form-label">企业名称<span style="color:red;">*</span>：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="companyName" id="companyName" value="${userCompanyInfo.companyName}"
+		       maxlength="50", placeholder="请输入企业名称" <#if user.tppUserCustId != null && user.tppUserCustId != ''>readonly="readonly"</#if> required>
+		      </div>
+		    </div>	
+  		</li> 
+  		<li>
+			<div class="form-group">
+		      <label for="companyName" class="control-label form-label">法定代表：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="legalDelegate" id="legalDelegate" value="${userCompanyInfo.legalDelegate}"
+		        maxlength="10" placeholder="请输入法定代表" <#if user.tppUserCustId != null && user.tppUserCustId != ''>readonly="readonly"</#if>>
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="companyName" class="control-label form-label">法定代表身份证号：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="certNo" id="certNo"  maxlength="18" value="${userCompanyInfo.certNo}"
+		       placeholder="请输入法定代表身份证号" <#if user.tppUserCustId != null && user.tppUserCustId != ''>readonly="readonly"</#if>>
+		      </div>
+		    </div>	
+  		</li> 
+  		<li>
+			<div class="form-group">
+					<label for="email" class="control-label form-label">是否三证合一：</label>
+					<div class="input-box" style="position: relative; top: 7px;">
+					    <#if user.tppUserCustId != null && user.tppUserCustId != ''>
+					        <input type="hidden" name="threeCertificate" value="${userCompanyInfo.threeCertificate!}" readonly="readonly">
+					        <#if userCompanyInfo.threeCertificate == '1'>是</#if>
+					        <#if userCompanyInfo.threeCertificate == '0'>否</#if>
+					    <#else>
+							<input type="radio" value="1" class="checkstatus" name="threeCertificate" <#if userCompanyInfo.threeCertificate == '1'>checked="checked"</#if>>是
+			     			<input type="radio" value="0" class="checkstatus" name="threeCertificate" <#if userCompanyInfo.threeCertificate == '0'>checked="checked"</#if>>否					    
+					    </#if>
+					</div>
+				</div>
+			</li>
+			<li class="codes" <#if userCompanyInfo.threeCertificate == '1'>style="display:block"<#else>style="display:none"</#if>>
+				<div class="form-group">
+					<label for="email" class="control-label form-label">统一社会信用代码：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="creditCode"
+							id="creditCode" maxlength="18" placeholder="请输入统一社会信用代码" value="${userCompanyInfo.creditCode!}" <#if user.tppUserCustId != null && user.tppUserCustId != ''>readonly="readonly"</#if>>
+						<div class="msg_tip"></div>
+					</div>
+				</div>
+			</li> 
+  		 <li class="code" <#if userCompanyInfo.threeCertificate == '0'>style="display:block"<#else>style="display:none"</#if>>
+			<div class="form-group">
+		      <label for="orgCode" class="control-label form-label">组织机构代码：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="orgCode" id="orgCode" value="${userCompanyInfo.orgCode}"
+		       maxlength="9" placeholder="请输人组织机构代码", <#if user.tppUserCustId != null && user.tppUserCustId != ''>readonly="readonly"</#if>>
+		      </div>
+		    </div>	
+  		</li> 
+  		 <li class="code" <#if userCompanyInfo.threeCertificate == '0'>style="display:block"<#else>style="display:none"</#if>>
+			<div class="form-group">
+		      <label for="bussinessCode" class="control-label form-label">营业执照注册号：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="bussinessCode" id="bussinessCode" value="${userCompanyInfo.bussinessCode}"
+		       maxlength="15" placeholder="请输人营业执照注册号" <#if user.tppUserCustId != null && user.tppUserCustId != ''>readonly="readonly"</#if>>
+		      </div>
+		    </div>		
+  		</li>  
+  	</ul>
+  	<b style="color:#cc5965;padding-left:95px;">备注：商户号、法定代表信息、企业证照信息将用于绑定托管账户和生成电子签章，提交后即不允许修改！</b>
+  	<@token name="editUserCompanyToken"/>
+  </form>
+</div>
+<script>
+var tppUserCustId = ${user.tppUserCustId}
+
+
+$('input[name="threeCertificate"]').click(function(){
+	if($(this).val()==1){
+		$(".codes").css("display","block");
+		$(".code").css("display","none")
+	}
+	else{
+		$(".codes").css("display","none");
+		$(".code").css("display","block")
+	}
+})
+
+$("#tppUserCustId").on("input",function(){
+	if($(this).val()!=""){
+		$("#companyName,#legalDelegate,#certNo,#orgCode,#bussinessCode,#creditCode").attr("required",true)
+	}
+	else{
+		$("#companyName,#legalDelegate,#certNo,#orgCode,#bussinessCode,#creditCode").removeAttr("required")
+	}
+})
+
+	$("#form").validate({
+		rules: {
+			tppUserCustId: {
+				number:true
+			},
+			companyName: {
+				rangelength:[1,50]
+			},
+			orgCode :{
+				orgCodetest:true,
+				rangelength:[9,9]
+			},
+			creditCode: {
+				credittest:true
+		   	},
+			bussinessCode:{
+				number:true,
+				rangelength:[15,15]
+			},
+			mobile:{
+				isMobile:true
+			}
+
+		},
+		messages:{
+			orgCode:{
+				orgCodetest:"请输入组织机构代码，格式XXXXXXXXX",
+				rangelength :'请输入组织机构代码，格式XXXXXXXXX'
+			},
+			creditCode: {
+				credittest:"请输入18位数字或大写英文字母"
+		   	},
+			bussinessCode:{
+				rangelength :'请输入十五位营业执照注册号'
+			}
+		},
+	  submitHandler:function(form){ 
+		 index = layer.load(1, {
+		    shade: [0.1,'#fff'], //0.1透明度的白色背景
+		    time: 4000,
+		    end: function(){
+			}
+		 });
+	  		$(form).ajaxSubmit({
+					type:"post",
+					dataType:"json",
+					success:function(data){
+						layer.close(index);
+						    if(data.result){
+				        		layer.alert(data.msg, {
+				        			icon: 6,
+				        			cancel: function(index){
+										layer.closeAll();
+										gridobj.trigger("reloadGrid"); //重新载入 
+					  				}
+				        		}, function(){	        			
+				        			layer.closeAll();
+				        			gridobj.trigger("reloadGrid"); //重新载入  
+				        		});
+				        	}else{
+				        		layer.alert(data.msg, {icon: 5});
+				        	}	       	
+			    	}
+			}); 
+
+	  }    
+	});</script>

@@ -1,0 +1,77 @@
+<style type="text/css">
+	.ui-jqgrid .ui-jqgrid-hdiv{
+			position: relative;
+		}
+		.ui-jqgrid .ui-jqgrid-bdiv{
+			margin-top: 0!important;
+		}
+      @media (max-height: 768px){
+        .ui-jqgrid .ui-jqgrid-bdiv {
+            margin-top: 39px;
+            padding-bottom: 0px;
+            max-height: 100px!important;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+      }
+      .ui-jqgrid .ui-jqgrid-pager {
+          position: relative;
+          bottom: 0px;
+          background: #fff;
+          border: 1px solid #EBEBEB;
+          border-radius: 3px;
+          z-index: 1000;
+      } 
+      @media (max-height: 1080px){
+        .ui-jqgrid .ui-jqgrid-bdiv {
+            margin-top: 39px;
+            padding-bottom: 0px;
+            max-height: 460px!important;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+      }
+</style>
+<div class="wrapper">
+	<div class="row mt20">
+		<div class="col-md-12">
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		<@dictFormatter type = "enable" />
+		<@dictFormatter type = "realizeSellStyle" />
+		<@dictFormatter type = "buyStyle" />
+		var url_list = "/realize/rule/list.html";
+		$(document).ready(
+			function() {
+			var url_key = url_list.substring(url_list.lastIndexOf('/') + 1, url_list.indexOf('.'));
+			//表格初始化		
+			$("#jqGrid").jqTreeGrid({
+				url : url_list,
+				multiselect : false,
+				colModel : [ { label : "状态",name : "ruleStatus",width : 40 ,formatter: enableFormatter},
+				             { label : "起息持有天数",name : "holdDays",width : 80 },
+				             { label : "还款到期剩余天数",name : "remainDays",width : 80 },
+				             { label : "本期还款剩余天数",name : "periodRemainDays",width : 80 },
+				             { label : "发布时间点",name : "issueTime",width : 80 },
+				             { label : "募集时间点 ",name : "raiseEndTime",width : 80 },
+				             { label : "变现方式",name : "sellStyle",width : 80, formatter: realizeSellStyleFormatter},
+				             { label : "最小变现金额",name : "sellAmountMin",width : 80 },
+				             { label : "投资方式",name : "buyStyle",width : 80, formatter: buyStyleFormatter },
+				             { label : "最小投资金额",name : "buyAmountMin",width : 80 },
+				             { label : "最大投资金额",name : "buyAmountMax",width : 80 },
+				             { label : "变现利率下限",name : "realizeRateMin",width : 80 },
+				             { label : "变现利率上限",name : "realizeRateMax",width : 80 },
+				             { label : "手续费率",name : "feeRate",width : 60 },
+				             { label : "单笔手续费上限值",name : "feeSingleMax",width : 100 },
+				             { label : "添加时间",name : "createTime",width : 110 , formatter : datetimeFormatter}
+				          ]
+					}) ;			
+				});
+	$(window).bind('resize', function() {				
+		$("#jqGrid").setGridHeight($(window).height()*0.8*0.52);
+	});
+	</script>
+</div>

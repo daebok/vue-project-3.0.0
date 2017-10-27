@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.project.mapper.ProjectCollectionMapper">
+	<resultMap type="com.rd.ifaes.core.project.domain.ProjectCollection" id="projectCollectionResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="investId" column="INVEST_ID"/>
+		<result property="repayTime" column="REPAY_TIME"/>
+		<result property="lastRepayTime" column="LAST_REPAY_TIME"/>
+		<result property="status" column="STATUS"/>
+		<result property="payment" column="PAYMENT"/>
+		<result property="repayedAmount" column="REPAYED_AMOUNT"/>
+		<result property="capital" column="CAPITAL"/>
+		<result property="interest" column="INTEREST"/>
+		<result property="raiseInterest" column="RAISE_INTEREST"/>
+		<result property="lateDays" column="LATE_DAYS"/>
+		<result property="lateInterest" column="LATE_INTEREST"/>
+		<result property="merchantLateInterest" column="MERCHANT_LATE_INTEREST"/>
+		<result property="manageFee" column="MANAGE_FEE"/>
+		<result property="collectionType" column="COLLECTION_TYPE"/>
+		<result property="period" column="PERIOD"/>
+		<result property="periods" column="PERIODS"/>
+		<result property="bondCapital" column="BOND_CAPITAL"/>
+		<result property="bondInterest" column="BOND_INTEREST"/>
+		<result property="addIp" column="ADD_IP"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="parentId" column="PARENT_ID"/>
+		<result property="freezeCapital" column="FREEZE_CAPITAL"/>
+		<result property="freezeInterest" column="FREEZE_INTEREST"/>
+        <result property="borrowManageFee" column="BORROW_MANAGE_FEE"/>
+	</resultMap>
+	
+	<!-- 月还款信息 -->
+	<resultMap type="com.rd.ifaes.core.project.model.MonthCollection" id="monthCollectionMap">
+		<result property="repayMonth" column="repay_month"/>
+		<result property="repayment" column="repayment"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		PROJECT_ID,
+		INVEST_ID,
+		REPAY_TIME,
+		LAST_REPAY_TIME,
+		STATUS,
+		PAYMENT,
+		REPAYED_AMOUNT,
+		CAPITAL,
+		INTEREST,
+		RAISE_INTEREST,
+		LATE_DAYS,
+		LATE_INTEREST,
+		MERCHANT_LATE_INTEREST,
+		MANAGE_FEE,
+		COLLECTION_TYPE,
+		PERIOD,
+		PERIODS,
+		BOND_CAPITAL,
+		BOND_INTEREST,
+		ADD_IP,
+		CREATE_TIME,
+		PARENT_ID,
+		FREEZE_CAPITAL,
+		FREEZE_INTEREST,
+        BORROW_MANAGE_FEE
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{projectId},
+		#{investId},
+		#{repayTime},
+		#{lastRepayTime},
+		#{status},
+		#{payment},
+		#{repayedAmount},
+		#{capital},
+		#{interest},
+		#{raiseInterest},
+		#{lateDays},
+		#{lateInterest},
+		#{merchantLateInterest},
+		#{manageFee},
+		#{collectionType},
+		#{period},
+		#{periods},
+		#{bondCapital},
+		#{bondInterest},
+		#{addIp},
+		#{createTime},
+		#{parentId},
+		#{freezeCapital},
+		#{freezeInterest},
+        #{borrowManageFee}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="projectId != null and projectId != ''">and PROJECT_ID = #{projectId}</if>
+            <if test="investId != null and investId != ''">and INVEST_ID = #{investId}</if>
+			<if test="repayTime != null">and REPAY_TIME = #{repayTime}</if>
+			<if test="lastRepayTime != null">and LAST_REPAY_TIME = #{lastRepayTime}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+			<if test="payment != null">and PAYMENT = #{payment}</if>
+			<if test="repayedAmount != null">and REPAYED_AMOUNT = #{repayedAmount}</if>
+			<if test="capital != null">and CAPITAL = #{capital}</if>
+			<if test="interest != null">and INTEREST = #{interest}</if>
+			<if test="raiseInterest != null">and RAISE_INTEREST = #{raiseInterest}</if>
+			<if test="lateDays != null">and LATE_DAYS = #{lateDays}</if>
+			<if test="lateInterest != null">and LATE_INTEREST = #{lateInterest}</if>
+			<if test="merchantLateInterest != null">and MERCHANT_LATE_INTEREST = #{merchantLateInterest}</if>
+			<if test="manageFee != null">and MANAGE_FEE = #{manageFee}</if>
+            <if test="collectionType != null and collectionType != ''">and COLLECTION_TYPE = #{collectionType}</if>
+			<if test="period != null">and PERIOD = #{period}</if>
+			<if test="bondCapital != null">and BOND_CAPITAL = #{bondCapital}</if>
+			<if test="bondInterest != null">and BOND_INTEREST = #{bondInterest}</if>
+            <if test="addIp != null and addIp != ''">and ADD_IP = #{addIp}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="parentId != null and parentId != ''">and PARENT_ID = #{parentId}</if>
+            <if test="freezeCapital != null">and FREEZE_CAPITAL = #{freezeCapital}</if>
+			<if test="freezeInterest != null">and FREEZE_INTEREST = #{freezeInterest}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by period asc  </if>
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.project.domain.ProjectCollection">
+		insert into project_collection( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into project_collection( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+		        #{item.uuid},
+				#{item.userId},
+				#{item.projectId},
+				#{item.investId},
+				#{item.repayTime},
+				#{item.lastRepayTime},
+				#{item.status},
+				#{item.payment},
+				#{item.repayedAmount},
+				#{item.capital},
+				#{item.interest},
+				#{item.raiseInterest},
+				#{item.lateDays},
+				#{item.lateInterest},
+				#{item.merchantLateInterest},
+				#{item.manageFee},
+				#{item.collectionType},
+				#{item.period},
+				#{item.periods},
+				#{item.bondCapital},
+				#{item.bondInterest},
+				#{item.addIp},
+				#{item.createTime},
+				#{item.parentId},
+				#{item.freezeCapital},
+				#{item.freezeInterest},
+                #{item.borrowManageFee}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from project_collection
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update project_collection set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="uuid" open="(" separator="," close=")">  
+            #{uuid} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update project_collection set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.project.domain.ProjectCollection">
+		update project_collection 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="lastRepayTime != null">LAST_REPAY_TIME = #{lastRepayTime},</if>
+            <if test="status != null and status != ''">STATUS = #{status},</if>
+			<if test="repayedAmount != null">REPAYED_AMOUNT = #{repayedAmount},</if>
+			<if test="lateDays != null">LATE_DAYS = #{lateDays},</if>
+			<if test="lateInterest != null">LATE_INTEREST = #{lateInterest},</if>
+			<if test="merchantLateInterest != null">MERCHANT_LATE_INTEREST = #{merchantLateInterest},</if>
+			<if test="manageFee != null">MANAGE_FEE = #{manageFee},</if>
+            <if test="collectionType != null and collectionType != ''">COLLECTION_TYPE = #{collectionType},</if>
+			<if test="bondCapital != null">BOND_CAPITAL = #{bondCapital},</if>
+			<if test="bondInterest != null">BOND_INTEREST = #{bondInterest},</if>
+            <if test="parentId != null and parentId != ''">PARENT_ID = #{parentId},</if>
+            <if test="freezeCapital != null">FREEZE_CAPITAL = #{freezeCapital},</if>
+			<if test="freezeInterest != null">FREEZE_INTEREST = #{freezeInterest},</if>
+			<if test="raiseInterest != null">RAISE_INTEREST = #{raiseInterest},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+	<update id="updateBatch" parameterType="java.util.List">
+		<foreach collection="list" item="item" open="" separator=";" close="">  
+			update project_collection 
+			<trim prefix="set" suffixOverrides=",">
+				<if test="item.lastRepayTime != null">LAST_REPAY_TIME = #{item.lastRepayTime},</if>
+	            <if test="item.status != null and item.status != ''">STATUS = #{item.status},</if>
+				<if test="item.repayedAmount != null">REPAYED_AMOUNT = #{item.repayedAmount},</if>
+				<if test="item.lateDays != null">LATE_DAYS = #{item.lateDays},</if>
+				<if test="item.lateInterest != null">LATE_INTEREST = #{item.lateInterest},</if>
+				<if test="item.merchantLateInterest != null">MERCHANT_LATE_INTEREST = #{item.merchantLateInterest},</if>
+				<if test="item.manageFee != null">MANAGE_FEE = #{item.manageFee},</if>
+	            <if test="item.collectionType != null and item.collectionType != ''">COLLECTION_TYPE = #{item.collectionType},</if>
+				<if test="item.bondCapital != null">BOND_CAPITAL = #{item.bondCapital},</if>
+				<if test="item.bondInterest != null">BOND_INTEREST = #{item.bondInterest},</if>
+				<if test="item.freezeCapital != null">FREEZE_CAPITAL = #{item.freezeCapital},</if>
+				<if test="item.freezeInterest != null">FREEZE_INTEREST = #{item.freezeInterest},</if>
+				<if test="item.raiseInterest != null">RAISE_INTEREST = #{item.raiseInterest},</if>
+			</trim>
+			where uuid = #{item.uuid} 
+        </foreach>	
+	</update>
+	
+	<!-- 批量更新待收逾期利息 -->
+	<update id="updateBatchLateInterest" parameterType="java.util.List">
+		<foreach collection="list" item="item" open="" separator=";" close="">  
+			update project_collection 
+			<trim prefix="set" suffixOverrides=",">
+				<if test="item.lateDays != null">LATE_DAYS = #{item.lateDays},</if>
+				<if test="item.lateInterest != null">LATE_INTEREST = #{item.lateInterest},</if>
+				<if test="item.merchantLateInterest != null">MERCHANT_LATE_INTEREST = #{item.merchantLateInterest},</if>
+			</trim>
+			where uuid = #{item.uuid} 
+        </foreach>	
+	</update>
+	
+	
+    <select id="findAll" resultMap="projectCollectionResultMap">
+        select <include refid="table_columns" />
+        from project_collection
+    </select>
+
+	<sql id="findListWhere">
+		<where>
+			<if test="userId != null and userId != ''">and pc.USER_ID = #{userId}</if>
+		    <if test="projectId != null and projectId != ''">and pc.PROJECT_ID = #{projectId}</if>
+		    <if test="investId != null and investId != ''">and pc.INVEST_ID = #{investId}</if>
+		    <if test="borrowFlag != null and borrowFlag != ''">and p.borrow_flag = #{borrowFlag}</if>
+			<if test="status != null and status != ''">and pc.STATUS = #{status}</if>
+			<if test="collectionType != null and collectionType != ''">and pc.COLLECTION_TYPE = #{collectionType}</if>
+			<if test="collectionTypeSet != null and collectionTypeSet != ''">
+			        	and pc.COLLECTION_TYPE in 
+			        	<foreach collection="collectionTypeSet" item="collectionTypeSetTemp" open="(" separator="," close=")">#{collectionTypeSetTemp}</foreach>
+			</if>
+			<if test="period != null">and pc.PERIOD = #{period}</if>			
+			<if test="projectName != null and projectName != ''">and p.PROJECT_NAME like concat('%', #{projectName},'%')</if>
+			<if test="userName != null and userName != ''">and u.user_name like concat('%', #{userName},'%')</if>
+	        <if test="realName != null and realName != ''">and u.real_name like concat('%',#{realName},'%') </if>
+			<if test="startTime != null and startTime != ''">and pc.REPAY_TIME &gt;= #{startTime}</if>
+			<if test="endTime != null   and endTime != ''">and pc.REPAY_TIME &lt;= #{endTime}</if>
+			<if test="keywords != null and keywords != ''">
+	        	and (p.PROJECT_NAME like concat('%',#{keywords},'%') 
+		        	or u.USER_NAME like concat('%',#{keywords},'%') 
+	        		or u.real_name like concat('%',#{keywords},'%') )
+	       </if>
+		</where>
+	</sql>
+
+    <select id="findList" resultMap="projectCollectionResultMap">
+    	select   u.user_name, u.real_name real_name,p.project_name, 
+			    	pc.uuid,pc.user_id,pc.project_id,pc.invest_id,
+					pc.repay_time,pc.last_repay_time,pc.status,
+					pc.payment,pc.repayed_amount,pc.capital,
+					pc.interest,pc.raise_interest,pc.late_days,pc.late_interest,pc.MERCHANT_LATE_INTEREST,pc.manage_fee,
+					pc.collection_type,pc.period,pc.periods 
+		from project_collection pc
+			inner join project p on pc.project_id = p.uuid
+			left join user u on pc.user_id = u.uuid
+			
+		<include refid="findListWhere" />
+		
+		<if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by pc.user_id, pc.REPAY_TIME asc </if>
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(pc.uuid) 
+        from project_collection pc 
+        	inner join project p on pc.project_id = p.uuid
+			left join user u on pc.user_id = u.uuid
+		<include refid="findListWhere" />
+    </select>
+
+    <select id="get" resultMap="projectCollectionResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from project_collection
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<!-- 查询下一个还款日的还款金额-->
+    <select id="getRepayAmountByMonth" resultType="BigDecimal" parameterType="com.rd.ifaes.core.project.domain.ProjectCollection" >
+        select IFNULL(sum(capital+interest),0) from
+		(select c1.user_id, c1.repay_time, (c1.capital-c1.bond_capital) as capital, (c1.interest-c1.bond_interest) as interest 
+		  from project_collection c1 
+		UNION ALL
+		select c2.user_id, c2.collection_time as repay_time, (c2.capital-c2.bond_capital) as capital, (c2.interest-c2.bond_interest) as interest
+		  from bond_collection c2 ) p1
+		where p1.user_id = #{userId} and DATE_FORMAT(repay_time,'%Y%m') = #{repayMonth}
+	</select>
+	
+	<!-- 按月统计一定时间段内project的回款金额 -->
+	<select id="findMonthRepayByTime" resultMap="monthCollectionMap" parameterType="com.rd.ifaes.core.project.domain.ProjectCollection" >
+		SELECT SUM(capital-IFNULL(bond_capital,0)+ interest -IFNULL(bond_interest,0)+ IFNULL(raise_interest,0)) repayment,MONTH(repay_time) repay_month
+		FROM project_collection pc
+		WHERE user_id = #{userId} AND status = #{status} AND repay_time &gt;= #{startTime} AND repay_time &lt;= #{endTime}
+		AND collection_type != 3
+		GROUP BY repay_month
+		ORDER BY repay_month
+	</select>
+	
+	<!-- 按月统计一定时间段内bond的回款金额 -->
+	<select id="findBondMonthRepayByTime" resultMap="monthCollectionMap" parameterType="com.rd.ifaes.core.project.domain.ProjectCollection" >
+		SELECT SUM(capital-IFNULL(bond_capital,0) + interest -IFNULL(bond_interest,0)) repayment ,MONTH(collection_time) repay_month
+		FROM bond_collection 
+		WHERE user_id = #{userId} AND collection_time &gt;= #{startTime} AND collection_time &lt;= #{endTime}
+		GROUP BY repay_month
+		ORDER BY repay_month
+	</select>
+
+	<select id="findPcByPIdAndUserId" resultMap="projectCollectionResultMap" parameterType="com.rd.ifaes.core.project.domain.ProjectCollection" >
+       select <include refid="table_columns" />
+		from project_collection
+		 <include refid="page_where" />
+	</select>
+
+	<select id="findByInvestId" resultMap="projectCollectionResultMap" >
+       select <include refid="table_columns" />
+		from project_collection
+		where invest_id = #{investId} 
+		<if test="status != null and status != ''">and status = #{status}</if>
+		order by period asc
+	</select>
+	
+	<select id="findForPage" resultMap="projectCollectionResultMap" >
+       select 
+        pc.UUID,pc.USER_ID,pc.PROJECT_ID,pc.INVEST_ID,pc.REPAY_TIME,pc.LAST_REPAY_TIME,
+		pc.STATUS,pc.PAYMENT,pc.REPAYED_AMOUNT,pc.CAPITAL,pc.INTEREST,pc.RAISE_INTEREST,
+		pc.LATE_DAYS,pc.LATE_INTEREST,pc.MERCHANT_LATE_INTEREST,pc.MANAGE_FEE,pc.COLLECTION_TYPE,
+		pc.PERIOD,pc.PERIODS,pc.BOND_CAPITAL,pc.BOND_INTEREST,pc.ADD_IP,pc.CREATE_TIME,pc.PARENT_ID,
+		pc.FREEZE_CAPITAL,pc.FREEZE_INTEREST  
+        from project_collection pc 
+        left join project_invest pi on pi.uuid = pc.invest_id
+        where  pc.invest_id = #{investId} and 
+        ((pi.invest_style = 2 and pc.collection_type = 2) or (pi.invest_style = 1 and pc.collection_type in(0,1,2,3)) or pc.collection_type = 0 ) 
+        order by  pc.period asc
+	</select>
+	
+	<select id="getLastCollectionByInvestId" resultMap="projectCollectionResultMap" parameterType="String" >
+       select <include refid="table_columns" />
+		from project_collection
+		where invest_id = #{investId} order by period desc limit 1
+	</select>
+	
+	<select id="findByProjectIdAndPeriod" resultMap="projectCollectionResultMap">
+       select <include refid="table_columns" />
+		from project_collection
+		where project_id = #{projectId} and period = #{period} and status = #{status}
+		 <if test="investId != null and investId != ''">and invest_id = #{investId}</if>
+	</select>
+	
+	<!-- 取得每期待收的汇总信息 -->
+	<select id="findPeriodCollectionList" resultMap="periodCollectionResult" >
+		select sum(pc.payment) payment, 
+			   sum(pc.capital) capital, 
+			   sum(pc.interest) interest,
+			   sum(pc.manage_fee) manage_fee, 
+			   pc.repay_time repay_time
+		  from  project_collection pc 
+		 where pc.status=0 
+		     and pc.project_id= #{projectId}
+			group by pc.repay_time
+	</select>
+	
+	<select id="getProjectCollectionByInvestIdAndPeriod"  resultMap="projectCollectionResultMap">
+		select <include refid="table_columns" />
+		from project_collection
+		where invest_id = #{investId} and period = #{period} 
+	</select>
+	
+	<!-- 根据投资记录和状态查询该笔投资对应的待收的已还和未还期数  --> 
+	<select id="getProjectPeriodByInvestId"  resultType="int">
+		select count(uuid) 
+		 from project_collection
+       where  invest_id = #{investId} 
+		<if test="status != null and status != ''">and STATUS = #{status}</if>
+	</select>
+	
+	<!-- 根据状态和项目ID查询 本金总和 -->
+	<select id="getRepayedAccountTotal" resultType="BigDecimal">
+		select sum(capital)
+		from project_collection 
+		where project_id = #{projectId} and status = #{status} 
+		and COLLECTION_TYPE in 
+		<foreach collection="collectionTypeSet" item="collectionTypeSetTemp" open="(" separator="," close=")">#{collectionTypeSetTemp}</foreach>  
+		and invest_id = #{investId}
+	</select>
+	<!-- 更新逾期信息 -->
+	<update id="updateOverdueInfo"  >
+		update project_collection 
+		       set late_days = #{lateDays},late_interest=payment*#{lateRate}
+	    where project_id = #{projectId} 
+	        and period= #{period}
+	        and COLLECTION_TYPE in 
+	    <foreach collection="collectionTypeSet" item="collectionTypeSetTemp" open="(" separator="," close=")">#{collectionTypeSetTemp}</foreach> 
+	</update>
+	
+	<resultMap type="com.rd.ifaes.core.project.model.PeriodCollectionModel" id="periodCollectionResult">
+		<result property="repayTime" column="REPAY_TIME"/>
+		<result property="payment" column="PAYMENT"/>
+		<result property="capital" column="CAPITAL"/>
+		<result property="interest" column="INTEREST"/>
+		<result property="manageFee" column="MANAGE_FEE"/>
+	</resultMap>
+	
+	<!-- 查询已还金额 -->
+	<select id="getRepayedAmount"  resultType="BigDecimal"> 
+		SELECT 
+		  SUM(t.repayed_amount)   repayedAmount
+		FROM
+		  project_collection t 
+		WHERE t.user_id = #{userId} AND t.project_id = #{projectId}
+		GROUP BY t.user_id, t.project_id 
+	</select>
+	
+	<select id="getNoRepayRaiseInterest" resultType="BigDecimal">
+		select SUM(raise_interest)   raiseInterest 
+		from project_collection where invest_id =  #{investId} and status = 0
+	</select>
+	
+	<!-- 查询债权转让最后还款日期 -->
+	<select id="getLastRepayTimeByBondInvestId" resultType="Date">
+		select max(pc.repay_time) 
+		from project_collection pc,bond_invest bi
+		WHERE bi.project_id=pc.project_id AND bi.uuid=#{bondInvestId}
+	</select>
+	
+	<!-- 查询坏账信息 -->
+	<select id="findBadDebtCollection" resultMap="projectCollectionResultMap">
+		SELECT pc.project_id as project_id,sum(pc.capital) as capital
+		FROM project p,project_collection pc
+		WHERE p.uuid=pc.project_id AND p.status=#{projectStatus} AND pc.status=#{collectionStatus}
+		group by project_id
+	</select>
+	
+</mapper>

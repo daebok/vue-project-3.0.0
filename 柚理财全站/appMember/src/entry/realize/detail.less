@@ -1,0 +1,219 @@
+@import (reference)'../../style/common.less';
+.realize-detail{
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+.realize-text{
+    padding: 20px 0 0 0;
+    line-height: 30px;
+    font-size: 14px;
+    text-indent: 2em;
+}
+.realize-detail-header{
+  height:435px;
+  /*background: url(../../style/images/invest-detail-bg.png) #ff5a68 no-repeat;*/
+  .realize-header-info{
+    background-color: #fff;
+    height: 431px;
+    &:extend(.fl);
+    margin: 0;
+    width: 850px;
+    border-top: 4px solid #ff5a68;
+    .info-title{
+      line-height: 100px;
+      padding: 0 50px;
+      overflow: hidden;
+      border-bottom:solid 1px @cololr-bodybg; 
+      .title-name{
+        &:extend(.fl);
+        color:@color-title;
+        font-size: 22px;
+        max-width: 500px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        .iconfont{
+          color:@color-main;
+          &:extend(.f20);
+          margin: 0 16px 0 0;
+        }
+      }
+      .protocol{
+        &:extend(.fr);
+        &:extend(.f14);
+        color: #41a6ed;
+      }
+    }
+    .info-main{
+      height: 200px;
+      padding-left: 80px;
+      border-bottom:solid 1px @cololr-bodybg;
+      ul{
+        li{
+          &:extend(.fl);
+          margin-top:48px;
+        }
+        s{
+          text-decoration: none;
+          &:extend(.f14);
+          color:#aaa;
+          display: block;
+          margin: 0 0 0 8px;
+        }
+        .profit{
+          width: 320px;
+          font-size: 30px;
+          color:@color-main;              
+          span.text{
+            font-size: 60px;
+          }
+          s{
+            margin-top: -8px;
+          }
+        }
+        .time{
+          width: 200px;
+          font-size: 20px;
+          color:@color-main;
+          margin:70px 0 0 0;          
+          span.text{
+            font-size: 40px;
+          }
+        }
+        .min{
+          width: 200px;
+          font-size: 20px;
+          margin-top: 70px;
+          color:@color-p;
+          span.text{
+            font-size: 40px;
+          }          
+        }
+      } 
+    }
+    .info-basic{
+      padding:24px 0 0 50px;
+      ul{
+        li{
+          line-height: 40px;
+          height: 40px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          &:extend(.fl);
+          width: 250px;
+          &:extend(.f14);
+          color: @color-p;
+          span.title{
+            display: inline-block;
+            width: 68px;
+            color:@color-text;
+          }          
+        }
+      }
+    }
+  }  
+}
+.realize-main{
+  margin-top:20px; 
+  .realize-main-nav{  
+      min-height: 350px;        
+      background-color: #fff;
+      .noLoginText{
+        margin: 120px auto 0;
+        text-align: center;
+        a{
+          margin: 0 5px;
+          .f16();
+          color: @color-main;
+        }
+      }
+      .ant-tabs-bar{
+        margin-bottom: 0;
+      }
+      .ant-tabs-nav .ant-tabs-tab{
+        margin-right: 0;
+        width: 150px;
+        height: 50px;
+        line-height: 35px;
+        text-align: center;
+        .ant-tabs-tab-inner{
+          color: #333;
+          .f16();
+        }
+      }
+      .account-tab();
+      .ant-tabs-tab-active{
+        background-color: #fff;
+        border-left: 1px solid #d9d9d9;
+        border-right: 1px solid #d9d9d9;
+      }
+      .ant-tabs-ink-bar{
+        top:0
+      }
+      .realize-detail-nav{
+        height: 50px;
+        &:extend(.fl);
+        li{
+          width: 150px;
+          text-align: center;
+          line-height:50px;
+          height: 50px;
+          cursor: pointer;
+          &:extend(.fl);
+          font-size: 16px;
+          color:@color-title;
+          border-right:solid 1px @color-tipsbg;
+          border-bottom:solid 1px @color-tipsbg;
+          &.on{
+          border-right:solid 1px @color-tipsbg;
+          border-top:solid 2px @color-main;
+          border-bottom:solid 1px #fff;
+          position: relative;
+          color: @color-main;
+          background-color: #fff;           
+          } 
+        }
+      }    
+    }
+    .realize-main-cont{
+      background-color: #fff;
+      min-height: 400px;
+      padding:20px 50px 0;
+      .module{
+        dt{
+          &:extend(.f18);
+          color:@color-title;
+          line-height: 60px;
+          border-bottom:solid 1px @color-tipsbg;
+          em{font-style:initial; font-size: 12px; color: #999;}
+          .a-link{
+            .fr();
+            .f14();
+            color: @color-main;
+            span.icon{
+              margin-right: 5px;
+              font-size: 18px;
+            }
+          }
+        }
+        dd{
+          min-height: 100px;
+          padding-bottom: 30px;
+        }
+      } 
+    }
+} 
+
+.header-from .form-detail .submitdom a {
+    display: block;
+    width: 270px;
+    height: 44px;
+    background: none !important;
+    line-height: 44px;
+    text-align: center;
+    font-size: 20px;
+    color: #fff;
+    border: 1px solid #fff;
+    border-radius: 3px;
+}

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.user.mapper.UserLoginLogMapper">
+	<resultMap type="com.rd.ifaes.core.user.domain.UserLoginLog" id="userLoginLogResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="loginTime" column="LOGIN_TIME"/>
+		<result property="loginIp" column="LOGIN_IP"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		LOGIN_TIME,
+		LOGIN_IP
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{loginTime},
+		#{loginIp}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="loginIp != null and loginIp != ''">and LOGIN_IP = #{loginIp}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.user.domain.UserLoginLog">
+		insert into user_login_log( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		BEGIN
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into user_login_log( <include refid="table_columns" /> ) 
+		values 
+		( 
+			#{item.uuid},
+			#{item.userId},
+			#{item.loginTime},
+			#{item.loginIp}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<update id="update" parameterType="com.rd.ifaes.core.user.domain.UserLoginLog">
+		update user_login_log 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="loginTime != null">LOGIN_TIME = #{loginTime},</if>
+            <if test="loginIp != null and loginIp != ''">LOGIN_IP = #{loginIp}</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="userLoginLogResultMap">
+        select <include refid="table_columns" />
+        from user_login_log
+    </select>
+
+    <select id="findList" resultMap="userLoginLogResultMap">
+        select <include refid="table_columns" />
+        from user_login_log
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from user_login_log
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="userLoginLogResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_login_log
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+
+    <!-- 获取最近一次登录记录 -->
+    <select id="getLastLoginTime" resultType="date" parameterType="String" >
+    	SELECT LOGIN_TIME FROM (
+			SELECT ROW_NUMBER() OVER(ORDER BY LOGIN_TIME DESC) RN, LOGIN_TIME
+			FROM USER_LOGIN_LOG
+			WHERE USER_ID = #{userId} 
+		) WHERE RN = 1
+	</select>
+
+</mapper>

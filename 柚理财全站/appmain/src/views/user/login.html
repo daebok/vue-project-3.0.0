@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="format-detection" content="telephone=no">
+    <title>登录-${web_name!""}</title>
+    <link rel="stylesheet" type="text/css" href="../../../common.css"/>
+    <link rel="stylesheet" type="text/css" href="../../../login.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+    <!--[if lte IE 7]> 
+    	<script>
+    		window.location = "/browserUpgrade.html"
+    	</script>
+    <![endif]-->
+<body>
+    <input type="hidden" value="${isRsa!}" id="isRsa">
+    <input type="hidden" value="${encrypt!}" id="encrypt">
+    <input type="hidden" value="${pubKey!}" id="pubKey">
+    <div class="header-title-login">
+        <#include "/include/header-sm.html">
+    </div> 
+    <div class="wrap-full login-body" data-url="${redirectURL!}">
+        <div class="wrap login-content">
+           <div class="loginbox" id="loginbox">
+               <div class="loading"></div>
+           </div>
+        </div>
+    </div>
+    <#include "/include/footer-sm.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/themes/js/jsencrypt.js"></script>
+<script src="../../../common.js"></script>
+<script src="../../../login.js"></script>
+</html>

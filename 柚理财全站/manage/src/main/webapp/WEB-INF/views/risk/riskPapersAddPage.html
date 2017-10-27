@@ -1,0 +1,174 @@
+<div class="form-tips-content">
+	<form class="form-horizontal" action="/risk/riskPapersAdd.html" id="form" role="form">
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">问卷名称<span style="color:red;">*</span>：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="papersName" id="papersName" placeholder="问卷名称" required maxLength=50>
+						<span class="error-tips"></span>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="configName" class="control-label form-label">问卷类型<span style="color:red;">*</span>：</label>
+					<div class="input-box">
+						 <@linkage name="papersType" id="papers_type" nid="papers_type" class="form-control" />
+					</div>
+				</div>
+			</li>
+			<#-- <li>
+				<div class="form-group">
+					<label for="configValue" class="control-label form-label">问卷问题数量：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="questionCount" id="questionCount" placeholder="问卷问题数量" required>
+					</div>
+				</div>
+			</li> -->
+		</ul>
+		<div class="questionType">
+				<div class="questionType-con">
+					<table class="table">
+					   <thead>
+					      <tr>
+					         <th>风险承受能力<span style="color:red;">*</span></th>
+					         <th>最低分值<span style="color:red;">*</span></th>
+					         <th>最高分值<span style="color:red;">*</span></th>
+					      </tr>
+					   </thead>
+					   <tbody>
+					   	  <#if levelList??>
+					   	  <#list levelList as item>
+					      <tr>
+					          <td>
+					          	<div class="input-box">
+					          		<input type="hidden" class="type form-control" name="scoreConfig" id="scoreConfig${item_index}" value="" >
+					          		<input type="hidden" class="type form-control" name="Luuid" id="uuid${item_index}" value="${item.uuid!''}" >
+					          		<input type="text" class="type form-control" name="userRiskLevelName" value="${item.userRiskLevelName!''}" readonly>
+					          		<label class="error-tips"></label>
+					         	</div>
+					      	  </td>
+					          <td>
+					          	<div class="input-box">
+						          	<input type="text" class="form-control" name="startScore" data-risk id="startScore${item_index}" value=""  placeholder="输入最低分值" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+										onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'0')}else{this.value=this.value.replace(/\D/g,'')}"  maxLength=3>
+
+									<em class="span1"></em>
+									<em class="span2"></em>
+									<span class="error-tips"></span>
+					         	</div>
+					          </td>
+					          <td>
+					          	<div class="input-box">
+						          	<input type="text" class="form-control" name="endScore" data-risk  id="endScore${item_index}"  value=""   placeholder="输入最高分值" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+										onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'0')}else{this.value=this.value.replace(/\D/g,'')}"  maxLength=3>
+									<em class="span1"></em>
+									<em class="span2"></em>
+									<span class="error-tips"></span>
+					         	</div>
+					          </td>
+					      </tr>
+					      </#list>
+					      </#if>
+					   </tbody>
+					</table>
+				</div>
+			</div>
+		<@token name="addPapersToken"/>
+	</form>
+</div>
+<script>
+
+	var  flag=[];
+    $('[data-risk]').on('input blur',function () {
+		var size=$('[data-risk]').size()
+		var index=$('[data-risk]').index($(this))
+			if(parseInt($(this).val())<=parseInt($('[data-risk]').eq(index-1).val())&& index!=0){
+				if(index%2==0){
+					flag[index]=1;
+					$(this).parent().find(".span1").html("最低分值要大于上一等级的最高分值");
+				}else{
+					flag[index]=1;
+					$(this).parent().find(".span1").html("最高分值要大于最低分值");
+				}
+			}else if(parseInt($(this).val())>=parseInt($('[data-risk]').eq(index+1).val())&& index!=size-1){
+				if(index%2==0){
+					flag[index]=1;
+					$(this).parent().find(".span1").html("最低分值要小于最高分值");
+				}else{
+					flag[index]=1;
+					$(this).parent().find(".span1").html("最高分要小于下一等级的最低分值");
+				}
+			}else{
+				flag[index]=0;
+				$(this).parent().find(".span1").html("");
+			}
+	})
+
+
+	$("input[name='papersName']").keyup(function () {
+		$(this).keyup(function () {
+			$(this).siblings('span').text('')
+		})
+	});
+	/*$('.questionType-con .input-box input[name="startScore"],.questionType-con .input-box input[name="endScore"]').each(function () {
+		$(this).keyup(function () {
+			$(this).next('span').text('')
+		})
+	});*/
+	$('.layui-layer-btn0').click(function () {
+
+	});
+$("#form").validate({
+	submitHandler: function(form) {	
+		for (var i = 0; i < ${levelList?size}; i++) {
+			var uuid = $("#uuid"+i).val();
+			var startScore =  $("#startScore"+i).val();
+			var endScore =  $("#endScore"+i).val();
+			var array = new Array();
+			array[0] = uuid;
+			array[1] = startScore;
+			array[2] = endScore;
+			$("#scoreConfig"+i).val(array);
+		}
+		var Bsize=$('[data-risk]').size()
+		for(var b=1;b<Bsize;b++){
+			if(parseInt($('[data-risk]').eq(b).val())<parseInt($('[data-risk]').eq(b+1).val())){
+				$('[data-risk]').eq(b).parent().find(".span1").html("");
+				flag[b]=0;
+			}
+		}
+		for(var i=0;i<flag.length;i++){
+			if(flag[i]==1){
+				layer.alert('分值填写有误，请重新填写', {
+					icon: 5
+				});
+				return false
+			}
+		}
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						icon: 6,
+						cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+					}, function() {
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入	
+					});
+				} else {
+					layer.alert(data.msg, {
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+})
+</script>

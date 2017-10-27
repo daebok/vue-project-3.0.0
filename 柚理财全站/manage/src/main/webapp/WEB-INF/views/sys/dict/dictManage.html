@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>角色管理</title>
+<#include "include/resources.html">
+</head>
+<body>
+<div class="wrapper">
+	<div class="row pt20">		
+		<div class="col-md-6">
+			<div class="row">		
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入字典类型/类型标识">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid_01" data-url="/sys/dict/dictTypeList.html">搜索</button>
+							    </span>						    
+						    </div>
+					    </form>	
+					</div>
+					<div class="search-form-adv ml10">
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					<@shiro.hasPermission name="set:dict:add">
+						<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.addFun(this)" data-tid="jqGrid_01" data-url="/sys/dict/dictTypeAddPage.html">新增</button>
+					</@shiro.hasPermission>
+					<@shiro.hasPermission name="set:dict:edit">
+						<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.editFun(this)" data-tid="jqGrid_01" data-url="/sys/dict/dictTypeEditPage.html">编辑</button>
+					</@shiro.hasPermission>
+					</div>			
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="row">		
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入字典名称/字典值">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid_02" id="dictDataSearchBtn">搜索</button>
+							    </span>						    
+						    </div>
+					    </form>	
+					</div>
+					<div class="search-form-adv ml10">
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+						<@shiro.hasPermission name="set:dict:contentadd">
+						 <button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.addFun(this, '', hasTableDataSelect)"  data-tid="jqGrid_02" id="dictDataAddBtn">添加</button>
+						</@shiro.hasPermission>
+						<@shiro.hasPermission name="set:dict:contentedit">
+						 <button type="button" class="btn btn-info"    onclick="$.fn.treeGridOptions.editFun(this)" data-tid="jqGrid_02" id="dictDataEditBtn" data-url="/sys/dict/dictDataEditPage.html">编辑</button>
+					    </@shiro.hasPermission>
+					</div>			
+				</div>
+			</div>		
+		</div>
+	</div>
+	<div class="row mt20">
+		<div class="col-md-6">
+			<table id="jqGrid_01"></table>
+			<div id="jqGridPager_01"></div>
+		</div>
+		<div class="col-md-6">
+			<table id="jqGrid_02"></table>
+			<div id="jqGridPager_02"></div>
+		</div>
+	</div>
+    <script type="text/javascript"> 	
+    <@dictFormatter type = "enable" />		    	
+        $(document).ready(function () {
+        	var jqGrid_02_flag = true;
+        	//表格初始化
+        	$("#jqGrid_01").jqTreeGrid({
+        		url: '/sys/dict/dictTypeList.html',
+        		
+        		multiselect : true,
+        		multiboxonly: true,
+        		pager: "#jqGridPager_01",
+                colModel: [
+                	{ label: 'id', name: 'id', hidden: true},
+                	{ label: '字典类型', name: 'typeName', width: 150},
+					{ label: '类型标识', name: 'dictType', width: 150},
+					{ label: '备注', name: 'remark', width: 200 }			
+                ],
+                beforeSelectRow:function(rowid, e){
+                    var dictType = $("#jqGrid_01").getRowData(rowid).dictType;
+                	greattable(dictType);
+                	$('#dictDataSearchBtn').attr("data-url","/sys/dict/dictDataList.html?dictType="+dictType); 
+                	$('#dictDataAddBtn').attr("data-url","/sys/dict/dictDataAddPage.html?dictType="+dictType); 
+                },
+                loadComplete:function(){
+                	if($("#jqGrid_01 tr").length > 1){
+                		$("#jqGrid_01 tr").eq(1)[0].click();
+                	}
+		        }
+        	}).jqGrid("setFrozenColumns").navGrid('#jqGridPager_01',		            
+		            { edit: false, add: false, del: false, search: false, refresh: true, view: false, position: "left", cloneToTop: false }
+		   	);		   	
+		   	function greattable(dictType){
+		   		var url = '/sys/dict/dictDataList.html?dictType='+dictType; 		   		
+		   		if(jqGrid_02_flag){		   			
+			   		$("#jqGrid_02").jqTreeGrid({
+		        		url: url,
+		        		
+		        		multiselect : true,
+		        		pager: "#jqGridPager_02",
+		                colModel: [
+		                	{ label: 'id', name: 'id', hidden:true},
+							{ label: '字典名称', name: 'itemName', align:"center", width: 120},
+							{ label: '字典值', name: 'itemValue', align:"center", width: 150, formatter:function(value){
+								if(dictType=="menuIcon"){
+									return "<em class='iconfont'>" + value + "</em>";
+								}else{
+									return value;
+								}
+							}},
+							{ label: '排序', name: 'sort', align:"center", width: 70},
+							{ label: '状态', name: 'status', width: 70, align:"center", formatter: enableFormatter}
+		                ],
+		                beforeSelectRow:function(rowid, e){
+		                	
+		                },
+		                loadComplete:function(){
+		                	jqGrid_02_flag = false;
+		                }
+		        	}).jqGrid("setFrozenColumns").navGrid('#jqGridPager_02',				            
+				            { edit: false, add: false, del: false, search: false, refresh: true, view: false, position: "left", cloneToTop: false }
+				   	);	
+		   		}
+		   		else
+		   		{		   				   		
+				   	$("#jqGrid_02").jqGrid('setGridParam',{url: url,page:1}).trigger("reloadGrid");
+		   		}
+		   	}
+       });
+	   //判断表格数据是否选择
+		function hasTableDataSelect(){
+			id = $("#jqGrid_01").jqGrid("getGridParam", "selarrrow");			
+			if(id.length == 1){				
+				return true;
+			} else {
+				layer.alert("请选择一条字典类型！", {icon: 5});
+				return false;				
+			}					
+		}
+	   
+  </script>	
+</body>
+</html>

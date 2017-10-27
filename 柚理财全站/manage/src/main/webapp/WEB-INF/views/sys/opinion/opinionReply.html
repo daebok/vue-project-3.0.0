@@ -1,0 +1,97 @@
+
+<style>
+	.input-box{line-height:34px;}
+</style>
+<form class="form-horizontal" action="/sys/opinion/opinionReplySubmit.html" id="form" role="form">
+<div class="form-tips-content">
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label class="control-label form-label">标题：</label>
+					<div class="input-box">
+						<p>${userOpinion.title}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label class="control-label form-label">反馈用户：</label>
+					<div class="input-box">
+						<p>${userOpinion.mobile}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group clearfix">
+					<label class="control-label form-label" >意见描述：</label>
+					<div class="input-box">
+						<p>${userOpinion.remark}</p>						
+					</div>
+				</div>
+			</li>
+			<li></li>
+			<#if picList?? && picList?size gt 0>
+				<li class="full-width">
+					<div class="form-group">
+						<label for="pwd" class="control-label form-label">图片：</label>
+						<div class="" class="input-box">
+							<div id="uploadGuaranteeBox2" class="uploadWrap" data-arr="uploadFile2">
+						    	<ul id="borrowPagePic2" class="photoUpload">   			           
+						           <#list picList as item>
+						            <li data-mum="${item.uuid!}" style="margin-top:0;">
+						               <a class="imgs" rel="group" href="${image_server_url}${item!}" title=""><img src="${image_server_url}${item!}" alt="" /></a>
+						           	</li>
+									</#list>
+						        </ul>
+						    </div>
+						</div>
+					</div>
+				</li>
+			</#if>	
+			<li class="full-width">
+				<div class="form-group">
+					<label for="remark" class="control-label form-label">答复内容：</label>
+					<div class="textarea-box">
+			       <textarea rows="" cols="" class="form-control" name="content" id="content" maxLength="500"></textarea>
+					</div>
+				</div>
+			</li>
+		</ul>
+</div>
+<input type="hidden" name="uuid" id="uuid" value="${userOpinion.uuid}">
+</form>
+<script type="text/javascript">
+var dd=0;
+$("#form").validate({
+	  submitHandler:function(form){
+		  dd++;
+		  if(dd>1){
+			  return false
+		  }
+			$(form).ajaxSubmit({
+				type:"post",
+				dataType:"json",
+				success:function(data){
+		        	if(data.result){
+		        		layer.alert(data.msg, {
+		        			zIndex:100000,
+							icon : 6,
+							cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入
+								dd=0
+	  						}
+						}, function() {
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入
+							dd=0
+						});
+		        	}else{
+		        		layer.alert(data.msg, {zIndex:100000,icon: 5});
+						dd=0
+		        	} 			        	
+		    	}
+			});
+	    }    
+	});
+</script>

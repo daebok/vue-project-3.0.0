@@ -1,0 +1,92 @@
+@import  (reference)'../../../../style/common.less';
+@import '../../../../style/account.less';
+.account-content{
+  .submit-button{
+    .form-button(@padding: 0px,@width: 280px,@fontsize: 16px,@lineheight:40px);
+  }
+  .about{
+    margin: 20px 0 0 0;
+    border:solid 4px #fafafd;
+    padding: 40px 45px 20px;
+    border-radius: 5px;
+    dl{
+      margin-bottom: 40px;
+      .clearfix();
+      dt{
+        .fl();
+        height: 50px;
+        padding: 0 0 0 220px;
+        background: url(../../../../style/images/hftx.png) no-repeat 24px 0;
+        .success{
+          .f18();
+          color: @color-title;
+          display: block;
+          margin:0 0 5px;
+        }
+        s{
+          .f14();
+          color: @color-text;
+          text-decoration: none;
+        }
+        .f14();
+        color:@color-p;
+      }
+      dd{
+        .fr();
+      }
+    }
+    a{
+      .form-button(@padding: 0px,@width: 130px,@fontsize: 14px,@lineheight:36px);
+      display: block;
+      text-align: center;
+      color: #fff;
+      border-radius: 3px;
+    }
+  }
+  .form-themes{
+    margin:17px 0 0 150px;
+  }
+  .remind{
+    line-height: 77px;
+    .f14();
+    color: #aaa;
+    em{
+      color: #66bef5;
+      vertical-align:middle;
+      margin-right: 6px;
+      padding: 0 0 0 170px;
+    }
+  }
+}
+.payaccount{
+    font-size: 18px;
+    padding: 30px 0px;
+    line-height: 30px;
+    text-align: center;
+  em{
+    font-size: 26px;
+    margin: 0 10px 0 0;
+    vertical-align: middle;    
+  }
+}
+
+.ant-modal-footer {
+    border-top: none;
+    padding: 0 0px 40px;
+    text-align: center;
+    button{
+      margin-right: 20px;
+    }
+}
+.ant-modal-content {
+    .ant-btn{
+      line-height: 36px
+    }
+    .ant-btn-lg{
+      padding: 0 15px;
+    }
+}
+.ant-modal-footer button + button {
+  margin-left: 0;
+  margin-bottom: 0;
+}

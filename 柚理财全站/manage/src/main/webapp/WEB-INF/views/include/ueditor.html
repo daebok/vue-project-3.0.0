@@ -1,0 +1,23 @@
+<#-- 显示百度富文本编辑器  输入参数长度、高度、id(Textarea的id)、name(Textarea的name)、文本框中的值-->
+<#macro showUeditor width height id name content readOnly >
+
+<script type="text/javascript" charset="utf-8" src="/static/js/plugins/ueditor/ueditor.parse.js"> </script>
+<script type="text/javascript" charset="utf-8" src="/static/js/plugins/ueditor/ueditor.config.js"> </script>
+<script type="text/javascript" charset="utf-8" src="/static/js/plugins/ueditor/ueditor.all.min.js"></script>
+
+<script type="text/plain" id="${id!'myEditor'}" name="${name!'myEditor'}" style="width:100%;height:${height!0}px;">
+	${content!''}
+</script>
+<script type="text/javascript">
+var readOnly = "${readOnly!false}"; 
+//实例化编辑器
+
+var ue = UE.getEditor('${id!"myEditor"}');
+if(readOnly){
+    ue.setDisabled()
+}
+</script>
+<style>
+	.edui-popup-content{height:auto !important;}
+</style>
+</#macro>

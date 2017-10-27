@@ -1,0 +1,116 @@
+<div class="row mt20">
+	<div class="col-md-12">
+		<table id="jqGrid" class="table-td-NoOverflow"></table>
+		<div id="jqGridPager"></div>
+	</div>
+</div>
+<script type="text/javascript">
+<@dictFormatter type = "bondStatus" />
+<@dictFormatter type = "repayStyle" />
+	$(document).ready(function() {		
+		var url_key = url_list.substring(url_list.lastIndexOf('/')+1,url_list.indexOf('.'));
+		//表格初始化		
+		$("#jqGrid").jqTreeGrid({
+				url : url_list,
+				multiselect:false,
+				colModel : [
+						{
+							label : "债权名称",
+							name : "bondName",
+							width : 300,
+							align: "center",
+						},   
+						{
+							label : "债权总价",
+							name : "bondMoney",
+							width : 150,
+							align: "center",
+							formatter : function(val, options,rowObject) {
+								return val+"元";
+							},
+						},   
+						{
+							label : "出让人",
+							name : "realName",
+							width : 150,
+							align: "center"
+						},{
+							label : "年化利率 ",
+							name : "apr",
+							width : 100,
+							align: "center",
+							formatter : function(val, options,rowObject) {
+									return val+"%";
+							},
+						},{
+							label : "还款方式",
+							name : "repayStyle",
+							width : 150,
+							align: "center",
+							formatter : repayStyleFormatter
+						},{
+							label : "剩余期限",
+							name : "remainDays",
+							width : 150,
+							align: "center",
+							formatter : function(val, options,rowObject) {
+								return val+"天";
+							},
+						},{
+							label : "折溢价率 ",
+							name : "bondApr",
+							width : 100,
+							align: "center",
+							formatter : function(val, options,rowObject) {
+									return val+"%";
+							},
+						},
+						{
+							label : "转让价格",
+							name : "soldCapital",
+							width : 100,
+							align: "center",
+							formatter : function(val, options,rowObject) {
+								return val+"元";
+							},
+						},
+						{
+							label : "状态",
+							name : "status",
+							width : 100,
+							align: "center",
+							formatter:bondStatusFormatter
+						},{
+							label : "添加时间 ",
+							name : "createTime",
+							width : 150,
+							align: "center",
+							formatter: datetimeFormatter
+						},{
+							label: "操作",
+							name: "cz",
+							width: 150,
+							align: "center",
+							formatter: function(val, options, rowObject){	
+								var btns = '';
+								var	id = rowObject.id;
+								btns += 
+									'<a href="javascript:;" onclick=$.fn.treeGridOptions.checkFun(this,"'+id+'") data-tid="jqGrid" data-url="/bond/bond/bondInvestPage.html" data-title="记录">记录</a>';
+								return btns;
+							}
+						}
+						],
+			}).jqGrid("setFrozenColumns").navGrid(
+			'#jqGridPager',
+			{
+				edit : false,
+				add : false,
+				del : false,
+				search : false,
+				refresh : true,
+				view : false,
+				position : "left",
+				cloneToTop : false
+			});
+		});
+</script>

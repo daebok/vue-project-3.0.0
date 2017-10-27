@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.project.mapper.RealizeRuleMapper">
+	<resultMap type="com.rd.ifaes.core.project.domain.RealizeRule" id="realizeRuleResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="ruleStatus" column="RULE_STATUS"/>
+		<result property="holdDays" column="HOLD_DAYS"/>
+		<result property="remainDays" column="REMAIN_DAYS"/>
+		<result property="periodRemainDays" column="PERIOD_REMAIN_DAYS"/>
+		<result property="sellStyle" column="SELL_STYLE"/>
+		<result property="sellAmountMin" column="SELL_AMOUNT_MIN"/>
+		<result property="buyStyle" column="BUY_STYLE"/>
+		<result property="buyAmountMin" column="BUY_AMOUNT_MIN"/>
+		<result property="buyAmountMax" column="BUY_AMOUNT_MAX"/>
+		<result property="realizeRateMin" column="REALIZE_RATE_MIN"/>
+		<result property="realizeRateMax" column="REALIZE_RATE_MAX"/>
+		<result property="overdueFeeRate" column="OVERDUE_FEE_RATE"/>
+		<result property="feeRate" column="FEE_RATE"/>
+		<result property="feeSingleMax" column="FEE_SINGLE_MAX"/>
+		<result property="issueTime" column="ISSUE_TIME"/>
+		<result property="raiseEndTime" column="RAISE_END_TIME"/>
+		<result property="interestManageRate" column="INTEREST_MANAGE_RATE"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		CREATE_TIME,
+		RULE_STATUS,
+		HOLD_DAYS,
+		REMAIN_DAYS,
+		PERIOD_REMAIN_DAYS,
+		SELL_STYLE,
+		SELL_AMOUNT_MIN,
+		BUY_STYLE,
+		BUY_AMOUNT_MIN,
+		BUY_AMOUNT_MAX,
+		REALIZE_RATE_MIN,
+		REALIZE_RATE_MAX,
+		OVERDUE_FEE_RATE,
+		FEE_RATE,
+		FEE_SINGLE_MAX,
+		ISSUE_TIME,
+		RAISE_END_TIME,
+		INTEREST_MANAGE_RATE
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{createTime},
+		#{ruleStatus},
+		#{holdDays},
+		#{remainDays},
+		#{periodRemainDays},
+		#{sellStyle},
+		#{sellAmountMin},
+		#{buyStyle},
+		#{buyAmountMin},
+		#{buyAmountMax},
+		#{realizeRateMin},
+		#{realizeRateMax},
+		#{overdueFeeRate},
+		#{feeRate},
+		#{feeSingleMax},
+		#{issueTime},
+		#{raiseEndTime},
+		#{interestManageRate}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="ruleStatus != null and ruleStatus != ''">and RULE_STATUS = #{ruleStatus}</if>
+			<if test="holdDays != null">and HOLD_DAYS = #{holdDays}</if>
+			<if test="remainDays != null">and REMAIN_DAYS = #{remainDays}</if>
+			<if test="periodRemainDays != null">and PERIOD_REMAIN_DAYS = #{periodRemainDays}</if>
+            <if test="sellStyle != null and sellStyle != ''">and SELL_STYLE = #{sellStyle}</if>
+			<if test="sellAmountMin != null">and SELL_AMOUNT_MIN = #{sellAmountMin}</if>
+            <if test="buyStyle != null and buyStyle != ''">and BUY_STYLE = #{buyStyle}</if>
+			<if test="buyAmountMin != null">and BUY_AMOUNT_MIN = #{buyAmountMin}</if>
+			<if test="buyAmountMax != null">and BUY_AMOUNT_MAX = #{buyAmountMax}</if>
+			<if test="realizeRateMin != null">and REALIZE_RATE_MIN = #{realizeRateMin}</if>
+			<if test="realizeRateMax != null">and REALIZE_RATE_MAX = #{realizeRateMax}</if>
+			<if test="overdueFeeRate != null">and OVERDUE_FEE_RATE = #{overdueFeeRate}</if>
+			<if test="feeRate != null">and FEE_RATE = #{feeRate}</if>
+			<if test="feeSingleMax != null">and FEE_SINGLE_MAX = #{feeSingleMax}</if>
+            <if test="issueTime != null and issueTime != ''">and ISSUE_TIME = #{issueTime}</if>
+            <if test="raiseEndTime != null and raiseEndTime != ''">and RAISE_END_TIME = #{raiseEndTime}</if>
+			<if test="interestManageRate != null">and INTEREST_MANAGE_RATE = #{interestManageRate}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.project.domain.RealizeRule">
+		insert into realize_rule( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into realize_rule( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+		#{item.uuid},
+				#{item.createTime},
+				#{item.ruleStatus},
+				#{item.holdDays},
+				#{item.remainDays},
+				#{item.periodRemainDays},
+				#{item.sellStyle},
+				#{item.sellAmountMin},
+				#{item.buyStyle},
+				#{item.buyAmountMin},
+				#{item.buyAmountMax},
+				#{item.realizeRateMin},
+				#{item.realizeRateMax},
+				#{item.overdueFeeRate},
+				#{item.feeRate},
+				#{item.feeSingleMax},
+				#{item.issueTime},
+				#{item.raiseEndTime},
+				#{item.interestManageRate}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from realize_rule
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="update" parameterType="com.rd.ifaes.core.project.domain.RealizeRule">
+		update realize_rule 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="ruleStatus != null and ruleStatus != ''">RULE_STATUS = #{ruleStatus},</if>
+			<if test="holdDays != null">HOLD_DAYS = #{holdDays},</if>
+			<if test="remainDays != null">REMAIN_DAYS = #{remainDays},</if>
+			<if test="periodRemainDays != null">PERIOD_REMAIN_DAYS = #{periodRemainDays},</if>
+            <if test="sellStyle != null and sellStyle != ''">SELL_STYLE = #{sellStyle},</if>
+			<if test="sellAmountMin != null">SELL_AMOUNT_MIN = #{sellAmountMin},</if>
+            <if test="buyStyle != null and buyStyle != ''">BUY_STYLE = #{buyStyle},</if>
+			<if test="buyAmountMin != null">BUY_AMOUNT_MIN = #{buyAmountMin},</if>
+			<if test="buyAmountMax != null">BUY_AMOUNT_MAX = #{buyAmountMax},</if>
+			<if test="realizeRateMin != null">REALIZE_RATE_MIN = #{realizeRateMin},</if>
+			<if test="realizeRateMax != null">REALIZE_RATE_MAX = #{realizeRateMax},</if>
+			<if test="overdueFeeRate != null">OVERDUE_FEE_RATE = #{overdueFeeRate},</if>
+			<if test="feeRate != null">FEE_RATE = #{feeRate},</if>
+			<if test="feeSingleMax != null">FEE_SINGLE_MAX = #{feeSingleMax},</if>
+            <if test="issueTime != null and issueTime != ''">ISSUE_TIME = #{issueTime},</if>
+            <if test="raiseEndTime != null and raiseEndTime != ''">RAISE_END_TIME = #{raiseEndTime},</if>
+			<if test="interestManageRate != null">INTEREST_MANAGE_RATE = #{interestManageRate},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="realizeRuleResultMap">
+        select <include refid="table_columns" />
+        from realize_rule
+    </select>
+
+    <select id="findList" resultMap="realizeRuleResultMap">
+        select <include refid="table_columns" />
+        from realize_rule
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from realize_rule
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="realizeRuleResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from realize_rule
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<select id="getRule" resultMap="realizeRuleResultMap"  >
+		select <include refid="table_columns" />
+		from realize_rule order by create_time desc limit 1
+	</select>
+	
+	<update id="closeOther" parameterType="String">
+		update realize_rule set rule_status = #{ruleStatus} where rule_status = '1' or rule_status is null
+	</update>
+
+</mapper>

@@ -1,0 +1,138 @@
+<div id="j-content">
+<div class="form-tips-content" id="articledom">
+<input type="hidden" id="image_server_url" value="${image_server_url}">
+	<form class="form-horizontal" action="/column/article/articleEdit.html" id="form" role="form">
+  	<ul class="form-item">
+  		<li>
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">文章名称：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="title" id="title" value="${article.title!}" maxlength="32" placeholder="请输入文章标题" required>
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">排序值：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="sort" id="sort" value="${article.sort!}" maxlength="10" placeholder="请输入排序值" required onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" 
+				onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'0')}else{this.value=this.value.replace(/\D/g,'')}">
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">文章链接：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="url" id="url" value="${article.url!}" maxlength="255" placeholder="请输入链接" >
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">描述：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="remark" id="remark" value="${article.remark!}" maxlength="512" placeholder="请输入描述" >
+		      </div>
+		    </div>	
+  		</li>
+  		 <li>
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">图片：</label>
+		       <div class="">
+					<div id="uploadArticle" class="uploadWrap" data-arr="picPath1">
+						  <ul id="articlePagePic" class="photoUpload">
+					        	<li class="addFileBtn">
+					            	<input type="file" name="articlePicPath"  accept="image/gif, image/jpeg,image/png" class="uploadFileInput" id="articlePicPath" onchange="return ajaxFileUpload('articlePicPath','/imageUp.jsp?editorid=article','picPath');" title="点击上传图片" />
+					            </li>
+					            <#if article??&&article.picPath>
+					            <li data-mum="0">
+									<img src="${image_server_url}${article.picPath!}" alt="">
+									<input name="picPath" value="${article.picPath!}" type="hidden">
+									<a class="closePic" style="float:left;" href="javascript:;" title="删除图片">x</a>
+								</li>
+								</#if>
+					      </ul>
+					</div>
+				</div>
+		    </div>	
+  		</li>
+
+   		<li>
+			<div class="form-group">
+		      <label for="username" class="control-label form-label">所属类别：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" readonly="readonly" name="siteName" id="siteName" data-url="/column/section/sectionTreePage.html?parentId=${siteUuid}" placeholder="请选择父级菜单" value="${sectionName!}" />
+		     <!--  <input type="text" class="form-control" readonly="readonly" name="siteName" id="siteName" onclick="$.fn.treeGridOptions.treeselect(this)" data-url="/column/section/sectionTreePage.html?parentId=${siteUuid}" placeholder="请选择父级菜单" value="${sectionName!}" /> -->
+		      <input type="hidden" name="siteUuid" id="siteUuid" value="${sectionUuid!}"/>
+		      <input type="hidden" name="siteNid" id="siteNid" value="${sectionCode!}"/>
+		      </div>
+		    </div>	
+  		</li>
+		<li class="full-width">
+				<div class="form-group">
+					<label for="remark" class="control-label form-label">文章详情：</label>
+					<div class="textarea-box-read">
+						<#include "include/ueditor.html">
+              			<@showUeditor width=650 height=200 id="articleEditor" name="content" content="${article.content}"/>
+					</div>
+				</div>
+		</li>
+  	</ul>
+		<input type="hidden" id="uuid" name="uuid" value="${article.uuid!}">
+  	<@token/>
+  </form>
+</div>
+</div>
+<div id="j-edit-content" class="hide">${article.content}</div>
+<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+<script src="${theme_dir}/static/js/fancybox/jquery.fancybox.pack.js"></script>
+<link rel="stylesheet" href="${theme_dir}/static/js/fancybox/jquery.fancybox.css" type="text/css" media="screen">
+<script src="${theme_dir}/static/js/upload.js"></script>
+<script type="text/javascript">
+	var thisContent = $("#j-edit-content").html();
+	$("#form").validate({
+		submitHandler: function(form) {
+		  if($("#parentId").val() == $("#uuid").val()){
+		        top.layer.alert("所属类别不能为自身!", {
+					icon: 5,
+					zIndex:100000,
+					shadeClose: true
+				});
+			return;
+		  }
+			$(form).ajaxSubmit({
+				type: "post",
+				dataType: "json",
+				success: function(data) {
+					if (data.result) {
+		        		layer.alert(data.msg, {
+		        			zIndex:100000,
+							icon : 6,
+							cancel: function(index){
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入 
+  						}
+						}, function() {
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入  
+						});
+					} else {
+						layer.alert(data.msg, {
+							zIndex:100000,
+							icon: 5
+						});
+					}
+				}
+			});
+		}
+	});
+	$('#uploadArticle').find('.addFileBtn').click(function(){
+		var num = $('#uploadArticle').find('li.addFileBtn').siblings().length;
+		if(num == 1){
+			alert("上传文件数量不能超过1张");
+			return false;
+		}
+		
+	});
+</script>

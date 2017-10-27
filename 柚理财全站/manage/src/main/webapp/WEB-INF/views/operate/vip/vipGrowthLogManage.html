@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>VIP成长日志</title>
+		<#include "include/resources.html">
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="startTime" id="startTime" placeholder="记录起始时间"  onFocus="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endTime\')}'})" readOnly="true" style="width:128px;">
+								 <span style="display:block;float:left;line-height:34px;">~</span> 
+								<input type="text" class="form-control search-input" name="endTime" id="endTime" placeholder="记录截止时间" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startTime\')}'})" readOnly="true" style="width:128px;">
+								<input type="hidden" class="form-control search-input" name="userId" id="userId" value="${userId!}" >
+								<span class="input-group-btn search-span" syle="left:5px">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/operate/vip/vipGrowthLogList.html">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					</div>					
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+		</div>
+      <script type="text/javascript">
+          $(document).ready(function() {
+            //表格初始化
+            $("#jqGrid").jqTreeGrid({
+              url: '/operate/vip/vipGrowthLogList.html?userId=${userId!}',  
+                multiselect : false,
+                colModel: [
+                          { label: 'id', name: 'uuid', width: 65, hidden:true},
+                          { label: '用户', name: 'userName',index:"userName",width: 25},
+                          { label: '原成长值', name: 'growthValue',index:"growth_value",width: 12},
+                          { label: '操作类型', name: 'optType',index:"opt_type",width: 12,
+                            formatter: function(value,row,index){
+                             if (value == '0'){
+                          return "减少";
+                        } else if (value == '1'){
+                          return "增加";
+                        } else {
+                          return "增加";
+                        }
+                  }},
+                          { label: '操作成长值', name: 'optValue',index:"opt_value",width: 12},
+                          { label: '新成长值', name: 'growthValueNew',index:"growth_value_new",width: 12},
+                          { label: '备注', name: 'remark',index:"remark",width: 30},
+                { label: '记录时间', name: 'createTime',index:"create_time", width: 15,formatter: datetimeFormatter}
+                      ]
+            }) ;      
+          });
+      </script>    
+     </body>
+</html>

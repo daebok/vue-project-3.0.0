@@ -1,0 +1,95 @@
+<style type="text/css">
+	.ui-jqgrid .ui-jqgrid-hdiv{
+			position: relative;
+		}
+		.ui-jqgrid .ui-jqgrid-bdiv{
+			margin-top: 0!important;
+		}
+      @media (max-height: 768px){
+        .ui-jqgrid .ui-jqgrid-bdiv {
+            margin-top: 39px;
+            padding-bottom: 0px;
+            max-height: 100px!important;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+      }
+      .ui-jqgrid .ui-jqgrid-pager {
+          position: relative;
+          bottom: 0px;
+          background: #fff;
+          border: 1px solid #EBEBEB;
+          border-radius: 3px;
+          z-index: 1000;
+      } 
+      @media (max-height: 1080px){
+        .ui-jqgrid .ui-jqgrid-bdiv {
+            margin-top: 39px;
+            padding-bottom: 0px;
+            max-height: 460px!important;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+      }
+</style>
+<div class="wrapper">
+	<div class="row pt20">				
+		<div class="col-md-6">
+			<div class="search-form">
+				<form>
+					<div class="input-group">
+						<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入名称">
+						<span class="input-group-btn search-span">
+					    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/protocol/protocol/list.html">搜索</button>
+					    </span>		    
+				    </div>
+			    </form>	
+			</div>
+		</div>		
+	</div>
+	<div class="row mt20">
+		<div class="col-md-12">
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		 <@dictFormatter type = "protocolType" />
+		$(document).ready(function() {		
+			//表格初始化
+			$("#jqGrid").jqTreeGrid({
+				multiselect: false,
+				url: '/protocol/protocol/list.html',
+				postData : {status:1},
+				width: 600,
+				height: $(window).height()*0.8*0.52,							
+				colModel: [ { label: 'id', name: 'uuid', width: 65, hidden:true},
+			                    { label: '类型', name: 'protocolType',index:"protocolType",hidden:true},
+			                    { label: '名称', name: 'name',index:"name",width: 20 },
+			                    { label: '类型名称', name: 'protocolType',index:"protocolType",width: 20,formatter:protocolTypeFormatter},
+			                    { label: '添加时间', name: 'createTime',index:"create_time",width: 15,
+			                    	formatter: 'date',
+									formatoptions: {
+										srcformat: 'u',
+										newformat: 'Y-m-d'
+									}
+			                    }],
+			}).jqGrid("setFrozenColumns").navGrid('#jqGridPager',
+				// the buttons to appear on the toolbar of the grid
+				{
+					edit: false,
+					add: false,
+					del: false,
+					search: false,
+					refresh: true,
+					view: false,
+					position: "left",
+					cloneToTop: false
+				}
+			);						
+		});
+	$(window).bind('resize', function() {				
+		$("#jqGrid").setGridHeight($(window).height()*0.8*0.52);
+	});
+	</script>
+</div>

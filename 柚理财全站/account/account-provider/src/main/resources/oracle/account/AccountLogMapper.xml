@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.account.mapper.AccountLogMapper">
+	<resultMap type="com.rd.account.domain.AccountLog" id="accountLogResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="accountCode" column="ACCOUNT_CODE"/>
+		<result property="toUser" column="TO_USER"/>
+		<result property="accountType" column="ACCOUNT_TYPE"/>
+		<result property="money" column="MONEY"/>
+		<result property="useMoney" column="USE_MONEY"/>
+		<result property="noUseMoney" column="NO_USE_MONEY"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="paymentsType" column="PAYMENTS_TYPE"/>
+		<result property="tradeNo" column="TRADE_NO"/>
+		<result property="remark" column="REMARK"/>
+		<result property="orderNo" column="ORDER_NO"/>
+		<result property="earn" column="EARN"/>
+		<result property="createTimestamp" column="CREATE_TIMESTAMP"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		ACCOUNT_CODE,
+		TO_USER,
+		PAYMENTS_TYPE,
+		MONEY,
+		USE_MONEY,
+		NO_USE_MONEY,
+		ACCOUNT_TYPE,
+		CREATE_TIME,
+		TRADE_NO,
+		REMARK,
+		ORDER_NO,
+		EARN,
+		CREATE_TIMESTAMP
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{accountCode},
+		#{toUser},
+		#{paymentsType},
+		#{money},
+		#{useMoney},
+		#{noUseMoney},
+		#{accountType},
+		#{createTime},
+		#{tradeNo},
+		#{remark},
+		#{orderNo},
+		#{earn},
+		#{createTimestamp}
+	</sql>
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="accountCode != null and accountCode != ''">and ACCOUNT_CODE = #{accountCode}</if>
+            <if test="toUser != null and toUser != ''">and TO_USER = #{toUser}</if>
+            <if test="accountType != null and accountType != ''">and ACCOUNT_TYPE = #{accountType}</if>
+			<if test="money != null">and MONEY = #{money}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="paymentsType != null and paymentsType != ''">and PAYMENTS_TYPE = #{paymentsType}</if>
+            <if test="tradeNo != null and tradeNo != ''">and TRADE_NO = #{tradeNo}</if>
+            <if test="remark != null and remark != ''">and REMARK = #{remark}</if>
+            <if test="orderNo != null and orderNo != ''">and ORDER_NO = #{orderNo}</if>
+            <if test="earn != null ">and earn = #{earn}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.account.domain.AccountLog">
+		insert into account_log( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	
+	<insert id="insertBySelect" parameterType="com.rd.account.domain.AccountLog">
+		insert into account_log( <include refid="table_columns" /> ) 
+		SELECT 
+		#{uuid},
+		#{userId},
+		#{accountCode},
+		#{toUser},
+		#{paymentsType},
+		#{money},
+		t.use_money,
+		t.no_use_money,
+		#{accountType},
+		#{createTime},
+		#{tradeNo},
+		#{remark},
+		#{orderNo},
+		#{earn},
+		#{createTimestamp}
+        FROM account t
+        where t.user_id = #{userId} 
+          and t.account_code = #{accountCode}
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">
+		BEGIN		
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into account_log( <include refid="table_columns" /> ) 
+			SELECT 
+				#{item.uuid},
+				#{item.userId},
+				#{item.accountCode},
+				#{item.toUser},
+				#{item.paymentsType},
+				#{item.money},
+				t.use_money,
+				t.no_use_money,
+				#{item.accountType},
+				#{item.createTime},
+				#{item.tradeNo},
+				#{item.remark},
+				#{item.orderNo},
+				#{item.earn},
+				#{item.createTimestamp}
+	        FROM account t
+	        where t.user_id = #{item.userId} 
+	          and t.account_code = #{item.accountCode}
+		</foreach>
+		; END ;
+	</insert>
+
+	<update id="update" parameterType="com.rd.account.domain.AccountLog">
+		update account_log 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="toUser != null and toUser != ''">TO_USER = #{toUser},</if>
+            <if test="accountType != null and accountType != ''">ACCOUNT_TYPE = #{accountType},</if>
+			<if test="money != null">MONEY = #{money},</if>
+			<if test="useMoney != null">USE_MONEY = #{useMoney},</if>
+			<if test="noUseMoney != null">NO_USE_MONEY = #{noUseMoney},</if>
+            <if test="paymentsType != null and paymentsType != ''">PAYMENTS_TYPE = #{paymentsType},</if>
+            <if test="tradeNo != null and tradeNo != ''">TRADE_NO = #{tradeNo},</if>
+            <if test="remark != null and remark != ''">REMARK = #{remark},</if>
+            <if test="orderNo != null and orderNo != ''">ORDER_NO = #{orderNo},</if>
+            <if test="earn != null ">earn = #{earn}</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="accountLogResultMap">
+        select <include refid="table_columns" />
+        from account_log
+    </select>
+
+    <select id="findList" resultMap="accountLogResultMap">
+        select <include refid="table_columns" />
+        from account_log
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from account_log
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="accountLogResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from account_log
+		where uuid = #{uuid}
+	</select>
+	
+	
+	<sql id="findManageListWhere">
+		 <where>        
+			<if test="userName != null and userName != ''">and p.user_name like '%'||#{userName}||'%' </if>
+	 		<if test="realName != null and realName != ''">and p.real_name like '%'||#{realName}||'%' </if>
+	 		<if test="toUserName != null and toUserName == '平台'">and t.to_user = u'1'</if>
+	 		<if test="toUserName != null and toUserName != '' and toUserName != '平台' ">and q.user_name like '%'||#{toUserName}||'%' </if>
+	 		<if test="toRealName != null and toRealName != ''">and q.real_name like '%'||#{toRealName}||'%' </if>
+	 		<if test="keywords != null and keywords != ''">and p.user_name like '%'||#{keywords}||'%' </if>
+			<if test="accountType != null and accountType != ''">and t.ACCOUNT_TYPE = #{accountType} </if>
+			<if test="dateType == null or dateType == '' or dateType == '00'">
+			     <if test="startTime != null and startTime != ''">and t.CREATE_TIME &gt;= to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')</if>
+			     <if test="endTime != null and endTime != ''">and t.CREATE_TIME &lt;= to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')</if>        
+	        </if>
+       </where>
+	</sql>
+	<!-- 其他自定义SQL -->
+	<select id="findManageList" resultMap="accountLogResultMap">
+        select 
+		t.UUID,
+		t.USER_ID,
+		t.ACCOUNT_CODE,
+		t.TO_USER,
+		t.ACCOUNT_TYPE,
+		t.MONEY,
+		t.USE_MONEY,
+		t.NO_USE_MONEY,
+		t.CREATE_TIME,
+		t.PAYMENTS_TYPE,
+		t.TRADE_NO,
+		t.REMARK,
+		p.USER_NAME,
+		p.REAL_NAME,
+		p.TPP_USER_CUST_ID,
+		q.USER_NAME as TO_USER_NAME,
+		q.REAL_NAME as TO_REAL_NAME,
+		(CASE t.TO_USER when u'1' THEN u'平台' ELSE  q.USER_NAME END) as TO_TPP_USER_CUST_ID
+        from account_log t
+        left join users p on t.user_id = p.uuid 
+        left join users q on t.to_user = q.uuid 
+      	
+      	<include refid="findManageListWhere" />
+        <choose>
+		  <when test="page != null and page.sort!=null and page.sort!=''">
+		  		order by ${page.sort} ${page.order}
+		   </when>
+		  <otherwise>
+		  		order by t.create_timestamp desc
+		  </otherwise>
+		</choose>
+	</select>
+	
+	<select id="getManageCount" resultType="int">
+        select count(t.UUID)
+        from account_log t
+        left join users p on t.user_id = p.uuid 
+        left join users q on t.to_user = q.uuid       	
+      	<include refid="findManageListWhere" />
+	</select>
+	
+	<!-- 后台资金日志导出 -->
+	<select id="findManageListExportExcel" resultMap="accountLogResultMap">
+        select 
+		t.UUID,
+		t.USER_ID,
+		t.ACCOUNT_CODE,
+		t.TO_USER,
+		t.MONEY,
+		t.USE_MONEY,
+		t.NO_USE_MONEY,
+		t.CREATE_TIME,
+		t.PAYMENTS_TYPE,
+		t.TRADE_NO,
+		t.REMARK,
+		p.USER_NAME,
+		p.REAL_NAME,
+		p.TPP_USER_CUST_ID,
+		q.USER_NAME as TO_USER_NAME,
+		q.REAL_NAME as TO_REAL_NAME,
+		(CASE t.TO_USER when u'1' THEN u'平台' ELSE  q.USER_NAME END) as TO_TPP_USER_CUST_ID,
+		sd.item_name ACCOUNT_TYPE
+        from account_log t
+        left join users p on t.user_id = p.uuid 
+        left join users q on t.to_user = q.uuid 
+        left join sys_dict_data sd on t.account_type = sd.item_value
+        where 1 = 1
+        
+		<if test="userName != null and userName != ''">and p.user_name like '%'||#{userName}||'%'   </if>
+ 		<if test="realName != null and realName != ''">and p.real_name like '%'||#{realName}||'%'   </if>
+ 		<if test="toUserName != null and toUserName != ''">and q.user_name like '%'||#{toUserName}||'%'   </if>
+ 		<if test="toRealName != null and toRealName != ''">and q.real_name like '%'||#{toRealName}||'%'   </if>
+ 		<if test="keywords != null and keywords != ''">and (p.user_name like '%'||#{keywords}||'%' or p.real_name like '%'||#{keywords}||'%' )  </if><!-- or q.user_name like '%'||#{keywords}||'%' or q.real_name like '%'||#{keywords}||'%' -->
+		 <if test="dateType == null or dateType == '' or dateType == '00'">
+		     <if test="startTime != null and startTime != ''">and t.CREATE_TIME &gt;= to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')</if>
+		     <if test="endTime != null and endTime != ''">and t.CREATE_TIME &lt;= to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')</if>        
+        </if>
+        
+        <choose>
+		  <when test="page != null and page.sort!=null and page.sort!=''">
+		  		order by ${page.sort} ${page.order}
+		   </when>
+		  <otherwise>
+		  		order by t.create_timestamp desc 
+		  </otherwise>
+		</choose>
+	</select>
+
+  	<!-- 根据日期查询记录 -->
+    <select id="findByDate" resultMap="accountLogResultMap" parameterType="com.rd.account.domain.AccountLog">
+        select <include refid="table_columns" />
+        from account_log  
+        <where>
+        <if test="userId != null and userId != ''">and user_id = #{userId}</if>
+        <if test="accountCode != null and accountCode != ''">and account_code = #{accountCode}</if>
+        <if test="accountType != null and accountType != ''">and account_type = #{accountType}</if>
+        <if test="dateTypeTime != null and dateTypeTime != ''">and create_time &gt; #{dateTypeTime}</if>
+        <if test="dateType == null or dateType == ''">
+		     <if test="startTime != null and startTime != ''">and create_time &gt;= to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')</if>
+		     <if test="endTime != null and endTime != ''">and create_time &lt;= to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')</if>        
+        </if>
+        <if test="accountTypeSet != null and accountTypeSet.length &gt; 0 ">
+         		and account_type in
+         <foreach collection="accountTypeSet" item="accountType" open="(" separator="," close=")">  
+            #{accountType} 
+         </foreach>	
+         </if>
+      </where>  
+        order by create_timestamp desc
+	</select>
+	
+	<!-- 根据日期统计收益-->
+    <select id="yesterdayEarnAmount" resultMap="accountLogResultMap" parameterType="com.rd.account.domain.AccountLog">
+        select nvl(SUM(a.earn),0) as money, a.user_id
+        from account_log a, users u where a.user_id=u.uuid
+        and u.tpp_status='1' and a.earn is not null
+        and a.create_time &gt;= to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss') 
+        and a.create_time &lt;= to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')
+        GROUP BY a.user_id
+	</select>
+
+	<!-- 查询处昨日17点30~今日17点30 所有有资金操作的用户 -->
+	<select id="findListForScanner" resultType="String" parameterType="com.rd.account.domain.AccountLog"> 
+		select  DISTINCT a.user_id
+		from  account_log a, users u where a.user_id=u.uuid
+		and u.tpp_status=#{tppStatus}  and a.create_time &gt;= to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss') 
+		and a.create_time &lt;= to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')
+	</select>
+</mapper>

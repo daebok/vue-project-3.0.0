@@ -1,0 +1,120 @@
+@import (reference)'../../../style/common.less';
+@import '../../../style/account.less';
+.account-content .main-title{
+  margin: 30px 0 24px;
+}
+.account-content{
+  .red-packet-info{
+   border:solid 2px #fff4f1;
+   height: 100px;
+   line-height: 96px;
+   .f14();
+   color: #ffad93;
+   text-align: center;
+   em{
+    color:#fb8966;
+    font-size: 30px;
+    margin: 0 20px 0 0;
+    vertical-align: middle;
+   }
+   .num{
+    color: @color-main;
+    .f24();
+    margin: 0 4px;
+    vertical-align: middle;
+   }
+   background: url(../../../style/images/friend.png) #fff9f7 no-repeat right bottom;
+  }
+  .invite-link{
+    .clearfix();
+    margin: 0 0 45px;
+    dl{
+      padding-top: 50px;
+      .fl();
+      dt{
+        overflow: hidden;
+        .f14();
+        color: @color-text;
+        em{
+          .f24();
+          color: @color-main;
+        }
+      }
+    }
+    .qrcode{
+      width: 155px;
+      margin-right: 140px;
+      dt{
+        em{
+          .fl();
+          .f28();
+          position: relative;
+          top: -5px;
+          margin-right: 10px;
+        }
+        .text{
+          line-height: 17px;
+          .fl();
+          width: 115px;
+        }
+      }
+      dd{
+        padding: 0 0 0 10px;
+      }
+    }
+    .link{
+      width: 182px;
+      margin-right: 123px;
+      dt{
+        em{
+          margin: 0 10px 0 0;
+        }
+      }
+      dd{
+        padding:33px 0 0 5px;
+        em{
+          .f36();
+          margin-right:33px;
+        }
+        .weibo{
+          color: #f23f53;
+        }
+        .qq{
+          color: #169bff;
+        }
+        .qzone{
+          color: #ffa944;
+        }
+      }
+    }
+    .copylink{
+      dd{
+        padding: 21px 0 0 0;
+      }
+      dt{
+        em{
+          margin-right: 12px;
+        }
+      }
+      input{
+        display: block;
+        border:solid 1px @color-tipsbg;
+        .f14();
+        color: @color-text;
+        width: 240px;
+        height: 40px;
+        line-height: 40px;
+        padding: 0 0 0 10px;
+      }
+      .copy{
+        color: #fff;
+        display: inline-block;
+        text-align: center;
+        border-radius: 3px;
+        cursor: pointer;
+        margin:10px 0 0 50px;
+        .form-button(@padding: 0px,@width: 130px,@fontsize: 14px,@lineheight:36px);
+      }
+    }
+  }
+}

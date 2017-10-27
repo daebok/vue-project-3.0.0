@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="format-detection" content="telephone=no">
+    <title>变现-${web_name!""}</title>
+    <link rel="stylesheet" type="text/css" href="/themes/css/common-5535fa1dbf.css"/>
+    <link rel="stylesheet" type="text/css" href="/themes/css/myrealizesetting-39b0e03462.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <#include "/include/header.html">
+    <input type="hidden" id="j-date" value="${daysOfYear!0}">
+    <input type="hidden" id="j-assets" value="${waitAmount!0}">
+    <input type="hidden" id="j-realizeRateMin" value="${rule.realizeRateMin!0}">
+    <input type="hidden" id="j-realizeRateMax" value="${rule.realizeRateMax!0}">
+    <input type="hidden" id="j-waitInterest" value="${waitInterest!0}">
+    <input type="hidden" id="j-uuid" value="${invest.uuid!0}"><!-- 投资ID -->
+    <input type="hidden" id="j-timeLimit" value="${timeLimit!0}">
+    <input type="hidden" id="j-all" value="${rule.sellStyle!0}">
+    <@token name="commitRealizeToken"/>
+    <div class="site-row account-content clearfix">
+        <div class="site-col-4 account-side" id="j-sider-menu">
+            <div class="loading"></div>
+        </div>
+        <div class="site-col-20 site-col-last">   
+            <div class="account-main">
+                <div class="main-title">变现设置<a class="backBtn" href="/member/myRealize/list.html">返回</a></div>
+                <div id="j-myrealize-setting">
+                      <div class="loading"></div> 
+                </div>
+                <div class="help">
+                  <div class="help-title"><em class="iconfont">&#xe639;</em>温馨提示</div>
+                  <ol>
+                    <li>发起变现申请的时间早于${rule.issueTime!}，则在当天${rule.raiseEndTime!}之前未变现成功则自动撤销变现申请，若变现成功则放款；若发起变现申请的时间晚于${rule.issueTime!}，则在第二天${rule.raiseEndTime!}之前未变现成功则自动撤销变现申请，若变现成功则放款；</li>
+                    <li>按变现金额的${rule.feeRate!0}%收取服务费，单次变现收取服务费总额不大于${rule.feeSingleMax!0}元。</li>
+                    <li>申请变现期间及变现成功后，原始项目的还款金额都需要冻结。</li>                        
+                  </ol>
+                </div>
+            </div>
+        </div>
+    </div> 
+    <#include "/include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/themes/js/common-5f2af2b543.js"></script>
+<script src="/themes/js/myrealizesetting-c7fc5bc449.js"></script>
+</html>

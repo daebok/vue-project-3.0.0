@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.project.mapper.BorrowMapper">
+	<resultMap type="com.rd.ifaes.core.project.domain.Borrow" id="borrowResultMap">
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="content" column="CONTENT"/>
+		<result property="borrowUse" column="BORROW_USE"/>
+		<result property="period" column="PERIOD"/>
+		<result property="repaymentAccount" column="REPAYMENT_ACCOUNT"/> 
+		<result property="repaymentYesAccount" column="REPAYMENT_YES_ACCOUNT"/>
+		<result property="repaymentYesInterest" column="REPAYMENT_YES_INTEREST"/>
+		<result property="bondUseful" column="BOND_USEFUL"/>
+		<result property="bondMaxTurn" column="BOND_MAX_TURN"/>
+		<result property="borrowNature" column="BORROW_NATURE"/>
+		<result property="hasPawn" column="HAS_PAWN"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		PROJECT_ID,
+		CONTENT,
+		BORROW_USE,
+		PERIOD,
+		REPAYMENT_ACCOUNT,
+		REPAYMENT_YES_ACCOUNT,
+		REPAYMENT_YES_INTEREST,
+		BOND_USEFUL,
+		BOND_MAX_TURN,
+		BORROW_NATURE,
+		HAS_PAWN
+    </sql>
+	<sql id="entity_properties">
+		#{projectId},
+		#{content},
+		#{borrowUse},
+		#{period},
+		#{repaymentAccount},
+		#{repaymentYesAccount},
+		#{repaymentYesInterest},
+		#{bondUseful},
+		#{bondMaxTurn},
+		#{borrowNature},
+		#{hasPawn}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+        	and exists (select uuid from project bb where bb.uuid = borrow.PROJECT_ID)
+            <if test="projectId != null and projectId != ''">and PROJECT_ID = #{projectId}</if>
+            <if test="content != null and content != ''">and CONTENT = #{content}</if>
+            <if test="borrowUse != null and borrowUse != ''">and BORROW_USE = #{borrowUse}</if>
+			<if test="period != null">and PERIOD = #{period}</if>
+			<if test="repaymentAccount != null">and REPAYMENT_ACCOUNT = #{repaymentAccount}</if>
+			<if test="repaymentYesAccount != null">and REPAYMENT_YES_ACCOUNT = #{repaymentYesAccount}</if>
+			<if test="repaymentYesInterest != null">and REPAYMENT_YES_INTEREST = #{repaymentYesInterest}</if>
+            <if test="bondUseful != null and bondUseful != ''">and BOND_USEFUL = #{bondUseful}</if>
+			<if test="bondMaxTurn != null">and BOND_MAX_TURN = #{bondMaxTurn}</if>
+            <if test="borrowNature != null and borrowNature != ''">and BORROW_NATURE = #{borrowNature}</if>
+            <if test="hasPawn != null and hasPawn != ''">and HAS_PAWN = #{hasPawn}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.project.domain.Borrow">
+		insert into borrow( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into borrow( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+				#{item.projectId},
+				#{item.content},
+				#{item.borrowUse},
+				#{item.period},
+				#{item.repaymentAccount},
+				#{item.repaymentYesAccount},
+				#{item.repaymentYesInterest},
+				#{item.bondUseful},
+				#{item.bondMaxTurn},
+				#{item.borrowNature},
+				#{item.hasPawn},
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from borrow
+		where PROJECT_ID = #{id}
+	</delete>
+	
+	<update id="deleteBatch">
+		update borrow set delete_flag = 1
+		where PROJECT_ID in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update borrow set delete_flag = 1 
+		where PROJECT_ID = #{projectId}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.project.domain.Borrow">
+		update borrow 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="content != null and content != ''">CONTENT = #{content},</if>
+            <if test="borrowUse != null and borrowUse != ''">BORROW_USE = #{borrowUse},</if>
+			<if test="period != null">PERIOD = #{period},</if>
+			<if test="repaymentAccount != null">REPAYMENT_ACCOUNT = #{repaymentAccount},</if>
+			<if test="repaymentYesAccount != null">REPAYMENT_YES_ACCOUNT = #{repaymentYesAccount},</if>
+			<if test="repaymentYesInterest != null">REPAYMENT_YES_INTEREST = #{repaymentYesInterest},</if>
+            <if test="bondUseful != null and bondUseful != ''">BOND_USEFUL = #{bondUseful},</if>
+			<if test="bondMaxTurn != null">BOND_MAX_TURN = #{bondMaxTurn},</if>
+            <if test="borrowNature != null and borrowNature != ''">BORROW_NATURE = #{borrowNature},</if>
+            <if test="hasPawn != null and hasPawn != ''">HAS_PAWN = #{hasPawn},</if>
+		</trim>
+		<where>PROJECT_ID = #{projectId}</where>
+	</update>
+
+    <select id="findAll" resultMap="borrowResultMap">
+        select <include refid="table_columns" />
+        from borrow
+    </select>
+
+	<sql id="findListWhere">
+		<where>
+		      bb.borrow_flag = '1'
+	        <if test="status == null and statusSet == null"> and  bb.status &lt;&gt; 30</if>
+	        <if test="borrowNature != null and borrowNature != ''">and b.borrow_nature = #{borrowNature}</if>
+	        <if test="timeType != null and timeType != ''">and bb.TIME_TYPE = #{timeType}</if>
+	        <if test="repayStyle != null and repayStyle != ''">and bb.REPAY_STYLE = #{repayStyle}</if>
+	        <if test="status != null and status != ''">and bb.STATUS = #{status}</if>
+	        <if test="vouchStatus != null and vouchStatus == 0">and bb.VOUCH_STATUS = 0 </if>
+		    <if test="vouchStatus != null and vouchStatus == 1">and bb.VOUCH_STATUS in (1,2) </if>
+	        <if test="isVouch != null and isVouch != ''">and bb.IS_VOUCH = #{isVouch}</if>
+	        <if test="hasPawn != null and hasPawn != ''">and b.HAS_PAWN = #{hasPawn}</if>
+	        <if test="vouchId != null and vouchId != ''">and bb.VOUCH_ID = #{vouchId}</if>
+	        <if test="statusSet != null and statusSet != ''">
+	        	and bb.STATUS in 
+	        		<foreach collection="statusSet" item="status" open="(" separator="," close=")">#{status}</foreach>
+	        </if>
+	        <include refid="com.rd.ifaes.core.project.mapper.ProjectMapper.queryConditionSql" />
+	        <if test="projectName != null and projectName != ''">and bb.PROJECT_NAME like concat('%', #{projectName},'%')</if>
+	        <if test="borrower != null and borrower != ''">and u.real_name like concat('%',#{borrower},'%') </if>
+	        <if test="keywords != null and keywords != ''">
+	        	and (bb.PROJECT_NAME like concat('%',#{keywords},'%') 
+	        		or u.USER_NAME like concat('%',#{keywords},'%') 
+	        		or u.real_name like concat('%',#{keywords},'%') )
+	       </if>
+	       <if test="listTag != null">
+				<if test="listTag == 'stop'">
+					and bb.show_time &lt;= now() and DATE_ADD(bb.sale_time,INTERVAL bb.raise_time_limit day) &gt;= now()
+					and  bb.account_yes &lt;   bb.account
+				</if>
+			</if>
+			<if  test="showing != null and showing== 1"> and (bb.show_time is null or bb.show_time > now() ) </if>
+		</where>
+	</sql>
+
+    <select id="findList" resultMap="borrowFullResultMap">
+       select 
+       		<if test="(keywords != null and keywords != '') or (borrower != null and borrower != '')">u.user_name, u.real_name borrower ,</if>
+       		<if test="borrowNature != null and borrowNature != ''">b.project_id, b.borrow_nature, b.borrow_use,b.repayment_account,b.repayment_yes_account,b.repayment_yes_interest,</if>
+       		bb.project_type_id,bb.uuid,bb.user_id, bb.project_no, bb.project_name, bb.account, bb.apr, bb.time_limit, bb.time_type, bb.status, bb.repay_style, 
+			bb.last_repay_time, bb.step_account,bb.cost_manage,bb.project_type,
+			bb.lowest_account, bb.most_account, bb.interest_manage_rate, bb.borrow_manage_rate, bb.create_time,bb.vouch_status, bb.update_time, 
+			bb.raise_time_limit, bb.show_time, bb.sale_time , bb.raise_end_time,bb.account_yes,bb.repay_amount,bb.repay_yes_account,bb.repay_yes_interest,
+			bb.vouch_verify_time, bb.overdue_fee_rate  
+		from 
+		<if test="borrowNature != null and borrowNature != ''">borrow b inner join project bb on b.PROJECT_ID = bb.uuid</if>
+		<if test="borrowNature == null or borrowNature == ''">project bb</if>
+		<if test="(keywords != null and keywords != '') or (borrower != null and borrower != '')">
+			inner join user u on bb.user_id = u.uuid
+		</if>
+        <include refid="findListWhere"/>		
+	    <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by bb.CREATE_TIME desc </if>
+	</select>
+	
+
+    <select id="getCount" resultType="int" >
+        select count(b.PROJECT_ID) 
+        from borrow b inner join project bb on b.PROJECT_ID = bb.uuid 
+			inner join user u on bb.user_id = u.uuid
+        <include refid="findListWhere" />
+    </select>
+
+
+    <select id="get" resultMap="borrowFullResultMap" parameterType="String" >
+		select *
+		from project bb, borrow b
+		where bb.uuid = b.PROJECT_ID and bb.uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+		
+	<!-- project和 borrow两张表的集合列 -->
+	<resultMap type="com.rd.ifaes.core.project.domain.Borrow" id="borrowFullResultMap" 
+		extends="com.rd.ifaes.core.project.mapper.ProjectMapper.projectResultMap">
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="content" column="CONTENT"/>
+		<result property="borrowUse" column="BORROW_USE"/>
+		<result property="period" column="PERIOD"/>
+		<result property="repaymentAccount" column="REPAYMENT_ACCOUNT"/>
+		<result property="repaymentYesAccount" column="REPAYMENT_YES_ACCOUNT"/>
+		<result property="repaymentYesInterest" column="REPAYMENT_YES_INTEREST"/>
+		<result property="bondUseful" column="BOND_USEFUL"/>
+		<result property="bondMaxTurn" column="BOND_MAX_TURN"/>
+		<result property="borrowNature" column="BORROW_NATURE"/>
+		<result property="hasPawn" column="HAS_PAWN"/>
+		<result property="reviewTime" column="REVIEM_TIME"/>
+		<result property="costManage" column="COST_MANAGE"/>
+	</resultMap>
+	
+	<!-- 根据产品id获取是否可转让 -->
+	<select id="getBondUsefulByProjectId" resultType="String" parameterType="String">
+        select bond_useful from borrow where project_id = #{projectId}
+    </select>
+    
+    <!-- 产品记录  -->
+    <select id="findRecord" resultMap="borrowFullResultMap">
+       select 
+       		<if test="(keywords != null and keywords != '') or (borrower != null and borrower != '')">u.user_name, u.real_name borrower ,</if>
+       		<if test="borrowNature != null and borrowNature != ''">b.project_id, b.borrow_nature, b.borrow_use, bb.step_account,b.repayment_account,b.repayment_yes_account,b.repayment_yes_interest,</if>
+       		bb.project_type_id,bb.uuid,bb.user_id, bb.project_no, bb.project_name, bb.account, bb.apr, bb.time_limit, bb.time_type,bb.repay_style, 
+            	(case when (  bb.status ='2'  or (bb.status ='4' and bb.show_time > now() ) ) then 40
+			         when  (  bb.status ='4'  and bb.show_time &lt;= now() and  bb.sale_time > now() ) then 41
+			         else  bb.status end)  status, 
+			bb.last_repay_time,bb.cost_manage,
+			bb.lowest_account, bb.most_account, bb.interest_manage_rate, bb.borrow_manage_rate, bb.create_time,bb.vouch_status, bb.update_time,bb.review_time, 
+			bb.raise_time_limit, bb.show_time, bb.sale_time , bb.raise_end_time,bb.account_yes,bb.repay_amount,bb.repay_yes_account,bb.repay_yes_interest,
+			bb.vouch_verify_time, bb.overdue_fee_rate,
+			<!-- (select l.remark from project_verify_log l where l.project_id= bb.uuid order by l.create_time desc limit 1)  verifyRemark, -->
+			(select count(uuid) from project_invest pi where pi.project_id = bb.uuid and pi.status != '2') invest_count
+		from 
+		<if test="borrowNature != null and borrowNature != ''">borrow b inner join project bb on b.PROJECT_ID = bb.uuid</if>
+		<if test="borrowNature == null or borrowNature == ''">project bb</if>
+		<if test="(keywords != null and keywords != '') or (borrower != null and borrower != '')">
+			inner join user u on bb.user_id = u.uuid
+		</if>
+       	<where>
+       		bb.borrow_flag ='1'  and bb.realize_flag = '0'
+	        <if test="borrowNature != null and borrowNature != ''">and b.borrow_nature = #{borrowNature}</if>
+	        <if test="timeType != null and timeType != ''">and bb.TIME_TYPE = #{timeType}</if>
+	        <if test="repayStyle != null and repayStyle != ''">and bb.REPAY_STYLE = #{repayStyle}</if>
+	         <choose>
+	             <!--  <when test="status == null  or status ==''"> and  bb.status &lt;&gt; '30'</when> -->
+	             <when test="status != null and status==40">and (  bb.status ='2'  or (bb.status ='4' and bb.show_time > now() )) </when>
+	             <when test="status != null and status==41">and (  bb.status ='4'  and bb.show_time &lt;= now()  and bb.sale_time > now() ) </when>
+	             <when test="status != null and status != ''">and bb.status = #{status}</when>    
+	       </choose>
+	        <include refid="com.rd.ifaes.core.project.mapper.ProjectMapper.queryConditionSql" />
+	        <if test="projectName != null and projectName != ''">and bb.PROJECT_NAME like concat('%', #{projectName},'%')</if>
+	        <if test="borrower != null and borrower != ''">and u.real_name like concat('%',#{borrower},'%') </if>
+	        <if test="keywords != null and keywords != ''">
+	        	and (bb.PROJECT_NAME like concat('%',#{keywords},'%') 
+	        		or u.USER_NAME like concat('%',#{keywords},'%') 
+	        		or u.real_name like concat('%',#{keywords},'%') )
+	       </if>
+		</where>
+	    <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by bb.CREATE_TIME desc </if>
+	</select>
+	
+	<!-- 查询具有合同协议的记录 -->
+	<select id="findByContract" resultMap="borrowFullResultMap">
+		select
+		<if test="(keywords != null and keywords != '') or (borrower != null and borrower != '')">u.user_name, u.real_name borrower ,</if>
+		<if test="borrowNature != null and borrowNature != ''">b.project_id, b.borrow_nature, b.borrow_use, bb.step_account,b.repayment_account,b.repayment_yes_account,b.repayment_yes_interest,</if>
+       		bb.project_type_id,bb.uuid,bb.user_id, bb.project_no, bb.project_name, bb.account, bb.apr, bb.time_limit, bb.time_type,bb.repay_style, 
+       		bb.last_repay_time,bb.cost_manage,bb.status,
+			bb.lowest_account, bb.most_account, bb.interest_manage_rate, bb.borrow_manage_rate, bb.create_time,bb.vouch_status, bb.update_time,bb.review_time, 
+			bb.raise_time_limit, bb.show_time, bb.sale_time , bb.raise_end_time,bb.account_yes,bb.repay_amount,bb.repay_yes_account,bb.repay_yes_interest,
+			bb.vouch_verify_time, bb.overdue_fee_rate
+			from
+			<if test="borrowNature != null and borrowNature != ''">borrow b inner join project bb on b.PROJECT_ID = bb.uuid</if>
+			<if test="borrowNature == null or borrowNature == ''">project bb</if>
+			<if test="(keywords != null and keywords != '') or (borrower != null and borrower != '')">
+				inner join user u on bb.user_id = u.uuid
+			</if>
+	       	<where>
+	       		bb.borrow_flag ='1'  and bb.realize_flag = '0'
+		        <if test="borrowNature != null and borrowNature != ''">and b.borrow_nature = #{borrowNature}</if>
+		        <if test="timeType != null and timeType != ''">and bb.TIME_TYPE = #{timeType}</if>
+		        <if test="repayStyle != null and repayStyle != ''">and bb.REPAY_STYLE = #{repayStyle}</if>	
+		        and bb.status in (6,8,9)
+			    <include refid="com.rd.ifaes.core.project.mapper.ProjectMapper.queryConditionSql" />
+		        <if test="projectName != null and projectName != ''">and bb.PROJECT_NAME like concat('%', #{projectName},'%')</if>
+		        <if test="borrower != null and borrower != ''">and u.real_name like concat('%',#{borrower},'%') </if>
+		        <if test="keywords != null and keywords != ''">
+		        	and (bb.PROJECT_NAME like concat('%',#{keywords},'%') 
+		        		or u.USER_NAME like concat('%',#{keywords},'%') 
+		        		or u.real_name like concat('%',#{keywords},'%') )
+		       </if>
+			</where>
+		    <if test="page != null and page.sort!=null and page.sort!=''">
+	        	order by ${page.sort} ${page.order}
+	        </if>
+	        <if test="page == null or page.sort == null or page.sort == ''">order by bb.CREATE_TIME desc </if>
+	</select>
+	
+	<select id="findBorrowByIds" resultMap="borrowResultMap" >
+		select <include refid="table_columns" />
+		from borrow
+	    where PROJECT_ID in
+         <foreach collection="borrowIds" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>
+	</select>
+	
+	<select id="getByProjectId" resultMap="borrowResultMap" >
+		select <include refid="table_columns" />
+		from borrow
+	    where PROJECT_ID = #{projectId}
+	</select>
+	
+	<select id="findBorrowListByDate" resultMap="borrowFullResultMap"> 
+		select p.uuid,p.user_id,p.project_type_id,p.account,p.is_vouch,p.time_limit,p.time_type,b.borrow_nature,b.has_pawn
+		from borrow b inner join  project p on p.uuid = b.project_id
+		<where>
+			p.status in (6,8,87,88,9,91)
+			and p.review_time &gt; #{startDate} 
+			and p.review_time &lt; #{endDate}
+		</where>
+	</select>
+</mapper>

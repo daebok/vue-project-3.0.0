@@ -1,0 +1,187 @@
+<div class="form-tips-content">
+	<input type="hidden" id="image_server_url" value="${image_server_url}">
+	<form class="form-horizontal" id="form" role="form">
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">名称：</label>
+					<div class="input-box-read">
+						<p>${redRule.ruleName!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">发放条件：</label>
+					<div class="input-box-read">
+						<p>
+						 <#if activityList??>
+						    <#list activityList as item>
+						    	<#if redRule??&&redRule.activityCode == item.activityCode >${item.activityName!}</#if>
+						    </#list>
+						 </#if>
+							<#if redRule.grantUrl?? && redRule.grantUrl != ""> &nbsp; &nbsp; &nbsp;链接地址：${redRule.grantUrl!}</#if>
+						</p>						
+					</div>
+				</div>
+			</li>
+
+			<#if redRule.activityCode == 'tender_suc'>
+			<li class="full-width">
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">发放产品类别：</label>
+					<div class="input-box-read">
+						<p>
+						<#if projectTypeList??>
+							<#list projectTypeList as item>
+								<#if redRule.grantProjectType?contains(item.uuid)>
+									<input type="checkbox" disabled="true" name="grantProjectType" checked />${item.typeName!}
+								</#if>
+							</#list>
+				   		</#if>
+				   		</p>
+					</div>
+				</div>
+			</li>
+			</#if>
+			<li>
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">发放类型：</label>
+					<div class="input-box-read">
+						<p><#if redRule.grantType == "1" >固定金额
+						   <#elseif redRule.grantType == "2" >固定比例
+						   <#elseif redRule.grantType == "3" >金额满返
+						   <#elseif redRule.grantType == "4" >比例满返
+						   </#if>
+						</p>
+					</div>
+				</div>
+			</li>
+			<#if redRule.totalNum??>
+				<li>
+					<div class="form-group">
+						<label for="projectName" class="control-label form-label">发放次数：</label>
+						<div class="input-box-read">
+							<p>${redRule.totalNum!}</p>						
+						</div>
+					</div>
+				</li>
+			</#if>
+			<li class="full-width">
+			<div class="form-group clearfix">
+				<#if redRule.grantType == "1">
+					<#list ruleDetailList as item>
+						<div class="sectionAmountList clearfix ">
+							<label class="control-label form-label">固定金额：</label><div class="pull-left"style="padding-top:7px;" >${item.amount!''}</div>
+							<label class="control-label form-label">投资满额：</label><div class="pull-left" style="padding-top:7px;" >${item.useTenderMoney!''}</div>
+						</div>
+					</#list>
+				<#elseif redRule.grantType == "2">
+						<div class="sectionAmountList clearfix ">
+							<label class="control-label form-label">红包比例(%)：</label><div class="pull-left"style="padding-top:7px;" >${redRule.grantRate!}</div>
+						</div>
+				<#elseif redRule.grantType == "3">
+					<#list ruleDetailList as item>
+						<div class="sectionAmountList clearfix ">
+						    <label class="control-label form-label">投资金额区间值：</label><div class="pull-left"style="padding-top:7px;">
+						    <#if item.tenderMax=="-1">
+						   		${item.tenderMin} 以上
+						    <#else>
+						    	${item.tenderMin!''}~${item.tenderMax}
+						    </#if>
+						    </div>
+						    <label class="control-label form-label">红包金额：</label> <div class="pull-left"style="padding-top:7px;">${item.amount!''}</div>
+						    <label class="control-label form-label">投资满额：</label><div class="pull-left"style="padding-top:7px;">${item.useTenderMoney!''}</div>
+						</div>
+					  </#list>
+				<#elseif redRule.grantType == "4">
+					<#list ruleDetailList as item>
+						<div class="sectionAmountList clearfix ">
+						 	<label class="control-label form-label">投资金额区间值：</label><div class="pull-left"style="padding-top:7px;">
+						 	<#if item.tenderMax=="-1">
+						   		${item.tenderMin} 以上
+						    <#else>
+						    	${item.tenderMin!''}~${item.tenderMax}
+						    </#if>
+						 	</div>
+							<label class="control-label form-label">红包比例(%)：</label><div class="pull-left"style="padding-top:7px;">${item.grantRate!''}</div>
+						</div>
+					</#list>
+				 </#if>
+			</div>
+			</li>
+			<#if redRule.grantType == "2" || redRule.grantType == "4">
+			<li>
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">最小金额：</label>
+					<div class="input-box-read">
+						<p>
+						${redRule.grantMin!"0"}
+						</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">最大金额：</label>
+					<div class="input-box-read">
+						<p>
+						${redRule.grantMax!"0"}
+						</p>						
+					</div>
+				</div>
+			</li>
+			</#if>
+			<#if redRule.activityCode!='select_users' &&  redRule.activityCode!='vip_level'>
+			<li>
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">发放时间：</label>
+					<div class="input-box-read">
+						<p>
+						<#if redRule.grantTimeStatus==0>
+							不限制
+						<#else>
+							${redRule.grantStartTime?string('yyyy-MM-dd')!''}起-${redRule.grantEndTime?string('yyyy-MM-dd')!''}止
+						</#if>
+						</p>						
+					</div>
+				</div>
+			</li>
+			</#if>
+			<li>
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">有效期：</label>
+					<div class="input-box-read">
+						<p>
+							<#if redRule.expiryStatus==0>长期有效
+							<#elseif redRule.expiryStatus==1>${redRule.useValidDay!''}天
+							<#elseif redRule.expiryStatus==2>${redRule.useExpireTime?string('yyyy-MM-dd HH:mm:ss')!''}
+							</#if>
+						</p>						
+					</div>
+				</div>
+			</li>
+			<li class="full-width">
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">使用限制：</label>
+					<div class="input-box-read">
+						<p>
+							<#if redRule.useStatus??&&redRule.useStatus==0>不限制
+							<#elseif redRule.useStatus==1>
+								<#if projectTypeList??>
+									<#list projectTypeList as item>
+										<#if redRule.useProjectType?contains(item.uuid)>
+									  		<input type="checkbox" disabled="true" name="useProjectType" checked />${item.typeName!}
+									  	</#if>
+									</#list>
+							    </#if>
+							</#if>
+						</p>						
+					</div>
+				</div>
+			</li>
+			
+		</ul>
+	</form>
+</div>
+

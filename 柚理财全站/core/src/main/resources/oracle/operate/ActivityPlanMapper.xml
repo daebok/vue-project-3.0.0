@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.operate.mapper.ActivityPlanMapper">
+	<resultMap type="com.rd.ifaes.core.operate.domain.ActivityPlan" id="activityPlanResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="activityName" column="ACTIVITY_NAME"/>
+		<result property="activityCode" column="ACTIVITY_CODE"/>
+		<result property="sort" column="SORT"/>
+		<result property="status" column="STATUS"/>
+		<result property="createTime" column="CREATE_TIME"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		ACTIVITY_NAME,
+		ACTIVITY_CODE,
+		SORT,
+		STATUS,
+		CREATE_TIME
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{activityName},
+		#{activityCode},
+		#{sort},
+		#{status},
+		#{createTime}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="activityCode != null and activityCode != ''">and ACTIVITY_CODE = #{activityCode}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+            <if test="activityName != null and activityName != ''">and ACTIVITY_NAME like  '%'||#{activityName}||'%'</if>
+            <if test="keywords != null and keywords != ''">and ACTIVITY_NAME like  '%'||#{keywords}||'%' </if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.operate.domain.ActivityPlan">
+		insert into activity_plan( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">
+		BEGIN		
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into activity_plan( <include refid="table_columns" /> ) 
+		values 
+		( 
+		#{item.uuid},
+				#{item.activityName},
+				#{item.activityCode},
+				#{item.sort},
+				#{item.status},
+				#{item.createTime}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from activity_plan
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update activity_plan set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{uuid} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update activity_plan set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.operate.domain.ActivityPlan">
+		update activity_plan 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="activityName != null and activityName != ''">ACTIVITY_NAME = #{activityName},</if>
+            <if test="status != null and status != ''">STATUS = #{status},</if>
+			<if test="sort != null">SORT = #{sort},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="activityPlanResultMap">
+        select <include refid="table_columns" />
+        from activity_plan 
+        where status=1 
+        order by  sort asc
+    </select>
+
+    <select id="findList" resultMap="activityPlanResultMap">
+        select <include refid="table_columns" />
+        from activity_plan
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from activity_plan
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="activityPlanResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from activity_plan
+		where uuid = #{uuid}
+	</select>
+	
+	<select id="findActivityPlanByCode" resultMap="activityPlanResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from activity_plan
+		where activity_code = #{code}
+	</select>
+	
+	<select id="findRuleByActivityCode" resultType="String" parameterType="String" >
+		select 
+			rule_name
+		from 
+			redenvelope_rule red
+		where 
+			red.activity_code = #{code}
+			and red.status=1  
+			and red.delete_flag=0 
+			and (red.total_num is null or  red.lssue_num &lt; red.total_num ) 
+		UNION ALL
+		(select 
+			rule_name
+		from 
+			rate_coupon_rule rate
+		where 
+			rate.activity_code = #{code}
+			and rate.status=1  
+			and rate.delete_flag=0 
+			and ( rate.total_num is null or rate.lssue_num &lt; rate.total_num )
+		) 
+	</select>
+	
+	<!-- 其他自定义SQL -->
+</mapper>

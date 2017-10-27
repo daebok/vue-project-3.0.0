@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.sys.mapper.UserMessageConfigMapper">
+	<resultMap type="com.rd.ifaes.core.sys.domain.UserMessageConfig" id="userMessageConfigResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="messageType" column="MESSAGE_TYPE"/>
+		<result property="sms" column="SMS"/>
+		<result property="email" column="EMAIL"/>
+		<result property="letter" column="LETTER"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		MESSAGE_TYPE,
+		SMS,
+		EMAIL,
+		LETTER
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{messageType},
+		#{sms},
+		#{email},
+		#{letter}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="messageType != null and messageType != ''">and MESSAGE_TYPE = #{messageType}</if>
+            <if test="sms != null and sms != ''">and SMS = #{sms}</if>
+            <if test="email != null and email != ''">and EMAIL = #{email}</if>
+            <if test="letter != null and letter != ''">and LETTER = #{letter}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.sys.domain.UserMessageConfig">
+		insert into sys_user_message_config( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into sys_user_message_config( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+		#{item.uuid},
+				#{item.userId},
+				#{item.messageType},
+				#{item.sms},
+				#{item.email},
+				#{item.letter}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from sys_user_message_config
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update sys_user_message_config set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update sys_user_message_config set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.sys.domain.UserMessageConfig">
+		update sys_user_message_config 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="userId != null and userId != ''">USER_ID = #{userId},</if>
+            <if test="messageType != null and messageType != ''">MESSAGE_TYPE = #{messageType},</if>
+            <if test="sms != null and sms != ''">SMS = #{sms},</if>
+            <if test="email != null and email != ''">EMAIL = #{email},</if>
+            <if test="letter != null and letter != ''">LETTER = #{letter},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="userMessageConfigResultMap">
+        select <include refid="table_columns" />
+        from sys_user_message_config
+    </select>
+
+    <select id="findList" resultMap="userMessageConfigResultMap">
+        select <include refid="table_columns" />
+        from sys_user_message_config
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from sys_user_message_config
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="userMessageConfigResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from sys_user_message_config
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+    <select id="findByParams" resultMap="userMessageConfigResultMap">
+		select <include refid="table_columns" />
+		from sys_user_message_config
+		<include refid="page_where" /> limit 1
+	</select>
+	
+
+</mapper>

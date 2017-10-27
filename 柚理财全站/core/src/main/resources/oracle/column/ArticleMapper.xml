@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.column.mapper.ArticleMapper">
+	<resultMap type="com.rd.ifaes.core.column.domain.Article" id="articleResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="sectionCode" column="SECTION_CODE"/>
+		<result property="title" column="TITLE"/>
+		<result property="sort" column="SORT"/>
+		<result property="isRecommend" column="IS_RECOMMEND"/>
+		<result property="isTop" column="IS_TOP"/>
+		<result property="content" column="CONTENT"/>
+		<result property="remark" column="REMARK"/>
+		<result property="clicks" column="CLICKS"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="picPath" column="PIC_PATH"/>
+		<result property="url" column="URL"/>
+		<result property="deleteFlag" column="DELETE_FLAG"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		SECTION_CODE,
+		TITLE,
+		SORT,
+		IS_RECOMMEND,
+		IS_TOP,
+		CONTENT,
+		REMARK,
+		CLICKS,
+		CREATE_TIME,
+		PIC_PATH,
+		URL,
+		DELETE_FLAG
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{sectionCode},
+		#{title},
+		#{sort},
+		#{isRecommend},
+		#{isTop},
+		#{content},
+		#{remark},
+		#{clicks},
+		#{createTime},
+		#{picPath},
+		#{url},
+		#{deleteFlag}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="title != null and title != ''">and TITLE like '%'||#{title}||'%'</if>
+			<if test="sort != null">and SORT = #{sort}</if>
+            <if test="isRecommend != null and isRecommend != ''">and IS_RECOMMEND = #{isRecommend}</if>
+            <if test="isTop != null and isTop != ''">and IS_TOP = #{isTop}</if>
+            <if test="content != null and content != ''">and CONTENT = #{content}</if>
+            <if test="remark != null and remark != ''">and REMARK = #{remark}</if>
+			<if test="clicks != null">and CLICKS = #{clicks}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="picPath != null and picPath != ''">and PIC_PATH = #{picPath}</if>
+            <if test="url != null and url != ''">and URL = #{url}</if>
+            <if test="deleteFlag != null and deleteFlag != ''">and DELETE_FLAG = #{deleteFlag}</if>
+            <if test="startTime != null and startTime != ''">and CREATE_TIME &gt; to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')</if>
+		    <if test="endTime != null   and endTime != ''">and CREATE_TIME &lt; to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')</if>
+		    <if test="keywords != null and keywords != ''">and (TITLE like '%'||#{keywords}||'%'  ) </if>
+		     <!--  后台列表查询 根据栏目获取所有子节点下的内容后期改造成sectionId来关联 -->
+		    <if test="sectionUuids != null and sectionUuids.length &gt; 0">
+		         and SECTION_CODE in
+				<foreach collection="sectionUuids" item="sid" open="(" separator="," close=")">  
+		            #{sid} 
+		        </foreach>
+        	</if>
+        	<!-- 前台展示文章内容根据具体code来展示，不需要展示子节点 -->
+        	<if test="sectionCode != null and sectionCode != ''">and section_code = #{sectionCode}</if>
+        </trim>
+        	order by IS_TOP DESC,IS_RECOMMEND DESC,SORT ASC
+        	<if test="page != null and page.order != null and page.order != ''">,CREATE_TIME ${page.order}</if>
+    		<if test="page == null">,CREATE_TIME DESC</if>
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.column.domain.Article">
+		insert into article( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">	
+		BEGIN	
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into article( <include refid="table_columns" /> ) 
+		values 
+		( 
+			#{item.uuid},
+			#{item.sectionCode},
+			#{item.title},
+			#{item.sort},
+			#{item.isRecommend},
+			#{item.isTop},
+			#{item.content},
+			#{item.remark},
+			#{item.clicks},
+			#{item.createTime},
+			#{item.picPath},
+			#{item.url},
+			#{item.deleteFlag}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<update id="deleteBatch">
+		update article set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="uuid" open="(" separator="," close=")">  
+            #{uuid} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update article set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.column.domain.Article">
+		update article 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="title != null and title != ''">TITLE = #{title},</if>
+			<if test="sort != null">SORT = #{sort},</if>
+            <if test="isRecommend != null and isRecommend != ''">IS_RECOMMEND = #{isRecommend},</if>
+            <if test="isTop != null and isTop != ''">IS_TOP = #{isTop},</if>
+            <if test="content != null and content != ''">CONTENT = #{content},</if>
+            <if test="remark != null and remark != ''">REMARK = #{remark},</if>
+			<if test="clicks != null">CLICKS = #{clicks},</if>
+            <if test="picPath != null">PIC_PATH = #{picPath},</if>
+            <if test="url != null and url != ''">URL = #{url},</if>
+            <if test="deleteFlag != null and deleteFlag != ''">DELETE_FLAG = #{deleteFlag}</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="articleResultMap">
+        select <include refid="table_columns" />
+        from article
+    </select>
+
+    <select id="findList" resultMap="articleResultMap">
+        select <include refid="table_columns" />
+        from article
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from article
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="articleResultMap" parameterType="com.rd.ifaes.core.column.domain.Article" >
+		select <include refid="table_columns" />
+		from article
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<!-- 更新点击次数 -->
+	<update id="updateClicks" parameterType="String">
+		update article  set clicks =clicks+1 where uuid=#{uuid}
+	</update>
+	
+	<select id="findArticleBySectionCode" resultMap="articleResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from article
+		where section_code = #{sectionCode}
+	</select>
+	
+	
+</mapper>

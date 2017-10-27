@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.user.mapper.UserMapper">
+	<resultMap type="com.rd.ifaes.core.user.domain.User" id="userResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userNo" column="USER_NO"/>
+		<result property="userName" column="USER_NAME"/>
+		<result property="pwd" column="PWD"/>
+		<result property="realName" column="REAL_NAME"/>
+		<result property="mobile" column="MOBILE"/>
+		<result property="email" column="EMAIL"/>
+		<result property="status" column="STATUS"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="payPwd" column="PAY_PWD"/>
+		<result property="tppStatus" column="TPP_STATUS"/>
+		<result property="tppUserAccId" column="TPP_USER_ACC_ID"/>
+		<result property="tppUserCustId" column="TPP_USER_CUST_ID"/>
+		<result property="realNameStatus" column="REAL_NAME_STATUS"/>
+		<result property="idNo" column="ID_NO"/>
+		<result property="sex" column="SEX"/>
+		<result property="bussinessCode" column="BUSSINESS_CODE"/>
+		<result property="companyName" column="COMPANY_NAME"/>
+		<result property="contacts" column="CONTACTS"/>
+		<result property="telephone" column="TELEPHONE"/>
+		<result property="taxRegNo" column="TAX_REG_NO"/>
+		<result property="userNature" column="USER_NATURE"/>
+		<result property="inviteName" column="INVITE_NAME"/>
+		<result property="provinceCity" column="PROVINCE_CITY"/>
+		<result property="registChannel" column="REGIST_CHANNEL"/>
+		<result property="collectionMoney" column="COLLECTION_MONEY"/>
+		<result property="paymentMoney" column="PAYMENT_MONRY"/>
+		<result property="investNum" column="INVEST_NUM"/>
+		<result property="borrowNum" column="BORROW_INVEST"/>
+		<result property="registerChannel" column="REGISTER_CHANNEL"/>
+		<result property="accountType" column="ACCOUNT_TYPE"/>
+		<result property="isStock" column="IS_STOCK"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_NO,
+		USER_NAME,
+		PWD,
+		REAL_NAME,
+		MOBILE,
+		EMAIL,
+		STATUS,
+		CREATE_TIME,
+		PAY_PWD,
+		TPP_STATUS,
+		TPP_USER_ACC_ID,
+		TPP_USER_CUST_ID,
+		USER_NATURE,
+		REGISTER_CHANNEL,
+		ACCOUNT_TYPE,
+		IS_STOCK
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userNo},
+		#{userName},
+		#{pwd},
+		#{realName},
+		#{mobile},
+		#{email},
+		#{status},
+		#{createTime},
+		#{payPwd},
+		#{tppStatus},
+		#{tppUserAccId},
+		#{tppUserCustId},
+		#{userNature},
+		#{registerChannel},
+		#{accountType},
+		#{isStock}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and u.UUID = #{uuid}</if>
+            <if test="uuids != null ">
+	          and u.UUID in
+		         <foreach collection="uuids" item="id" open="(" separator="," close=")">  
+		            #{id} 
+		        </foreach>	
+            </if>
+            <if test="userName != null and userName != ''">and u.USER_NAME = #{userName}</if>
+            <if test="mobile != null and mobile != ''">and u.MOBILE = #{mobile}</if>
+            <if test="isVouch != null and isVouch == 1">and u.user_nature = 3 </if>
+            <if test="isVouch != null and isVouch == 0">and u.user_nature in (1, 2) </if>
+            <if test="userNature != null and userNature != ''">and u.user_nature = #{userNature}</if>
+            <if test="keywords != null and keywords != ''">
+            	and (u.USER_NAME like concat('%',#{keywords},'%') or u.REAL_NAME like concat('%',#{keywords},'%') or u.MOBILE like concat('%',#{keywords},'%') ) 
+            </if>
+            <if test="userNo != null and userNo != ''">and u.USER_NO = #{userNo}</if>
+            <if test="email != null and email != ''">and u.EMAIL = #{email}</if>
+            <if test="status != null and status != ''">and u.STATUS = #{status}</if>
+			<if test="createTime != null">and u.CREATE_TIME = #{createTime}</if>
+            <if test="tppStatus != null and tppStatus != ''">and u.TPP_STATUS = #{tppStatus}</if>
+            <if test="tppUserAccId != null and tppUserAccId != ''">and u.TPP_USER_ACC_ID = #{tppUserAccId}</if>
+            <if test="tppUserCustId != null and tppUserCustId != ''">and u.TPP_USER_CUST_ID = #{tppUserCustId}</if>
+            <if test="realName != null and realName != ''">and u.REAL_NAME = #{realName}</if>
+            <if test="startTime != null and startTime != ''">and  u.create_time &gt;= #{startTime}</if>
+		    <if test="endTime != null and endTime != ''">and  u.create_time  &lt;= #{endTime}</if>
+		    <if test="accountType != null and accountType != ''">and  u.account_type = #{accountType}</if>
+		    <if test="isStock != null and isStock != ''">and u.IS_STOCK = #{isStock}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by u.${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.user.domain.User">
+		insert into user( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into user( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+			#{item.uuid},
+			#{item.userNo},
+			#{item.userName},
+			#{item.pwd},
+			#{item.realName},
+			#{item.mobile},
+			#{item.email},
+			#{item.status},
+			#{item.createTime},
+			#{item.payPwd},
+			#{item.tppStatus},
+			#{item.tppUserAccId},
+			#{item.tppUserCustId},
+			#{item.userNature},
+			#{item.registerChannel},
+			#{item.accountType},
+			#{item.isStock}
+		)
+		</foreach>
+	</insert>
+	
+	<update id="update" parameterType="com.rd.ifaes.core.user.domain.User">
+		update user 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="userName != null and userName != ''">USER_NAME = #{userName},</if>
+            <if test="pwd != null and pwd != ''">PWD = #{pwd},</if>
+            <if test="realName != null and realName != ''">REAL_NAME = #{realName},</if>
+            <if test="mobile != null and mobile != ''">MOBILE = #{mobile},</if>
+            <if test="email != null and email != ''">EMAIL = #{email},</if>
+            <if test="status != null and status != ''">STATUS = #{status},</if>
+            <if test="payPwd != null and payPwd != ''">PAY_PWD = #{payPwd},</if>
+            <if test="tppStatus != null and tppStatus != ''">TPP_STATUS = #{tppStatus},</if>
+            <if test="tppUserAccId != null and tppUserAccId != ''">TPP_USER_ACC_ID = #{tppUserAccId},</if>
+            <if test="tppUserCustId != null and tppUserCustId != ''">TPP_USER_CUST_ID = #{tppUserCustId},</if>
+            <if test="userNature != null and userNature != ''">USER_NATURE = #{userNature},</if>
+            <if test="accountType != null and accountType != ''">account_type = #{accountType},</if>
+            <if test="isStock != null and isStock != ''">IS_STOCK = #{isStock},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+	
+	<update id="updateBatch" parameterType="java.util.List">
+		<foreach collection="list" item="item" open="" separator=";" close="">  
+			update user 
+			<trim prefix="set" suffixOverrides=",">
+	            <if test="item.realName != null and item.realName != ''">REAL_NAME = #{item.realName},</if>
+	            <if test="item.tppUserCustId != null and item.tppUserCustId != ''">TPP_USER_CUST_ID = #{item.tppUserCustId},</if>
+			</trim>
+			<where>uuid = #{item.uuid}</where>
+        </foreach>	
+	</update>
+
+    <select id="findAll" resultMap="userResultMap">
+        select <include refid="table_columns" />
+        from user
+    </select>
+
+    <select id="findList" resultMap="userResultMap">
+        select u.UUID,
+			u.USER_NO,
+			u.USER_NAME,
+			u.PWD,
+			u.REAL_NAME,
+			u.MOBILE,
+			u.EMAIL,
+			u.STATUS,
+			u.CREATE_TIME,
+			u.PAY_PWD,
+			u.TPP_STATUS,
+			u.TPP_USER_ACC_ID,
+			u.TPP_USER_CUST_ID,
+			u.USER_NATURE
+        from user u  
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(u.uuid) from user u
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="userResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	
+	<!-- 根据UserNo查找对象-->
+    <select id="findByUserNo" resultMap="userResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user
+		where user_no = #{userNo}
+	</select>
+	
+	<!-- 根据tppUserCustId查找对象-->
+	<select id="findByUserCustId" resultMap="userResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user
+		where tpp_user_cust_id = #{userCustId}
+	</select>
+	
+	<!-- 根据Status查找对象-->
+	<select id="findByStatus" resultMap="userResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user
+		where status = #{status}
+	</select>
+		
+	<!-- 检查重复 -->
+    <select id="checkRepeat" resultType="int" parameterType="com.rd.ifaes.core.user.domain.User">
+        select count(uuid) from user  
+        <where>
+           <if test="uuid != null and uuid != ''">and UUID != #{uuid}</if>
+           <if test="userName != null and userName != ''">and USER_NAME = #{userName}</if>
+           <if test="mobile != null and mobile != ''">and MOBILE = #{mobile}</if>
+           <if test="email != null and email != ''">and EMAIL = #{email}</if>
+           <if test="tppUserCustId != null and tppUserCustId != ''">and TPP_USER_CUST_ID = #{tppUserCustId}</if>
+       </where>    
+   </select>
+   
+   <!-- 查询借款人或担保机构 -->
+   <select id="findBorrower" resultMap="userResultMap" parameterType="com.rd.ifaes.core.user.domain.User">
+	   	select u.uuid, u.user_name, u.user_no, u.tpp_user_cust_id, u.tpp_user_acc_id,
+	   		u.real_name, u.mobile, u.email ,u.create_time, u.user_nature
+	   	 	from user u
+			<if test="isVouch == null or isVouch == 0"> left join user_company_info uci on u.uuid = uci.user_id </if>	
+			<where>
+				 <if test="uuid != null and uuid != ''">and u.uuid = #{uuid} </if>
+		         <if test="userName != null and userName != ''">and u.USER_NAME like concat('%',#{userName},'%') </if>
+		         <if test="mobile != null and mobile != ''">and u.MOBILE like concat('%',#{mobile},'%') </if>
+				 <if test="isVouch != null and isVouch == 1">and u.user_nature = 3 </if>
+				 <if test="isVouch == null or isVouch == 0">and (u.user_nature =1 or (u.user_nature =2 and (uci.credit_code &lt;&gt; '' or uci.bussiness_code &lt;&gt; ''))) </if>
+				 <if test="status !=null and status !=''">and u.status=#{status}</if>
+				 <if test="userNo != null and userNo != ''">and u.USER_NO = #{userNo} </if>
+		         <if test="realNameStatus != null and realNameStatus != ''">and u.TPP_STATUS = #{realNameStatus} </if>
+		         <if test="exceptFreeze != null and exceptFreeze != ''"><![CDATA[ and not exists (select uf.uuid from user_freeze uf where uf.user_id = u.uuid and uf.operation = #{exceptFreeze}) ]]></if>
+				 <if test="startTime !=null and startTime !=''">and u.create_time &gt;= DATE(#{startTime})</if>
+                 <if test="endTime !=null and endTime !=''">and u.create_time &lt;= DATE(#{endTime})</if>
+		         <if test="realName != null and realName != ''">and u.REAL_NAME like concat('%',#{realName},'%') </if>
+		         <if test="keywords != null and keywords != ''">and (u.MOBILE like concat('%',#{keywords},'%') or u.REAL_NAME like concat('%',#{keywords},'%') or u.USER_NAME like concat('%',#{keywords},'%') ) </if>
+          </where>                                               
+         <if test="page == null or page.sort == null or page.sort == ''">order by u.create_time desc  </if>
+         <if test="queryStyle != null and queryStyle== 1 "> limit 5 </if>
+   </select>
+		
+	<!-- 更新登录密码 -->
+	<update id="updatePwd" parameterType="com.rd.ifaes.core.user.model.UserModel">
+	    update user set pwd = #{newLoginPwd} where uuid = #{uuid}
+	</update>
+	
+	<!-- 更新用户状态 -->
+	<update id="updateStatus" parameterType="com.rd.ifaes.core.user.domain.User">
+	    update user set status = #{status} where uuid = #{uuid}
+	</update>
+	
+	<select id="getUserByLoginName" resultMap="userResultMap"  parameterType="com.rd.ifaes.core.user.domain.User">
+		select <include refid="table_columns" />
+		from user
+	   <where>
+		    <choose>
+		         <when  test="mobile != null "> mobile = #{mobile}</when>
+		         <when test="userName != null and userName != ''"> user_name = #{userName}</when>
+		         <when  test="email != null and email != ''"> email = #{email}</when>
+		         <otherwise/>
+		    </choose>
+	    </where>
+	</select>
+	
+	<!-- 查询个人用户 -->
+	<sql id="findPersonUserWhere">
+        <if test="realNameStatus != null and realNameStatus !=''">and u.tpp_status=#{realNameStatus}</if>
+        <if test="status !=null and status !=''">and u.status=#{status}</if>
+        <if test="startTime !=null and startTime !=''">and u.create_time &gt;= DATE(#{startTime})</if>
+        <if test="endTime !=null and endTime !=''">and u.create_time &lt;= DATE(#{endTime})</if>
+        <if test="keywords != null and keywords != ''">and (u.user_name like concat('%',#{keywords},'%') or u.real_name like concat('%',#{keywords},'%') or u.mobile like concat('%',#{keywords},'%'))</if>
+	</sql>
+    <select id="findPersonUser" resultMap="userResultMap" parameterType="com.rd.ifaes.core.user.model.UserModel">
+        select  u.uuid,u.user_name,u.real_name,u.account_type,u.mobile,u.email,u.create_time,u.tpp_user_cust_id,u.tpp_status as real_name_status,u.status,u1.real_name as invite_name,CONCAT(sa.area_name,sar.area_name)as province_city,
+        if(su.regist_channel='1','pc端',if(su.regist_channel='2','APP端','微信端'))as regist_channel,sum(pc.payment) AS COLLECTION_MONEY,IFNULL(sum(pr.payment - pr.payed_amount + pr.late_interest + pr.merchant_late_interest), 0) AS PAYMENT_MONRY
+        from user u LEFT JOIN user_invite ui on u.uuid=ui.invitee_user_id left JOIN user u1 on u1.uuid=ui.invite_user_id LEFT JOIN user_cache uc on u.uuid=uc.user_id LEFT JOIN statistic_user su ON
+				u.uuid=su.user_id left join project_collection pc on u.uuid=pc.user_id AND pc. STATUS = '0' LEFT JOIN project_repayment pr on pr.user_id=u.uuid AND pr. STATUS = '0' left join  sys_area sa on uc.province=sa.area_code LEFT JOIN sys_area sar on uc.city=sar.area_code
+        <if test="freezeOperation !=null and freezeOperation !=''">, user_freeze uf</if>
+        where u.user_nature = #{userNature}
+        <if test="freezeOperation !=null and freezeOperation !=''">and u.uuid = uf.user_id and operation=#{freezeOperation}</if>
+     	<include refid="findPersonUserWhere" />
+     	GROUP BY u.uuid
+        order by u.create_time desc
+	</select>
+	<!-- 取得个人用户数 -->
+	<select id="getPersonUserCount" resultType="int" parameterType="com.rd.ifaes.core.user.model.UserModel">
+        select count(u.uuid)
+        from user u <if test="freezeOperation !=null and freezeOperation !=''">, user_freeze uf</if>
+        where u.user_nature = #{userNature}
+        <if test="freezeOperation !=null and freezeOperation !=''">and u.uuid = uf.user_id and operation=#{freezeOperation}</if>
+        <include refid="findPersonUserWhere" />
+	</select>
+	 
+	<!-- 查询企业用户 -->
+	<sql id="findCompanyUserWhere">
+       <if test="status !=null and status !=''">and u.status=#{status}</if>
+       <if test="startTime !=null and startTime !=''">and u.create_time &gt;= DATE(#{startTime})</if>
+       <if test="endTime !=null and endTime !=''">and u.create_time &lt;= DATE(#{endTime})</if>
+       <if test="companyName != null and companyName != ''">and uci.company_name like concat('%',#{companyName},'%')</if>
+       <if test="keywords != null and keywords != ''">and (u.user_name like concat('%',#{keywords},'%') or uci.company_name like concat('%',#{keywords},'%') or u.mobile like concat('%',#{keywords},'%'))</if>
+	</sql>
+    <select id="findCompanyUser" resultMap="userResultMap" parameterType="com.rd.ifaes.core.user.model.UserModel">
+       select u.uuid, u.user_name,u.account_type, uci.company_name, uci.bussiness_code, uci.org_code,uci.credit_code, uci.contacts, uci.tax_reg_no, u.mobile, u.email, u.create_time, u.tpp_user_cust_id
+       from user u, user_company_info uci<if test="freezeOperation !=null and freezeOperation !=''">, user_freeze uf</if>
+       where u.uuid=uci.user_id and u.user_nature=#{userNature} 
+       <if test="freezeOperation !=null and freezeOperation !=''">and u.uuid = uf.user_id and operation=#{freezeOperation}</if>
+       <include refid="findCompanyUserWhere" />
+       order by u.create_time desc
+	</select>
+	
+	<!-- 取得企业用户数 -->
+	<select id="getCompanyUserCount" resultType="int" parameterType="com.rd.ifaes.core.user.model.UserModel">
+       select count(u.uuid)
+       from user u, user_company_info uci<if test="freezeOperation !=null and freezeOperation !=''">, user_freeze uf</if>
+       where u.uuid=uci.user_id and u.user_nature=#{userNature} 
+       <if test="freezeOperation !=null and freezeOperation !=''">and u.uuid = uf.user_id and operation=#{freezeOperation}</if>
+       <include refid="findCompanyUserWhere" />
+	</select>
+	
+	<sql id="findAccountUserWhere">
+		<where>
+	         <if test="userName != null and userName != ''">and u.USER_NAME like concat('%',#{userName},'%') </if>
+	         <if test="keywords != null and keywords != ''">
+	            and (u.USER_NAME like concat('%',#{keywords},'%') or u.REAL_NAME like concat('%',#{keywords},'%') )
+	         </if>
+        </where>    
+	</sql>
+	<!-- 后台查询用户 -->
+	<select id="findAccountUser" resultMap="userResultMap" parameterType="com.rd.ifaes.core.user.domain.User">
+	   	select u.uuid, u.user_name, u.tpp_user_cust_id, u.tpp_status, u.user_nature,u.real_name
+			from user u
+		 <include refid="findAccountUserWhere" />                                   
+         <if test="page == null or page.sort == null or page.sort == ''">order by u.create_time desc  </if>
+   </select>
+   
+	<select id="getAccountUserCount" resultType="int" parameterType="com.rd.ifaes.core.user.domain.User">
+	   	select count(u.uuid) from user u
+		 <include refid="findAccountUserWhere" />                                 
+   </select>
+   
+   
+   <!-- 查询个人用户 -->
+	<select id="findUserForRed" resultMap="userResultMap" parameterType="com.rd.ifaes.core.user.model.UserModel">
+		select u.uuid, u.user_name,u.real_name,u.mobile,u.user_nature
+		from user u
+		where u.user_nature != '3' 
+		 <if test="uuids != null ">
+	          and u.uuid in
+		         <foreach collection="uuids" item="id" open="(" separator="," close=")">  
+		            #{id} 
+		        </foreach>	
+            </if>
+		 <if test="keywords != null and keywords != ''">and (u.user_name like concat('%',#{keywords},'%') or u.mobile like concat('%',#{keywords},'%') or u.real_name like concat('%',#{keywords},'%'))</if>
+		order by u.create_time desc
+	</select>
+	
+	<!-- 根据被邀请人获取 邀请人 -->
+  	<select id="getByInvitee" resultMap="userResultMap" parameterType="String" >
+		SELECT
+			u.*
+		FROM
+			user u
+		LEFT JOIN 
+			user_invite ui 
+		ON 
+			u.uuid = ui.invite_user_id
+		WHERE
+			ui.invitee_user_id = #{userId}
+ 	 </select>
+ 	 <select id="checkUser" resultType="int" parameterType="String" >
+ 	 	select 
+ 	 		count(uuid)
+ 	 	from 
+ 	 		user u
+ 	 	where u.mobile=#{mobile}
+ 	 </select>
+	<!-- 根据手机号获取用户   -->
+ 	 <select id="getUserByMobile" resultMap="userResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user
+	    where mobile= #{mobile} and status = 0
+	</select>
+	
+	<!-- 根据uuid获取用户   -->
+ 	 <select id="findUserByIds" resultMap="userResultMap"  >
+		select <include refid="table_columns" />
+		from user
+	    where uuid in
+         <foreach collection="uuids" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>
+	</select>
+	
+    <!-- 根据用户名获取用户   -->
+ 	<select id="findByUserName" resultMap="userResultMap">
+		select uuid,user_name
+		from user
+		where user_name !='admin'
+	    <if test="keywords != null and keywords != ''">and user_name like concat('%',#{keywords},'%') </if>
+        order by create_time desc
+	</select>
+	
+    <!-- 统计用户数量   -->
+ 	<select id="getCountByUserName" resultType="int">
+		select ifnull(count(1),0)
+		from user
+		where user_name !='admin'
+	    <if test="keywords != null and keywords != ''">and user_name like concat('%',#{keywords},'%') </if>
+        order by create_time
+	</select>
+	
+	<!--查询用户是否投过资和投资次数  -->
+	<select id="queryInvestDetails" resultMap="userResultMap" parameterType="String">
+		select u.user_name as USER_NAME,count(project_id)as INVEST_NUM
+		from project_invest pi, user u
+		where pi.user_id=#{id} and u.uuid = pi.user_id group by u.user_name
+	</select>
+	
+	<!--查询用户是否借过款和借款次数  -->
+	<select id="queryBorrowDetails" resultMap="userResultMap" parameterType="String">
+		select u.user_name as USER_NAME,count(p.project_no)as BORROW_INVEST
+		from project p, user u
+		where p.user_id=#{id} and u.uuid = p.user_id group by u.user_name
+	</select>
+	
+	<!-- 修改用户账号类型-->
+	<update id="editUserAccountTypeByManage" parameterType="com.rd.ifaes.core.user.model.UserModel">
+	    update user set account_type = #{accountType} where uuid = #{uuid}
+	</update>
+</mapper>

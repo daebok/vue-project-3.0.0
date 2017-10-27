@@ -1,0 +1,134 @@
+@import (reference)'../../style/common.less';
+.help-wrap{
+    background-color: #fff;
+    margin: 30px auto 50px;
+}
+.help-side{
+    .fl();
+    width: 180px;
+    min-height: 530px;
+    border-right: 1px solid @color-tipsbg;
+    box-sizing:border-box;
+    h3{
+        height: 80px;
+        line-height: 80px;
+        .f18();
+        font-weight: 100;
+        color:@color-text;
+        text-align: center;
+        span{
+            display: inline-block;
+            margin-top: -2px;
+            margin-right: 10px;
+            color: #e6e6e6;
+            vertical-align: top;
+        }
+    }
+    &-list{
+        li{
+            width: 179px;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            box-sizing: border-box;
+            &.active{               
+                a{
+                    border-left: 2px solid @color-main;
+                    background-color: #fff9f7;
+                    color: @color-main;
+                }
+            }
+            a{
+                display: block;
+                .f16();
+                color:@color-text;
+                &:hover{
+                    border-left: 2px solid @color-main;
+                    background-color: #fff9f7;
+                    color: @color-main;
+                }                
+            }
+        }
+    }
+}
+.help-main{
+    .fl();
+    width: 900px;
+    padding: 0 50px;
+    h2{
+        height: 80px;
+        line-height: 80px;
+        .f18();
+        font-weight: 100;
+    }
+    &-list{
+        li{            
+            h3{
+                height:40px;
+                line-height: 40px;                
+                font-weight: 100;
+                cursor: pointer;
+                color: @color-p;
+                .f14();
+                span{
+                    display: inline-block;
+                    height: 40px;
+                    width: 30px;
+                    vertical-align: middle;
+                    background: url(../../style/images/arrow_bg.png) 12px -59px no-repeat;                                                 
+                }  
+            }
+            .cont{
+                display: none;
+                height: 0;
+                overflow: hidden;
+                box-sizing: border-box;
+                .text{
+                    padding: 14px 30px;
+                    color: #999;
+                }
+            }
+            &.on{
+                margin: 6px 0;
+                border: 1px solid @color-tipsbg;
+                -webkit-border-radius: 3px;
+                -moz-border-radius: 3px;
+                border-radius: 3px;
+                h3{
+                    height: 40px;
+                    line-height: 40px;
+                    font-weight: 900;
+                    background-color: #fafafa;               
+                    border-bottom: 1px solid @color-tipsbg;                  
+                    span{
+                     background-position:12px 18px;                                                                       
+                    }
+                }
+                .cont{
+                    display: block;
+                    height: auto;                                       
+                    p{
+                        line-height: 24px;
+                        color: @color-text;
+                    }
+                }
+            }
+        }        
+    }
+    .help-table{
+        width: 900px;        
+        thead tr{
+            height: 38px;
+            background-color: #fafafa;
+            .f14();
+            border: 1px solid @color-tipsbg;
+        }
+        td{
+            height: 58px;
+            .f14();
+            color: @color-text;
+            border: 1px solid @color-tipsbg;
+            text-align: center;
+        }
+    }
+}

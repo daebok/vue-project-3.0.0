@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>角色管理</title>
+<#include "include/resources.html">
+</head>
+<body>
+<div class="wrapper">
+	<div class="row pt20">		
+		<div class="col-md-6">
+			<div class="row">		
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入问卷名称">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid_01" data-url="/risk/riskPapersList.html">搜索</button>
+							    </span>						    
+						    </div>
+					    </form>	
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					    <!-- <@shiro.hasPermission name="set:riskTpl:question:query">
+						<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.checkFun(this)" data-tid="jqGrid_01" data-url="/risk/riskPapersSearch.html" data-title="问卷预览">预览</button>
+						</@shiro.hasPermission> -->
+						<@shiro.hasPermission name="set:riskTpl:question:add">
+						<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.addFun(this)" data-tid="jqGrid_01" data-url="/risk/riskPapersAddPage.html">添加</button>
+					    </@shiro.hasPermission>
+					    <@shiro.hasPermission name="set:riskTpl:question:edit">
+						<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.editFun(this)" data-tid="jqGrid_01" data-url="/risk/riskPapersEditPage.html">编辑</button>
+						</@shiro.hasPermission>
+						<@shiro.hasPermission name="set:riskTpl:question:del">
+						<button type="button" class="btn btn-warning" onclick="$.fn.treeGridOptions.deleteFun(this)" data-tid="jqGrid_01" data-url="/risk/PapersDelLogic.html">删除</button>	
+						</@shiro.hasPermission>
+					</div>			 
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="row">		
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入试题名称">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid_02" id="questionSearchBtn">搜索</button>
+							    </span>						    
+						    </div>
+					    </form>	
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+						<@shiro.hasPermission name="set:riskTpl:question:answeradd">
+						<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.addFun(this, '', hasTableDataSelect)"  data-tid="jqGrid_02" id="questionAddBtn">添加</button>
+						</@shiro.hasPermission>
+						<@shiro.hasPermission name="set:riskTpl:question:answeredit">
+						<button type="button" class="btn btn-info"    onclick="$.fn.treeGridOptions.editFun(this)" data-tid="jqGrid_02" id="questionEditBtn" data-url="/risk/riskQuestionEditPage.html">编辑</button>
+						</@shiro.hasPermission>
+						<@shiro.hasPermission name="set:riskTpl:question:answerdel">
+						<button type="button" class="btn btn-warning" onclick="$.fn.treeGridOptions.deleteFun(this)" data-tid="jqGrid_02" data-url="/risk/questionDelLogic.html">删除</button>	
+						</@shiro.hasPermission>
+					</div>			
+				</div>
+			</div>		
+		</div>
+	</div>
+	<div class="row mt20">
+		<div class="col-md-6">
+			<table id="jqGrid_01"></table>
+			<div id="jqGridPager_01"></div>
+		</div>
+		<div class="col-md-6">
+			<table id="jqGrid_02"></table>
+			<div id="jqGridPager_02"></div>
+		</div>
+	</div>
+    <script type="text/javascript"> 	
+    <@dictFormatter type = "papers_type" />
+    <@dictFormatter type = "papersStatus" />
+    <@dictFormatter type = "isSingle" />
+        $(document).ready(function () {
+        	var jqGrid_02_flag = true;
+        	//表格初始化
+        	$("#jqGrid_01").jqTreeGrid({
+        		url: '/risk/riskPapersList.html',
+        		
+        		multiselect : true,
+        		multiboxonly: true,
+        		pager: "#jqGridPager_01",
+                colModel: [
+                    { label: 'ID值', name: 'id',hidden:true},
+                	{ label: '名称', name: 'papersName', width: 50,align: "center"},
+					{ label: '类型', name: 'papersType', width: 50,align: "center",formatter:papers_typeFormatter},
+					/* {
+						label : "问题数量",
+						name : "questionCount",
+						formatter : function(val, options,rowObject) {
+							if(val == undefined){
+								return 0 +"个";
+							}
+							return val + "个";
+						},
+						width : 50
+					}, */
+					{
+						label : "创建时间 ",
+						name : "createTime",
+						width : 100,
+						align: "center",
+						formatter: datetimeFormatter
+					},
+					{
+						label : "状态 ",
+						name : "status",
+						width : 50,
+						align: "center",
+						formatter:papersStatusFormatter
+					},{
+						label : "总分",
+						name : "totalScore",
+						width : 50,
+						align: "center"
+					},{
+						label: "操作",
+						name: "cz",
+						width: 100,
+						align: "center",
+						formatter: function(val, options, rowObject){	
+							var btns = '';
+							var	id = rowObject.id;
+							if(rowObject.status == "1"){
+								btns += '<a href="javascript:;" onclick=$.fn.treeGridOptions.lineDeleteFun(this,"'+id+'") data-tid="jqGrid_01" data-url="/risk/riskPapersDoPublish.html?publish=2" data-title="用户将无法进行风险评测，是否确认禁用？">禁用</a>';
+							}else{
+								btns += '<a href="javascript:;" onclick=$.fn.treeGridOptions.lineDeleteFun(this,"'+id+'") data-tid="jqGrid_01" data-url="/risk/riskPapersDoPublish.html?publish=1" data-title="是否确定启用">启用</a>';
+							}
+							if(rowObject.canSearch == "1"){
+								btns += '| <a href="javascript:;" onclick=$.fn.treeGridOptions.checkFun(this,"'+id+'") data-tid="jqGrid_01" data-url="/risk/riskPapersSearch.html" data-title="问卷预览">预览</a>';
+							}
+							
+							return btns;
+						}
+						
+					} 
+					
+                ],
+                beforeSelectRow:function(rowid, e){
+                    var uuid = $("#jqGrid_01").getRowData(rowid).id;
+                	greattable(uuid);
+                	$('#questionSearchBtn').attr("data-url","/risk/riskQuestionList.html?papersId="+uuid); 
+                	$('#questionAddBtn').attr("data-url","/risk/riskQuestionAddPage.html?id="+uuid); 
+                },
+                loadComplete:function(){
+                	if($("#jqGrid_01 tr").length > 1){
+                		$("#jqGrid_01 tr").eq(1)[0].click();
+                	}
+		        }
+        	}).jqGrid("setFrozenColumns").navGrid('#jqGridPager_01',		            
+		            { edit: false, add: false, del: false, search: false, refresh: true, view: false, position: "left", cloneToTop: false }
+		   	);		   	
+		   	function greattable(uuid){
+		   		var url = '/risk/riskQuestionList.html?papersId='+uuid; 		   		
+		   		if(jqGrid_02_flag){		   			
+			   		$("#jqGrid_02").jqTreeGrid({
+		        		url: url,
+		        		
+		        		multiselect : true,
+		        		pager: "#jqGridPager_02",
+		                colModel: [
+		                	{ label: 'uuid', name: 'uuid', hidden:true},
+		                	{ label: '题号', name: 'sort', align:"center", width: 40},
+							{ label: '试题内容 ', name: 'questionName', align:"center", width: 150},
+							{
+								label : "题型",
+								name : "isSingle",
+								width : 50,
+								align: "center",
+								formatter:isSingleFormatter
+							},
+							{ label: '分值', name: 'score', align:"center", width: 50},
+							{
+								label : "创建时间",
+								name : "createTime",
+								width : 100,
+								align: "center",
+								formatter:datetimeFormatter
+							},{
+								label: "操作",
+								name: "cz",
+								width: 100,
+								align: "center",
+								formatter: function(val, options, rowObject){	
+									var btns = '';
+									var	id = rowObject.id;
+									btns += '<a href="javascript:;" onclick=$.fn.treeGridOptions.checkFun(this,"'+id+'") data-tid="jqGrid_02" data-url="/risk/riskQuestionSearch.html" data-title="查看">查看</a>';
+								/* 	btns += '|<a href="javascript:;" onclick=$.fn.treeGridOptions.lineEditFun(this,"'+id+'") data-tid="jqGrid_02" data-url="/risk/riskAnswerAddPage.html" data-title="新增答案">新增答案</a>'; */
+									return btns;
+								}
+								
+							} 
+		                ],
+		                beforeSelectRow:function(rowid, e){
+		                	
+		                },
+		                loadComplete:function(){
+		                	jqGrid_02_flag = false;
+		                }
+		        	}).jqGrid("setFrozenColumns").navGrid('#jqGridPager_02',				            
+				            { edit: false, add: false, del: false, search: false, refresh: true, view: false, position: "left", cloneToTop: false }
+				   	);	
+		   		}
+		   		else
+		   		{		   				   		
+				   	$("#jqGrid_02").jqGrid('setGridParam',{url: url,page:1}).trigger("reloadGrid");
+		   		}
+		   	}
+       });
+	   //判断表格数据是否选择
+		function hasTableDataSelect(){
+			id = $("#jqGrid_01").jqGrid("getGridParam", "selarrrow");			
+			if(id.length == 1){				
+				return true;
+			} else {
+				layer.alert("请选择一张问卷！", {icon: 5});
+				return false;				
+			}					
+		}
+  </script>	
+</body>
+</html>

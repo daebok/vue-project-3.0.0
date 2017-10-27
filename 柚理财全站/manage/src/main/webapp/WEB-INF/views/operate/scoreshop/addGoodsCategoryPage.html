@@ -1,0 +1,87 @@
+<div class="form-tips-content" id="redpackage">
+<input type="hidden" id="image_server_url" value="${image_server_url}">
+  <form class="form-horizontal" action="/operate/scoreshop/addGoodsCategory.html"   method="post" id="form" >
+  <ul class="form-item">
+        <li class="heightLimit">
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">类别名称：</label>
+		      <div class="input-box">
+		        <input type="text" class="form-control" name="goodsCategoryName"  id="goodsCategoryName" maxlength="12" placeholder="" required>
+		    </div>
+  		</li>
+  		<li class="heightLimit">
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">排序值：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="sort" data-rule-digits="true" data-msg-digits="" id="yearDeduction" maxlength="12" placeholder="" required>
+		      </div>
+		    </div>
+  		</li>
+      <li class="full-width">
+  			<div class="form-group">
+		      <label for="name" class="control-label form-label" style="width:13%;">图片：</label>
+		       <div class="">
+					<div id="uploadArticle" class="uploadWrap" data-arr="picPath">
+						  <ul id="articlePagePic" class="photoUpload" style="overflow:hidden">
+					        	<li class="addFileBtn">
+					            	<input type="file" name="picName"  accept="image/gif, image/jpeg,image/png" class="uploadFileInput" id="articlePicPath" onchange="return ajaxFileUpload4('articlePicPath','/imageUp.jsp?editorid=article','introPic');" title="点击上传图片" />
+					            </li>
+					            <div class="imgdom"></div>
+					      </ul>
+					</div>
+				</div>
+		    </div>
+		</li>
+  		<li  style="width:100%;">
+		<div class="form-group">
+				<label for="loginName" class="control-label form-label" style="width:13%;">备注：</label>
+				<div class="input-box" style="width:87%;">
+					<textarea name="remark" id="remark" rows="4"  class="text" maxlength="256" style="width:100%;border:1px solid #e5e6e7"></textarea>
+				</div>
+			</div>
+		</li>
+  		</ul>
+</form>
+ </div>
+<script src="${theme_dir}/static/js/plugins/jquery.suggest.js"></script>
+<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+<script src="${theme_dir}/static/js/upload.js"></script>
+<script type="text/javascript">
+//点击添加按钮时，判断图片上传数量
+/*$('#uploadArticle').find('.addFileBtn').click(function(){
+	var num = $('#uploadArticle').find('li.addFileBtn').siblings().length;
+	if(num == 1){
+		alert("上传文件数量不能超过1张");
+		return false;
+	}
+
+});*/
+$("#form").validate({
+	submitHandler: function(form) {	
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						zIndex:100000,
+						icon: 6,
+						cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+					}, function() {						
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入  
+					});
+				} else {
+					layer.alert(data.msg, {
+						zIndex:100000,
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+});
+</script>

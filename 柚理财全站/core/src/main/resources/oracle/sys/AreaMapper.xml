@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.sys.mapper.AreaMapper">
+	<resultMap type="com.rd.ifaes.core.sys.domain.Area" id="areaResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="areaCode" column="AREA_CODE"/>
+		<result property="areaName" column="AREA_NAME"/>
+		<result property="areaLevel" column="AREA_LEVEL"/>
+		<result property="sort" column="SORT"/>
+		<result property="parentCode" column="PARENT_CODE"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		AREA_CODE,
+		AREA_NAME,
+		AREA_LEVEL,
+		SORT,
+		PARENT_CODE
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{areaCode},
+		#{areaName},
+		#{areaLevel},
+		#{sort},
+		#{parentCode}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="areaCode != null and areaCode != ''">and AREA_CODE = #{areaCode}</if>
+            <if test="areaName != null and areaName != ''">and AREA_NAME = #{areaName}</if>
+			<if test="areaLevel != null">and AREA_LEVEL = #{areaLevel}</if>
+			<if test="sort != null">and SORT = #{sort}</if>
+            <if test="parentCode != null and parentCode != ''">and PARENT_CODE = #{parentCode}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by area_code, sort </if>
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.sys.domain.Area">
+		insert into sys_area( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		BEGIN
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into sys_area( <include refid="table_columns" /> ) 
+		values 
+		( 
+			#{item.uuid},
+			#{item.areaCode},
+			#{item.areaName},
+			#{item.areaLevel},
+			#{item.sort},
+			#{item.parentCode}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<update id="update" parameterType="com.rd.ifaes.core.sys.domain.Area">
+		update sys_area 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="areaCode != null and areaCode != ''">AREA_CODE = #{areaCode},</if>
+            <if test="areaName != null and areaName != ''">AREA_NAME = #{areaName},</if>
+			<if test="areaLevel != null">AREA_LEVEL = #{areaLevel},</if>
+			<if test="sort != null">SORT = #{sort},</if>
+            <if test="parentCode != null and parentCode != ''">PARENT_CODE = #{parentCode},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="areaResultMap">
+        select <include refid="table_columns" />
+        from sys_area
+    </select>
+
+    <select id="findList" resultMap="areaResultMap">
+        select <include refid="table_columns" />
+        from sys_area
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from sys_area
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="areaResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from sys_area
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<!-- 根据areaCode查询名称 -->
+	<select id="getNameByCode" resultType="String" parameterType="String" >
+		select area_name
+		from sys_area
+		where area_code = #{areaCode}
+	</select>
+
+</mapper>

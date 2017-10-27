@@ -1,0 +1,188 @@
+@import (reference)'../../../style/common.less';
+body{
+  background:#f1f1f1;
+  .risk-con{
+    background:#fff;
+    margin:30px auto 20px;
+    padding:0 20px;
+    .risk-title{
+      .f18();
+      color:#666;
+      padding-left:20px;
+      line-height:58px;
+      border-bottom:1px solid #eaeaea;
+    }
+    .risk-prompt{
+      .f14();
+      color:#999;
+      padding:10px 20px 30px 20px;
+      span{
+        display:block;
+        line-height:35px;
+      }
+      p{
+        text-indent:2em;
+        line-height:25px;
+      }
+    }
+  }
+  #riskList{
+    margin:20px auto 0;
+    position: relative;
+    #warp{
+      background:#fff;
+      padding:0 30px;
+      min-height: 650px;
+      margin: 0 0 40px;      
+      .cnt{
+        position: relative;
+        margin-top:30px;
+        .title{
+          .f14();
+          color:#666;
+          margin-bottom:44px;
+          em{
+            color:#f95a28;
+          }
+          font{
+            color:#51b3f2;
+            padding-left:5px;
+          }
+        }
+        .error{
+          width:150px;
+          line-height:24px;
+          background:#ffefe9;
+          color:#f95a28;
+          border-radius:24px;
+          text-align:center;
+          margin:0px 0 12px 0;
+          display:none;
+        }
+        .answer{
+            dd{
+              width:630px;
+              line-height:45px;
+              cursor: pointer;
+              color:#999;
+              .f14();
+              label{
+                font-size: 14px;
+              }
+            }
+            dd:hover{
+              background:#f1f1f1;
+            }
+        }
+        .answerRadio{
+          span{
+            width:15px;
+            height:45px;
+            display:inline-block;
+            margin:0 20px 0 15px;
+            background: url(../../../style/images/radiobg.png) 0 14px no-repeat;
+          }
+        }
+        .answerRadio{
+          .hover{
+            span{
+              background: url(../../../style/images/radiohover.png) 0 14px no-repeat;
+            }
+          }
+        }
+        .answerCheck{
+          span{
+            width:15px;
+            height:45px;
+            display:inline-block;
+            margin:0 20px 0 15px;
+            background: url(../../../style/images/checkbg.png) 0 16px no-repeat;
+          }
+        }
+        .answerCheck{
+          .hover{
+            span{
+              background: url(../../../style/images/checkhover.png) 0 16px no-repeat;
+            }
+          }
+        }
+        }
+        .submit-btn{
+          width: 180px;
+          height: 40px;
+          border: none;
+          background-color: #f95b29;
+          color: #fff;
+          text-align: center;
+          line-height: 40px;
+          font-size: 18px;
+          margin:30px 0 72px 35%;
+          border-radius: 3px;
+        &:active,&:focus{
+          outline: 0;
+        }
+      }
+    }
+  }
+  .evaluation{
+    background:#fff;
+    margin:0 auto 20px;
+    .title{
+      .f18();
+      color: #666;
+      padding-left: 20px;
+      line-height: 58px;
+      border-bottom: 1px solid #eaeaea;
+    }
+    .evaluation-ok{
+      padding:120px 0 300px 0;
+      margin-left:300px;
+    .ok-i{
+      color:#91cf5e;
+      font-size:52px;
+      float:left;
+      width:75px;
+      em{
+        font-size: 52px;
+      }
+    }
+    .ok-con{
+      float:left;
+      width:400px;
+      margin-top:10px;
+        .ok-text{
+          font-size:28px;
+          color:#666;
+          font{
+            color:#f95a28;
+          }
+        }
+        p{
+          color:#999;
+          margin-top:10px;
+          .f14();
+        }
+        .btn{
+          margin-top:46px;
+          a.invest{
+              display:inline-block;
+              width: 130px;
+              height: 40px;
+              border: none;
+              background-color: #f95b29;
+              color: #fff;
+              text-align: center;
+              line-height:40px;
+              font-size: 16px;
+              margin-right:20px;
+              padding: 0;
+          }
+          a{
+            color:#aaa;
+            .f14();
+          }
+        }
+      }
+    }
+  }
+}

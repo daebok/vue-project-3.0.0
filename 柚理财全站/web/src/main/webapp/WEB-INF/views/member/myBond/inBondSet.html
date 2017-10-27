@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>转让设置</title>
+</head>
+<body>
+	<form id="form1" action="/member/myBond/bondPublish.html" method="post">
+		<div>可转让债权：${data.projectInvest.amount}</div>
+		<div>转让债权：<input type="text" name="bondMoney" id="bondMoney" value="" onblur="return price()"/> </div>
+		<div>折溢价率：<input type="text" name="bondApr" id="bondApr" value="" onblur="return price()"/>最大溢价率：${data.maxApr!}</div>
+		<div>转让价格：<span id="bondPrice">0</span>元</div>
+		<div>
+			<input type="hidden" name="projectId" value="${data.projectInvest.projectId}"/>
+			<input type="hidden" name="ruleId" value="${data.bondRule.uuid}"/>
+			<input type="hidden" name="investId" value="${data.projectInvest.uuid}"/>
+			<input type="hidden" name="userId" value="${data.projectInvest.userId}"/>
+			<input type="hidden" name="startPeriod" value="${data.startPeriod}"/>
+		</div>
+		<div><input type="submit" value="提交"/></div>
+	</form>
+	<script type="text/javascript">
+		function price(){
+			var bondMoney = document.getElementById("bondMoney").value;
+			var apr = document.getElementById("bondApr").value;
+			var bondPrice = bondMoney*(1-apr/100);
+			document.getElementById("bondPrice").innerHTML =bondPrice;
+		};
+	</script>
+</body>
+</html>

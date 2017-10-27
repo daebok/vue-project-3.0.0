@@ -1,0 +1,158 @@
+<#include "../header/head_file.html">
+<style>
+	/* msg页面样式 */
+	.aui-bar{
+		background-color: #3e454f;
+	}/* 头部底色改变 */
+	#main{
+		margin:0;
+	}
+	#main .cont{
+		text-align: center;
+		margin-top: .45rem; 
+		color: #333;
+	}
+	.msg-tip{
+		margin:.25rem 0;
+	}
+	.t-btn,.m-btn{
+		display: block; 
+		height: .45rem; 
+		line-height: .45rem; 
+		font-size: .16rem; 
+		width: 94%; 
+		border-radius: 5px; 
+		margin: 0 auto;
+	}
+	.tip-icon img{
+		width:.8rem;
+		height:.8rem;
+	}
+	.t-btn{
+		color: #fff;
+	}
+	.m-btn{
+		border: 1px solid #AA0809;
+	    background: #fff;
+	    color: #AA0809;
+	    margin-top: .1rem;
+	}
+	
+</style>
+<body>
+	<header class="aui-bar rd-bar-nav rd-bar-dark">
+	    <!-- <a class="aui-pull-left" href="javascript:history.go(-1)">
+	       <span class="aui-iconfont aui-icon-left"></span>
+	    </a> -->
+	    <div class="aui-title name">系统提示消息</div>
+	</header>
+
+	<div id="main">
+		<div class="cont">
+				
+				<#if rsmsg??>
+					<#if rsmsg.contains('资金托管方授权操作成功')>
+						<div class="tip-icon"><img src="${theme_dir}/wx/images/tip_succeed.png" /></div>
+						<div class="msg-tip">${rsmsg!""}</div>
+						<a href="/wx/member/auto.html" class="t-btn">返回自动投标</a>
+					<#elseif rsmsg.contains('自动投标开启成功') || rsmsg.contains('自动投标关闭成功')>
+						<div class="tip-icon"><img src="${theme_dir}/wx/images/tip_succeed.png" /></div>
+						<div class="msg-tip">${rsmsg!""}</div>
+						<a href="/wx/member/auto.html" class="t-btn">返回自动投标</a>
+					<#elseif rsmsg.contains('为了您的资金安全，请您开通第三方资金存管账户')>
+						<div class="msg-tip">${rsmsg!""}</div>
+						<a href="/wx/member/realname.html" class="t-btn">开通托管账户</a>
+					<#elseif rsmsg.contains('开户前请先认证手机！')>
+						<div class="msg-tip">${rsmsg!""}</div>
+						<a href="/wx/member/phone.html" class="t-btn">手机认证</a>
+					<#elseif rsmsg.contains('投资授权成功')>
+						<div class="msg-tip">${rsmsg!""}</div>
+						<a id="link" href="" class="t-btn">返回投资页面</a>
+						<script type="text/javascript">
+							var uuid = localStorage.getItem('uuid');
+							$("#link").attr("href","/wx/member/details.html?uuid="+uuid);
+						</script>
+					<#elseif rsmsg.contains('提现处理失败')>
+						<div class="tip-icon">
+							<img src="${theme_dir}/wx/images/tip_warn.png" />
+						</div>
+						<div class="msg-tip">${rsmsg!""}</div>
+						<a href="/wx/member/account.html" class="t-btn">返回账户中心</a>
+					<#elseif rsmsg.contains('交易申请已受理')>
+						<div class="tip-icon">
+							<img src="${theme_dir}/wx/images/tip_succeed.png" />
+						</div>
+						<div class="msg-tip">${rsmsg!""}</div>
+						<a href="" id="agin_invest" class="t-btn margin-bottom-10">继续投资</a>
+						<a href="/wx/member/investRecord.html" class="m-btn">查看投资记录</a>
+						<script type="text/javascript">
+							var uuid = localStorage.getItem('uuid');
+							$("#agin_invest").attr("href","/wx/member/detail.html?uuid="+uuid);
+						</script>
+					<#elseif rsmsg.contains('请先开通托管帐户！')>
+						<div class="msg-tip">${rsmsg!""}</div>
+						<a href="/wx/member/realname.html" id="agin_invest" class="t-btn margin-bottom-10">开通托管</a>
+						<a href="/wx/member/account.html" class="m-btn">账户中心</a>
+					<#elseif rsmsg.contains('您的提现功能已被冻结')>
+						<div class="msg-tip">${rsmsg!""}</div>
+						<a href="/wx/member/account.html" id="agin_invest" class="t-btn margin-bottom-10">账户中心</a>
+					<#elseif rsmsg.contains('充值成功')>
+						<div class="tip-icon">
+							<img src="${theme_dir}/wx/images/tip_succeed.png" />
+						</div>
+						<div class="msg-tip">${rsmsg!""}</div>
+						<a href="/wx/member/newRecharge.html" class="t-btn">继续充值</a>
+						<a href="/wx/member/account.html" class="m-btn">账户中心</a>
+					<#elseif rsmsg.contains('投资失败！账户余额不足，请立即充值！ ')>
+						<div class="tip-icon">
+							<img src="${theme_dir}/wx/images/tip_warn.png" />
+						</div>
+						<div class="msg-tip">${rsmsg!""}</div>
+						<a href="/wx/member/newRecharge.html" class="t-btn">充值</a>
+						<a href="javascript:history.go(-1);" class="m-btn">返回上一步</a>
+					<#else>
+						<div class="msg-tip">${rsmsg!""}</div>
+						<a href="javascript:history.go(-1);" class="t-btn">返回上一步</a>
+					</#if>
+				<#elseif msg??>
+					<#if msg.contains('成功')>
+						<div class="tip-icon">
+							<img src="${theme_dir}/wx/images/tip_succeed.png" />
+						</div>
+						<div class="msg-tip">${msg!""}</div>
+						<a href="javascript:history.go(-1);" class="t-btn">返回上一步</a>
+					<#elseif msg.contains('失败')>
+						<div class="tip-icon">
+							<img src="${theme_dir}/wx/images/tip_warn.png" />
+						</div>
+						<div class="msg-tip">${msg!""}</div>
+						<a href="javascript:history.go(-1);" class="t-btn">返回上一步</a>
+					<#elseif msg.contains('请先开通托管帐户！')>
+						<div class="msg-tip">${msg!""}</div>
+						<a href="/wx/member/realname.html" id="agin_invest" class="t-btn margin-bottom-10">开通托管</a>
+						<a href="/wx/member/account.html" class="m-btn">账户中心</a>
+					<#else>
+						<div class="msg-tip">${msg!""}</div>
+						<a href="javascript:history.go(-1);" class="t-btn">返回上一步</a>
+					</#if>
+					
+				</#if>
+        </div>
+    </div>
+</body>
+
+
+<script>
+	localStorage.setItem('newrecharge',1);
+	localStorage.setItem('newcash',1);
+	localStorage.setItem('tender',1);
+	localStorage.setItem('autoTender',1);
+
+	var msg_tip = $('.msg-tip').text(),return_url = location.href;
+	if(msg_tip.match('成功')){
+		localStorage.setItem('success_tip',1);
+	}
+	if(return_url.match('baofooFail')){
+		$('.cont a').attr('href','/wx/member/account.html').text('返回账户中心');
+	}
+</script>

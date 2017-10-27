@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>订单确认</title>
+    <link rel="stylesheet" type="text/css" href="/themes/css/common-22faacfd60.css"/>
+    <link rel="stylesheet" type="text/css" href="/themes/css/bondOrder-6390af4267.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <#include "/include/header.html">
+    <input type="hidden" value="${bondModel.uuid}" id="bondId">
+    <input type="hidden" value="${bondModel.projectId}" id="projectId">
+    <input type="hidden" value="${bondModel.investId}" id="investId">
+    <input type="hidden" value="${amount!0.00}" id="amountInput">
+    <input type="hidden" value="${receivedAccount!0.00}" id="receivedAccount">
+    <input type="hidden" value="${investTimeOut!}" id="investTimeOut">
+    <div class="wrap bond-order-main">
+        <div class="invest-order-title">投资信息</div>
+        <div class="invest-order-info" id="j-invest-order">            
+            <dl class="order-item product">
+                <dt>产品选择</dt>
+                <dd>
+                    <table>
+                        <tr>
+                            <th width="40%">产品名称</th>
+                            <th width="20%">预期年化收益率</th>
+                            <th width="20%">折溢价率</th>
+                            <th width="20%">产品期限</th>
+                        </tr>
+                        <tr>
+                            <input type="hidden" id="projectId" name="projectId" value="${bondModel.projectId}"/>
+                            <td>${bondModel.bondName!}</td>
+                            <td>${bondModel.apr!}</td>
+                            <td>${bondModel.bondApr!}</td>
+                            <td>${bondModel.timeLimit!}<#if bondModel.timeType==1>天<#else>个月</#if></td>
+                        </tr>
+                    </table>
+                </dd>
+            </dl>
+            <div id="j-bondOrder">
+                <div class="loading"></div>
+            </div>                                
+        </div>
+    </div>
+    <#include "/include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/themes/js/common-81aa8d07d8.js"></script>
+<script src="/themes/js/bondOrder-79ed8c0d84.js"></script>
+</html>

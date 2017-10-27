@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>加息券规则管理页面</title>
+		<#include "include/resources.html">
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="加息券规则名称">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/operate/rateCoupon/rateRuleList.html">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form>
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					 	<@shiro.hasPermission name="oper:addApr:addAprRule:add">
+						<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.addFun(this)"data-tid="jqGrid" data-url="/operate/rateCoupon/rateRuleAddPage.html">新增</button>
+						</@shiro.hasPermission>
+						<@shiro.hasPermission name="oper:addApr:addAprRule:edit">
+						<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.DiscounteditFun(this)" data-tid="jqGrid" data-url="/operate/rateCoupon/rateRuleEditPage.html">复用</button>
+						</@shiro.hasPermission>
+						<@shiro.hasPermission name="oper:addApr:addAprRule:del">
+						<button type="button" class="btn btn-warning" onclick="$.fn.treeGridOptions.deleteFun(this)" data-tid="jqGrid" data-url="/operate/rateCoupon/rateRuleDel.html">删除</button>						
+						</@shiro.hasPermission>
+					</div>					
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+					$(document).ready(function() {												
+						//表格初始化
+						$("#jqGrid").jqTreeGrid({
+							url: '/operate/rateCoupon/rateRuleList.html',	
+							  multiselect : true,	
+							  colModel: [ 
+			                    { label: 'id', name: 'uuid', width: 65, hidden:true},
+			                    { label: '名称', name: 'ruleName',index:"rule_name",width: 15},
+			                    { label: '发放条件', name: 'activityName',index:"activity_name",width: 30},
+								{ label: '发放类型', name: 'grantType',index:"grant_type", width: 20,
+									formatter: function(value,row,index){
+				            		   if (value == '1'){
+					  						return "固定值";
+					  					} else if (value == '2'){
+					  						return "金额满返";
+					  					}else {
+					  						return "固定值";
+					  					}
+					  				}
+								
+								},
+								{ label: '预计发放总数', name: 'totalNum',index:"total_num",width: 30,
+									formatter: function(value,row,index){
+					            		   if (value == null ){
+						  						return "--";
+						  					} else {
+						  						return value;
+						  					}
+						  				}
+								},
+								{ label: '实际发放总数', name: 'lssueNum',index:"lssue_num",width: 30},
+								{ label: '发放开始时间', name: 'grantStartTime',index:"grant_start_time", width: 20,
+									formatter: datetimeFormatter
+								},
+								{ label: '发放结束时间', name: 'grantEndTime',index:"grant_end_time", width: 20,
+									formatter: datetimeFormatter
+								},
+								{ label: '使用条件', name: 'useProjectType',index:"use_project_type", width: 20,
+									formatter: function(value,row,index){
+				            		   if (value == '' || value == null){
+					  						return "不限制";
+					  					} else {
+					  						return "特定产品";
+					  					}
+					  				}
+								
+								},
+								{ label: '有效期', name: '',sortable:false,width: 20,formatter:function(val, options, rowObject){	
+									   var useValidDay = rowObject.useValidDay;
+									   var useExpireTime = rowObject.useExpireTime;
+									   if(useValidDay){
+											 return  useValidDay+"天";
+									   }else if(useExpireTime){
+										   return getLocalTime(useExpireTime,4);
+									   }else{
+										   return  "长期有效";
+									   }
+									}
+								},
+								{ label: '状态', name: 'status',index:"status", width: 20,
+									formatter: function(value,row,index){
+				            		   if (value == '1'){
+					  						return "启用";
+					  					} else if (value == '0'){
+					  						return "禁用";
+					  					} else {
+					  						return "启用";
+					  					}
+					  				}
+								
+								},
+								{ label: '更新时间', name: 'updateTime',index:"update_time", width: 20,
+									formatter: datetimeFormatter
+								},
+								{ label: '操作', name: '',sortable:false,width: 20,formatter:function(val, options, rowObject){	
+									   var id = rowObject.id;
+									   var ret ="-";
+									   <@shiro.hasPermission name="oper:addApr:addAprList:cancel">
+									   if(rowObject.status==1){
+										   ret =   '<a href="javascript:;" onclick=$.fn.treeGridOptions.lineSetFun(this,"'+id+'") data-tid="jqGrid" data-title="确认禁用该加息券规则？" data-url="/operate/rateCoupon/rateRuleStatus.html?status=0">禁用</a>';
+									   }else{
+										   ret = '<a href="javascript:;" onclick=$.fn.treeGridOptions.lineSetFun(this,"'+id+'") data-tid="jqGrid" data-title="确认启用该加息券规则？" data-url="/operate/rateCoupon/rateRuleStatus.html?status=1">启用</a>';
+									   }
+									   </@shiro.hasPermission>
+									   ret += '|';
+									   ret += '<a href="javascript:;" onclick=$.fn.treeGridOptions.checkFun(this,"'+id+'") data-tid="jqGrid" data-url="/operate/rateCoupon/rateRuleViewPage.html">查看</a>';
+									   return ret;
+									}
+								}
+			                ]
+						}) ;			
+					});
+			</script>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>贷后跟进</title>
+		<#include "include/resources.html">
+		<script type="text/javascript">
+			var url_list = "/loan/borrow/borrowFollowList.html";
+			$(document).ready(function() {	
+				$('#keywordsSearch').attr('data-url',url_list);
+				$('#conditionSearch').attr('data-url',url_list);				
+			});
+		</script>
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入用户名/借款方/借款名称">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" id="keywordsSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form>
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							     <li class="input-group input-group-sm"><span>借款方</span><input type="text" class="form-control" name="borrower" /></li>
+							    <li class="input-group input-group-sm"><span>借款名称</span><input type="text" class="form-control" name="projectName" /></li>
+ 								<li class="input-group input-group-sm"><span>借款期限</span><@linkage name="timeCondition" nid="timeCondition" noselect="不限" class="form-control"/></li>							
+							    <li class="input-group input-group-sm"><span>还款方式</span><@linkage name="repayStyle" nid="repayStyle" noselect="全部" class="form-control"/></li>
+							    <li class="input-group input-group-sm"><span>借款性质</span><@linkage name="borrowNature" nid="borrowNature" noselect="全部" class="form-control"/></li>
+							    <li><button class="btn btn-sm btn-primary" type="button" id="conditionSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					</div>					
+				</div>
+			</div>
+			
+			<!-- 列表信息 -->
+			<div class="row mt20">
+			<div class="col-md-12">
+				<table id="jqGrid" class="table-td-NoOverflow"></table>
+				<div id="jqGridPager"></div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			<@dictFormatter type = "borrowNature" />
+			<@dictFormatter type = "repayStyle" />
+			<@dictFormatter type = "borrowStatus" />
+			$(document).ready(function() {		
+				//表格初始化		
+				$("#jqGrid").jqTreeGrid({
+						url : url_list,
+						multiselect:false,
+						colModel : [
+								{
+									label : "用户名",
+									name : "userName",
+									width : 150
+								},
+								{
+									label : "借款方",
+									name : "borrower",
+									width : 150
+								},
+								{
+									label : "借款名称",
+									name : "projectName",
+									width : 150
+								},
+								{
+									label : "借款金额",
+									name : "account",
+									width : 100
+								},
+								{
+									label : "年化利率(%)",
+									name : "apr",
+									formatter : function(val, options,rowObject) {
+										return val ;
+									},
+									width : 100
+								},
+								{
+									label : "借款期限",
+									name : "timeLimit",
+									formatter : function(val, options,rowObject) {
+										return val + ""+ (rowObject.timeType == 0 ? '个月': '天');
+									},
+									width : 80
+								},
+								{
+									label : "应还金额",
+									name : "repayAmount",
+									formatter : function(val, options,rowObject) {
+										if(val == null || val == ""){
+											return 0;
+										}
+										return val;
+									},
+									width : 100
+								},
+								{
+									label : "已还金额",
+									name : "repayYesTotal",
+									width : 80
+								},
+								{
+									label : "借款性质",
+									name : "borrowNature",
+									width : 100,
+									formatter : borrowNatureFormatter
+								},
+								{
+									label : "到期日",
+									name : "lastRepayTime",
+									width : 100,
+									formatter: 'date',
+									formatoptions: {
+										srcformat: 'u',
+										newformat: 'Y-m-d'
+									}
+								},
+								{
+									label: "操作",
+									name: "cz",
+									width: 100,
+									align: "center",
+									formatter: function(val, options, rowObject){	
+										var btns = '<a href="javascript:;" onclick=$.fn.treeGridOptions.setFun(this,"'+rowObject.id+'") data-tid="jqGrid" data-url="/loan/borrow/borrowFollowEdit.html" data-title="贷后跟进">贷后跟进</a>'
+										return btns;
+									}
+									
+								} ],
+					}).jqGrid("setFrozenColumns").navGrid(
+					'#jqGridPager',
+					{
+						edit : false,
+						add : false,
+						del : false,
+						search : false,
+						refresh : true,
+						view : false,
+						position : "left",
+						cloneToTop : false
+					});
+				});
+		</script>
+			
+		</div>
+	</body>
+</html>

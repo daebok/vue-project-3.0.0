@@ -1,0 +1,282 @@
+@import (reference)'../../style/common.less';
+.realize-index-main{
+  min-height:350px;
+  margin: 30px 0;
+  overflow: hidden;
+  .realize-index-nav{
+    width: 100%;
+    background-color: #fff;
+    .navList{
+      .fl();
+      li{
+        .fl();
+        width: 150px;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        border-right: 1px solid @color-tipsbg;
+        &.active{
+          height: 51px;
+          background-color: #fff;
+          position: relative;
+          z-index: 3;
+          a{
+            border-top-color: @color-main;
+            color: @color-main;
+          }
+        }
+        a{
+          display: block;
+          width: 150px;
+          height: 48px;
+          .f16();
+          color: @color-title;
+          border-top: 2px solid #fff;
+          &:hover{
+            border-top-color: @color-main;
+            color: @color-main;
+          }          
+        }
+      }
+    }
+  }
+  .invest-index-filter{
+    position: relative;
+    z-index: 2;
+    .filter-btn{
+      display: inline-block;
+      color:@color-text;
+      font-size: 12px;
+      cursor: pointer;
+      width: 78px;
+      margin: 16px 0 0 0;
+      em{
+        position: absolute;
+        font-size: 12px;
+        margin: 0 0 0 5px;
+        transition: transform .1s ease-in 0s;
+        -webkit-transition: -webkit-transform .1s ease-in 0s;
+      }
+    }
+    &:extend(.fr);
+    .invest-index-filter-cont{
+      display: none;
+      background-color: #fff;
+      border-top: 1px solid #eaeaea;
+      dl{
+        clear: both;
+        dt,dd{
+          &:extend(.fl);
+          line-height: 52px;
+        }
+        dt{
+          font-size: 14px;
+          color: @color-text;
+          width: 130px;
+          padding: 0 0 0 36px;
+        }
+        dd{
+          span{
+              font-size: 14px;
+              display: inline-block;
+              padding: 0 12px;
+              border-radius: 3px;
+              line-height: 22px; 
+              color: @color-p;
+              margin: 0 30px 0 0;
+              cursor: pointer;               
+            &.on,&:hover{
+              background-color:@color-main;                
+              color:#fff;
+            }
+          }
+        }
+      }
+    }
+    &.on{
+      .filter-btn{
+        em{
+            transform: rotate(180deg);
+            -webkit-transform: rotate(180deg);
+        }
+      }
+      .invest-index-filter-cont{
+        padding: 10px 0;
+        display: block;
+        width: 1180px;
+        position: absolute;
+        top: 50px;
+        left: -1102px;        
+        box-shadow: 0 2px 7px rgba(240,240,240,0.8);        
+      }
+    }
+  } 
+  .invest-index-cont{
+    padding-bottom: 40px;
+    background-color: #fff;
+    margin: 10px 0 0;
+    .sort{
+      background-color: #fafafd;
+      height: 50px;
+      border-bottom: solid 1px @color-tipsbg;
+      ul{
+        li{
+          &:extend(.fl);
+          line-height: 50px;
+          height: 50px;
+          span{
+            position:relative;
+            font-size: 14px;
+            display: inline-block;
+            cursor: pointer;
+            em{
+              color: #c8c8c8;
+              font-size: 20px;
+              &.desc,&.asc{
+                color:@color-main;
+              }
+            }
+          }
+          &.w1{width: 350px;padding-left: 50px;}
+          &.w2{width: 180px;}
+          &.w3{width: 150px;}
+        }
+      }
+    }
+    .result{
+      ul{
+        &:extend(.fl);
+        padding:0 30px; 
+        li{
+          &:extend(.fl);
+          width: 100%;
+          dl{
+            dt,dd{
+              &:extend(.fl);
+            }
+            dt{
+              padding-left: 20px;
+              height: 88px;
+              line-height: 88px;
+              font-size: 14px;
+              color:@color-text;
+              width: 320px;
+              a{
+                color: @color-p;
+                &:hover{
+                  color: @color-main;
+                }
+              }
+              .new{
+                background-color:#ff9e2c;
+                border-radius: 4px;
+                color: #fff;
+                font-size: 12px;
+                text-align: center;
+                line-height:18px;
+                padding:0 4px;
+                display: inline-block;
+                margin: 0 0 0 10px; 
+              }
+            }
+            dd.profit{
+              font-size: 24px;
+              color:@color-main;
+              padding-top: 28px;
+              width: 180px;              
+              em{
+                font-size: 16px;
+              }
+              s{
+                line-height: 100%;
+                display: block;
+                font-size:12px;
+                color:@color-text;
+                text-decoration: none;
+                margin: -3px 0 0 3px;
+              }
+            }
+            dd.timelimit{
+              width: 150px;
+              color:@color-p;
+              font-size:14px;
+              padding-top: 32px;
+              s{
+                line-height: 100%;
+                display: block;
+                font-size:12px;
+                text-decoration: none;
+                margin:2px 0 0 1px;              
+              }
+            }
+            dd.minmoney{
+              width: 150px;
+              color:@color-p;
+              font-size:14px;
+              line-height: 88px;              
+            }
+            dd.money{
+              width: 180px;
+              color:@color-p;
+              .f16();
+              line-height: 88px;
+              em{
+                .f14();
+                font-style: initial;
+              }              
+            }
+            dd.status{
+              a.investment{
+                color:@color-main;
+                line-height: 38px;
+                padding:0 27px;
+                .f16();
+                display: inline-block;
+                border:solid 1px currentColor;
+                border-radius: 3px;
+                margin: 24px 0 0 0;
+                &:hover{
+                  color: #fff;
+                  background-color: @color-main;
+                  border-color: currentColor;  
+                }
+              }
+              .bespeak{
+                line-height: 88px;
+                color:@color-main;
+                &:extend(.f14);
+              }
+              .describe{
+                color: #aaa;
+                &:extend(.f14);
+                margin: 22px 0 0 0;
+                display: inline-block;
+                s{
+                  display: block;
+                  line-height: 100%;
+                  display: block;
+                  font-size:14px;
+                  text-decoration: none;
+                  margin:6px 0 0 1px;
+                  color: @color-p;                   
+                }
+              }
+              .item-status{
+                margin-top: 20px;
+                .f14();
+                strong{
+                  font-weight: 100;
+                  color:@color-p;
+                }
+                p{
+                  line-height: 25px;
+                }
+              }
+            }
+          }
+          border-bottom: solid 1px @color-tipsbg;
+        }
+      }
+    }
+  }
+}

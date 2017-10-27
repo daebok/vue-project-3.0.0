@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>产品详情</title>
+    <link rel="stylesheet" type="text/css" href="/common.css"/>
+    <link rel="stylesheet" type="text/css" href="/realizeDetail.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <#include "/include/header.html">
+    <input type="hidden" id="id" value="${id!}" />
+    <input type="hidden" id="projectId" value="${projectId!}" />
+    <input type="hidden" id="investId" value="${investId!}" />
+    <input type="hidden" id="originalProjectId" value="${originalProjectId!}" />
+    <input type="hidden" id="isSelectedTip" value="0" />
+    <div class="wrap-full">
+        <div id="j-realizeDetail" class="realize-detail">
+        </div>
+    </div>
+    <#include "/include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/common.js"></script>
+<script src="/realizeDetail.js"></script>
+</html>

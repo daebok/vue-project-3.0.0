@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <title>江西银行提现跳转中......</title>
+	    <meta http-equiv="content-Type" content="hidden/html; charset=utf-8" />
+	</head>
+	
+	<body>
+	    <div>江西银行提现跳转中,请您不要关闭页面......</div>
+	    <form action="${authSign.summitUrl}" method="post" id="frm1" style="">
+	        <input type="hidden" name="version" value="${authSign.version!}" />       	         
+			<input type="hidden" name="txCode" value="${authSign.txCode!}" />
+			<input type="hidden" name="instCode" value="${authSign.instCode!}" />
+			<input type="hidden" name="bankCode" value="${authSign.bankCode!}" />
+			<input type="hidden" name="txDate" value="${authSign.txDate!}" />
+			<input type="hidden" name="txTime" value="${authSign.txTime!}" />
+	        <input type="hidden" name="seqNo" value="${authSign.seqNo!}" />
+	        <input type="hidden" name="channel" value="${authSign.channel!}" />
+	        <input type="hidden" name="accountId" value="${authSign.accountId!}" />
+            <input type="hidden" name="orderId" value="${authSign.orderId!}" />
+	        <input type="hidden" name="txAmount" value="${authSign.txAmount!}" />
+	        <input type="hidden" name="totAmount" value="${authSign.totAmount}" />
+	        <input type="hidden" name="forgotPwdUrl" value="${authSign.forgotPwdUrl!}" />
+            <input type="hidden" name="retUrl" value="${authSign.retUrl!}" />
+            <input type="hidden" name="notifyUrl" value="${authSign.notifyUrl!}" />
+            <input type="hidden" name="lastSrvAuthCode" value="${authSign.lastSrvAuthCode!}" />
+            <input type="hidden" name="smsCode" value="${authSign.smsCode!}" />
+            <input type="text" name="sign" value="${sign!}" />
+	        <input type="submit" value="提交">
+	    </form>
+	
+	    <script type="text/javascript">
+            document.getElementById("frm1").submit();
+	    </script>
+	</body>
+</html>

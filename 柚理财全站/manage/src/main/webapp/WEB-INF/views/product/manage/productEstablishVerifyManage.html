@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>成立审核</title>
+		<#include "include/resources.html">
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入产品名称">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/product/manage/productEstablishVerifyList.html">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>
+					 					
+					<div class="search-form-adv ml10">
+						<form>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+ 					</div>					
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+			    <@dictFormatter  type = "interestStyle" />
+				<@dictFormatter  type = "repayStyle" />
+					$(document).ready(function() {												
+						//表格初始化
+						$("#jqGrid").jqTreeGrid({
+							url: '/product/manage/productEstablishVerifyList.html',
+							multiselect:false,				
+							  colModel: [
+			                    { label: 'id', name: 'uuid', width: 65, hidden:true},
+			                    { label: '产品名称', name: 'projectName',index:"borrow_name",width: 40},
+								{ label: '年利率(%)', name: 'apr',index:"apr", width: 15},			
+								{ label: '产品金额', name: 'account',index:"account",  width: 20},
+								{ label: '募集期(天)', name: 'raiseTimeLimit',index:"raise_time_limit",  width: 20},
+								{ label: '募集金额', name: 'accountYes',index:"account_yes",  width: 20},
+							    { label: '募集时长(天)', name: 'raiseRealDays',sortable:false, width: 20},
+							    { label: '募集结束时间', name: 'raiseEndTime',index:"raise_end_time", width: 25, formatter: datetimeFormatter},
+							 	{ label: '投资进度(%)', name: 'scales',index:"scales",  width: 20},
+								{ label: '操作', name: '',sortable:false,width: 20,formatter:function(val, options, rowObject){	
+								   var id = rowObject.id;
+									 return  '<a href="javascript:;" onclick=$.fn.treeGridOptions.lineEditFun(this,"'+id+'") data-tid="jqGrid" data-title="审核" data-url="/product/manage/productEstablishVerifyPage.html">审核</a>';
+								}}
+			                ]
+						}) ;			
+					});
+			</script>
+		</div>
+	</body>
+</html>

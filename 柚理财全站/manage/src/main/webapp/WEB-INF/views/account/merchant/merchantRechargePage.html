@@ -1,0 +1,48 @@
+<div class="form-tips-content">
+  <form class="form-horizontal" action="/account/merchant/merchantRecharge.html" id="form" role="form" target="_blank">
+  	<div class="valBox w750" style="padding-top:30px;">
+        <div class="val clearfix">
+            <div class="clearfix account" style="padding:0 38px;" >
+	            <label for="">请输入充值金额：</label>
+                <div style="position: relative;display: inline-block;width: 300px;">
+	            <input type="text" name="money" class="easyui-numberbox" precision="2" required maxlength="12"/>
+                <span style="color:red">*</span><label class="error" id="money-error"></label>
+                </div>
+                	<!-- <br>返回页面由前台改成了后台，前端需要写一下页面，适合商户充值，商户提现。页面是retResult.html 
+				               后台返回参数
+				               			request.setAttribute("resultFlag", resultFlag);
+						request.setAttribute("r_msg", msg);
+						request.setAttribute("close", 1);
+               	 -->
+	         </div>
+        </div>
+    </div>
+  </form>
+</div>
+<script>
+    $("#form").validate({
+        rules: {
+            money:{
+                required:true,
+                moneyArea:true
+            }
+        },
+        messages:{
+            money:{
+            	required:'金额不能为空',
+                moneyArea:'请输入范围为大于等于0.01小于100000000的数值'
+            }
+        },
+        submitHandler: function(form) {
+            form.submit();
+            layer.confirm('充值处理中', {
+                btn: ['成功','失败'] //按钮
+            }, function(){
+                layer.closeAll();
+                gridobj.trigger("reloadGrid");
+            }, function(){
+                layer.close()
+            });
+        }
+    });
+</script>

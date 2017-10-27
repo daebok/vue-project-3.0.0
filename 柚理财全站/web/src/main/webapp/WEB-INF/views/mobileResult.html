@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<meta http-equiv="Content-Type"
+	content="application/xhtml+xml; charset=utf-8" />
+<meta http-equiv="Cache-Control" content="no-cache" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="-1" />
+<meta name="viewport"
+	content="width=device-width, minimum-scale=1.0, initial-scale=1.0, maximum-scale=1.0, user-scalable=1" />
+<meta name="format-detection" content="telephone=no" />
+
+<body>
+
+	<div id="main" class="clearfix">
+		<div class="box">
+			<div class="box-con">
+				<p class="reg-pro">系统提示信息</p>
+				<div align="center" id="msg_content">
+					<br> <br> <span class="sysTipsTxt">处理中...</span>
+				</div>
+				<div id="useragent"></div>
+				<input id="resmsg" type="hidden"  value="${res_msg}"></input>
+				<input id="rescode" type="hidden" value="${res_code}"></input>
+                <input id="mobileUrl" type="hidden" value="${mobile_url}"></input>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+	 	var ua = navigator.userAgent;
+		setTimeout("returnApp()", 100);
+			function returnApp() {
+				var msg=document.getElementById("resmsg").value;
+				var code=document.getElementById("rescode").value;
+                var mobileUrl=document.getElementById("mobileUrl").value;
+				if (ua=='Android') {
+					window.webReturn.webReturn(code, msg);
+					}else if(ua=='iPhone'){
+				window.webkit.messageHandlers.showSendMsg.postMessage({'code':code,'msg':msg});
+					}else{
+				window.location.href = mobileUrl + '/#/msg_result?code='+code
+				}
+		}
+	</script>
+</body>
+</html>

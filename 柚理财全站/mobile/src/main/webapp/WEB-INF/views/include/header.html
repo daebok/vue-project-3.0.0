@@ -1,0 +1,43 @@
+<div id="header">
+    <div class="wrap-full header-info">
+        <div class="site-row clearfix">
+            <div class="site-col-8 header-info-left">
+                <span>客服热线：${customer_hotline!}</span><dl><dt>关注我们</dt><dd><span class="iconfont">&#xe609;</span></dd><dd><span class="iconfont">&#xe605;</span></dd><dd><span class="iconfont">&#xe606;</span></dd></dl>
+            </div>
+            <div class="site-col-14  header-info-right fr">
+                <#if session_user?exists ><a href="/member/account/main.html" class="first">${session_user.userName}</a><a href="/user/logout.html" class="first">退出</a><#else><a href="/user/login.html" class="first">登录</a><a href="/user/register.html" class="first">注册</a></#if><a href="#" class="phone_icon"><i class="iconfont font-f95a28">&#xe607;</i>手机APP</a><a href="#">安全保障</a><a href="/column/helpCenter.html?sectionCode=register">新手指引</a><a href="/column/helpCenter.html?sectionCode=help" class="last">帮助中心</a>
+            </div>
+        </div>
+    </div>       
+    <div class="site-row header-cont">
+        <div class="site-col-5">
+            <a href="/" class="logo"></a>
+        </div>
+        <div class="site-col-13 site-col-offset-3">
+            <ul class="nav clearfix">
+                <li <#if (pageFlag??&&pageFlag=='home')> class="active" </#if>><a href="/">首页</a></li>
+                <li <#if (pageFlag??&&pageFlag=='invest')> class="active" </#if>><a href="/invest/index.html">理财频道</a></li>
+                <li <#if (pageFlag??&&pageFlag=='bond')> class="active" </#if>><a href="/bond/index.html">转让专区</a></li>
+                <li <#if (pageFlag??&&pageFlag=='realize')> class="active" </#if>><a href="/realize/introduce.html">变现</a></li>
+                <li <#if (pageFlag??&&pageFlag=='bespeak')> class="active" </#if>><a href="/borrow/bespeak.html">融资借款</a></li>
+                <li <#if (pageFlag??&&pageFlag=='aboutus')> class="active" </#if>><a href="/column/sectionDetail.html?sectionCode=platformInfo">关于我们</a></li>                    
+            </ul>
+        </div>
+        <#if session_user?exists >
+        <div class="site-col-3 site-col-last login-state">                	        
+            <div class="myAccount"><em class="iconfont">&#xe61b;</em><a href="/member/account/main.html">我的账户</a><em class="iconfont">&#xe636;</em></div>
+            <ul>
+                <li><a href="/member/account/main.html">账户概览</a></li>
+                <li><a href="/member/myInvest/list.html">我的投资</a></li>
+                <li><a href="/member/fund/list.html">资金明细</a></li>
+                <li><a href="/member/baseInfo/index.html">安全设置</a></li>
+                <li><a href="/user/logout.html">退出账户</a></li>
+            </ul>	           
+        </div>
+        <#else>
+        <div class="site-col-3 site-col-last login-state">                	        
+            <div class="myAccount"><em class="iconfont">&#xe61b;</em>我的账户<em class="iconfont">&#xe636;</em></div>	           
+        </div>        
+        </#if>
+    </div>        
+</div> 

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>催收日志</title>
+		<#include "include/resources.html">
+	</head>
+	<body>
+	<style>
+				.ui-jqgrid .ui-jqgrid-hdiv{
+			position: relative;
+		}
+		.ui-jqgrid .ui-jqgrid-bdiv{
+			margin-top: 0!important;
+		}
+      @media (max-height: 768px){
+        .ui-jqgrid .ui-jqgrid-bdiv {
+            margin-top: 39px;
+            padding-bottom: 0px;
+            max-height: 100px!important;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+      }
+      .ui-jqgrid .ui-jqgrid-pager {
+          position: relative;
+          bottom: 0px;
+          background: #fff;
+          border: 1px solid #EBEBEB;
+          border-radius: 3px;
+          z-index: 1000;
+      } 
+      @media (max-height: 1080px){
+        .ui-jqgrid .ui-jqgrid-bdiv {
+            margin-top: 39px;
+            padding-bottom: 0px;
+            max-height: 460px!important;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+      }
+	</style>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="hidden" class="form-control search-input" name="repaymentId" value='${repaymentId!}' id="repaymentId">	    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					</div>					
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+					$(document).ready(function() {												
+						//表格初始化
+						$("#jqGrid").jqTreeGrid({
+							url: '/loan/repayment/repaymentUrgeLogList.html?repaymentId=${repaymentId!}',	
+							  multiselect : false,
+							  height:280,
+							  colModel: [
+			                    { label: 'id', name: 'uuid', width: 65, hidden:true},
+								{ label: '催收时间', name: 'createTime',index:"create_time", width: 60,formatter: datetimeFormatter},
+								{ label: '催收备注', name: 'remark',index:"remark",width: 100},
+			                ]
+						}) ;			
+					});
+			</script>
+		</div>
+	</body>
+</html>

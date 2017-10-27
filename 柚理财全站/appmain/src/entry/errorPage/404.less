@@ -1,0 +1,47 @@
+@import (reference)'../../style/common.less';
+body{
+  background: #fff;
+}
+.centerContent {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left:-250px;
+  margin-top:-300px;
+  width: 500px;
+  height: 600px;
+  h2{
+    background: url(../../style/images/img-404.png) no-repeat ;
+    width: 500px;
+    height: 388px;
+
+  }
+
+}
+.bottom {
+  padding-top: 30px;
+  font-size: 14px;
+  color: #aaa;
+  .title{
+    width: 118px;
+    text-align: center;
+    float: left;
+  }
+  .link {
+    float: left;
+    em{
+      background: url(../../style/images/img-404-1.png) no-repeat;
+      width: 6px;
+      height:6px;
+      display: inline-block;
+      margin-right: 20px;
+      vertical-align: 2px;
+    }
+    li{
+      margin-bottom: 20px;
+    &.bottomLi{
+      padding-left: 26px;
+    }
+    }
+  }
+}

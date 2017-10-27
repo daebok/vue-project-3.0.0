@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.user.mapper.AutoInvestRuleLogMapper">
+	<resultMap type="com.rd.ifaes.core.user.domain.AutoInvestRuleLog" id="autoInvestRuleLogResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="amountDayMax" column="AMOUNT_DAY_MAX"/>
+		<result property="repayStyles" column="REPAY_STYLES"/>
+		<result property="monthType" column="MONTH_TYPE"/>
+		<result property="monthLimitMin" column="MONTH_LIMIT_MIN"/>
+		<result property="monthLimitMax" column="MONTH_LIMIT_MAX"/>
+		<result property="dayType" column="DAY_TYPE"/>
+		<result property="dayLimitMin" column="DAY_LIMIT_MIN"/>
+		<result property="dayLimitMax" column="DAY_LIMIT_MAX"/>
+		<result property="aprMin" column="APR_MIN"/>
+		<result property="realizeUseful" column="REALIZE_USEFUL"/>
+		<result property="bondUseful" column="BOND_USEFUL"/>
+		<result property="status" column="STATUS"/>
+		<result property="createTime" column="CREATE_TIME"/>
+        <result property="redType" column="RED_TYPE"/>
+        <result property="increaseType" column="INCREASE_TYPE"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		AMOUNT_DAY_MAX,
+		REPAY_STYLES,
+		MONTH_TYPE,
+		MONTH_LIMIT_MIN,
+		MONTH_LIMIT_MAX,
+		DAY_TYPE,
+		DAY_LIMIT_MIN,
+		DAY_LIMIT_MAX,
+		APR_MIN,
+		REALIZE_USEFUL,
+		BOND_USEFUL,
+		STATUS,
+		CREATE_TIME,
+        RED_TYPE,
+        INCREASE_TYPE
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{amountDayMax},
+		#{repayStyles},
+		#{monthType},
+		#{monthLimitMin},
+		#{monthLimitMax},
+		#{dayType},
+		#{dayLimitMin},
+		#{dayLimitMax},
+		#{aprMin},
+		#{realizeUseful},
+		#{bondUseful},
+		#{status},
+		#{createTime},
+        #{redType},
+        #{increaseType}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+			<if test="amountDayMax != null">and AMOUNT_DAY_MAX = #{amountDayMax}</if>
+            <if test="repayStyles != null and repayStyles != ''">and REPAY_STYLES = #{repayStyles}</if>
+            <if test="monthType != null and monthType != ''">and MONTH_TYPE = #{monthType}</if>
+			<if test="monthLimitMin != null">and MONTH_LIMIT_MIN = #{monthLimitMin}</if>
+			<if test="monthLimitMax != null">and MONTH_LIMIT_MAX = #{monthLimitMax}</if>
+            <if test="dayType != null and dayType != ''">and DAY_TYPE = #{dayType}</if>
+			<if test="dayLimitMin != null">and DAY_LIMIT_MIN = #{dayLimitMin}</if>
+			<if test="dayLimitMax != null">and DAY_LIMIT_MAX = #{dayLimitMax}</if>
+			<if test="aprMin != null">and APR_MIN = #{aprMin}</if>
+            <if test="realizeUseful != null and realizeUseful != ''">and REALIZE_USEFUL = #{realizeUseful}</if>
+            <if test="bondUseful != null and bondUseful != ''">and BOND_USEFUL = #{bondUseful}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="redType != null and redType != ''">and RED_TYPE = #{redType}</if>
+            <if test="increaseType != null and increaseType != ''">and INCREASE_TYPE = #{increaseType}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.user.domain.AutoInvestRuleLog">
+		insert into auto_invest_rule_log( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into auto_invest_rule_log( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+		#{item.uuid},
+				#{item.amountDayMax},
+				#{item.repayStyles},
+				#{item.monthType},
+				#{item.monthLimitMin},
+				#{item.monthLimitMax},
+				#{item.dayType},
+				#{item.dayLimitMin},
+				#{item.dayLimitMax},
+				#{item.aprMin},
+				#{item.realizeUseful},
+				#{item.bondUseful},
+				#{item.status},
+				#{item.createTime},
+                #{item.redType},
+                #{item.increaseType}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from auto_invest_rule_log
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="update" parameterType="com.rd.ifaes.core.user.domain.AutoInvestRuleLog">
+		update auto_invest_rule_log 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="amountDayMax != null">AMOUNT_DAY_MAX = #{amountDayMax},</if>
+            <if test="repayStyles != null and repayStyles != ''">REPAY_STYLES = #{repayStyles},</if>
+            <if test="monthType != null and monthType != ''">MONTH_TYPE = #{monthType},</if>
+			<if test="monthLimitMin != null">MONTH_LIMIT_MIN = #{monthLimitMin},</if>
+			<if test="monthLimitMax != null">MONTH_LIMIT_MAX = #{monthLimitMax},</if>
+            <if test="dayType != null and dayType != ''">DAY_TYPE = #{dayType},</if>
+			<if test="dayLimitMin != null">DAY_LIMIT_MIN = #{dayLimitMin},</if>
+			<if test="dayLimitMax != null">DAY_LIMIT_MAX = #{dayLimitMax},</if>
+			<if test="aprMin != null">APR_MIN = #{aprMin},</if>
+            <if test="realizeUseful != null and realizeUseful != ''">REALIZE_USEFUL = #{realizeUseful},</if>
+            <if test="bondUseful != null and bondUseful != ''">BOND_USEFUL = #{bondUseful},</if>
+            <if test="status != null and status != ''">STATUS = #{status},</if>
+            <if test="redType != null and redType != ''">RED_TYPE = #{redType},</if>
+            <if test="increaseType != null and increaseType != ''">INCREASE_TYPE = #{increaseType},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="autoInvestRuleLogResultMap">
+        select <include refid="table_columns" />
+        from auto_invest_rule_log
+    </select>
+
+    <select id="findList" resultMap="autoInvestRuleLogResultMap">
+        select <include refid="table_columns" />
+        from auto_invest_rule_log
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from auto_invest_rule_log
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="autoInvestRuleLogResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from auto_invest_rule_log
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+
+
+</mapper>

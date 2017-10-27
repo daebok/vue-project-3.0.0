@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.score.mapper.ScoreGoodsPicMapper">
+	<resultMap type="com.rd.ifaes.core.score.domain.ScoreGoodsPic" id="scoreGoodsPicResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="goodsId" column="GOODS_ID"/>
+		<result property="picType" column="PIC_TYPE"/>
+		<result property="picPath" column="PIC_PATH"/>
+		<result property="createTime" column="CREATE_TIME"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		GOODS_ID,
+		PIC_TYPE,
+		PIC_PATH,
+		CREATE_TIME
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{goodsId},
+		#{picType},
+		#{picPath},
+		#{createTime}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="goodsId != null and goodsId != ''">and goods_id = #{goodsId}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.score.domain.ScoreGoodsPic">
+		insert into score_goods_pic( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into score_goods_pic( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+			#{item.uuid},
+			#{item.goodsId},
+			#{item.picType},
+			#{item.picPath},
+			#{item.createTime}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from score_goods_pic
+		where uuid = #{uuid}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from score_goods_pic 
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</delete>
+
+	<update id="update" parameterType="com.rd.ifaes.core.score.domain.ScoreGoodsPic">
+		update score_goods_pic 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="goodsId !=null and goodsId !='' ">GOODS_ID = #{goodsId}, </if>
+			<if test="picType !=null and picType !='' ">PIC_TYPE = #{picType}, </if>
+			<if test="picPath !=null and picPath !='' ">PIC_PATH = #{picPath}, </if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="scoreGoodsPicResultMap">
+        select <include refid="table_columns" />
+        from score_goods_pic
+    </select>
+	
+	<select id="findList" resultMap="scoreGoodsPicResultMap">
+        select <include refid="table_columns" />
+        from score_goods_pic 
+        <include refid="page_where" />
+    </select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from score_goods_pic
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="scoreGoodsPicResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+        from 
+        	score_goods_pic sgp 
+		where 
+			sgp.uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<delete id="initPic" parameterType="String">
+		delete from score_goods_pic 
+		where goods_id= #{goodsId} 
+	</delete>
+	
+	
+</mapper>

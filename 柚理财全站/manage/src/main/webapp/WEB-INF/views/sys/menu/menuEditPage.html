@@ -1,0 +1,145 @@
+<div class="form-tips-content">
+	<form class="form-horizontal" action="/sys/menu/menuEdit.html" id="form" role="form">
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label for="name" class="control-label form-label">菜单名称：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="menuName" id="menuName" maxlength="40" value="${menu.menuName}" placeholder="请输入菜单名称" required>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="username" class="control-label form-label">父级菜单：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" readonly="readonly" name="parentName" id="parentName" onclick="$.fn.treeGridOptions.treeselect(this)" data-url="/sys/menu/menuTreePage.html?parentId=${menu.parentId}" placeholder="请选择父级菜单" value="${parentName}" required/>
+						<input type="hidden" name="parentId" id="parentId" value="${menu.parentId}" required/>
+					</div>
+				</div>
+			</li>
+	  	  	<li>
+			<div class="form-group">
+		      <label for="master" class="control-label form-label">链接地址：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="url" id="url" value="${menu.url}" maxlength="512" placeholder="请输入链接地址" required>
+		      </div>
+		    </div>	
+  		</li>
+			<li>
+				<div class="form-group">
+					<label for="sort" class="control-label form-label">排序值：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="sort" id="sort" value="${menu.sort}" maxlength="4" digits="true" placeholder="请输入排序值" required>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="master" class="control-label form-label">标识：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="code" id="code" value="${menu.code}" maxlength="64" placeholder="请输入标识" required>
+					</div>
+				</div>
+			</li>
+			<li>
+			<div class="form-group">
+		      <label for="master" class="control-label form-label">图标：</label>
+		      <div class="input-box">
+		      	<input type="hidden" class="form-control" name="iconCss" id="iconCss" maxlength="64" placeholder="请输入标识" value="${menu.iconCss}" required>
+		      	<span class="ckbtn form-control">请选择图标</span>
+		      	<ul class="iconselect clearfix">
+		      	</ul>
+		      </div>
+		    </div>	
+  		</li>
+			<li>
+				<div class="form-group">
+			      <label for="master" class="control-label form-label">叶节点：</label>
+			      <div class="input-checkbox-box">
+			      	<input type="checkbox" name="isLeaf" id="isLeaf" <#if menu.isLeaf==1>checked="checked" </#if>  value="1"/><label for="isLeaf">是</label>
+			      </div>
+			    </div>	
+	  		</li>
+  		
+			<li>
+				<div class="form-group">
+					<label for="remark" class="control-label form-label">备注：</label>
+					<div class="input-box">
+						<textarea rows="" cols="" class="form-control" name="remark" maxlength="512" id="remark">${menu.remark}</textarea>
+					</div>
+				</div>
+			</li>
+			<!-- <li>
+				<div class="form-group">
+					<label for="remark" class="control-label form-label">功能：</label>
+					<div class="checked-box">
+						<#list operationList as x>
+							<span>${x.operationName}</span>
+						</#list>
+					</div>
+				</div>
+			</li> -->
+		</ul>
+		<input type="hidden" name="uuid" id="uuid" value="${menu.uuid}" required/>
+		<@token/>
+	</form>
+</div>
+<script>
+	$("#form").validate({
+		submitHandler: function(form) {
+			$(form).ajaxSubmit({
+				type: "post",
+				dataType: "json",
+				success: function(data) {
+					if (data.result) {
+						layer.alert(data.msg, {
+							icon: 6
+						});
+						gridobj.jqGrid('setGridParam', {
+							datatype: 'json',
+							postData: {
+								'parentId': $("input[name='parentId']").val()
+							}, //发送数据  
+							page: 1
+						}).trigger("reloadGrid");
+						editfn($("input[name='parentId']").val());
+						layer.closeAll();
+					} else {
+						layer.alert(data.msg, {
+							icon: 5
+						});
+					}
+				}
+			});
+		}
+	});
+</script>
+
+<script>
+	if($("#iconCss").val()!=""){
+		var iconval = $("#iconCss").val().replace("&amp;","&");
+		$(".ckbtn").html("<em class='iconfont'>"+iconval+"</em>");
+	}
+
+	var data = "${iconfont}";
+	var str ="";
+	var datajson = data.split("|");
+	for(var i=0;i<datajson.length;i++){
+		dataval = String(datajson[i]).replace("&amp;","&");
+		if(dataval!=""){
+			str+="<li data-val='"+datajson[i]+"'><em class='iconfont'>"+dataval+"</em></li>" 
+		}
+	}
+	$(".iconselect").html(str);
+
+	$(".ckbtn").click(function(){
+	   $(".iconselect").show();
+	})
+
+	$(".iconselect li").click(function(){
+		$(".iconselect").hide();
+		$("#iconCss").val(String($(this).attr("data-val")));
+		$(".ckbtn").html($(this).html());
+	})	
+</script>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>用户VIP页面</title>
+		<#include "include/resources.html">
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入用户或认证名称查询">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/operate/vip/userVipList.html">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form>
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+								  <li class="input-group input-group-sm"><span>VIP等级</span>
+								  	<select name="vipLevel" class="form-control">
+								  		<option value="">不限</option>
+								  		<#if vipList?? && vipList?size gt 0>
+								  		<#list vipList as item>
+								  			<option value="${item}">VIP${item}</option>
+								  		</#list>
+								  		</#if>
+								  	</select>
+								  </li>
+								  <li class="input-group input-group-sm"><span>用户名</span><input type="text" class="form-control" name="userName" /></li>
+								  <li class="input-group input-group-sm"><span>认证名称</span><input type="text" class="form-control" name="realName" /></li>
+								  <li class="input-group input-group-sm"><span>获取时间</span> <input type="text" name="startTime" id="startTime" class="form-control"placeholder="开始时间"/> <input type="text" name="endTime" id="endTime"   class="form-control" placeholder="结束时间"/>  
+								  <li><button class="btn btn-sm btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/operate/vip/userVipList.html">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					</div>					
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+				//设置开始时间控件
+				var startTime= {
+					elem:'#startTime',
+					format: 'YYYY-MM-DD', //日期格式
+					istime: false, //是否开启时间选择
+					max:$('#endTime').val(),
+					event:'focus',
+					choose: function(dates){
+					    endTime.min=dates;
+					    endTime.start=dates;
+					}
+				};
+				
+				//设置发放结束时间
+				var endTime=  {
+						elem:'#endTime',
+						format: 'YYYY-MM-DD', //日期格式
+						istime: false, //是否开启时间选择
+						min: $('#startTime').val(), //最小日期
+						event:'focus',
+						choose: function(dates){
+							startTime.max=dates;
+					   }
+				};
+				laydate(startTime);
+				laydate(endTime);
+					$(document).ready(function() {												
+						//表格初始化
+						$("#jqGrid").jqTreeGrid({
+							url: '/operate/vip/userVipList.html',	
+							  multiselect : false,	
+							  colModel: [
+			                    { label: 'id', name: 'uuid', width: 65, hidden:true},
+			                    { label: '用户', name: 'userName',index:"userName",width: 30},
+			                    { label: '认证名称', name: 'realName',index:"real_name",width: 20},
+			                    { label: 'VIP等级', name: 'vipLevel',index:"vip_level",width: 15, formatter:function(value,row,index){
+			                    	return "VIP" + value;
+			                    }},
+			                    { label: '成长值', name: 'growthValue',index:"growth_value",width: 15},
+								{ label: '生日礼包', name: 'birthdayGiftStatus',index:"birthday_gift_status", width: 20,
+									formatter: function(value,row,index){
+				            		   if (value == '0'){
+					  						return "未领取";
+					  					} else if (value == '1'){
+					  						return "已领取";
+					  					} else if (value == '2'){
+					  						return "无礼包";
+					  					} else if (value == '3'){
+					  						return "已作废";
+					  					} else {
+					  						return "-";
+					  					}
+					  				}
+								
+								},
+								{ label: '专享礼包', name: 'exclusiveGiftStatus',index:"exclusive_gift_status", width: 20,
+									formatter: function(value,row,index){
+				            		   if (value == '0'){
+					  						return "未领取";
+					  					} else if (value == '1'){
+					  						return "已领取";
+					  					} else if (value == '2'){
+					  						return "无礼包";
+					  					}else if (value == '3'){
+					  						return "已作废";
+					  					}else {
+					  						return "-";
+					  					}
+					  				}
+								
+								},
+								{ label: 'vip获取时间', name: 'createTime',index:"create_time", width: 20,formatter: datetimeFormatter},
+								{ label: '等级更新时间', name: 'updateTime',index:"update_time", width: 20,formatter: datetimeFormatter},
+								{ label: '操作', name: '',sortable:false,width: 20,formatter:function(val, options, rowObject){	
+									  var id = rowObject.id;
+									  if(rowObject.growthValue==0){
+										  return  '无成长记录';
+									  }
+									  return  '<a href="javascript:;" onclick=$.fn.treeGridOptions.ListShow(this) data-tid="jqGrid" data-width="75%" data-height="75%" data-title="VIP成长记录" data-url="/operate/vip/vipGrowthLogPage.html?userId='+rowObject.userId+'" >VIP成长记录</a>';
+								}
+								}
+			                ]
+						}) ;			
+					});
+			</script>
+		</div>
+	</body>
+</html>

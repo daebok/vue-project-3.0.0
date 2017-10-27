@@ -1,0 +1,97 @@
+<div class="form-tips-content" id="redpackage">
+    <form class="form-horizontal" action="/operate/score/scoreTypeEdit.html" method="post" id="form">
+        <input type="hidden" name="uuid" id="uuid" value=${model.uuid}>
+        <ul class="form-item">
+            <li class="heightLimit">
+                <div class="form-group">
+                    <label for="typeName" class="control-label form-label">类别名称：</label>
+                    <div class="input-box">
+                        <input class="form-control" name="typeName" id="typeName" value="${model.typeName}" readonly>
+                    </div>
+                </div>
+            </li>
+            <li class="heightLimit">
+                <div class="form-group">
+                    <label for="grantTypeStr" class="control-label form-label">发放类型：</label>
+                    <div class="input-box">
+                        <input class="form-control" name="grantTypeStr" id="grantTypeStr" value="${model.grantType}" readonly>
+                        <input type="hidden" name="grantType" id="grantType" value="${model.grantType}">
+                    </div>
+                </div>
+            </li>
+            <li class="heightLimit">
+                <div class="form-group">
+                    <label for="grantValue" class="control-label form-label">发放积分：</label>
+                    <div class="input-box">
+                        <input class="form-control" name="grantValue" id="grantValue" value="${model.grantValue}" <#if model.grantType!='1'>readonly</#if>>
+                    </div>
+                </div>
+            </li>
+            <li class="heightLimit">
+                <div class="form-group">
+                    <label for="grantRate" class="control-label form-label">发放比例：</label>
+                    <div class="input-box">
+                        <input class="form-control" name="grantRate" id="grantRate" value="${model.grantRate}" <#if model.grantType!='2'&&model.grantType!='4'>readonly</#if>>
+                    </div>
+                </div>
+            </li>
+            <li class="heightLimit">
+                <div class="form-group">
+                    <label for="grantMin" class="control-label form-label">发放最小值：</label>
+                    <div class="input-box">
+                        <input class="form-control" name="grantMin" id="grantMin" value="${model.grantMin}" <#if model.grantType!='5'>readonly</#if>>
+                    </div>
+                </div>
+            </li>
+            <li class="heightLimit">
+                <div class="form-group">
+                    <label for="grantMax" class="control-label form-label">发放最大值：</label>
+                    <div class="input-box">
+                        <input class="form-control" name="grantMax" id="grantMax" value="${model.grantMax}" <#if model.grantType!='5'>readonly</#if>>
+                    </div>
+                </div>
+            </li>
+            <li class="heightLimit">
+                <div class="form-group">
+                    <label for="grantUp" class="control-label form-label">发放递增值：</label>
+                    <div class="input-box">
+                        <input class="form-control" name="grantUp" id="grantUp" value="${model.grantUp}" <#if model.grantType!='5'>readonly</#if>>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </form>
+</div>
+<script src="${theme_dir}/static/js/plugins/jquery.suggest.js"></script>
+<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+<script src="${theme_dir}/static/js/upload.js"></script>
+<script type="text/javascript">
+    $("#form").validate({
+        submitHandler: function (form) {
+            $(form).ajaxSubmit({
+                type: "post",
+                dataType: "json",
+                success: function (data) {
+                    if (data.result) {
+                        layer.alert(data.msg, {
+                            zIndex: 100000,
+                            icon: 6,
+                            cancel: function (index) {
+                                layer.closeAll();
+                                gridobj.trigger("reloadGrid"); //重新载入
+                            }
+                        }, function () {
+                            layer.closeAll();
+                            gridobj.trigger("reloadGrid"); //重新载入
+                        });
+                    } else {
+                        layer.alert(data.msg, {
+                            zIndex: 100000,
+                            icon: 5
+                        });
+                    }
+                }
+            });
+        }
+    });
+</script>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="format-detection" content="telephone=no">
+    <title>转让设置-${web_name!""}</title>
+    <link rel="stylesheet" type="text/css" href="/common.css"/>
+    <link rel="stylesheet" type="text/css" href="/mybondsetting.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <#include "/include/header.html">
+
+    <input type="hidden" id="projectId" value="${data.projectId!''}"/>
+    <input type="hidden" id="ruleId" value="${data.ruleId}"/>
+    <input type="hidden" id="investId" value="${data.investId!''}"/>
+    <input type="hidden" id="userId" value="${data.userId!''}"/>
+    <input type="hidden" id="startPeriod" value="${data.startPeriod!''}"/>
+    <input type="hidden" id="Money" value="${data.bondValue!''}"/>
+    <input type="hidden" id="max" value="${data.max!''}"/>
+    <input type="hidden" id="min" value="${data.min!''}"/>
+    <input type="hidden" id="protocolId" value="${data.protocolId} "/>
+    <@token name="commitBondToken"/>
+    <input type="hidden" id="sellAll" value="${data.isSellAll!''}"/>
+    <input type="hidden" id="repayedCapital" value="${data.repayedCapital!''}"/>
+
+    <div class="site-row account-content clearfix">
+        <div class="site-col-4 account-side" id="j-sider-menu">
+            <div class="loading"></div>
+        </div>
+        <div class="site-col-20 site-col-last">
+            <div class="account-main">
+              <div class="main-title">转让设置<a class="backBtn" href="/member/myBond/list.html">返回</a></div>
+                <div class="account-tab" id="j-mybond-setting">
+                  <div class="loading"></div>
+                </div>
+                <div class="help">
+                    <div class="help-title"><em class="iconfont">&#xe639;</em>温馨提示</div>
+                    <ol>
+                      <li>转让成功后可赎回金额=转出债权本金x（1+折溢价率）+持有期限应收利息-应收利息的利息管理费-转让手续费</li>
+                      <li>手续费将从转让后投资人支付的每笔成交额中扣除${data.fee!''}。</li>
+                      <li>持有期限应收利息将由投资人投资时支付</li>
+                      <li>债权一旦发生转让，转让人将无法享受产品加息及加息券加息</li>
+                      <li>最高溢价率会随着转让人持有期限的增加而降低。转让过程中，当转让人设置的溢价率高于当日债权可设置的最高溢价率时，系统会自动把转让中债权的折溢价率改为当日债权可设置的最高溢价率的值</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <#include "/include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/common.js"></script>
+<script src="/mybondsetting.js"></script>
+</html>

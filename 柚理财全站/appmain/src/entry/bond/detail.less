@@ -1,0 +1,256 @@
+@import (reference)'../../style/common.less';
+.ant-modal-body{
+  padding: 16px;
+}
+.bond-detail{
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+.bond-detail-header{
+  height:360px;
+  /*background: url(../../style/images/invest-detail-bg.png) #ff5a68 no-repeat;*/
+  .bond-header-info{
+    background-color: #fff;
+    padding: 0 50px;
+    height: 360px;
+    &:extend(.fl);
+    margin: 0;
+    width: 850px;
+    .info-title{
+      line-height: 80px;
+      overflow: hidden;
+      border-bottom:solid 1px #f1f1f1; 
+      .title-name{
+        &:extend(.fl);
+        color:@color-title;
+        font-size: 22px;
+        max-width: 500px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        .iconfont{
+          color:@color-main;
+          &:extend(.f20);
+          margin: 0 16px 0 0;
+        }
+      }
+      .protocol{
+        &:extend(.fr);
+        &:extend(.f14);
+        color: #ff9545;
+      }
+    }
+    .info-main{
+      height: 150px;
+      ul{
+        li{
+          &:extend(.fl);
+          margin-top:31px;
+        }
+        s{
+          text-decoration: none;
+          &:extend(.f14);
+          color:#aaa;
+          display: block;
+          margin: 0 0 0 8px;
+        }
+        .profit{
+          width: 230px;
+          font-size: 20px;
+          color:#f64040;
+          span.text{
+            font-size: 50px;
+          }
+          s{
+            margin-top: -8px;
+          }
+        }
+        .time{
+          width: 160px;
+          font-size: 14px;
+          color:@color-p;
+          margin:45px 0 0 0;
+          span.text{
+            font-size: 34px;
+          }
+        }
+        .min,.bondApr{
+          width: 180px;
+          font-size: 14px;
+          margin-top: 45px;
+          color:@color-p;
+          span.text{
+            font-size: 34px;
+          }
+        }
+/*        .pro_box{
+          width: 170px;
+          font-size: 14px;
+          color: #999;
+          margin-top: 70px;
+          .progress{
+            width: 170px;
+            height: 6px;
+            border-radius: 3px;
+            background: #eaeaea;
+            line-height: 6px;
+            em{
+              display: block;
+              height: 6px;
+              line-height: 6px;
+              background: #fc0;
+              border-radius: 3px;
+            }
+          }
+          .progress_txt{
+            margin-top: 20px;
+            p{
+              width: 50%;
+              &.fr{
+                text-align: right;
+              }
+            }
+          }
+        }*/
+      }
+    }
+    .info-basic{
+      padding:10px;
+      background: #fcfcfc;
+      ul{
+        overflow: hidden;
+        li{
+          line-height: 32px;
+          height:32px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          &:extend(.fl);
+          width: 240px;
+          &:extend(.f14);
+          color: @color-p;
+          span.title{
+            display: inline-block;
+            width: 68px;
+            color:@color-text;
+          }
+        }
+      }
+    }
+  }  
+}
+.bond-main{
+  margin-top:20px; 
+  .bond-main-nav{          
+      min-height: 350px;    
+      background-color: #fff;
+      .noLoginText{
+        margin: 120px auto 0;
+        text-align: center;
+        a{
+          margin: 0 5px;
+          .f16();
+          color: @color-main;
+        }
+      }
+      .ant-tabs-bar{
+        margin-bottom: 0;
+        border-bottom: 1px solid @color-tipsbg;
+        background: #f9f9f9;        
+      }
+      .ant-tabs-nav .ant-tabs-tab{
+        margin-right: 0;
+        width: 150px;
+        height: 50px;
+        line-height: 35px;
+        text-align: center;
+        .ant-tabs-tab-inner{
+          color: #333;
+          .f16();
+        }
+      }
+      .account-tab();
+      .ant-tabs-tab-active{
+        background-color: #fff;
+        border-left: 1px solid @color-tipsbg;
+        border-right: 1px solid @color-tipsbg;
+        font-weight: normal;
+      }
+      .ant-tabs-ink-bar{
+        width: 150px;
+        top:0
+      }
+      .bond-detail-nav{
+        height: 50px;
+        &:extend(.fl);
+        li{
+          width: 150px;
+          text-align: center;
+          line-height:50px;
+          height: 50px;
+          cursor: pointer;
+          &:extend(.fl);
+          font-size: 16px;
+          color:@color-title;
+          border-right:solid 1px @color-tipsbg;
+          border-bottom:solid 1px @color-tipsbg;
+          &.on{
+          border-right:solid 1px @color-tipsbg;
+          border-top:solid 2px @color-main;
+          border-bottom:solid 1px #fff;
+          position: relative;
+          color: @color-main;
+          background-color: #fff;           
+          } 
+        }
+      }    
+    }
+    .bond-main-cont{
+      background-color: #fff;
+      min-height: 400px;
+      padding:20px 50px 0;
+      .module{
+        dt{
+          &:extend(.f18);
+          color:@color-title;
+          line-height: 60px;
+          border-bottom:solid 1px @color-tipsbg;
+        }
+        dd{
+          min-height: 100px;
+        }
+      } 
+    }
+}
+.ant-input:focus, .ant-input:hover, .has-success .ant-input:not([disabled]):hover {
+    border-color: #fff;
+    box-shadow: none;
+}
+.has-error .ant-input {
+    border-color: #f50;
+    box-shadow: none;
+}
+
+.realPayAmount-pop .ant-popover-arrow {
+    left: 50%!important;
+}
+.realPayAmount-pop .ant-popover-inner {
+    background:none;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#75000000', endColorstr='#75000000');
+}
+
+@media screen and (min-width: 0px) {
+    .realPayAmount-pop .ant-popover-inner {
+        background: rgba(0,0,0,0.65);
+    }
+}
+.detail-info {
+    padding-left: 50px
+}
+
+.detail-info label {
+    color: #999;
+    font-size: 14px;
+    float: left;
+    padding-right: 10px
+}

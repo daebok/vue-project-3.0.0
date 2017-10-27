@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.statistic.mapper.StatisticBadDebtMapper">
+	<resultMap type="com.rd.ifaes.core.statistic.domain.StatisticBadDebt" id="statisticBadDebtResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="statDate" column="STAT_DATE"/>
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="amount" column="AMOUNT"/>
+		<result property="isVouch" column="IS_VOUCH"/>
+		<result property="isMortgage" column="IS_MORTGAGE"/>
+		<result property="isRealize" column="IS_REALIZE"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		STAT_DATE,
+		PROJECT_ID,
+		AMOUNT,
+		IS_VOUCH,
+		IS_MORTGAGE,
+		IS_REALIZE
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{statDate},
+		#{projectId},
+		#{amount},
+		#{isVouch},
+		#{isMortgage},
+		#{isRealize}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#columnName#||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="statDate != null and statDate != ''">and STAT_DATE = #{statDate}</if>
+            <if test="projectId != null and projectId != ''">and PROJECT_ID = #{projectId}</if>
+            <if test="amount != null and amount != ''">and AMOUNT = #{amount}</if>
+            <if test="isVouch != null and isVouch != ''">and IS_VOUCH = #{isVouch}</if>
+            <if test="isMortgage != null and isMortgage != ''">and IS_MORTGAGE = #{isMortgage}</if>
+            <if test="isRealize != null and isRealize != ''">and IS_REALIZE = #{isRealize}</if>
+        </trim>
+    </sql>
+
+
+	<!-- 适用于主键自增类型 -->
+	<insert id="insert" parameterType="com.rd.ifaes.core.statistic.domain.StatisticBadDebt" useGeneratedKeys="true" keyProperty="id">
+		insert into statistic_bad_debt( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">
+		BEGIN		
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into statistic_bad_debt( <include refid="table_columns" /> ) 
+		values 
+		( 
+			#{item.uuid},
+			#{item.statDate},
+			#{item.projectId},
+			#{item.amount},
+			#{item.isVouch},
+			#{item.isMortgage},
+			#{item.isRealize}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="int">
+		delete from statistic_bad_debt
+		where uuid = #{uuid}
+	</delete>
+
+	<update id="deleteLogic" parameterType="int">
+		update statistic_bad_debt set is_delete = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.statistic.domain.StatisticBadDebt">
+		update statistic_bad_debt 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="statDate != null and statDate != ''">STAT_DATE = #{statDate},</if>
+			<if test="projectId != null and projectId != ''">PROJECT_ID = #{projectId},</if>
+			<if test="amount != null and amount != ''">AMOUNT = #{amount},</if>
+			<if test="isVouch != null and isVouch != ''">IS_VOUCH = #{isVouch},</if>
+			<if test="isMortgage != null and isMortgage != ''">IS_MORTGAGE = #{isMortgage},</if>
+			<if test="isRealize != null and isRealize != ''">IS_REALIZE = #{isRealize},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <update id="updateSelective" parameterType="com.rd.ifaes.core.statistic.domain.StatisticBadDebt">
+        update statistic_bad_debt
+        <trim prefix="set" suffixOverrides=",">
+            <if test="statDate != null and statDate != ''">STAT_DATE = #{statDate},</if>
+            <if test="projectId != null and projectId != ''">PROJECT_ID = #{projectId},</if>
+            <if test="amount != null and amount != ''">AMOUNT = #{amount},</if>
+            <if test="isVouch != null and isVouch != ''">IS_VOUCH = #{isVouch},</if>
+            <if test="isMortgage != null and isMortgage != ''">IS_MORTGAGE = #{isMortgage},</if>
+            <if test="isRealize != null and isRealize != ''">IS_REALIZE = #{isRealize},</if>
+        </trim>
+        <include refid="page_where" />
+    </update>
+
+
+    <select id="findAll" resultMap="statisticBadDebtResultMap">
+        select <include refid="table_columns" />
+        from statistic_bad_debt
+    </select>
+
+    <select id="findList" resultMap="statisticBadDebtResultMap">
+        select <include refid="table_columns" />
+        from statistic_bad_debt
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from statistic_bad_debt
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="statisticBadDebtResultMap" parameterType="int" >
+		select <include refid="table_columns" />
+		from statistic_bad_debt
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<!-- 统计坏账 -->
+	<resultMap type="com.rd.ifaes.core.statistic.model.StatisticResultModel" id="statisticResultModelResultMap">
+		<result property="statDate" column="STAT_DATE"/>
+		<result property="totalCount" column="TOTAL_COUNT"/>
+	</resultMap>
+	
+	<!-- 根据查询类型统计数据 -->
+ 	<select id="findByStatDate" resultMap="statisticResultModelResultMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select <include refid="select_dateType" /> as statDate, <include refid="statistic_type" /> as totalCount
+		from statistic_bad_debt 
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="startDate != null and startDate != ''">and <include refid="select_dateType" /> &gt;= to_date(#{startDate},'yyyy-mm-dd hh24:mi:ss')</if>
+        	<if test="endDate != null and endDate != ''">and <include refid="select_dateType" /> &lt;= to_date(#{endDate},'yyyy-mm-dd hh24:mi:ss')</if>
+        </trim>
+        group by <include refid="select_dateType" />
+	</select>
+	<!-- 日期格式 -->
+	<sql id="select_dateType">
+	   <choose> 
+            <when test="3==dateType ">  
+                to_char(stat_date,'yyyymm')  
+            </when >  
+            <when test="2==dateType ">  
+                to_char(stat_date,'yyyyWW')  
+            </when >  
+            <otherwise>
+                to_char(stat_date,'yyyymmdd')  
+            </otherwise> 
+	   </choose>
+	</sql>
+	<!-- 查询类型 -->
+	<sql id="statistic_type">
+	   <choose> 
+            <when test="3==statType ">  
+                count(project_id) 
+            </when >  
+            <when test="2==statType ">  
+                sum(amount) 
+            </when >  
+            <otherwise>
+                count(project_id)
+            </otherwise> 
+	   </choose>
+	</sql>
+	
+	<!-- 统计不同借款类型坏账笔数或金额  -->
+	<select id="countByBorrowType" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select <include refid="selectByBorrowType" />
+		from statistic_bad_debt 
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="startDate != null and startDate != ''">and stat_date &gt;= to_date(#{startDate},'yyyy-mm-dd hh24:mi:ss')</if>
+        	<if test="endDate != null and endDate != ''">and stat_date &lt;= to_date(#{endDate},'yyyy-mm-dd hh24:mi:ss')</if>
+        </trim>
+	</select>	
+	<!-- 查询饼状图类型 -->
+	<sql id="selectByBorrowType">
+	   <choose> 
+            <when test="2==statType ">  
+				nvl(sum(case when is_mortgage = '1' then amount ELSE 0 end),0) as '抵押借款', 
+				nvl(sum(case when is_vouch = '1' then amount ELSE 0 end),0) as '担保借款',
+				nvl(sum(case when is_realize = '1' then amount ELSE 0 end),0) as '变现借款',
+				nvl(sum(case when is_vouch = '0' and is_mortgage = '0' then amount ELSE 0 end),0) as '其他' 
+            </when >  
+            <otherwise>
+				nvl(count(case when is_mortgage = '1' then 1 ELSE null end),0) as '抵押借款', 
+				nvl(count(case when is_vouch = '1' then 1 ELSE null end),0) as '担保借款',
+				nvl(count(case when is_realize = '1' then 1 ELSE null end),0) as '变现借款',
+				nvl(count(case when is_vouch = '0' and is_mortgage = '0' then 1 ELSE null end),0) as '其他' 
+            </otherwise> 
+	   </choose>
+	</sql>
+</mapper>

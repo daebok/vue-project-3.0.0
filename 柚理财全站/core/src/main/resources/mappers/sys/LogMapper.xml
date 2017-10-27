@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.sys.mapper.LogMapper">
+	<resultMap type="com.rd.ifaes.core.sys.domain.Log" id="logResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="logType" column="LOG_TYPE"/>
+		<result property="ip" column="IP"/>
+		<result property="requestUri" column="REQUEST_URI"/>
+		<result property="requestMethod" column="REQUEST_METHOD"/>
+		<result property="params" column="PARAMS"/>
+		<result property="exception" column="EXCEPTION"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="remark" column="REMARK"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="takeTime" column="TAKE_TIME"/>
+		<result property="loginName" column="LOGIN_NAME"/>
+		<result property="operationContent" column="OPERATION_CONTENT"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		LOG_TYPE,
+		IP,
+		REQUEST_URI,
+		REQUEST_METHOD,
+		PARAMS,
+		EXCEPTION,
+		CREATE_TIME,
+		REMARK,
+		USER_ID,
+		TAKE_TIME,
+		OPERATION_CONTENT
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{logType},
+		#{ip},
+		#{requestUri},
+		#{requestMethod},
+		#{params},
+		#{exception},
+		#{createTime},
+		#{remark},
+		#{userId},
+		#{takeTime},
+		#{operationContent}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="logType != null and logType != ''">and LOG_TYPE = #{logType}</if>
+            <if test="ip != null and ip != ''">and IP = #{ip}</if>
+            <if test="requestUri != null and requestUri != ''">and REQUEST_URI = #{requestUri}</if>
+            <if test="requestMethod != null and requestMethod != ''">and REQUEST_METHOD = #{requestMethod}</if>
+            <if test="params != null and params != ''">and PARAMS = #{params}</if>
+            <if test="exception != null and exception != ''">and EXCEPTION = #{exception}</if>
+			<if test="createTime != null">and create_time = #{createTime}</if>
+            <if test="remark != null and remark != ''">and REMARK = #{remark}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="takeTime != null and takeTime != ''">and TAKE_TIME = #{takeTime}</if>
+             <if test="operationContent != null and operationContent != ''">and OPERATION_CONTENT = #{operationContent}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by create_time desc </if>
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.sys.domain.Log">
+		insert into sys_log( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into sys_log( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+				#{item.uuid},
+				#{item.logType},
+				#{item.ip},
+				#{item.requestUri},
+				#{item.requestMethod},
+				#{item.params},
+				#{item.exception},
+				#{item.createTime},
+				#{item.remark},
+				#{item.userId},
+				#{item.takeTime},
+				#{item.operationContent}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from sys_log
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update sys_log set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update sys_log set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+
+    <select id="findAll" resultMap="logResultMap">
+        select <include refid="table_columns" />
+        from sys_log
+    </select>
+
+    <select id="findList" resultMap="logResultMap">
+        select <include refid="table_columns" />
+        from sys_log
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from sys_log
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="logResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from sys_log
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<select id="getLogList" resultMap="logResultMap">
+        select log.uuid,log.log_type,log.user_id,log.ip,log.request_uri,log.request_method,log.params,log.exception,log.create_time,log.operation_content,op.login_name
+        from sys_log log 
+        inner join sys_operator op on log.user_id = op.uuid
+         <trim prefix="where" prefixOverrides="and | or">
+            <if test="uuid != null and uuid != ''">and log.uuid = #{uuid}</if>
+            <if test="logType != null and logType != ''">and log.log_type = #{logType}</if>
+            <if test="requestUri != null and requestUri != ''">and log.request_uri = #{requestUri}</if>
+            <if test="requestMethod != null and requestMethod != ''">and log.request_method = #{requestMethod}</if>
+            <if test="operationContent != null and operationContent != ''">and log.operation_content = #{operationContent}</if>
+            <if test="userId != null and userId != ''">and log.user_id = #{userId}</if>
+            <if test="ip != null and ip != ''">and ip like concat('%',#{ip},'%')</if>
+            <if test="loginName != null and loginName != ''">and op.login_name = #{loginName}</if>
+            <if test="startTime != null and startTime != ''">and log.create_time &gt;= #{startTime}</if>
+		    <if test="endTime != null and endTime != ''">and log.create_time &lt;= #{endTime}</if> 
+            <if test="keywords != null and keywords != ''">
+				and op.login_name like concat('%',#{keywords},'%')
+			</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''"> order by log.create_time desc </if>
+	</select>
+
+</mapper>

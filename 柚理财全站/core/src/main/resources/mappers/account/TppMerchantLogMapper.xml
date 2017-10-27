@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.account.mapper.TppMerchantLogMapper">
+	<resultMap type="com.rd.ifaes.core.account.domain.TppMerchantLog" id="tppMerchantLogResultMap">
+	</resultMap>
+	<resultMap type="com.rd.ifaes.core.account.model.TppMerchantLogModel" id="tppMerchantLogModelResultMap">
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		OPERATOR_ID,
+		ACCOUNT,
+		TO_ACCOUNT,
+		MONEY,
+		FEE,
+		STATUS,
+		OPERATE_TYPE,
+		ORDER_NO,
+		CREATE_TIME,
+		ADD_IP,
+		REMARK
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{operatorId},
+		#{account},
+		#{toAccount},
+		#{money},
+		#{fee},
+		#{status},
+		#{operateType},
+		#{orderNo},
+		#{createTime},
+		#{addIp},
+		#{remark}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="operatorId != null and operatorId != ''">and OPERATOR_ID = #{operatorId}</if>
+            <if test="account != null and account != ''">and ACCOUNT = #{account}</if>
+            <if test="toAccount != null and toAccount != ''">and TO_ACCOUNT = #{toAccount}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.account.domain.TppMerchantLog">
+		insert into tpp_merchant_log( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into tpp_merchant_log( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+				#{item.uuid},
+				#{item.operatorId},
+				#{item.account},
+				#{item.toAccount},
+				#{item.money},
+				#{item.fee},
+				#{item.status},
+				#{item.operateType},
+				#{item.orderNo},
+				#{item.createTime},
+				#{item.addIp},
+				#{item.remark}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from tpp_merchant_log
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		delete from tpp_merchant_log
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		delete from tpp_merchant_log
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.account.domain.TppMerchantLog">
+		update tpp_merchant_log 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="operatorId != null and operatorId != ''">OPERATOR_ID = #{operatorId},</if>
+            <if test="account != null and account != ''">ACCOUNT = #{account},</if>
+            <if test="toAccount != null and toAccount != ''">TO_ACCOUNT = #{toAccount},</if>
+            <if test="money != null">MONEY = #{money},</if>
+			<if test="fee != null">FEE = #{fee},</if>
+			<if test="status != null">STATUS = #{status},</if>
+            <if test="operateType != null and operateType != ''">OPERATE_TYPE = #{operateType},</if>
+            <if test="orderNo != null and orderNo != ''">ORDER_NO = #{orderNo},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="tppMerchantLogResultMap">
+        select <include refid="table_columns" />
+        from tpp_merchant_log
+    </select>
+
+    <select id="findList" resultMap="tppMerchantLogResultMap">
+        select <include refid="table_columns" />
+        from tpp_merchant_log
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from tpp_merchant_log
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="tppMerchantLogResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from tpp_merchant_log
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+
+    <!-- 根据订单号查询记录 -->
+    <update id="truncateTppMerchantLog">
+		truncate table tpp_merchant_log
+	</update>
+
+
+	<sql id="findManageListWhere">
+		 <where>
+	        <if test="loginName != null and loginName != ''">and p.login_name like concat('%',#{loginName},'%')   </if>
+	 		<if test="realName != null and realName != ''">and p.real_name like concat('%',#{realName},'%')   </if>
+	 		<if test="account != null and account != ''">and t.ACCOUNT like concat('%',#{account},'%')   </if>
+	 		<if test="toAccount != null and toAccount != ''">and t.TO_ACCOUNT like concat('%',#{toAccount},'%')   </if>
+	        <if test="orderNo != null and orderNo != ''">and t.ORDER_NO like concat('%',#{orderNo},'%') </if>
+	 		<if test="keywords != null and keywords != ''">and (p.login_name like concat('%',#{keywords},'%') or p.real_name like concat('%',#{keywords},'%'))  </if>
+	 		<if test="status != null and status != '' and status != 99 ">and t.status = #{status}  </if>
+	 		<if test="operateType != null and operateType != ''">and t.OPERATE_TYPE = #{operateType}  </if>
+	 		<if test="dateType == null or dateType == '' or dateType == '00'">
+			     <if test="startTime != null and startTime != ''">and t.CREATE_TIME &gt;= #{startTime}</if>
+			     <if test="endTime != null and endTime != ''">and t.CREATE_TIME &lt;= #{endTime}</if>        
+	        </if>
+        </where>
+	</sql>
+	<!-- 后台资金操作记录 -->
+	<select id="findManageList" resultMap="tppMerchantLogResultMap">
+        select
+        t.UUID,
+		t.OPERATOR_ID,
+		t.ACCOUNT,
+		t.TO_ACCOUNT,
+		t.MONEY,
+		t.FEE,
+		t.STATUS,
+		t.OPERATE_TYPE,
+		t.ORDER_NO,
+		t.CREATE_TIME,
+		t.ADD_IP,
+		t.REMARK,
+		(case when t.OPERATOR_ID is NULL then '-' else p.LOGIN_NAME end) login_name,
+		p.REAL_NAME
+        from tpp_merchant_log t
+        left join sys_operator p on t.operator_id = p.uuid 
+        <include refid="findManageListWhere" />
+ 		<choose>
+		  <when test="page != null and page.sort!=null and page.sort!=''">
+		  		order by ${page.sort} ${page.order}
+		   </when>
+		  <otherwise>
+		  		order by t.create_time desc,t.order_no desc
+		  </otherwise>
+		</choose>
+	</select>
+	
+	<select id="getManageCount" resultType="int">
+        select count( t.UUID)
+        from tpp_merchant_log t
+        left join sys_operator p on t.operator_id = p.uuid 
+        <include refid="findManageListWhere" />
+ 		<choose>
+		  <when test="page != null and page.sort!=null and page.sort!=''">
+		  		order by ${page.sort} ${page.order}
+		   </when>
+		  <otherwise>
+		  		order by t.create_time desc,t.order_no desc
+		  </otherwise>
+		</choose>
+	</select>
+
+
+    <select id="findByOrderNo" resultMap="tppMerchantLogResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from tpp_merchant_log
+		where order_no = #{orderNo}
+	</select>
+	
+		
+	<!-- 其他自定义SQL -->
+	<resultMap type="com.rd.ifaes.core.statistic.model.StatisticResultModel" id="statisticResultModelResultMap">
+		<result property="statDate" column="STAT_DATE"/>
+		<result property="totalCount" column="TOTAL_COUNT"/>
+		<result property="totalAmnt" column="TOTAL_AMNT"/>
+		<result property="type" column="TYPE"/>
+	</resultMap>
+	
+	<!-- 根据统计日期查询统计信息 -->
+    <select id="findByStatDate" resultMap="statisticResultModelResultMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel">
+        select <include refid="select_dateType" /> as statDate, sum(money) as totalCount 
+        from tpp_merchant_log
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="startDate != null and startDate != ''">and <include refid="select_dateType" /> &gt;= #{startDate}</if>
+			<if test="endDate != null and endDate != ''">and <include refid="select_dateType" /> &lt;= #{endDate}</if>
+            <include refid="queryConditionSql" />
+        </trim>
+        group by statDate order by statDate
+	</select>
+	<!-- 获取起始日期前一天数值 -->
+	<select id="getCountBeforeStartDate" resultType="BigDecimal" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select sum(money)
+		from tpp_merchant_log 
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="beforeStartDate != null and beforeStartDate != ''">and <include refid="select_dateType" /> = #{beforeStartDate}</if>
+            <include refid="queryConditionSql" />
+        </trim>
+	</select>	
+	<!-- 日期格式 -->
+	<sql id="select_dateType">
+	   <choose> 
+            <when test="3==dateType ">  
+                date_format(create_time,'%X%m')  
+            </when >  
+            <when test="2==dateType ">  
+                date_format(create_time,'%X%V')  
+            </when >  
+            <otherwise>
+                date_format(create_time,'%Y%m%d')  
+            </otherwise> 
+	   </choose>
+	</sql>
+    <!-- 类型 -->
+	<sql id="queryConditionSql">
+	    <if test="status != null and status != ''"> and status = #{status} </if>
+		<if test="typeArr != null and typeArr.length &gt; 0">
+        and operate_type in
+	        <foreach collection="typeArr" item="item" open="(" separator="," close=")">  
+	          #{item} 
+	        </foreach>	
+        </if>
+	</sql>
+	
+	<!-- 根据状态查询统计信息 -->
+    <select id="getMoneyByType" resultMap="statisticResultModelResultMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel">
+        select operate_type as type, sum(money) as totalAmnt
+		from tpp_merchant_log
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="startDate != null and startDate != ''">and <include refid="select_dateType" /> &gt;= #{startDate}</if>
+        	<if test="endDate != null and endDate != ''">and <include refid="select_dateType" /> &lt;= #{endDate}</if>
+            <if test="status != null and status != ''"> and status = #{status} </if>
+        </trim>
+        group by type
+	</select>
+
+</mapper>

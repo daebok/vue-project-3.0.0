@@ -1,0 +1,450 @@
+<link href="/static/js/plugins/umeditor/themes/default/css/umeditor.css" type="text/css" rel="stylesheet">
+<script type="text/javascript" charset="utf-8" src="/static/js/plugins/umeditor/umeditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="/static/js/plugins/umeditor/umeditor.min.js"></script>
+<script type="text/javascript" src="/static/js/plugins/umeditor/lang/zh-cn/zh-cn.js"></script>
+<div id="j-content">
+<div class="form-tips-content" id="con">
+	<input type="hidden" id="image_server_url" value="${image_server_url}">
+	<form class="form-horizontal" action="/loan/borrow/borrowEdit.html" id="form" role="form">
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">借款名称<span style="color:red;">*</span>：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="projectName" id="projectName" value="${borrow.projectName}" maxlength="25" placeholder="请输入名称" required>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+			      <label for="sort" class="control-label form-label">风险等级<span class="icon-important">*</span>：</label>
+			      <div class="input-box">
+			      	<select name="riskLevel" autocomplete="off" id="riskLevel" class="form-control required" data-msg-required="请选择">
+			      		<option value="">请选择</option>
+			      		<#list levelList as item>
+			      			<option value="${item.riskLevelVal}" <#if item.riskLevelVal==borrow.riskLevel>selected="selected"</#if> >${item.riskLevelName}</option>
+			      		</#list>
+			      	</select>
+			      </div>
+			    </div>
+	  		</li>
+			<li>
+				<div class="form-group">
+					<label for="userName" class="control-label form-label">借款方<span class="icon-important">*</span>：</label>
+					<div class="input-box">
+						<input type="text" readonly class="form-control" style="width: auto; display: inline-block; vertical-align: middle;" name="userName" id="userName" value="${borrow.userName}" placeholder="请输入借款方" required data-msg-required="请选择" autocomplete="off">
+						<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.borrowSelect(this, borrowerSelectFn)" data-tid="jqGrid" data-url="/loan/borrow/borrowerPage.html">选择</button>
+						<div id="keyword"></div>
+						<input type="hidden" class="form-control" name="userId" value="${borrow.userId}" id="userId">
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="account" class="control-label form-label">借款总金额<span class="icon-important">*</span>：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="account" id="account" value="${borrow.account}" placeholder="请输入借款金额" data-rule-digits="true" data-msg-digits="请输入整数" data-rule-rangeNumber="${borrowMinAccount}, ${borrowMaxAccount}" data-msg-rangeNumber="借款总金额不能小于${borrowMinAccount},且不能超过${borrowMaxAccount}" required>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="apr" class="control-label form-label">年利率(%)<span class="icon-important">*</span>：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="apr" id="apr" value="${borrow.apr}"  placeholder="请输入年利率" data-rule-rangeNumber="0.01, 24" data-msg-rangeNumber="输入的值在0.01~24之间" required>&nbsp;
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="borrowUse" class="control-label form-label">借款用途：</label>
+					<div class="input-box">
+						<@linkage name="borrowUse" nid="borrowUse" class="form-control" default="${borrow.borrowUse}"/>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="borrowUse" class="control-label form-label">标的类别：</label>
+					<div class="input-box">
+						<@linkage name="projectType" nid="project_type_manage" class="form-control" default="${borrow.projectType}"/>
+					</div>
+				</div>
+			</li>
+	  		<li>
+				<div class="form-group">
+			      <label for="timeType" class="control-label form-label">借款期限类型：</label>
+			      <div class="input-checkbox-box">
+			        <input type="radio"  id="timeTypeRadio1" name="timeType" value="0" <#if borrow.timeType == 0 > checked="checked" </#if> >
+			        <label for="timeTypeRadio1">月</label>
+			        <input type="radio" id="timeTypeRadio2" name="timeType" value="1" <#if borrow.timeType == 1 > checked="checked" </#if> >
+			        <label for="timeTypeRadio2">天</label>
+			      </div>
+			    </div>
+	  		</li>
+			<li>
+				<div class="form-group">
+					<label for="timeLimit" class="control-label form-label">借款期限<span class="icon-important">*</span>：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="timeLimit" id="timeLimit" value="${borrow.timeLimit}" placeholder="请输入借款期限"  data-rule-digits="true" data-msg-digits="请输入整数" required>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="lowestAccount" class="control-label form-label">最低起投金额<span class="icon-important">*</span>：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="lowestAccount" id="lowestAccount" value="${borrow.lowestAccount}" placeholder="请输入最低起投金额" data-rule-digits="true" data-msg-digits="请输入整数" data-rule-lessThan="#account" data-msg-lessThan="最低起投金额不能高于借款总金额" required>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="stepAccount" class="control-label form-label">递增金额：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="stepAccount" id="stepAccount" value="${borrow.stepAccount}" placeholder="请输入递增金额" data-rule-digits="true" data-msg-digits="请输入整数" >
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="mostAccount" class="control-label form-label">最高投资总额：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="mostAccount" id="mostAccount" value="${borrow.mostAccount}" placeholder="请输入最高投资总额,默认为借款总金额" data-rule-digits="true" data-msg-digits="请输入整数" data-rule-lessThan="#account" data-msg-lessThan="最高投资总额不能高于借款总金额" data-rule-greaterThan="#lowestAccount" data-msg-greaterThan="最高投资总额不能小于最低起投金额" required>
+					</div>
+				</div>
+			</li>
+	  		<li>
+				<div class="form-group">
+			      <label for="sort" class="control-label form-label">计息方式：</label>
+			      <div class="input-box row" style="margin:0; padding:0;">
+			      	<input name="interestStyle" id="interestStyle1" value="1" type="radio" <#if borrow.interestStyle == '1'>checked </#if> > 成立计息
+			      	<input name="interestStyle" id="interestStyle2" value="2" type="radio" style="margin-left:10px;" <#if borrow.interestStyle == '2'>checked </#if>>
+		      		 <b>T</b>+<select class="tnContainer" <#if borrow.interestStyle == '1'>disabled="disabled"</#if>  name="interestStartDays" id="interestStartDays" data-msg-required="请选择计息起始天数"  required>
+			      		<option value="">请选择</option>
+			      		 <#list 0..7 as t>
+			      		   <option value="${t}" <#if t==borrow.interestStartDays >selected="selected"</#if>>${t}</option>
+			      		</#list>
+			      		</select>计息  （T为交易登记日，交易登记日时间段
+		      		<select class="tnContainer" <#if borrow.interestStyle == '1'>disabled="disabled"</#if> name="interestTime" id="interestTime">
+		      			<#list hourList as item>
+		      			<option value="${item}" <#if borrow.interestTime == item?number>selected="selected"</#if> >${item}</option>
+			      		</#list>
+		      		</select>时+24h）
+			      </div>
+			    </div>
+	  		</li>
+			<li>
+				<div class="form-group">
+			      <label for="sort" class="control-label form-label">还款方式<span class="icon-important">*</span>：</label>
+			      <div class="input-box">
+			        <@linkage name="repayStyle" id="repayStyle" nid="repayStyle"  default="${borrow.repayStyle}"  class="form-control required" noselect="请选择" />
+			      </div>
+			    </div>
+	  		</li>
+	  		<li>
+				<div class="form-group" style="height: 34px;">
+					<div class="hide" id="fixRepayDayBox">
+						<label for="fixedRepayDay" class="control-label form-label">固定还款日：</label>
+						<div class="input-box">
+							<input type="text" class="form-control" name="fixedRepayDay" id="fixedRepayDay"   value="${borrow.fixedRepayDay!}" placeholder="请输入固定还款日" data-rule-digits="true" data-msg-digits="请输入整数">
+					    </div>
+				    </div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="isPawn" class="control-label form-label">是否有抵押物：</label>
+					<div class="input-checkbox-box">
+						<input type="radio"  id="isPawn1" name="isPawn" value="0" <#if (mtgList?size > 0) > <#else>checked </#if>	>
+				        <label for="isPawn1">否</label>
+				        <input type="radio" id="isPawn2" name="isPawn" value="1" <#if (mtgList?size > 0) >checked </#if>	>
+				        <label for="isPawn2">是</label>
+					</div>
+				</div>
+			</li>
+			<li id="li_borrowUse" style="<#if (mtgList?size > 0) > <#else>display: none;</#if>">
+				<div class="form-group">
+					<label for="borrowUse" class="control-label form-label">抵押物资料：</label>
+					<div class="">
+						<div id="uploadGuaranteeBox1" class="uploadWrap" data-arr="uploadFile1">
+					    	<ul id="businessPagePic1" class="photoUpload">
+					        	<li class="addFileBtn">
+					            	<input type="file" name="file"  accept="image/gif, image/jpeg,image/png" class="uploadFileInput" id="uploadFile1" onchange="return ajaxFileUpload('uploadFile1','/imageUp.jsp?editorid=mortgage','mtgPath');" title="点击上传图片" />
+					            </li>
+
+					            <#if mtgList??><#list mtgList as item>
+					            <li data-mum="${item.uuid!}">
+					               <img src="${image_server_url}${item.filePath!}"/>
+					               <input name="mtgPath" value="${item.filePath!}" type="hidden">
+					               <a class="closePic" style="float:left;" href="javascript:;" title="删除图片">x</a>
+					           	</li>
+								</#list></#if>
+					        </ul>
+					    </div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="isVouch" class="control-label form-label">是否担保：</label>
+					<div class="input-checkbox-box">
+						<input type="radio"  id="isVouch1" name="isVouch" value="0" <#if (borrow.isVouch?? && borrow.isVouch==0) >checked="checked"</#if>>
+				        <label for="isVouch1">否</label>
+				        <input type="radio" id="isVouch2" name="isVouch" value="1"  <#if (borrow.isVouch?? && borrow.isVouch==1) > checked="checked" </#if>  >
+				        <label for="isVouch2">是</label>
+					</div>
+				</div>
+			</li>
+
+			<li id="li_vouchId" style="<#if (borrow.isVouch?? && borrow.isVouch==1) ><#else>display: none;</#if>">
+				<div class="form-group">
+					<label for="vouchId" class="control-label form-label">担保机构：</label>
+					<div class="input-box">
+						<select name="vouchId" id="vouchId" class="form-control">
+							<option value="">请选择</option>
+							<#if vouchList??><#list vouchList as item>
+								<option value="${item.uuid!}" <#if borrow.vouchId == item.uuid>selected </#if> >${item.realName!}</option>
+							</#list></#if>
+						</select>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="borrowManageRate" class="control-label form-label">借款管理费<span class="icon-important">*</span>：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" style="width: auto; display: inline-block; vertical-align: middle;"  data-rule-aprval="true" data-msg-aprval="输入的值在0~100之间" maxlength="6" name="borrowManageRate" id="borrowManageRate" value="${borrow.borrowManageRate}" placeholder="请输入借款管理费" required>&nbsp;%
+				    </div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="interestManageRate" class="control-label form-label">利息管理费<span class="icon-important">*</span>：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" style="width: auto; display: inline-block; vertical-align: middle;"  data-rule-aprval="true" data-msg-aprval="输入的值在0~100之间" maxlength="6" name="interestManageRate" id="interestManageRate" value="${borrow.interestManageRate}" placeholder="请输入利息管理费" required>&nbsp;%
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="interestManageRate" class="control-label form-label">逾期罚息利率<span class="icon-important">*</span>：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" style="width: auto; display: inline-block; vertical-align: middle;"  data-rule-aprval="true" data-msg-aprval="输入的值在0~100之间" maxlength="6" name="overdueFeeRate" id="overdueFeeRate" value="${borrow.overdueFeeRate*100}" placeholder="请输入逾期罚息利率" required>&nbsp;%
+					</div>
+				</div>
+			</li>
+			<li class="full-width">
+				<div class="form-group">
+					<label for="pwd" class="control-label form-label">借款资料<span class="icon-important">*</span>：</label>
+					<div class="">
+						<div id="uploadGuaranteeBox2" class="uploadWrap" data-arr="uploadFile2">
+					    	<ul id="borrowPagePic2" class="photoUpload">
+					        	<li class="addFileBtn">
+					            	<input type="file" name="file"  accept="image/gif, image/jpeg,image/png" class="uploadFileInput" id="uploadFile2" onchange="return ajaxFileUpload('uploadFile2','/imageUp.jsp?editorid=borrow','picPath');" title="点击上传图片" />
+					            </li>
+
+					            <#if picList??><#list picList as item>
+					            <li data-mum="${item.uuid!}">
+					               <img src="${image_server_url}${item.filePath!}"/>
+					               <input name="picPath" value="${item.filePath!}" type="hidden">
+					               <a class="closePic" style="float:left;" href="javascript:;" title="删除图片">x</a>
+					           	</li>
+								</#list></#if>
+					        </ul>
+					    </div>
+					</div>
+				</div>
+			</li>
+			<li class="full-width">
+				<div class="form-group">
+					<label for="remark" class="control-label form-label">借款详情<span class="icon-important">*</span>：</label>
+					<div class="textarea-box-read">
+						<#include "include/ueditor.html">
+              			<@showUeditor width=650 height=200 id="productEditor" name="content" content="${borrow.content}"/>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<input type="hidden" name="uuid" value="${borrow.uuid}"/>
+		<input type="hidden" name="projectId" value="${borrow.projectId}"/>
+     	<@token name="editBorrowToken"/>
+	</form>
+</div>
+</div>
+<script src="${theme_dir}/static/js/plugins/jquery.suggest.js"></script>
+<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+<script src="${theme_dir}/static/js/upload.js"></script>
+<script>
+function fun1(){
+switch($("input[name=timeType]:checked").attr("id")){
+		  case "timeTypeRadio1":
+			    $("#repayStyle option").show();
+			   break;
+		  case "timeTypeRadio2":
+			    $("#repayStyle option").each(function(index,obj){
+			              if($(obj).val() == 2){
+			                  $(obj).prop("selected", true);
+			              }else{
+			                 $(obj).prop("selected", false);
+			                 $(obj).hide();
+			              }
+			        });
+			   break;
+	       default:
+		      break;
+		 }
+
+//天标为一次性还款限制
+$("input[name=timeType]").click(function(){
+	 switch($("input[name=timeType]:checked").attr("id")){
+		  case "timeTypeRadio1":
+			    $("#repayStyle option").show();
+			    $("#repayStyle").val("");
+			   break;
+		  case "timeTypeRadio2":
+			    $("#repayStyle option").each(function(index,obj){
+			              if($(obj).val() == 2){
+			                  $(obj).prop("selected", true);
+			              }else{
+			                 $(obj).prop("selected", false);
+			                 $(obj).hide();
+			              }
+			        });
+			   break;
+	       default:
+		      break;
+		 }
+ });
+
+$("#form").validate({
+	submitHandler: function(form) {
+	 var mAccount=$("#mostAccount").val();
+	   if(!mAccount){
+	        $("#mostAccount").val($("#account").val());
+	   }
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				console.log(data.result)
+				if (data.result) {
+					layer.alert(data.msg, {
+						zIndex:100000,
+						icon: 6,
+						cancel: function(index){
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入
+  						}
+					}, function() {
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入
+					});
+				} else {
+					layer.alert(data.msg, {
+						zIndex:100000,
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+})
+
+//借款方
+$("#userName").searchInput({
+	url:"/loan/borrow/autoCompleteBorrower.html"
+});
+
+}
+fun1();
+
+function borrowerSelectFn(id, value){
+	$("#userId").val(id);
+	$("#userName").val(value);
+}
+
+function hisShow(obj, val){
+	if(val == 0){
+		obj.removeClass("show").addClass("hide");
+	} else {
+		obj.removeClass("hide").addClass("show");
+	}
+}
+
+
+function fun2(){
+//年利率
+$("#apr").on("keyup", function(){
+	if(!$(this).val()) return false;
+	var _this = $(this)[0];
+	_this.value = $.fn.page.decimalsNumber(_this.value);
+
+}).on("blur", function(){
+	var _val = $(this).val(),
+		val = (_val > 24) ? 24 : (_val < 1) ? 1 : _val;
+	val = $.fn.page.charTwoDecimals(val);
+	$(this).val(val);
+});
+
+//利息管理费
+$("#borrowManageRate,#overdueFeeRate,#interestManageRate").on("keyup", function(){
+	if(!$(this).val()) return false;
+	var _this = $(this)[0];
+	_this.value = $.fn.page.decimalsNumber(_this.value);
+
+}).on("blur", function(){
+	var _val = $(this).val(),
+		val = (_val > 100) ? 100 : (_val <= 0) ? 0 : _val;
+	val = $.fn.page.charTwoDecimals(val);
+	$(this).val(val);
+});
+//抵押物
+$("input[name='isPawn']").on("click", function(){
+	hisShow($("#li_borrowUse"), $(this).val());
+	hisShow($("#pawnImgBox"), $(this).val());
+});
+
+//担保结构
+$("input[name='isVouch']").on("click", function(){
+	hisShow($("#li_vouchId"), $(this).val());
+	hisShow($("#vouchNameBox"), $(this).val());
+});
+
+var val = $("#repayStyle").children('option:selected').val()
+	if(val == 3 || val == 5){
+		hisShow($("#fixRepayDayBox"), true);
+	}else{
+		$('#fixedRepayDay').val('');
+		hisShow($("#fixRepayDayBox"), false);
+	}
+
+//还款方式
+$("#repayStyle").on("change", function(){
+	var val = $(this).children('option:selected').val()
+	if(val == 3 || val == 5){
+		hisShow($("#fixRepayDayBox"), true);
+	}else{
+		$('#fixedRepayDay').val('');
+		hisShow($("#fixRepayDayBox"), false);
+	}
+});
+//计息方式
+$("input[name=interestStyle]").click(function(){
+	 switch($("input[name=interestStyle]:checked").attr("id")){
+		  case "interestStyle1":
+			    $(".tnContainer").prop("disabled",true)
+			   break;
+		  case "interestStyle2":
+			    $(".tnContainer").prop("disabled",false)
+			   break;
+	       default:
+		      break;
+		 }
+ });
+}
+fun2();
+/*//图片预览
+$(".fileshow").fancybox();*/
+
+</script>

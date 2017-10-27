@@ -1,0 +1,71 @@
+<div class="form-tips-content">
+	<form class="form-horizontal" action="/sys/role/roleEdit.html" id="form" role="form">
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label for="roleName" class="control-label form-label">角色名称<span style="color:#f33a00;">*</span>：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="roleName" id="roleName" maxlength="16" value="${role.roleName}" placeholder="请输入角色名" required>
+						<input type="hidden" value="${role.code}" id="code">
+					</div>
+				</div>
+			</li>
+			<!-- <li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">角色标识：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="code" id="code" value="${role.code}" placeholder="请输入角色标识" maxlength="128" required>
+					</div>
+				</div>
+			</li> -->
+			<li>
+				<div class="form-group">
+					<label for="remark" class="control-label form-label">备注：</label>
+					<div class="input-box">
+						<textarea rows="" cols="" class="form-control" name="remark" maxlength="200" id="remark">${role.remark}</textarea>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<@token/>
+		<input name="uuid" value="${role.uuid}" type="hidden" />
+	</form>
+</div>
+<script>
+	var code = $("#code").val();
+	if(code=="onlineServer"||code=="admin"||code=="broker"){
+		$("#roleName").prop("readonly",true)
+	}
+	else{
+		$("#roleName").prop("readonly",false)
+	}
+
+
+	$("#form").validate({
+		ignore: ".ignore",
+		submitHandler: function(form) {
+			$(form).ajaxSubmit({
+				type: "post",
+				dataType: "json",
+				success: function(data) {
+					if (data.result) {
+						layer.alert(data.msg, {
+							icon: 6,
+							cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+						}, function() {
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入  
+						});
+					} else {
+						layer.alert(data.msg, {
+							icon: 5
+						});
+					}
+				}
+			});
+		}
+	});
+</script>

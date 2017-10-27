@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>正常还款分析</title>
+<#include "include/resources.html">
+</head>
+<body class="overflowY">
+<div class="wrapper">
+  <div class="row pt20">
+    <div class="col-md-12">
+     <form class="form-horizontal">
+        <input type="hidden" name="reportType" value="1" id="j-realNameStatus" />
+        <div id="legend">
+          <legend>正常还款分析</legend>
+        </div>
+        <div class="col-md-16 mt20">
+          <ul id="myTab" class="nav nav-tabs">
+            <li class="active">
+              <a  data-toggle="tab">还款金额</a>
+            </li>
+            <li><a  data-toggle="tab">还款笔数</a></li>
+          </ul>
+        </div>        
+        <div class="control-group">
+          <label class="control-label">日期：</label>
+          <div class="controls">
+            <label class="checkbox inline selectTime"><input type="text" name="startDate" id="startTime" value="${startDate}" class="form-control" placeholder="开始日期" readonly="readonly" style="background:#fff;"/></label><label class="checkbox inline selectTime"><input type="text" value="${endDate}" name="endDate" id="endTime" class="form-control" placeholder="结束日期" readonly="readonly" style="background:#fff;"/></label>
+          </div>
+        </div>        
+        <div class="control-group">
+          <label class="control-label">借款类型：</label>
+          <div class="controls">
+            <label class="checkbox inline">
+              <input type="radio" checked name="borrowType" value="0">不限
+            </label>
+            <label class="checkbox inline">
+              <input type="radio" name="borrowType" value="1">抵押借款
+            </label>
+            <label class="checkbox inline">
+              <input type="radio" name="borrowType" value="2">担保借款
+            </label>
+            <label class="checkbox inline">
+              <input type="radio" name="borrowType" value="3">其他
+            </label>            
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">借款性质：</label>
+          <div class="controls">
+            <label class="checkbox inline">
+              <input type="radio" checked name="borrowNature" value="">不限
+            </label>          
+            <label class="checkbox inline">
+              <input type="radio" name="borrowNature"  value="1">个人借款
+            </label>            
+            <label class="checkbox inline">
+              <input type="radio" name="borrowNature" value="2">企业借款
+            </label>
+          </div>
+        </div>
+        <div class="" style="margin-left:116px;">
+          <button type="submit" name="button" class="btn btn-primary">搜索</button>
+        </div>
+    </form>
+    </div>
+    </div>
+    <div class="lineStyle col-md-12"></div>
+    <div class="row">
+    <div class="col-md-12">
+        <div id="j-main" class="chart-map mt20 ml30" style="width:80%;margin:50px auto 0;"></div>
+    </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+    //设置开始时间控件
+  var startTime= {
+    elem:'#startTime',
+    format: 'YYYY-MM-DD', //日期格式
+    max:$('#endTime').val(),
+    event:'focus',
+    choose: function(dates){
+        endTime.min=dates;
+        endTime.start=dates;
+    }
+  };
+  //设置发放结束时间
+  var endTime=  {
+      elem:'#endTime',
+      format: 'YYYY-MM-DD', //日期格式
+      min: $('#startTime').val(), //最小日期
+      event:'focus',
+      choose: function(dates){
+        startTime.max=dates;
+       }
+  };
+  laydate(startTime);
+  laydate(endTime);
+  var myChart = echarts.init(document.getElementById('j-main'));
+  var option = {
+      title: {
+          text: '还款笔数及环比值',
+          left: 'center'
+      },    
+      tooltip: {
+          trigger: 'axis'
+      },
+      legend: {
+          data:['还款利息','还款本金','环比值'],
+          top:'50px'
+      },
+      grid:{
+          top:'25%'
+      },
+      xAxis: [
+          {
+              type: 'category',
+              data: []
+          }
+      ],
+      yAxis: [
+          {
+              type: 'value',
+              name: '金额',
+              axisLabel: {
+                  formatter: '{value} '
+              }
+          },
+          {
+              type: 'value',
+              name: '百分比',
+              axisLabel: {
+                  formatter: '{value} %'
+              }
+          }
+      ],
+      dataZoom: [
+       {   // 这个dataZoom组件，默认控制x轴。
+           type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+           startValue :0
+       },
+
+   ],
+      series: [
+          {
+              name:'还款利息',
+              type:'bar',
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#76b7f9'
+                }
+              }
+          },{
+              name:'还款本金',
+              type:'bar',
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#f8d15c'
+                }
+              }
+          },{
+              name:'环比值',
+              type:'line',
+              yAxisIndex: 1,
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#ef826f'
+                }
+              }
+          }
+      ]
+  };
+
+ var option2 = {
+      title: {
+          text: '还款笔数及环比值',
+          left: 'center'
+      },    
+      tooltip: {
+          trigger: 'axis'
+      },
+      legend: {
+          data:['还款笔数','环比值'],
+          top:'50px'
+      },
+      grid:{
+          top:'25%'
+      },
+      xAxis: [
+          {
+              type: 'category',
+              data: []
+          }
+      ],
+      yAxis: [
+          {
+              type: 'value',
+              name: '笔数',
+              axisLabel: {
+                  formatter: '{value} '
+              }
+          },
+          {
+              type: 'value',
+              name: '百分比',
+              axisLabel: {
+                  formatter: '{value} %'
+              }
+          }
+      ],
+      dataZoom: [
+       {   // 这个dataZoom组件，默认控制x轴。
+           type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+           startValue :0
+       },
+
+   ],
+      series: [
+          {
+              name:'还款笔数',
+              type:'bar',
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#76b7f9'
+                }
+              }
+          },{
+              name:'环比值',
+              type:'line',
+              yAxisIndex: 1,
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#ef826f'
+                }
+              }
+          }
+      ]
+  }; 
+  //['#76b7f9','#f8d15c','#ef826f','#92cb8b','#c3e9e1','#ffa879','#95a3ea','#ba7dd1']
+  chartAjax($(".form-horizontal").serialize());
+
+  function chartAjax(req){
+      $.ajax({
+          url:'/statistic/borrow/getBorrowRepaid.html?'+req,
+          dataType:'json',
+          success:function(data){
+            //var timeLength=data.date.length;
+
+            //option.dataZoom[0].startValue=timeLength;
+            if($("#j-realNameStatus").val() == "2"){
+              option2.xAxis[0].data=data.date;
+              option2.series[0].data=data.total;
+              option2.series[1].data=data.ratio;
+              myChart.setOption(option2,true);
+            }
+            else
+            {  
+              option.xAxis[0].data=data.date;
+              option.series[0].data=data.interest;
+              option.series[1].data=data.capital;
+              option.series[2].data=data.ratio;
+              myChart.setOption(option,true);
+            }
+          }
+      })
+  }
+
+
+/* submit事件 */
+ $('.form-horizontal').submit(function (e) {
+   e.preventDefault()
+   chartAjax($(this).serialize());
+ });
+
+ $("#myTab li").on("click",function(){
+    $("#j-realNameStatus").val($(this).index()+1);
+    $('.form-horizontal').submit();
+ });
+</script>
+</body>
+</html>

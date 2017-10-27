@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.risk.mapper.PapersMapper">
+	<resultMap type="com.rd.ifaes.core.risk.domain.Papers" id="papersResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="papersNo" column="PAPERS_NO"/>
+		<result property="papersName" column="PAPERS_NAME"/>
+		<result property="papersType" column="PAPERS_TYPE"/>
+		<result property="questionCount" column="QUESTION_COUNT"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="status" column="STATUS"/>
+		<result property="deleteFlag" column="DELETE_FLAG"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		PAPERS_NO,
+		PAPERS_NAME,
+		PAPERS_TYPE,
+		QUESTION_COUNT,
+		CREATE_TIME,
+		STATUS,
+		DELETE_FLAG
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{papersNo},
+		#{papersName},
+		#{papersType},
+		#{questionCount},
+		#{createTime},
+		#{status},
+		#{deleteFlag}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="papersNo != null and papersNo != ''">and PAPERS_NO = #{papersNo}</if>
+            <if test="papersName != null and papersName != ''">and PAPERS_NAME = #{papersName}</if>
+			<if test="papersType != null">and PAPERS_TYPE = #{papersType}</if>
+			<if test="questionCount != null">and QUESTION_COUNT = #{questionCount}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+			<if test="status != null">and STATUS = #{status}</if>
+			<if test="deleteFlag != null">and delete_flag = #{deleteFlag}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+       <if test="page == null or page.sort == null or page.sort == ''">order by create_time desc </if> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.risk.domain.Papers">
+		insert into risk_papers( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into risk_papers( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+		#{item.uuid},
+				#{item.papersNo},
+				#{item.papersName},
+				#{item.papersType},
+				#{item.questionCount},
+				#{item.createTime},
+				#{item.status},
+				#{deleteFlag}
+		)
+		</foreach>
+	</insert>
+	
+	<!-- 根据主键删除 -->
+	<delete id="delete" parameterType="String">
+		delete from risk_papers
+		where uuid = #{uuid}
+	</delete>
+	
+	
+	<update id="deleteBatch">
+		update risk_papers set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="uuid" open="(" separator="," close=")">  
+            #{uuid} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update risk_papers set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+	
+	<!-- 根据对象修改试卷的类型和名称 -->
+	<update id="update" parameterType="com.rd.ifaes.core.risk.domain.Papers">
+		update risk_papers 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="papersName != null and papersName != ''">PAPERS_NAME = #{papersName},</if>
+			<if test="papersType != null">PAPERS_TYPE = #{papersType},</if>
+			<if test="status != null">STATUS = #{status},</if>
+			<if test="deleteFlag != null">delete_flag = #{deleteFlag},</if>
+			<if test="questionCount != null">QUESTION_COUNT = #{questionCount},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+	
+	<!-- 批量更新 -->
+	<update id="updateBatch" parameterType="java.util.List">
+		<foreach collection="list" item="item" open="" separator=";" close="">  
+			update risk_papers 
+			<trim prefix="set" suffixOverrides=",">
+	            <if test="item.papersName != null and item.papersName != ''">PAPERS_NAME = #{item.papersName},</if>
+				<if test="item.papersType != null">PAPERS_TYPE = #{item.papersType},</if>
+				<if test="item.status != null">STATUS = #{item.status},</if>
+				<if test="item.deleteFlag != null">delete_flag = #{item.deleteFlag},</if>
+				<if test="item.questionCount != null">QUESTION_COUNT = #{item.questionCount},</if>
+			</trim>
+			<where>uuid = #{item.uuid}</where>
+		</foreach>
+	</update>
+	
+	<!-- 查询试卷的所有的信息 -->
+    <select id="findAll" resultMap="papersResultMap">
+        select <include refid="table_columns" />
+        from risk_papers
+    </select>
+	
+	<!-- 列表查询 -->
+     <select id="findList" resultMap="papersResultMap">
+        select <include refid="table_columns" />
+        from risk_papers
+        <include refid="page_where" />
+	</select>
+	
+	<!-- 查询是试卷的数量 -->
+    <select id="getCount" resultType="int" >
+        select count(uuid) from risk_papers
+        <include refid="page_where" />
+    </select>
+
+	<!-- 根据主键获取试卷对象  -->
+    <select id="get" resultMap="papersResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from risk_papers
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<!-- 找到已经发布的未删除的试卷-->
+	<select id="getPapersByStatusAndDeleteFlag" resultMap="papersResultMap" >
+		select <include refid="table_columns" />
+		from risk_papers where status = #{status} and delete_flag = #{deleteFlag}
+	</select>
+	<!-- 后台默认排序分页查询试卷 -->
+	<select id="findPageList" resultMap="papersResultMap">
+        select <include refid="table_columns" />
+        from risk_papers
+       	<trim prefix="where" prefixOverrides="and | or ">
+	        <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+	        <if test="papersName != null and papersName != ''">and PAPERS_NAME  like concat('%',#{papersName},'%') </if>
+			<if test="papersType != null and papersType !='' ">and PAPERS_TYPE = #{papersType}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+			<if test="status != null and status !='' ">and STATUS = #{status}</if>
+			<if test="deleteFlag != null">and delete_flag = #{deleteFlag}</if>
+			<if test="papersTypeSet != null and papersTypeSet != ''">
+		        	and PAPERS_TYPE in 
+		        	<foreach collection="papersTypeSet" item="papersTypeSetTemp" open="(" separator="," close=")">#{papersTypeSetTemp}</foreach>
+		    </if>
+		    <if test="statusSet != null and statusSet != ''">
+		        	and STATUS in 
+		        	<foreach collection="statusSet" item="statusSetTemp" open="(" separator="," close=")">#{statusSetTemp}</foreach>
+		     </if>
+	     </trim>
+        	order by create_time desc
+	</select>
+	
+	
+</mapper>

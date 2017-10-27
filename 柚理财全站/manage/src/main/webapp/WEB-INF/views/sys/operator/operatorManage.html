@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>后台用户管理</title>
+<#include "include/resources.html">
+</head>
+<body>
+<div class="wrapper">
+	<div class="row pt20">		
+		<div class="col-md-6">
+			<div class="search-form">
+				<form>
+					<div class="input-group">
+						<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入用户名、姓名或手机">
+						<span class="input-group-btn search-span">
+					    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/sys/operator/list.html">搜索</button>
+					    </span>						    
+				    </div>
+			    </form>	
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="tool-btns">
+			    <@shiro.hasPermission name="set:sys:user:add">
+				<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.addFun(this)" data-tid="jqGrid" data-url="/sys/operator/operatorAddPage.html">新增</button>
+				 </@shiro.hasPermission>
+				 <@shiro.hasPermission name="set:sys:user:edit">
+				<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.editFun(this)" data-tid="jqGrid" data-url="/sys/operator/operatorEditPage.html">编辑</button>
+				</@shiro.hasPermission>
+				 <button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.forbiddenFun(this)" data-tid="jqGrid" data-url="/sys/operator/operatorForbidden.html">批量禁用</button>
+				 <@shiro.hasPermission name="set:sys:user:del">
+				<button type="button" class="btn btn-warning" onclick="$.fn.treeGridOptions.deleteFun(this)" data-tid="jqGrid" data-url="/sys/operator/operatorDel.html">删除</button>
+				</@shiro.hasPermission>
+				<@shiro.hasPermission name="set:sys:user:resetPwd">
+				<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.editFun(this)" data-title="密码重置" data-width="50%" data-height="40%" data-tid="jqGrid" data-url="/sys/operator/resetOperatorPwdPage.html">密码重置</button>
+			    </@shiro.hasPermission>
+			</div>			
+		</div>
+	</div>
+	<div class="row mt20">
+		<div class="col-md-12">
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+	</div>
+    <script type="text/javascript"> 	
+    	<@dictFormatter type = "userStatus" />
+    	
+        $(document).ready(function () {
+        	//表格初始化
+        	$("#jqGrid").jqTreeGrid({
+        		url: '/sys/operator/list.html',
+        		
+        		idField:"id",
+                colModel: [
+                    { label: 'id', name: 'id', width: 150,hidden:true },
+			 		{ label: '用户名', name: 'loginName', width: 100/*, frozen: true*/ },
+					{ label: '姓名', name: 'realName', width: 150 },
+					{ label: '工号', name: 'empNo', width: 150 },
+					{ label: '组织机构', name: 'orgName', width: 250 },
+					{ label: '手机', name: 'mobile', width: 150 },
+					{ label: 'QQ号码', name: 'qq', width: 150 },					
+					{ label: '添加时间', name: 'createTime', width: 200,
+						formatter: 'date',
+						formatoptions: {
+							srcformat: 'u',
+							newformat: 'Y-m-d H:m:s'
+						} },
+					{ label: '备注', name: 'remark', width: 250 },
+					{ label: '操作', name: '',sortable:false,width: 50,formatter:function(val, options, rowObject){	
+						   var btns = '';
+						   var id = rowObject.id;		 	    	
+				 	    	if(rowObject.status == "-1"){
+				 	    	 <@shiro.hasPermission name="vip:member:freeze">
+				 	    	  btns +='<a href="javascript:;" onclick=$.fn.treeGridOptions.forbiddenFun(this,"'+id+'") data-tid="jqGrid" data-title="解禁" data-url="/sys/operator/operatorForbidden.html" style="color:red;">禁用</a>';
+				 	    	 </@shiro.hasPermission>
+				 	    	}else{
+				 	    	 <@shiro.hasPermission name="vip:member:freeze">
+				 	    	  btns +='<a href="javascript:;" onclick=$.fn.treeGridOptions.forbiddenFun(this,"'+id+'") data-tid="jqGrid" data-title="禁用" data-url="/sys/operator/operatorForbidden.html">禁用</a>';
+				 	    	 </@shiro.hasPermission>
+				 	    	}		
+						   return btns;
+						}}
+                ],
+        	}).jqGrid("setFrozenColumns").navGrid('#jqGridPager',		            
+		            { edit: false, add: false, del: false, search: false, refresh: true, view: false, position: "left", cloneToTop: false }
+		   	);
+       });
+  </script>	
+</body>
+</html>

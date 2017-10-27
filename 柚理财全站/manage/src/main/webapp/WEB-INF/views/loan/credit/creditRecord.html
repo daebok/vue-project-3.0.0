@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>申请额度</title>
+		<#include "include/resources.html">
+		<script type="text/javascript">
+			var url_list = "/loan/credit/creditRecordList.html";
+			$(document).ready(function() {	
+				$('#keywordsSearch').attr('data-url',url_list);
+			});
+		</script>
+		<style>
+		.layui-layer-loading .layui-layer-loading3{width:200px!important;padding-left: 66px;color: #fff;line-height: 24px;}
+		.showInfoSingleDiv{
+			left:-100px;
+		}
+		</style>
+	</head>
+	<body>
+	<style>
+		.showInfoSingleDiv{
+			left:-100px;
+		}
+	</style>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入用户名/申请方">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" id="keywordsSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form id="advSearchForm">
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					</div>					
+				</div>
+			</div>
+			
+			<!-- 列表信息 -->
+			<div class="row mt20">
+			<div class="col-md-12">
+				<table id="jqGrid" class="table-td-NoOverflow"></table>
+				<div id="jqGridPager"></div>
+			</div>
+		</div>
+		<script type="text/javascript">
+
+			$(document).ready(function() {		
+				//表格初始化		
+				$("#jqGrid").jqTreeGrid({
+						url : url_list,
+						multiselect : false,
+						colModel : [
+								{
+									label : "用户名",
+									name : "userName",
+									width : 160,
+									align:"center"
+								},
+								{
+									label : "申请方",
+									name : "realName",
+									width : 150 ,
+									align:"center"
+								},
+								{
+									label : "电话号码",
+									name : "mobile",
+									width : 100, 
+									align:"center"
+								},
+								{
+									label : "邮箱",
+									name : "email",
+									width : 100, 
+									align:"center"
+								},
+								{
+									label : "申请额度(元)",
+									name : "account",
+									width : 100, 
+									align:"center"
+								},
+								{
+									label : "扣除额度(元)",
+									name : "deduct",
+									width : 100, 
+									align:"center"
+								},
+								{
+									label : "状态",
+									name : "status",
+									width : 100,
+									align:"center",
+									formatter : function(val, options,index) {
+										if(val == 0) {
+											return "未审核";
+										}else if(val == 1){
+											return "已审核";
+										}else if(val == 2) {
+											return "发布审核被拒";
+										}else if(val == 4) {
+											return "额度不够扣除";
+										}
+									}
+								},
+								{
+									label : "添加时间",
+									name : "createTime",
+									width : 100 ,
+									align:"center",
+									formatter : function(val, options,index) {
+										return $.fn.page.transFormatDate(index.createTime);
+									}
+								},
+								{
+									label : "其他信息",
+									name : "others",
+									width : 100,
+									title : false,
+									align : "center",
+									formatter : function(value, row,index) {
+										var content = index.content?index.content:'';
+										var remark = index.remark?index.remark:'';
+										var otherInfo = '<a href="javascript:void(0);" class="j-showInfo">其他信息</a><div class="showInfoSingleDiv"><div class="showInfo"><ul><li>'
+												+ '<span style="color:#139077">额度详情：</span>'
+												+ content
+												+ '</li><li><span style="color:#139077">审核内容：</span>'
+												+ remark
+												+ '</li></ul></div></div>';
+										return otherInfo;
+									}
+								},
+								{
+									label: "操作",
+									name: "cz",
+									width: 100,
+									formatter: function(val, options, rowObject){	
+										var btns="" ;
+										if(rowObject.status == 0) {
+											btns += '<a href="javascript:;" onclick=$.fn.treeGridOptions.setFun(this,"'+rowObject.id+'") data-tid="jqGrid" data-url="/loan/credit/creditVerifyPage.html?uuid='+rowObject.id+'" data-title="审核">审核</a>';
+										}
+										return btns;
+									}
+									
+								} ],
+					}).jqGrid("setFrozenColumns").navGrid(
+					'#jqGridPager',
+					{
+						edit : false,
+						add : false,
+						del : false,
+						search : false,
+						refresh : true,
+						view : false,
+						position : "left",
+						cloneToTop : false
+					});
+				});
+		</script>
+			
+		</div>
+	</body>
+</html>

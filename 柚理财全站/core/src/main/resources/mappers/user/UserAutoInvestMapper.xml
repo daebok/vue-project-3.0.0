@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.user.mapper.UserAutoInvestMapper">
+	<resultMap type="com.rd.ifaes.core.user.domain.UserAutoInvest" id="userAutoInvestResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="ruleId" column="RULE_ID"/>
+		<result property="sortTime" column="SORT_TIME"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		RULE_ID,
+		SORT_TIME
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{ruleId},
+		#{sortTime}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="ruleId != null and ruleId != ''">and RULE_ID = #{ruleId}</if>
+			<if test="sortTime != null">and SORT_TIME = #{sortTime}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.user.domain.UserAutoInvest">
+		insert into user_auto_invest( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into user_auto_invest( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+		#{item.uuid},
+				#{item.userId},
+				#{item.ruleId},
+				#{item.sortTime}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from user_auto_invest
+		where uuid = #{uuid}
+	</delete>
+
+	<update id="update" parameterType="com.rd.ifaes.core.user.domain.UserAutoInvest">
+		update user_auto_invest 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="ruleId != null and ruleId != ''">RULE_ID = #{ruleId},</if>
+			<if test="sortTime != null">SORT_TIME = #{sortTime},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="userAutoInvestResultMap">
+        select <include refid="table_columns" />
+        from user_auto_invest
+    </select>
+
+    <select id="findList" resultMap="userAutoInvestResultMap">
+        select <include refid="table_columns" />
+        from user_auto_invest
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from user_auto_invest
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="userAutoInvestResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_auto_invest
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	
+	<!-- 根据用户id获取 -->
+	<select id="getAutoInvestByUserId" resultMap="userAutoInvestResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_auto_invest
+		where user_id = #{userId}
+	</select>
+
+	<!-- 获取自动投标排序 -->
+	<select id="findSortList" resultMap="userAutoInvestResultMap" parameterType="com.rd.ifaes.core.user.model.AutoInvestRuleLogModel">
+		select auto.uuid,auto.user_id,auto.rule_id  
+		from user_auto_invest auto 
+		left join auto_invest_rule_log rule on auto.rule_id = rule.uuid 
+		left join user us on auto.user_id = us.uuid 
+		left join user_vip uv on auto.user_id = uv.user_id
+		where  us.status = #{userStatus} and rule.status = #{status} 
+		<if test="bondUseful != null and bondUseful != ''"> and (rule.bond_useful='0' or (rule.bond_useful='1' and #{bondUseful}='1')) </if>
+		<if test="realizeUseful != null and realizeUseful != ''"> and (rule.realize_useful='0' or (rule.realize_useful='1' and #{realizeUseful}='1'))  </if>
+		and rule.apr_min &lt;= #{aprMin} and rule.repay_styles like concat('%',#{repayStyles},'%') 
+		<if test="monthLimitMax != null and monthLimitMax != ''"> and (rule.month_type=#{monthType} and rule.month_limit_min &lt;= #{monthLimitMax} and rule.month_limit_max &gt;= #{monthLimitMax} ) </if> 
+		<if test="dayLimitMax != null and dayLimitMax != ''"> and (rule.day_type=#{dayType} and rule.day_limit_min &lt;= #{dayLimitMax} and rule.day_limit_max &gt;= #{dayLimitMax}) </if>
+		order by 
+		<if test="userVipStatus != null and userVipStatus == 1"> uv.vip_level desc, </if>
+		auto.sort_time asc,us.create_time asc
+	</select>
+	
+	<!-- 获取自动投资总人数 -->
+	<select id="getSumByStatus" resultType="int" parameterType="String">
+        select count(uai.uuid) 
+        from user_auto_invest uai 
+        left join auto_invest_rule_log rule on uai.rule_id = rule.uuid 
+        where rule.status = #{status}
+    </select>
+    
+    <!-- 获取自动投资所在排名 -->
+	<select id="getNumByStatus" resultType="int" parameterType="com.rd.ifaes.core.user.domain.UserAutoInvest">
+        select count(uai.uuid) 
+        from user_auto_invest uai 
+        left join auto_invest_rule_log rule on uai.rule_id = rule.uuid 
+        where rule.status = #{status} and uai.sort_time &lt;= #{sortTime}
+    </select>
+</mapper>

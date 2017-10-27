@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>投资记录</title>
+		<#include "include/resources.html">
+		<script type="text/javascript">
+			var borrowFlag = ${borrowFlag!0};
+			var url_list = "/loan/invest/investRecordList.html?borrowFlag=${borrowFlag!'0'}";
+			$(document).ready(function() {	
+				$('#keywordsSearch').attr('data-url',url_list);
+				$('#conditionSearch').attr('data-url',url_list);	
+				if(borrowFlag == 0){
+					$('#productExportBtn').show();
+					$('#borrowExportBtn').hide();
+				}else{
+					$('#productExportBtn').hide();
+					$('#borrowExportBtn').show();
+				}
+			});
+		</script>
+		<style>
+			.layui-layer-loading .layui-layer-loading3{width:200px!important;padding-left: 66px;color: #fff;line-height: 24px;}
+		</style>
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入用户名、真实姓名来搜索">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" id="keywordsSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form id="advSearchForm">
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							     <li class="input-group input-group-sm"><span>用户名</span><input type="text" class="form-control" name="userName" /></li>
+							    <li class="input-group input-group-sm"><span>真实姓名</span><input type="text" class="form-control" name="realName" /></li>
+							    <li class="input-group input-group-sm"><span>投资状态</span><@linkage name="status" nid="investStatus" noselect="全部" class="form-control"/></li>
+							    <li class="input-group input-group-sm"><span>投资开始时间</span><input type="text" name="startTime" class="form-control layer-date" id="startTime"/></li>
+							    <li class="input-group input-group-sm"><span>投资截止时间</span><input type="text" name="endTime" class="form-control layer-date" id="endTime"/></li>
+							    <li><button class="btn btn-sm btn-primary" type="button" id="conditionSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+							<@shiro.hasPermission name="project:product:investList:export">
+							<a href="javascript:" target="_blank" class="btn btn-info" onclick="exportExcel(this)" id="productExportBtn" data-title='投资记录' data-url="/loan/invest/exportInvestRecord.html?borrowFlag=${borrowFlag!'0'}" data-tid="jqGrid">导出</a>
+							</@shiro.hasPermission>
+							<@shiro.hasPermission name="project:borrow:investList:export">
+							<a href="javascript:" target="_blank" class="btn btn-info" onclick="exportExcel(this)" id="borrowExportBtn" data-title='投资记录' data-url="/loan/invest/exportInvestRecord.html?borrowFlag=${borrowFlag!'0'}" data-tid="jqGrid">导出</a>
+							</@shiro.hasPermission>
+							
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					</div>					
+				</div>
+			</div>
+			
+			<!-- 列表信息 -->
+			<div class="row mt20">
+			<div class="col-md-12">
+				<table id="jqGrid" class="table-td-NoOverflow"></table>
+				<div id="jqGridPager"></div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			<@dictFormatter type = "investType" />
+			<@dictFormatter type = "investStatus" />
+			<@dictFormatter type = "saleChannel" />
+
+			$(document).ready(function() {	
+				
+				//设置投资时间
+				var startTime= {
+					elem:'#startTime',
+					format: 'YYYY-MM-DD', //日期格式
+					istime: false, //是否开启时间选择
+					max:$('#endTime').val(),
+					event:'focus',
+					choose: function(dates){
+					    endTime.min=dates;
+					    endTime.start=dates;
+					}
+				};
+				//设置截止时间
+				var endTime=  {
+						elem:'#endTime',
+						format: 'YYYY-MM-DD', //日期格式
+						istime: false, //是否开启时间选择
+						min: $('#startTime').val(), //最小日期大于当前时间
+						event:'focus',
+						choose: function(dates){
+						    startTime.max=dates;
+					   }
+				};				
+				laydate(startTime);
+				laydate(endTime);
+				
+				//表格初始化		
+				$("#jqGrid").jqTreeGrid({
+						url : url_list,
+						multiselect : false,
+						colModel : [
+								{
+									label : "用户名",
+									name : "userName",
+									align: "center",
+									width : 150
+								},
+								{
+									label : "真实姓名",
+									name : "realName",
+									align: "center",
+									width : 80
+								},
+								{
+									label : borrowFlag==1?"借款名称":"产品名称",
+									name : "projectName",
+									align: "center",
+									width : 150  ,
+									formatter: function(val, options, rowObject){	
+										var btns = '';
+										btns += '<a href="javascript:;" onclick=$.fn.treeGridOptions.checkFun(this,"'+rowObject.projectId+'") data-tid="jqGrid" data-url="/loan/borrow/borrowView.html" data-title="借款详情">'+val+'</a>';	
+										return btns;
+									} 
+								},
+								{
+									label : "期数",
+									name : "periods",
+									align: "center",
+									formatter:function(val, options, rowObject){	
+										var period = val;
+										if(!period || period == 0){//0期表示一次性还款  是1期
+											period = 1;
+										}
+										return period;
+									},
+									width : 80
+								},
+								{
+									label : "投资总额(元)",
+									name : "amount",
+									align: "center",
+									width : 80
+								},
+								{
+									label : "利息(元)",
+									name : "interest",
+									align: "center",
+									width : 80
+								},
+								{
+									label : "加息(元)",
+									name : "raiseInterest",
+									align: "center",
+									width : 80
+								},
+								{
+									label : "待收总额(元)",
+									name : "collectionTotal",
+									align: "center",
+									width : 80
+								},
+								{
+									label : "投资方式",
+									name : "investType",
+									formatter : investTypeFormatter,
+									align: "center",
+									width : 80
+								},
+								{
+									label : "投资渠道",
+									name : "investChannel",
+									width : 100,
+									align: "center",
+									formatter : saleChannelFormatter
+								},
+								{
+									label : "投资时间",
+									name : "createTime",
+									width : 200,
+									align: "center",
+									formatter: 'date',
+									formatoptions: {
+										srcformat: 'u',
+										newformat: 'Y-m-d H:i:s'
+									}
+								},
+								{
+									label : "投资状态",
+									name : "status",
+									width : 100,
+									formatter : investStatusFormatter
+								},
+								{
+									label : "期限" ,
+									name : "endDate" ,
+									width : 80,
+									formatter : function(val, options,index) {
+										return $.fn.page.transFormatDate(index.endDate);
+									}
+								},
+								{
+									label: "操作",
+									name: "cz",
+									width: 150,
+									align: "center",
+									formatter: function(val, options, rowObject){	
+										var btns = '<a href="javascript:;" onclick=$.fn.treeGridOptions.checkFun(this,"'+rowObject.ProjectId+'") data-tid="jqGrid" data-url="/loan/collection/collectionList.html?projectId='+rowObject.projectId+'" data-title="待收记录">待收记录</a>';
+										return btns;
+									}									
+								}
+								],
+					}).jqGrid("setFrozenColumns").navGrid(
+					'#jqGridPager',
+					{
+						edit : false,
+						add : false,
+						del : false,
+						search : false,
+						refresh : true,
+						view : false,
+						position : "left",
+						cloneToTop : false
+					});
+				});
+		</script>
+			
+		</div>
+	</body>
+</html>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.project.mapper.BorrowUploadMapper">
+	<resultMap type="com.rd.ifaes.core.project.domain.BorrowUpload" id="borrowUploadResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="fileType" column="FILE_TYPE"/>
+		<result property="filePath" column="FILE_PATH"/>
+		<result property="addTime" column="ADD_TIME"/>
+		<result property="sort" column="SORT"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		PROJECT_ID,
+		FILE_TYPE,
+		FILE_PATH,
+		ADD_TIME,
+		SORT
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{projectId},
+		#{fileType},
+		#{filePath},
+		#{addTime},
+		#{sort}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="projectId != null and projectId != ''">and PROJECT_ID = #{projectId}</if>
+            <if test="fileType != null and fileType != ''">and FILE_TYPE = #{fileType}</if>
+            <if test="filePath != null and filePath != ''">and FILE_PATH = #{filePath}</if>
+			<if test="addTime != null">and ADD_TIME = #{addTime}</if>
+			<if test="sort != null">and SORT = #{sort}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.project.domain.BorrowUpload">
+		insert into borrow_upload( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		BEGIN
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into borrow_upload( <include refid="table_columns" /> ) 
+		values 
+		( 
+		#{item.uuid},
+				#{item.projectId},
+				#{item.fileType},
+				#{item.filePath},
+				#{item.addTime},
+				#{item.sort}
+		)
+		</foreach>
+		; END ;		
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from borrow_upload
+		where uuid = #{uuid}
+	</delete>
+	
+
+	<update id="update" parameterType="com.rd.ifaes.core.project.domain.BorrowUpload">
+		update borrow_upload 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="projectId != null and projectId != ''">PROJECT_ID = #{projectId},</if>
+            <if test="fileType != null and fileType != ''">FILE_TYPE = #{fileType},</if>
+            <if test="filePath != null and filePath != ''">FILE_PATH = #{filePath},</if>
+			<if test="addTime != null">ADD_TIME = #{addTime},</if>
+			<if test="sort != null">SORT = #{sort},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="borrowUploadResultMap">
+        select <include refid="table_columns" />
+        from borrow_upload
+    </select>
+
+    <select id="findList" resultMap="borrowUploadResultMap">
+        select <include refid="table_columns" />
+        from borrow_upload
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from borrow_upload
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="borrowUploadResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from borrow_upload
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	
+	
+	<delete id="deleteByProjectId">
+		delete from borrow_upload
+		where PROJECT_ID = #{projectId} 
+		<if test="fileTypes != null ">
+		and FILE_TYPE in 
+		<foreach collection="fileTypes" item="fileType"  open="(" separator="," close=")">  
+			#{fileType}
+		</foreach>
+		</if>
+	</delete>
+
+
+</mapper>

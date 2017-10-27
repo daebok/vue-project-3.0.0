@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.workflow.mapper.NotionExtMapper">
+
+	<resultMap type="com.rd.ifaes.core.workflow.domain.NotionExt" id="notionExtResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="processInstanceId" column="PROCESSINSTANCE_ID"/>
+		<result property="taskId" column="TASK_ID"/>
+		<result property="activityName" column="ACTIVITY_NAME"/>
+		<result property="operator" column="OPERATOR"/>
+		<result property="operateDate" column="OPERATE_DATE"/>
+		<result property="actionName" column="ACTION_NAME"/>
+		<result property="remark" column="REMARK"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		PROCESSINSTANCE_ID,
+		TASK_ID,
+		ACTIVITY_NAME,
+		OPERATOR,
+		OPERATE_DATE,
+		ACTION_NAME,
+		REMARK
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{processInstanceId},
+		#{taskId},
+		#{activityName},
+		#{operator},
+		#{operateDate},
+		#{actionName},
+		#{remark}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="processInstanceId != null and processInstanceId != ''">and PROCESSINSTANCE_ID = #{processInstanceId}</if>
+            <if test="taskId != null and taskId != ''">and TASK_ID = #{taskId}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by OPERATE_DATE </if>
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.workflow.domain.NotionExt">
+		insert into ACT_NOTION_EXT( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into ACT_NOTION_EXT( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+				#{uuid},
+				#{processInstanceId},
+				#{taskId},
+				#{activityName},
+				#{operator},
+				#{operateDate},
+				#{actionName},
+				#{remark}
+		)
+		</foreach>
+	</insert>
+
+    <select id="findAll" resultMap="notionExtResultMap">
+        select <include refid="table_columns" />
+        from ACT_NOTION_EXT
+    </select>
+
+    <select id="findList" resultMap="notionExtResultMap">
+        select <include refid="table_columns" />
+        from ACT_NOTION_EXT
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from ACT_NOTION_EXT
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="notionExtResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from ACT_NOTION_EXT
+		where uuid = #{uuid}
+	</select>
+	
+</mapper>

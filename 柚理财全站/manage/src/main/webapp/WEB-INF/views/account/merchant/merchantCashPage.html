@@ -1,0 +1,42 @@
+<div class="form-tips-content">
+  <form class="form-horizontal" action="/account/merchant/merchantCash.html" id="form" role="form" >
+        <ul class="form-item">
+            <li>
+                <div class="form-group">
+                    <label for="userName" class="control-label form-label"><span style="color:red;">*</span>充值金额：</label>
+                    <div class="input-box">
+                        <input type="text" class="form-control" name="money" maxlength="12"  required>
+                    </div>
+                </div>               
+            </li>
+        </ul>
+  </form>
+</div>
+
+<script>
+    $("#form").validate({
+        rules: {
+            money:{
+                required:true,
+                moneyArea:true
+            }
+        },
+        messages:{
+            money:{
+                required:'金额不能为空',
+                moneyArea:'请输入范围为大于等于0.01小于100000000的数值'
+            }
+        },
+        submitHandler: function(form) {
+            form.submit();
+            layer.confirm('提现处理中', {
+                btn: ['成功','失败'] //按钮
+            }, function(){
+                layer.closeAll();
+                gridobj.trigger("reloadGrid");
+            }, function(){
+                layer.close()
+            });
+        }
+    });
+</script>

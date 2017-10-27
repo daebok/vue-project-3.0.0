@@ -1,0 +1,518 @@
+<div class="form-tips-content">
+	<input type="hidden" id="image_server_url" value="${image_server_url}">
+	<input type="hidden" id="tppName" value="${tppName}">
+	<form class="form-horizontal" action="/product/manage/productSaleEdit.html" id="form" role="form">
+		<input type="hidden" value="${product.timeType}" id="timetypeVal">
+		<input type="hidden" value="${product.timeLimit!}" id="timetVal">
+		<ul class="form-item">
+		 <li>
+			<div class="form-group">
+		      <label  class="control-label form-label">产品名称：</label>
+		     <div class="input-box-read">
+						<p>${product.projectName!}</p>
+					</div>
+		    </div>	
+  		</li>
+  				<li>
+			<div class="form-group">
+		      <label   class="control-label form-label">产品风险等级：</label>
+		       <div class="input-box-read">			
+		      	<p>${product.riskLevelName!}</p>
+		      </div>
+		    </div>	
+  		</li>
+			<li>
+				<div class="form-group">
+					<label   class="control-label form-label">资金账户：</label>
+					<div class="input-box-read">						
+						<p>${product.userName!}</p>						
+					</div>
+				</div>
+			</li>
+  			<li>
+			<div class="form-group">
+		      <label  class="control-label form-label">产品金额：</label>
+		       <div class="input-box-read">						
+						<p>${product.account!}元</p>						
+					</div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label  class="control-label form-label">年利率(%)：</label>
+		         <div class="input-box-read">						
+						<p>${product.apr!}</p>						
+		          </div>	
+		    </div>	
+  		</li>
+			
+			
+  		<li>
+			<div class="form-group">
+		      <label  class="control-label form-label">借款期限：</label>
+		      <div class="input-box-read">			
+		         <p> ${product.timeLimit!}<#if product.timeType==1>天<#else>个月</#if></p>		
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+				<div class="form-group">
+			      <label  class="control-label form-label">计息方式：</label>
+			       <div class="input-box-read">
+			      	<p><#if product.interestStyle == '1'>
+							 成立计息
+						<#else>
+							<b>T</b>+${product.interestStartDays!}计息  （T为交易登记日，交易登记日时间段 ${product.interestTime!'00'} +24h）
+						</#if>
+						</p>
+			      </div>		         
+			    </div>	
+	  		</li>	  
+  		<li>
+			<div class="form-group">
+		      <label  class="control-label form-label">还款方式：</label>
+		       <div class="input-box-read">			
+		         <p><@linkage   id="repayStyle" nid="repayStyle"  default="${product.repayStyle!}"  plantext="plantext"    /></p>	
+		      </div>
+		    </div>	
+  		</li>
+  			<li>
+			<div class="form-group">
+		      <label  class="control-label form-label">销售方式：</label>
+		       <div class="input-box-read">			
+		         <p><@linkage  id="saleStyle" nid="saleStyle" default="${product.saleStyle!}"   plantext="plantext"    /></p>	
+		      </div>
+		    </div>	
+  		</li>
+  		<#if product.saleStyle=="1">
+  		<li>
+			<div class="form-group">
+		       <label  class="control-label form-label">最低起投金额：</label>
+		              <div class="input-box-read">						
+							<p>${product.lowestAccount!}元</p>						
+			          </div>	
+		    </div>	
+  		</li>
+  		<#if  product.stepAccount?? && product.stepAccount gt 0 >
+  		<li>
+			<div class="form-group">
+		       <label  class="control-label form-label">递增金额：</label>
+		              <div class="input-box-read">						
+							<p>${product.stepAccount!''}元</p>				
+			          </div>	
+		    </div>	
+  		</li>
+  		</#if>
+  		<li>
+			<div class="form-group">
+		       <label  class="control-label form-label">最高投资总额：</label>
+		            <div class="input-box-read">						
+							<p>${product.mostAccount!}元</p>						
+			          </div>	
+		    </div>	
+  		</li>
+  		<#else>
+  		<!-- 按份数购买 -->
+  	    <li>
+			<div class="form-group">
+		       <label  class="control-label form-label">总份数：</label>
+		            <div class="input-box-read">						
+							<p>${product.totalCopies!}份</p>						
+			          </div>	
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		       <label  class="control-label form-label">每份金额：</label>
+		             <div class="input-box-read">						
+							<p>${product.copyAccount!}元</p>						
+			          </div>	
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		       <label  class="control-label form-label">最低起投份数：</label>
+		             <div class="input-box-read">						
+							<p>${product.lowestCopies!}份</p>						
+			          </div>	
+		    </div>	
+  		</li>  		
+  		<li>
+			<div class="form-group">
+		       <label  class="control-label form-label">最高投资份数：</label>
+			         <div class="input-box-read">						
+							<p>${product.mostCopies!}份</p>						
+			          </div>	
+		    </div>	
+  		</li>
+  		</#if>
+  			<#--<li>
+			<div class="form-group">
+		      <label  class="control-label form-label">利息管理费(%)：</label>
+		            <div class="input-box-read">						
+						<p>${product.interestManageRate!}</p>						
+		             </div>
+		    </div>	
+  		</li>
+  		
+  		<li>
+			<div class="form-group">
+		      <label  class="control-label form-label">逾期罚息利率(%)：</label>
+		            <div class="input-box-read">						
+						<p>${product.overdueFeeRate!*100}</p>						
+		             </div>
+		    </div>	
+  		</li>-->
+  			<li>
+			<div class="form-group">
+		      <label  class="control-label form-label">自动还款：</label>
+		        <div class="input-box-read">						
+					       <p> <#if product.autoRepay==1>是<#else>否</#if></p>
+		             </div>
+		    </div>	
+  		 </li>
+			<li>
+				<div class="form-group">
+					<label  class="control-label form-label">添加时间：</label>
+					<div class="input-box-read">
+						<p><#if product.createTime??> ${product.createTime?string("yyyy-MM-dd HH:mm:ss")}</#if></p>
+					</div>
+				</div>
+			</li>
+			<li class="full-width">
+				<div class="form-group">
+					<label for="productEditor" class="control-label form-label">产品详情：</label>
+					<div class="textarea-box-read" id="j-prdcont"></div>
+					<textarea style="display:none" id="j-tipcont">${product.content!}</textarea>
+				</div>
+			</li>
+			
+				<li>
+				<div class="form-group">
+					<label for="projectTypeName" class="control-label form-label">所属类别<span style="color:red;">*</span>：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" readonly="readonly" name="projectTypeName" id="projectTypeName" 
+					         	    onclick="$.fn.treeGridOptions.treeselect(this)" data-url="/project/type/typeTreePage.html?pageFlag=projectType" 
+					            	placeholder="请选择所属类别"  value="${projectTypeName!''}"   required/>
+		      			<input type="hidden" name="projectTypeId" id="projectTypeId" value="${product.projectTypeId!}" />					
+					</div>
+				</div>
+			</li>
+			<li class="mjTime">
+				
+			</li>
+			
+			<!-- 红包发放、加息券发放 start -->
+			<li>
+				<div class="form-group">
+					<label for="redenvelopeRuleId" class="control-label form-label">红包发放：</label>
+					<div class="input-box">
+						<select  autocomplete="off" name="redenvelopeRuleId" id="redenvelopeRuleId" class="form-control">
+		          			 <option value="0" <#if product.redenvelopeRuleId==0>selected="selected"</#if>>不发放</option>
+		          			<#list redenvelopeRule as rule>
+					      		<option value="${rule.uuid}"   <#if product.redenvelopeRuleId==rule.uuid>selected="selected"</#if> >${rule.ruleName!}</option>
+					        </#list>
+						</select>						
+					</div>
+				</div>
+			</li>	
+			<li>
+				<div class="form-group">
+					<label for="rateCouponRuleId" class="control-label form-label">加息券发放：</label>
+					<div class="input-box">
+						<select  autocomplete="off" name="rateCouponRuleId" id="rateCouponRuleId" class="form-control">
+		          			<option value="0" <#if product.rateCouponRuleId==0>selected="selected"</#if>>不发放</option>
+		          			 <#list rateCouponRule as rule>
+					      		<option value="${rule.uuid}"   <#if product.rateCouponRuleId==rule.uuid>selected="selected"</#if> >${rule.ruleName!}</option>
+					        </#list>
+						</select>	
+					</div>
+				</div>
+			</li>	
+			<!-- 红包发放、加息券发放 end -->
+			<li>
+				<div class="form-group">
+					<label   class="control-label form-label">加息(%)：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="addApr" id="addApr" value="${product.addApr!0}"  placeholder="请输入加息" required>
+					</div>
+				</div>
+			</li>
+			  <li>
+				<div class="form-group">
+					<label for="raiseTimeLimit" class="control-label form-label">优惠券使用：</label>
+					 <div class="input-box" >
+			      		<input type="checkbox" name="redEnvelopeUseful" id="redEnvelopeUseful"   value="1" <#if product.redEnvelopeUseful==1>checked="checked" </#if>>红包
+						<input type="checkbox" name="additionalRateUseful" id="additionalRateUseful"   value="1"  <#if product.additionalRateUseful==1>checked="checked" </#if>>加息券
+			      </div>
+				</div>
+			</li>
+			<li id="redEnvelopeRateli" <#if product.redEnvelopeUseful==1><#else>style="display:none;" </#if> > 
+				<div class="form-group">
+					<label for="realizeUseful" class="control-label form-label">红包可用比例(%)<span style="color:red;">*</span>：</label>
+					<div class="input-box">
+					<input  type="text" class="form-control"  name="redEnvelopeRate" id="redEnvelopeRate" value="${product.redEnvelopeRate!0}"
+			      		         maxlength="5" placeholder="请输入红包可用比例" data-rule-range="[0.01, ${product.redEnvelopeRate!0}]" data-msg-range="输入的红包可用比例必须大于0且小于等于${product.redEnvelopeRate!0}" >
+				  </div>
+				</div>
+			</li>	
+					
+			<li>
+				<div class="form-group">
+					<label for="realizeUseful" class="control-label form-label">允许变现：</label>
+					<div class="input-box">
+				        <input type="radio"  id="realizeUsefulRadio1" name="realizeUseful" value="1" <#if product.realizeUseful==1>checked="checked" </#if>>
+				        <label for="realizeUsefulRadio1">是</label>
+				        <input type="radio" id="realizeUsefulRadio2" name="realizeUseful" value="0" <#if product.realizeUseful !=1 >checked="checked" </#if>>
+				        <label for="realizeUsefulRadio2">否</label>
+				   </div>
+				</div>
+			</li>
+ 			<li>
+				<div class="form-group">
+					<label for="choice" class="control-label form-label">设置精选：</label>
+					<div class="input-checkbox-box" style="height:34px;">
+				        <input type="radio"  id="choiceRadio1" name="choice" value="1" <#if product.choice==1>checked="checked" </#if>>
+				        <label for="choiceRadio1">是</label>
+				        <input type="radio" id="choiceRadio2" name="choice" value="0" <#if product.choice !=1 >checked="checked" </#if>>
+				        <label for="choiceRadio2">否</label>
+				   </div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="novice" class="control-label form-label">新手专享：</label>
+					<div class="input-box">
+				        <input type="radio"  id="noviceRadio1" name="novice" value="1" <#if product.novice==1>checked="checked" </#if>>
+				        <label for="noviceRadio1">是</label>
+				        <input type="radio" id="noviceRadio2" name="novice" value="0" <#if product.novice !=1 >checked="checked" </#if>>
+				        <label for="noviceRadio2">否</label>
+				   </div>
+				</div>
+			</li>
+		     <li>
+				<div class="form-group">
+					<label for="saleChannel" class="control-label form-label">上架渠道：</label>
+				    <input type="hidden" name="saleChannel" id="saleChannel"  value="${product.saleChannel!'1,2,3'}"/>
+				 	<div class="input-box" id="saleChannelDiv">
+						    <input type="checkbox" id="saleChannel1" value="1"  checked="checked">PC
+					        <input type="checkbox" id="saleChannel2" value="2" checked="checked">APP
+						    <input  type="checkbox" id="saleChannel3" value="3" checked="checked">微信
+					</div>
+				</div>
+			</li>
+			 <li>
+				<div class="form-group">
+					<label for="specificSale" class="control-label form-label">定向销售：</label>
+					 <div class="input-box">
+					  <@linkage name="specificSale" id="specificSale" nid="specificSale" default="${product.specificSale!'0'}"  class="form-control" />
+					</div>
+				</div>
+			</li>
+			<li  id="specificSaleRuleLi" <#if product.specificSale ==null || product.specificSale =="0" > style="display:none;" </#if>>
+			<div class="form-group">
+		      <label for="specificSaleRule" class="control-label form-label" id="specificSaleRuleLabel">
+		      	<#if product.specificSale=="1">定向密码：</#if> 
+		     	<#if product.specificSale=="2">定向等级：</#if> 
+		     	<#if product.specificSale=="3">定向邮箱域名：</#if> 
+		      </label>
+		      <div class="input-box">
+		       <input type="text" class="form-control" name="specificSaleRule" id="specificSaleRule" value="${product.specificSaleRule!}"   placeholder="请输入定向销售规则"   required>
+		       <select   autocomplete="off" id="vipLevelSelect" class="form-control valid"  <#if product.specificSale !="2"> style="display:none;"</#if>  required>
+		             <#list vipLevelList as level>
+			      			<option value="${level}"  <#if product.specificSale==2 && level==product.specificSaleRule>selected="selected"</#if>>VIP${level!}及以上</option>
+			         </#list>
+		          </select>
+		      </div>
+		    </div>	
+  		 </li>
+			<li>
+				<div class="form-group">
+					<label for="showTime" class="control-label form-label">上架时间<span style="color:red;">*</span>：</label>
+					<div class="input-box">
+						<input type="text" class="form-control layer-date selectTime" name="showTime" id="showTime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',readOnly:true,minDate:'${nowTime?string('yyyy-MM-dd HH:mm:ss')}',maxDate:'#F{$dp.$D(\'saleTime\')}'})"  <#if product.showTime ?? > value="${product.showTime?string('yyyy-MM-dd HH:mm:ss')}" </#if> required>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="saleTime" class="control-label form-label">开售时间<span style="color:red;">*</span>：</label>
+					<div class="input-box">
+						<input type="text"  class="form-control layer-date selectTime" name="saleTime" id="saleTime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',readOnly:true,minDate:'#F{$dp.$D(\'showTime\')}'})" <#if product.saleTime ??> value="${product.saleTime?string('yyyy-MM-dd HH:mm:ss')}" <#else> </#if> required>
+					</div>
+				</div>
+			</li>
+		</ul>
+		  <input type="hidden" name="uuid" value="${product.uuid}"/>
+		  <input type="hidden"  name="projectId" id="projectId" value="${product.uuid}"  >
+		  <@token name="saleProductToken"/>
+	</form>
+</div>
+<script src="${theme_dir}/static/js/plugins/jquery.suggest.js"></script>
+<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+<script src="${theme_dir}/static/js/upload.js"></script>
+<script type="text/javascript">
+/**
+ * 选择项目类别回调函数
+ * @param ptid 项目类别ID
+ * @param ptname 项目类别名称
+ */
+
+if($("#tppName").val()!="cbhb"){
+	var str ="<div class='form-group'><label for='raiseTimeLimit' class='control-label form-label'>募集期(天)：</label><div class='input-box'><input type='text' class='form-control' name='raiseTimeLimit' id='raiseTimeLimit' value='${product.raiseTimeLimit!}' maxlength='2' placeholder='请输入募集期' data-rule-digits='true' data-msg-digits='请输入整数' autocomplete='off'></div></div>";
+	$(".mjTime").html(str);
+}else{
+	var str ="<div class='form-group'><label for='raiseTimeLimit' class='control-label form-label'>募集期(天)<span style='color:red;'>*</span>：</label><div class='input-box'><input type='text' class='form-control' name='raiseTimeLimit' id='raiseTimeLimit' value='${product.raiseTimeLimit!}' maxlength='2' placeholder='请输入募集期' data-rule-morethanone='true' autocomplete='off' data-msg-morethanone='请输入大于0整数' required></div></div>";
+	$(".mjTime").html(str);
+}
+
+
+function typeTreePageSelectEnd(ptid,ptname){
+   $.post("/operate/redEnvelope/redRuleForProjectType.html",{"projectTypeId":ptid},function(data){
+       if(data.result){
+           $("#redenvelopeRuleId").val(data.ruleId);
+       }
+   });
+      $.post("/operate/rateCoupon/rateCouponForProjectType.html",{"projectTypeId":ptid},function(data){
+       if(data.result){
+           $("#rateCouponRuleId").val(data.ruleId);
+       }
+   });
+}
+$("#j-prdcont").html($("#j-tipcont").html().replace(/&lt;[^&gt;].*?&gt;/g,""));
+/*$(".selectTime").focus(function(){
+	$(".layui-layer-content").css("overflow","hidden");
+})
+$(".selectTime").blur(function(){
+	$(".layui-layer-content").css("overflow","auto");
+})*/
+
+$(".selectTime").click(function(){
+	$(".layui-layer-content").css("overflow","hidden");
+})
+$(".layui-layer-content").click(function(){
+	$(".layui-layer-content").css("overflow","auto");
+})
+
+
+
+
+
+$("#form").validate({
+	submitHandler: function(form) {	
+		/*var timetypeVal = $("#timetypeVal").val();
+		var timetVal = $("#timetVal").val();
+		var raiseTimeLimitVal = $("#raiseTimeLimit").val();
+		if(timetypeVal==1){
+			if(raiseTimeLimitVal>timetVal){
+				layer.alert('募集期天数不能大于借款期限', {
+				icon: 2
+					}, function() {
+						layer.closeAll();
+					});
+			 	return false
+			}
+		}*/
+		
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						icon: 6,
+						cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+					}, function() {
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入  
+					});
+				} else {
+					layer.alert(data.msg, {
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+});
+
+
+$(function(){
+$("#redEnvelopeUseful").click(function(){
+     if($(this).is(":checked")){
+	      $("#redEnvelopeRateli").show();
+	  }else{
+	      $("#redEnvelopeRateli").hide();
+	     $("#redEnvelopeRate").val("${product.redEnvelopeRate!0}");
+	  }
+});
+$("#addApr").on("keyup", function(){
+	if(!$(this).val()) return false;
+	var _this = $(this)[0];
+	_this.value = $.fn.page.decimalsNumber(_this.value);
+}).on("blur", function(){
+	var _val = $(this).val(),
+			val = (_val > 24) ? 24 : (_val < 0) ? 0 : _val;
+	val = $.fn.page.charTwoDecimals(val);
+	$(this).val(val);
+});
+function specificSaleHandle(val,first){
+        var specificSaleRuleLi = $("#specificSaleRuleLi"),
+	     labelObj=$("#specificSaleRuleLabel"),
+	     inputObj=$("#specificSaleRule"),
+	     vipSelect=$("#vipLevelSelect");
+    if(val == 0){
+	  specificSaleRuleLi.hide();
+	} else {
+	   specificSaleRuleLi.show();
+	   if(!first)   inputObj.val("");
+	  if(val == 1){
+	     labelObj.html("定向密码<span style='color:red;'>*</span>：");
+	       vipSelect.hide();
+	      inputObj.show().attr("placeholder","请输入定向密码");
+	  }else if(val ==2){
+	     labelObj.html("定向等级<span style='color:red;'>*</span>：");
+	     inputObj.hide();
+	     vipSelect.show();
+	  }else if(val ==3){
+	      labelObj.html("定向邮箱域名<span style='color:red;'>*</span>：");
+	      vipSelect.hide();
+	      inputObj.show().attr("placeholder","请输入定向邮箱域名");
+	  } 
+	}
+}
+$("#vipLevelSelect").on("change", function(){
+	var val = $(this).children('option:selected').val();
+	 $("#specificSaleRule").val(val);
+});
+$("#specificSale").on("change", function(){
+	var val = $(this).children('option:selected').val();
+	specificSaleHandle(val);
+});
+
+   specificSaleHandle($("#specificSale").val(),1);
+
+$("#saleChannelDiv :checkbox").on('click',function(){
+var  v="";
+   $("#saleChannelDiv :checked").each(function(){
+      if(v.length>0){
+         v+=",";
+      }
+      v+=$(this).val();
+    })
+   $("#saleChannel").val(v);
+});
+<#if product.status =="4">
+//上架渠道 初始化
+	var saleChannelVal=$("#saleChannel").val();
+      for(var i=1;i<4;i++){
+	        if(saleChannelVal.indexOf(i) < 0){ 
+	             $("#saleChannel"+i).removeAttr("checked");
+	       }
+	   }
+</#if>
+});
+</script>

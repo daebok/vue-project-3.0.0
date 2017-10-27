@@ -1,0 +1,186 @@
+<div class="form-tips-content">
+	<input type="hidden" id="image_server_url" value="${image_server_url}">
+	<form class="form-horizontal"  action="/loan/borrow/doBorrowFollowEdit.html" id="form" >
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label for="userName" class="control-label form-label">借款人用户名：</label>
+					<div class="input-box-read">						
+						<p>${borrow.userName!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="userName" class="control-label form-label">借款方：</label>
+					<div class="input-box-read">						
+						<p>${borrow.realName!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">借款名称：</label>
+					<div class="input-box-read">
+						<p>${borrow.projectName!}</p>						
+					</div>
+				</div>
+			</li>
+		   <li>
+				<div class="form-group">
+					<label for="account" class="control-label form-label">借款金额：</label>
+					<div class="input-box-read">
+						<p>${borrow.account!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="apr" class="control-label form-label">年化利率：</label>
+					<div class="input-box-read">
+						<p>${borrow.apr!}&nbsp;%</p>						
+					</div>					
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="timeLimit" class="control-label form-label">借款期限：</label>
+					<div class="input-box-read">
+						<p>${borrow.timeLimit!} <#if borrow.timeType == 0 >个月<#else>天</#if></p>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">预还金额：</label>
+					<div class="input-box-read">
+						<p>${borrow.repayAmount!0}</p>						
+					</div>
+				</div>
+			</li>			
+			<li>
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">已还金额：</label>
+					<div class="input-box-read">
+						<p>${borrow.repayYesTotal!0}</p>						
+					</div>
+				</div>
+			</li>	
+			
+			<li>
+				<div class="form-group">
+					<label for="borrowUse" class="control-label form-label">借款性质：</label>
+					<div class="input-box-read">
+					    <p><#if borrow.borrowUse==2>
+					    		   企业借款
+					    	<#else>
+					    	             个人借款
+					    </#if></p>
+					</div>					
+				</div>
+			</li>
+			<!-- <li>
+				<div class="form-group">
+					<label for="borrowUse" class="control-label form-label">借款用途：</label>
+					<div class="input-box-read">
+						<p>${borrow.borrowUse!}</p>
+					</div>					
+				</div>
+			</li> -->	
+			<li>
+				<div class="form-group">
+			      <label for="name" class="control-label form-label">资金运用情况<span style="color:red;">*</span>：</label>
+			      <div class="input-box">
+			      <input type="text" class="form-control" name="fundsCondition" id="fundsCondition" value="${borrowFollow.fundsCondition!}" maxlength="512" placeholder="请输入资金运用情况" required>
+			      </div>
+			    </div>	
+		    </li>	
+		    <li>
+				<div class="form-group">
+			      <label for="operateCondition" class="control-label form-label">经营情况<span style="color:red;">*</span>：</label>
+			      <div class="input-box">
+			      <input type="text" class="form-control" name="operateCondition" id="operateCondition" value="${borrowFollow.operateCondition!}" maxlength="512" placeholder="经营情况" required>
+			      </div>
+			    </div>	
+		    </li>
+		      <li>
+				<div class="form-group">
+			      <label for="financeCondition" class="control-label form-label">财务情况<span style="color:red;">*</span>：</label>
+			      <div class="input-box">
+			      <input type="text" class="form-control" name="financeCondition" id="financeCondition" value="${borrowFollow.financeCondition!}" maxlength="512" placeholder="财务情况" required>
+			      </div>
+			    </div>	
+		    </li>
+		   <li>
+				<div class="form-group">
+			      <label for="repaymentAbility" class="control-label form-label">还款能力<span style="color:red;">*</span>：</label>
+			      <div class="input-box">
+			      <input type="text" class="form-control" name="repaymentAbility" id="repaymentAbility" value="${borrowFollow.repaymentAbility!}" maxlength="512" placeholder="还款能力" required>
+			      </div>
+			    </div>	
+		    </li>
+		    <li class="full-width">
+				<div class="form-group">
+					<label for="pics" class="control-label form-label">上传图片：</label>
+					<div class="clearfix pull-left" style="width: 80%">
+						<div id="uploadGuaranteeBox2" class="uploadWrap" data-arr="uploadFile2">
+					    	<ul id="borrowPagePic2" class="photoUpload clearfix">
+					        	<li class="addFileBtn">
+					            	<input type="file" name="file"  accept="image/gif, image/jpeg,image/png" class="uploadFileInput" id="uploadFile2" onchange="return ajaxFileUpload('uploadFile2','/imageUp.jsp?editorid=borrowFlow','picPath');" title="点击上传图片" />
+					            </li>
+					            
+					            <#if picList??><#list picList as item>
+					            <li data-mum="${item.uuid!}">
+									<a href="${image_server_url}${item.filePath!}">
+					               <img src="${image_server_url}${item.filePath!}"/>
+									</a>
+					               <input name="picPath" value="${item.filePath!}" type="hidden">
+
+					               <a class="closePic" style="float:left;" href="javascript:;" title="删除图片">x</a>                     
+					           	</li>
+								</#list></#if>
+								
+					        </ul>
+					    </div>
+					</div>
+				</div>
+			</li>		
+		    
+		</ul>
+		<input type="hidden" name="projectId" value="${borrow.projectId!}"/>
+		<input type="hidden" name="uuid" value="${borrowFollow.uuid!}"/>
+		<@token/>
+	</form>
+	<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+	<script src="${theme_dir}/static/js/upload.js"></script>
+	<script type="text/javascript">
+		//图片预览
+		$("#borrowPagePic2 a").fancybox();
+	$("#form").validate({
+		submitHandler: function(form) {
+			$(form).ajaxSubmit({
+				type: "post",
+				dataType: "json",
+				success: function(data) {
+					if (data.result) {
+						layer.alert(data.msg, {
+							icon: 6,
+							cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+						}, function() {
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入  
+						});
+					} else {
+						layer.alert(data.msg, {
+							icon: 5
+						});
+					}
+				}
+			});
+		}
+	});
+</script>
+</div>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.user.mapper.UserOpinionMapper">
+	<resultMap type="com.rd.ifaes.core.user.domain.UserOpinion" id="userOpinionResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="title" column="TITLE"/>
+		<result property="attachmentPath" column="ATTACHMENT_PATH"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="remark" column="REMARK"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="addIp" column="ADD_IP"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		TITLE,
+		ATTACHMENT_PATH,
+		USER_ID,
+		REMARK,
+		CREATE_TIME,
+		ADD_IP
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{title},
+		#{attachmentPath},
+		#{userId},
+		#{remark},
+		#{createTime},
+		#{addIp}
+	</sql>
+
+    <select id="findList" resultMap="userOpinionResultMap">
+        select 
+			uo.UUID,
+			uo.TITLE,
+			uo.ATTACHMENT_PATH,
+			uo.USER_ID,
+			uo.REMARK,
+			uo.CREATE_TIME,
+			uo.ADD_IP,
+			u.USER_NAME,
+			u.REAL_NAME,
+			u.MOBILE
+        from user_opinion uo left outer join users u on uo.user_id = u.uuid
+        <include refid="page_where" />
+	</select>
+
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+         	<if test="uuid != null and uuid != ''">and uo.UUID=#{uuid}</if>
+            <if test="keywords != null and keywords != ''">and uo.TITLE like '%'||#{keywords}||'%'</if>
+           <!--  <if test="startTime != null and startTime != ''">and  create_time &gt;= to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')</if>
+		    <if test="endTime != null and endTime != ''">and  create_time  &lt;= to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')</if>         -->
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by uo.create_time desc</if> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.user.domain.UserOpinion">
+		insert into user_opinion( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	
+</mapper>

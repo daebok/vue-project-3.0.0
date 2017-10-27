@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.project.mapper.ProjectTypeMapper">
+	<resultMap type="com.rd.ifaes.core.project.domain.ProjectType" id="projectTypeResultMap">
+		<result property="uuid" column="UUID" jdbcType="VARCHAR"/>
+		<result property="typeName" column="TYPE_NAME" jdbcType="VARCHAR"/>
+		<result property="parentId" column="PARENT_ID" jdbcType="VARCHAR"/>
+		<result property="sort" column="SORT" jdbcType="INTEGER"/>
+		<result property="protocolId" column="PROTOCOL_ID" jdbcType="VARCHAR"/>
+		<result property="features" column="FEATURES" jdbcType="VARCHAR"/>
+		<result property="deleteFlag" column="DELETE_FLAG" jdbcType="CHAR"/>
+		<result property="typeLevel" column="TYPE_LEVEL" jdbcType="INTEGER"/>
+	    <result property="protocolName" column="PROTOCOL_NAME" jdbcType="VARCHAR"/>
+	    <result property="nid" column="NID" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		TYPE_NAME,
+		PARENT_ID,
+		SORT,
+		PROTOCOL_ID,
+		FEATURES,
+		DELETE_FLAG,
+		NID,
+		TYPE_LEVEL 
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{typeName},
+		#{parentId},
+		#{sort},
+		#{protocolId},
+		#{features},
+		#{deleteFlag},
+		#{nid},
+		#{typeLevel} 
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="typeName != null and typeName != ''">and TYPE_NAME = #{typeName}</if>
+            <if test="parentId != null and parentId != ''">and PARENT_ID = #{parentId}</if>
+			<if test="sort != null">and SORT = #{sort}</if>
+            <if test="protocolId != null and protocolId != ''">and PROTOCOL_ID = #{protocolId}</if>
+            <if test="features != null and features != ''">and FEATURES = #{features}</if>
+            <if test="deleteFlag != null and deleteFlag != ''">and DELETE_FLAG = #{deleteFlag}</if>
+			<if test="typeLevel != null">and TYPE_LEVEL = #{typeLevel}</if>
+			<if test="exceptTypeLevel != null">and TYPE_LEVEL != #{exceptTypeLevel}</if>
+			<if test="nid != null and nid != ''">and NID = #{nid}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+         <if test="page == null or page.sort == null or page.sort == ''">order by sort </if>  
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.project.domain.ProjectType">
+		insert into project_type( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	
+	<update id="deleteBatch">
+		update project_type set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="uuid" open="(" separator="," close=")">  
+            #{uuid} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update project_type set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.project.domain.ProjectType">
+		update project_type 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="typeName != null and typeName != ''">TYPE_NAME = #{typeName},</if>
+            <if test="parentId != null and parentId != ''">PARENT_ID = #{parentId},</if>
+			<if test="sort != null">SORT = #{sort},</if>
+            <if test="protocolId != null and protocolId != ''">PROTOCOL_ID = #{protocolId},</if>
+            <if test="features != null and features != ''">FEATURES = #{features},</if>
+			<if test="typeLevel != null">TYPE_LEVEL = #{typeLevel},</if>
+			<if test="nid != null and nid != ''">NID = #{nid},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+	<update id="updateBatch" parameterType="java.util.List">
+		<foreach collection="list" item="item" open="" separator=";" close="">  
+			update project_type 
+			<trim prefix="set" suffixOverrides=",">
+            <if test="item.typeName != null and item.typeName != ''">TYPE_NAME = #{item.typeName},</if>
+            <if test="item.parentId != null and item.parentId != ''">PARENT_ID = #{item.parentId},</if>
+			<if test="item.sort != null">SORT = #{item.sort},</if>
+            <if test="item.protocolId != null and item.protocolId != ''">PROTOCOL_ID = #{item.protocolId},</if>
+            <if test="item.features != null and item.features != ''">FEATURES = #{item.features},</if>
+			<if test="item.typeLevel != null">TYPE_LEVEL = #{item.typeLevel},</if>
+		</trim>
+			where uuid = #{item.uuid} 
+        </foreach>	
+	</update>
+	
+    <select id="findAll" resultMap="projectTypeResultMap">
+        select <include refid="table_columns" />
+        from project_type
+        where delete_flag = 0 or delete_flag is null
+    </select>
+
+    <select id="findList" resultMap="projectTypeResultMap">
+        select <include refid="table_columns" />
+        from project_type
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from project_type
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="projectTypeResultMap" parameterType="String" >
+	  select  t.uuid,
+				t.type_name,
+				t.parent_id,
+				t.sort,
+				t.protocol_id,
+				t.features,
+				t.delete_flag,
+				t.type_level,
+				t.nid,
+				p.name protocol_name
+		from project_type t left join protocol  p  on t.protocol_id=p.uuid
+		where  t.uuid = #{uuid}
+		and (t.delete_flag = 0 or t.delete_flag is null) 
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<select id="getTypeTree" resultMap="projectTypeResultMap" parameterType="String" >
+          select  t.uuid,
+				t.type_name,
+				t.parent_id,
+				t.sort,
+				t.protocol_id,
+				t.features,
+				t.delete_flag,
+				t.type_level,
+				t.nid,
+				p.name protocol_name
+		from project_type t left join protocol  p  on t.protocol_id=p.uuid
+        where  (t.delete_flag = 0 or t.delete_flag is null) 
+        <if test="value != null and value != ''"> 
+            and  (t.parent_id = #{uuid} or t.uuid = #{uuid})
+        </if>
+        order by t.sort
+	</select>
+	
+	<select id="getCurrType" resultMap="projectTypeResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from project_type where  (DELETE_FLAG = 0 OR DELETE_FLAG IS NULL) 
+		<if test="value == null or value == ''">
+			and (PARENT_ID IS NULL OR PARENT_ID ='')
+		</if>
+		<if test="value != null and value != ''">
+			and  uuid = #{value}
+		</if>	
+		order by sort	
+	</select>
+
+	<select id="countChilds"  parameterType="String"  resultType="int" >
+	  <![CDATA[ 
+	 	select count(uuid)
+	    from project_type
+	 	where parent_id=#{projectTypeId} and delete_flag <> 1
+	     ]]> 
+	</select>
+	
+	<select id="countSort" resultType="int">
+		select count(uuid) from project_type
+		<trim prefix="where" prefixOverrides="and | or ">
+			and delete_flag != 1
+			<if test="sort != null">and sort = #{sort}</if>
+			<if test="typeLevel != null">and type_level = #{typeLevel}</if>
+			<if test="uuid != null and uuid != ''">and uuid != #{uuid}</if>
+		</trim>
+	</select>
+  
+    <!-- 取得类型名称 -->
+    <select id="getProjectTypeName" resultType="String" parameterType="String" >
+	  select t.type_name from project_type t where  t.uuid = #{uuid}
+    </select>
+  
+    <!-- 取得一级类别列表 -->
+    <select id="findByTypeLevel" resultMap="projectTypeResultMap" parameterType="Integer">
+        select <include refid="table_columns" />
+        from project_type
+        where type_level=#{typeLevel} and delete_flag = 0
+	</select>
+	
+	<!-- 取得产品所使用类别列表 -->
+    <select id="findUseProjectType" resultMap="projectTypeResultMap">
+		select <include refid="table_columns" />
+		from project_type
+		where uuid not in (
+		   select distinct parent_id from project_type where parent_id is not null
+		) and delete_flag='0'
+	</select>
+
+</mapper>

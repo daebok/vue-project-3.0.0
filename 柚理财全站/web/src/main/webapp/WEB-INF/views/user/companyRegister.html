@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="format-detection" content="telephone=no">
+    <title>注册-${web_name!""}</title>
+    <link rel="stylesheet" type="text/css" href="/themes/css/common-c82a7457f8.css"/>
+    <link rel="stylesheet" type="text/css" href="/themes/css/register-abbd90b096.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+    <script type="text/javascript">
+           var protocolList = ${protocolList};
+    </script>      
+    <!--[if lte IE 7]> 
+    	<script>
+    		window.location = "/browserUpgrade.html"
+    	</script>
+    <![endif]-->
+<body>
+    <div class="header-title header-title-reg" id="userNature" data-value="${userNature}" data-ui="${ui!''}" data-phone="${inviteUserMobile!''}">
+        <#include "/include/header-sm.html">
+    </div>
+    <div class="wrap-full user-body">
+        <div class="wrapper user-content">
+            <div class="register-content">
+                <div class="title clearfix">
+                    <h2 class="fl">欢迎成为融都互金企业用户</h2>
+                    <#if (ui??&&ui!='')>
+                      <a href="/user/userRegister.html?ui=${ui}" class="a-changeRegister fr">切换成个人账户注册</a>
+                    <#else>
+                      <a href="/user/userRegister.html" class="a-changeRegister fr">切换成个人账户注册</a>
+                    </#if>    
+                </div>
+                <div class="site-row">
+                    <div class="site-col-10 fl register-form" id="registerForm">
+                        <div class="loading"></div>
+                    </div>
+                    <div class="site-col-12 fr register-img"></div>
+                </div>
+                <div class="site-row hide" id="j-register-ok">
+                    <div class="site-col-24 register-ok">
+                        <span class="register-right"><i class="anticon anticon-check-circle-o"></i></span>                        
+                        <span class="ok-text">恭喜您，注册成功</span>
+                        <span class="btn"><a href="/member/security/realNameIdentify.html">立即开通</a></span>
+                        <p class="remind-text"><s>*</s>为了顺利投资，请开通资金托管账户！</p>
+                        <p class="other">暂不开通<a href="/invest/index.html">看看理财产品></a></p>
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </div>   
+    <#include "/include/footer-sm.html">   
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/themes/js/common-0aa0729634.js"></script>
+<script src="/themes/js/register-a45716637d.js"></script>

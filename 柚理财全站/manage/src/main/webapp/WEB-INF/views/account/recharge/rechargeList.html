@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>产品列表</title>
+		<#include "include/resources.html">
+	</head>
+	<style>
+		.layui-layer-loading .layui-layer-loading3{width:200px!important;padding-left: 66px;color: #fff;line-height: 24px;}
+	</style>
+	<body>
+		<input type="hidden" value="${tppName!}" id="tppName">
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入用户名,认证名称,流水号">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" id="keywordsSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/account/recharge/list.html">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form id="advSearchForm">
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							    <li class="input-group input-group-sm"><span>用户名</span><input type="text" class="form-control" name="userName" /></li>
+							    <li class="input-group input-group-sm"><span>认证名称</span><input type="text" class="form-control" name="realName" /></li>
+							    <li class="input-group input-group-sm"><span>流水号</span><input type="text" class="form-control" name="orderNo" /></li>
+							    <li class="input-group input-group-sm"><span>状态</span> <@linkage name="status" nid="rechargeStatus" noselect="不限" class="form-control"/>  </li>
+							    <li class="input-group input-group-sm"><span>承担方</span> <@linkage name="feeType" nid="rechargeFeeType" noselect="不限" class="form-control"/>  </li>
+							    <li class="input-group input-group-sm"><span>充值时间</span> <input type="text" name="startTime" id="startTime" class="form-control"placeholder="开始时间"/> <input type="text" name="endTime" id="endTime"   class="form-control" placeholder="结束时间"/>  
+							    <li><button class="btn btn-sm btn-primary" type="button" id="conditionSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/account/recharge/list.html">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+							<@shiro.hasPermission name="account:rechargeList:export">
+							<button type="button" class="btn btn-info" onclick="exportExcel(this)" data-url="/account/recharge/exportExcel.html" data-title="充值记录" data-tid="jqGrid">导出</button>
+							</@shiro.hasPermission>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					</div>					
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+			//导出相关 start
+			/*var exportTitle = '充值记录';
+			function getFieldsAndHearders(){
+				var hearders = '', fields = '';
+				var colModel = $("#jqGrid").jqGrid("getGridParam","colModel");				
+				$.each(colModel,function(index,obj){
+					if(obj.colmenu && !obj.hidden){//自定义非隐藏列
+						hearders += obj.label+",";
+						fields  += obj.name+",";
+					}
+				});		
+				return '&hearders='+hearders+"&fields="+fields;
+			}
+
+			var exportData;
+
+			function progress(){
+				var url = "/account/recharge/exportExcel.html";
+				$.ajax({
+	                type: "POST",
+	                url:"/sys/export/progress.html",
+	                data:{'exportUrl':url},
+	                async: false,
+	                error: function(request) {
+	                  	 clearTimeout(exportData)  
+	                },
+	                success: function(data) {
+	                	exportData=setTimeout("progress()",2000);
+	                   if(data.msg==100){
+	                   	 layer.closeAll('loading')
+	                   	 clearTimeout(exportData)
+	                   }
+	                }
+	            });
+			}
+
+			function exportExcel(){
+				var params = '?exportTitle=' + exportTitle + getFieldsAndHearders();				
+				var url = "/account/recharge/exportExcel.html";
+				var keywords =  $("#keywords").val();
+				if(keywords != null && keywords != ''){
+					params += '&keywords='+keywords;
+				}else{
+					params += '&'+$('#advSearchForm').serialize();
+				}
+				var hrefval = url + params;
+				window.location.href=hrefval;
+				layer.load(3,{
+					shade: 0.5,
+					content:'<span>请等待，正在导出中...</span>'
+				});
+			    progress()
+			}			*/
+			//导出相关 end
+			
+			
+			//设置开始时间控件
+			var startTime= {
+				elem:'#startTime',
+				format: 'YYYY-MM-DD', //日期格式
+				istime: false, //是否开启时间选择
+				max:$('#endTime').val(),
+				event:'focus',
+				choose: function(dates){
+				    endTime.min=dates;
+				    endTime.start=dates;
+				}
+			};
+			
+			//设置发放结束时间
+			var endTime=  {
+					elem:'#endTime',
+					format: 'YYYY-MM-DD', //日期格式
+					istime: false, //是否开启时间选择
+					min: $('#startTime').val(), //最小日期
+					event:'focus',
+					choose: function(dates){
+						startTime.max=dates;
+				   }
+			};
+			laydate(startTime);
+			laydate(endTime);
+			<@dictFormatter type = "userNature" />
+			<@dictFormatter type = "rechargeStatus" />
+			<@dictFormatter type = "rechargePayWay" />
+			<@dictFormatter type = "rechargeFeeType" />
+					$(document).ready(function() {
+						var colModelDom = [];
+						if($("#tppName").val()=="cbhb"){
+							colModelDom = [
+			                    { label: 'id', name: 'uuid', width: 65, hidden:true},
+			                    { label: 'id', name: 'fee', width: 65, hidden:true},
+			                    { label: '用户名', name: 'userName',index:"user_name",width: 30,},
+			                    { label: '认证名称', name: 'realName',index:"real_name",width: 15},
+			                    { label: '充值渠道', name: 'channel',index:"channel",width: 15},
+			                    { label: '用户类型', name: 'userNature',index:"user_nature",width: 15,formatter: userNatureFormatter},
+								{ label: '充值金额', name: 'amount',index:"amount", width: 15
+								},
+								{ label: '到账金额', name: 'amount',index:"amount", width: 15,
+									formatter: function(value,index,row){
+										var fee = 0; 
+				            		  	if(row.fee == NaN || row.fee == undefined){
+				            		  	
+				            		  	}else{
+				            		  		fee = row.fee;
+				            		  	}
+					  					return value - fee;
+					  					
+					  				}
+								},
+								{ label: '手续费', name: 'rechargeFee',index:"rechargeFee", width: 15,
+									formatter: function(value,index,row){
+										var rechargeFee = 0;
+				            		  	if(row.rechargeFee == NaN || row.rechargeFee == undefined){
+				            		  	
+				            		  	}else{
+				            		  		rechargeFee = row.rechargeFee;
+				            		  	}
+					  					return rechargeFee;
+					  					
+					  				}
+					  			},
+								{ label: '承担方', name: 'feeType',index:"fee_type", width: 20,formatter: rechargeFeeTypeFormatter},
+								{ label: '状态', name: 'status',index:"status", width: 20,formatter: rechargeStatusFormatter},
+			                    { label: '交易流水号', name: 'orderNo',index:"order_no",width: 30},	
+								{ label: '充值时间', name: 'createTime',index:"create_time", width: 20,formatter: datetimeFormatter}
+			                ]
+						}
+						else{
+							colModelDom =[
+			                    { label: 'id', name: 'uuid', width: 65, hidden:true},
+			                    { label: 'id', name: 'fee', width: 65, hidden:true},
+			                    { label: '用户名', name: 'userName',index:"user_name",width: 30},
+			                    { label: '认证名称', name: 'realName',index:"real_name",width: 15},
+			                    { label: '充值渠道', name: 'channel',index:"channel",width: 15},
+			                    { label: '用户类型', name: 'userNature',index:"user_nature",width: 15,formatter: userNatureFormatter},
+								{ label: '充值金额', name: 'amount',index:"amount", width: 15
+								},
+								{ label: '到账金额', name: 'amount',index:"amount", width: 15,
+									formatter: function(value,index,row){
+										var fee = 0; 
+				            		  	if(row.fee == NaN || row.fee == undefined){
+				            		  	
+				            		  	}else{
+				            		  		fee = row.fee;
+				            		  	}
+					  					return value - fee;
+					  					
+					  				}
+								},
+								{ label: '手续费', name: 'fee',index:"fee", width: 15,
+									formatter: function(value,index,row){
+										var fee = 0;
+				            		  	if(row.fee == NaN || row.fee == undefined){
+				            		  	
+				            		  	}else{
+				            		  		fee = row.fee;
+				            		  	}
+					  					return fee;
+					  					
+					  				}
+					  			},
+								{ label: '承担方', name: 'feeType',index:"fee_type", width: 20,formatter: rechargeFeeTypeFormatter},
+								{ label: '充值类型', name: 'payWay',index:"pay_way", width: 15,formatter: rechargePayWayFormatter},
+								{ label: '状态', name: 'status',index:"status", width: 20,formatter: rechargeStatusFormatter},
+			                    { label: '交易流水号', name: 'orderNo',index:"order_no",width: 30},	
+								{ label: '充值时间', name: 'createTime',index:"create_time", width: 20,formatter: datetimeFormatter}
+			                ]
+						}												
+						//表格初始化
+						$("#jqGrid").jqTreeGrid({
+							url: '/account/recharge/list.html',	
+							  multiselect : false,	
+							  colModel: colModelDom
+						}) ;
+					});
+			</script>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,60 @@
+<style>
+	.showItem{padding:20px 0 0 20px;float:left; width:50%;}
+	.showItem-group{
+		padding:0 0 0 20px;
+	}
+	.showItem-group .title{
+		font-weight:bold;
+		padding:20px 0 0 20px;
+	}
+</style>
+<div class="popShow" style="padding-bottom: 0;">
+	<div class="clearfix"> 
+		<#if data??>
+		<div class="showItem">
+			<span>平台总额：</span> ${((data.acctBal)!)?replace(',','')}
+		</div>
+		<div class="showItem">
+			<span>平台余额：</span> ${((data.avlBal)!)?replace(',','')}
+		</div>
+		<div class="showItem">
+			<span>平台冻结：</span> ${((data.frzBal)!)?replace(',','')}
+		</div>
+		<#elseif list?? && list?size gt 0>
+			<#list list as item>
+			<div class="clearfix showItem-group">
+				<div class="clearfix title">
+					${item.acTypName!}
+				</div>
+				<div class="showItem">
+					<span>可用余额：</span> ${((item.avlBal)!)?replace(',','')}
+				</div>
+				<div class="showItem">
+					<span>账户余额：</span> ${((item.actBal)!)?replace(',','')}
+				</div>
+				<div class="showItem">
+					<span>冻结余额：</span> ${((item.frzBal)!)?replace(',','')}
+				</div>
+			</div>
+			</#list>
+		<#else>
+		<div class="showItem">
+			<span>平台总额：</span> 0.00
+		</div>
+		<div class="showItem">
+			<span>平台余额：</span> 0.00
+		</div>
+		<div class="showItem">
+			<span>平台冻结：</span> 0.00
+		</div>
+		</#if>
+	</div>
+<script>
+$(function(){
+  	$(".dialog-button").remove();
+    $("#closeBtn").click(function(){
+        parent.$.modalDialog.handler.dialog('close');
+    })
+});
+</script>
+</div>

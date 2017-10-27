@@ -1,0 +1,76 @@
+<div class="form-tips-content">
+	<form class="form-horizontal" action="/sys/messageType/messageTypeAdd.html" id="form" role="form">
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label for="messageType" class="control-label form-label">类型标识：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="messageType" id="messageType" maxlength="30" placeholder="请输入消息类型标识" required>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="messageName" class="control-label form-label">类型名称：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="messageName" id="messageName" maxlength="30" placeholder="请输入类型名称" required>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="sendType" class="control-label form-label">通知类型：</label>
+					<div class="input-box">
+						<@linkage name="sendType" nid="sendType" class="form-control" />
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="messageTitle" class="control-label form-label">消息标题：</label>
+					<div class="input-box input-radio">
+						<input type="text" class="form-control" name="messageTitle" id="messageTitle" maxlength="30" placeholder="请输入消息标题" required>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="messageContent" class="control-label form-label">消息内容：</label>
+					<div class="input-box input-radio">
+						<textarea name="messageContent" id="messageContent" class="form-control" rows="" cols="" required></textarea>
+					</div>
+				</div>
+			</li>
+
+		</ul>
+		<@token/>
+	</form>
+</div>
+<script>
+$("#form").validate({
+	submitHandler: function(form) {	
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						icon: 6,
+						cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+					}, function() {
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入  
+					});
+				} else {
+					layer.alert(data.msg, {
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+})
+</script>

@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.user.mapper.UserInviteMapper">
+	<resultMap type="com.rd.ifaes.core.user.domain.UserInvite" id="userInviteResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="inviteTime" column="INVITE_TIME"/>
+		<result property="inviteUserId" column="INVITE_USER_ID"/>
+		<result property="inviteeUserId" column="INVITEE_USER_ID"/>
+		<!-- 邀请人信息 -->
+		<result property="inviteUserName" column="INVITE_USER_NAME"/>
+		<result property="inviteUserRealName" column="INVITE_USER_REALNAME"/>
+		<result property="inviteUserMobile" column="INVITE_USER_MOBILE"/>
+		<!-- 被邀请人信息 -->
+		<result property="inviteeUserName" column="INVITEE_USER_NAME"/>
+		<result property="inviteeUserRealName" column="INVITEE_USER_REALNAME"/>
+		<result property="inviteeUserMobile" column="INVITEE_USER_MOBILE"/>
+		<result property="inviteeUserTime" column="INVITEE_USER_TIME"/>
+		<result property="userNature" column="USER_NATURE"/>
+		<!-- 统计信息 -->
+		<result property="level1Invest" column="level1Invest"/>
+		<result property="level1Count" column="level1Count"/>
+		<result property="level2Invest" column="level2Invest"/>
+		<result property="level2Count" column="level2Count"/>
+		
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		INVITE_TIME,
+		INVITE_USER_ID,
+		INVITEE_USER_ID
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{inviteTime},
+		#{inviteUserId},
+		#{inviteeUserId}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+			<if test="inviteTime != null">and INVITE_TIME = #{inviteTime}</if>
+            <if test="inviteUserId != null and inviteUserId != ''">and INVITE_USER_ID = #{inviteUserId}</if>
+            <if test="inviteeUserId != null and inviteeUserId != ''">and INVITEE_USER_ID = #{inviteeUserId}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.user.domain.UserInvite">
+		insert into user_invite( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into user_invite( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+		#{item.uuid},
+				#{item.inviteTime},
+				#{item.inviteUserId},
+				#{item.inviteeUserId}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from user_invite
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update user_invite set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="uuid" open="(" separator="," close=")">  
+            #{uuid} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update user_invite set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.user.domain.UserInvite">
+		update user_invite 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="inviteTime != null">INVITE_TIME = #{inviteTime},</if>
+            <if test="inviteUserId != null and inviteUserId != ''">INVITE_USER_ID = #{inviteUserId},</if>
+            <if test="inviteeUserId != null and inviteeUserId != ''">INVITEE_USER_ID = #{inviteeUserId},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="userInviteResultMap">
+        select <include refid="table_columns" />
+        from user_invite
+    </select>
+
+
+    <select id="findList" resultMap="userInviteResultMap">
+      SELECT 
+          <!--  邀请关系 -->
+		  t.uuid,
+		  t.invite_user_id,
+		  t.invitee_user_id,
+		  t.invite_time,
+		  <!-- 直接邀请人 -->
+		  u1.mobile invite_user_mobile,
+		  u1.real_name invite_user_realName,
+		  u1.user_name invite_user_name, 
+	      <!-- 被邀请人 -->
+		  u2.mobile invitee_user_mobile,
+		  u2.real_name invitee_user_realName,
+		  u2.user_name invitee_user_name,
+		  u2.create_time invitee_user_time,
+		  uc.user_nature,
+		  (SELECT SUM(p.amount) FROM project_invest p WHERE p.user_id = t.invitee_user_id AND p.status = 1) level1Invest 
+	  FROM user_invite t 
+	      INNER JOIN user u1  ON t.invite_user_id = u1.uuid 
+	      INNER JOIN user u2  ON t.invitee_user_id = u2.uuid 
+	      INNER JOIN user_cache uc ON uc.user_id = t.invitee_user_id
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and t.uuid = #{uuid}</if>
+            <if test="inviteUserId != null and inviteUserId != ''">and t.invite_user_id = #{inviteUserId}</if>
+            <if test="inviteeUserId != null and inviteeUserId != ''">and t.invitee_user_id = #{inviteeUserId}</if>
+            <if test="inviteUserName != null and inviteUserName != ''">and u1.user_name = #{inviteUserName}</if>
+            <if test="inviteUserRealName != null and inviteUserRealName != ''">and u1.real_name = #{inviteUserRealName}</if>
+            <if test="inviteUserMobile != null and inviteUserMobile != ''">and u1.mobile = #{inviteUserMobile}</if>
+            <if test="inviteeUserName != null and inviteeUserName != ''">and u2.user_name = #{inviteeUserName}</if>
+            <if test="inviteeUserRealName != null and inviteeUserRealName != ''">and u2.real_name = #{inviteeUserRealName}</if>
+            <if test="inviteeUserMobile != null and inviteeUserMobile != ''">u2.mobile = #{inviteeUserMobile}</if>
+         	<if test="keywords != null and keywords != ''">and (u2.mobile like concat('%',#{keywords},'%') or u2.real_name like concat('%',#{keywords},'%') or u2.user_name like concat('%',#{keywords},'%') ) 
+         	</if>
+         	<if test="inviteUserMobile != null and inviteUserMobile != ''">and u1.mobile like concat('%',#{inviteUserMobile},'%')</if>
+         	<if test="startTime != null and startTime != ''">and  u2.create_time &gt;= #{startTime}</if>
+		    <if test="endTime != null and endTime != ''">and  u2.create_time  &lt;= #{endTime}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by u2.create_time desc </if> 
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from user_invite
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="userInviteResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_invite
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+  <!-- 获取用户的二级人脉 -->
+    <select id="findSecondInvite" resultMap="userInviteResultMap">
+	    SELECT 
+			  <!-- 间接邀请人 -->
+			  t1.invite_user_id,
+			  u1.mobile invite_User_Mobile,
+			  u1.real_name invite_User_RealName,
+			  u1.user_name invite_User_Name,
+			  u1.create_time invite_User_Time,
+			  <!-- 被邀请人 -->
+			  u2.mobile invitee_User_Mobile,
+			  u2.real_name invitee_User_RealName,
+			  u2.user_name invitee_User_Name,
+			  u2.create_time invitee_User_Time,
+			  uc.user_nature,
+			  (SELECT SUM(invest.amount)  FROM  project_invest  invest  WHERE  invest.user_id=t2.invitee_user_id AND invest.status = 1) level1Invest,
+			  t2.invitee_user_id 
+			FROM user_invite t1 
+			  INNER JOIN user_invite t2 ON t2.invite_user_id = t1.invitee_user_id 
+			  INNER JOIN user u1 ON t1.invite_user_id = u1.uuid 
+			  INNER JOIN user u2  ON t2.invitee_user_id = u2.uuid 
+			  INNER JOIN user_cache uc ON t2.invitee_user_id = uc.user_id 
+		 <where>
+			<if test="inviteUserId != null and inviteUserId != ''">and t1.INVITE_USER_ID = #{inviteUserId}</if>
+			<if test="keywords != null and keywords != ''">and (u2.mobile like concat('%',#{keywords},'%') or u2.real_name like concat('%',#{keywords},'%') or u2.user_name like concat('%',#{keywords},'%') ) 
+	        </if>
+	        <if test="startTime != null and startTime != ''">and u2.create_time &gt;= #{startTime}</if>
+		    <if test="endTime != null and endTime != ''">and u2.create_time  &lt;= #{endTime}</if>
+	        <if test="inviteUserMobile != null and inviteUserMobile != ''">and u1.user_name like  #{inviteUserMobile}</if>
+         </where> 
+		<if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by u2.create_time desc </if> 
+	</select>
+	<!-- 后台邀请统计 -->
+	  <select id="findInvitestatistics" resultMap="userInviteResultMap">
+	   SELECT
+	         <!-- 邀请人 -->
+   			 DISTINCT u1.uuid invite_user_id ,
+  			 u1.user_name invite_user_name,
+		     u1.real_name invite_user_realName,
+		     u1.mobile invite_user_mobile,
+		     u1.user_nature,
+		     <!-- 直接邀请统计 -->
+		     (SELECT COUNT(1) FROM user_invite t2 WHERE t2.invite_user_id = t1.invite_user_id ) level1Count,
+		     (SELECT SUM(p1.amount) FROM project_invest p1
+		                          WHERE p1.status = 1 
+		                          AND p1.user_id IN ( SELECT t3.invitee_user_id FROM user_invite t3 WHERE t3.invite_user_id = t1.invite_user_id )) level1Invest,
+		      <!--   间接邀请统计       -->        
+		     (SELECT COUNT(1) FROM user_invite t4 WHERE t4.invite_user_id = t1.invitee_user_id ) level2Count,
+		     (SELECT SUM(p2.amount) FROM project_invest p2
+		                          WHERE p2.status = 1 
+		                            AND p2.user_id IN ( SELECT t4.invitee_user_id FROM user_invite t4 WHERE t4.invite_user_id = t1.invitee_user_id )) level2Invest
+		FROM user_invite t1 
+		     INNER JOIN user u1 ON t1.invite_user_id = u1.uuid
+		<where>
+          <if test="keywords != null and keywords != ''">and (u1.MOBILE like concat('%',#{keywords},'%') or u1.REAL_NAME like concat('%',#{keywords},'%') or u1.USER_NAME like concat('%',#{keywords},'%') ) 
+          </if>
+          <if test="inviteUserMobile != null and inviteUserMobile != ''">and u1.MOBILE like concat('%',#{inviteUserMobile},'%')</if>
+        </where> 
+	</select>
+</mapper>

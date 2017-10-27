@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>会员</title>
+    <link rel="stylesheet" type="text/css" href="/common.css"/>
+    <link rel="stylesheet" type="text/css" href="/vip.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <#include "/include/header.html">
+    <div class="site-row warn-row" style="display:none">
+        <div class="site-col-24 account-warn"><em class="iconfont">&#xe639;</em>您尚未完成风险承受能力评估，为了不影响您之后的投资，请您<a href="/member/risk/userRiskPapers.html">立即评估</a><span class="close"><em class="iconfont">&#xe665;</em></span></div>
+    </div>
+    <div class="site-row account-content clearfix">
+        <div class="site-col-4 account-side" id="j-sider-menu">
+            <div class="loading"></div>
+        </div>
+        <div class="site-col-20 site-col-last">
+                <div class="account-main member">
+                    <div class="main-title">会员</div>
+                    <div class="userinfo">
+                        <dl>
+                            <dt>
+                                <span class="userheaderimg">
+                                    <#if avatar_photo!=NULL>
+                                        <img src="${image_server_url}${avatar_photo}" />
+                                    <#else>
+                                        <img src="${image_server_url}/data/img/avatar/default_portrait.jpg" />
+                                    </#if>
+                                    <a href="/member/info/face.html">修改头像</a>
+                                </span>
+                            </dt>
+                            <dd class="welcome">
+                                你好，<span>${telephone}</span>
+                            </dd>
+                            <dd class="info">
+                                <ul>
+                                    <li>
+                                        <span class="info-name">当前等级：</span><span id="j-vip" data-vip="${currentUserVip.vipLevel}"></span>
+                                    </li>
+                                    <li>
+                                        <span class="info-name">当前成长值：</span>${currentUserVip.growthValue}
+                                    </li>                                                                       
+                                </ul>                                
+                            </dd>                            
+                        </dl>
+                    </div>
+                    <div class="about">
+                        <div class="about-title" style="line-height: 50px;margin: 23px 0 0 0;">介绍</div>
+                        <div class="about-cont">
+                            <ol>
+                                <li>VIP等级是用户活跃和荣誉的见证，随着用户在平台的投资累计，等级会随之增长。等级越高，享有福利越丰厚！</li>
+                                <li>VIP等级提升由成长值决定，成长值是由要不过户累计投资金额计算获得。</li>
+                                <li>若用户一年内未有新的投资则会根据等级的“年扣成长值”扣除相应的成长值。</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="about">
+                        <div class="about-title">成长说明</div>
+                        <div class="about-cont">
+                            <table class="table_content">
+                                <tr>
+                                    <th>等级</th>
+                                    <th>成长值区间</th>
+                                    <th>年扣除成长值</th>
+                                    <th>等级</th>
+                                    <th>成长值区间</th>
+                                    <th>年扣除成长值</th>
+                                </tr> 
+                                <#list vipLevelList as vipLevel>
+                                    <#if vipLevel_index % 2 = 0>
+                                      <tr>
+                                    </#if>
+                                    <td>VIP ${vipLevel.vipLevel}</td> 
+                                    <td>${vipLevel.growthValue} -- ${vipLevel.growthLimitValue}</td>
+                                    <td>${vipLevel.yearDeduction}</td> 
+                                    <#if vipLevel_index % 2 != 0>
+                                      </tr>
+                                    </#if>
+                                </#list>
+                                <#if vipLevelList?size % 2 != 0 >
+                                    <td></td> 
+                                    <td></td>
+                                    <td></td> 
+                                    </tr>
+                                </#if>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="about">
+                        <div class="about-title">福利说明</div>
+                        <div class="about-cont">
+                            <table class="table_content">
+                                <tr>
+                                    <th>等级</th>
+                                    <th>红包福利</th>
+                                    <th>加息券福利</th>
+                                    <th>生日礼包</th>
+                                    <th>专享礼包</th>
+                                </tr>
+                                <#list vipLevelList as vipLevel>
+                                <tr>
+                                    <td>VIP ${vipLevel.vipLevel}</td>
+                                    <td>
+                                    <#if vipLevel.redenvelopeRuleId??&& vipLevel.redenvelopeRuleId!="">
+                                       <em class="iconfont">&#xe63a;</em>
+                                    </#if>
+                                    </td>
+                                    <td>
+                                    <#if vipLevel.rateCouponRuleId??&& vipLevel.rateCouponRuleId!="">
+                                        <em class="iconfont">&#xe63a;</em>
+                                    </#if>
+                                    </td>
+                                    <td>
+                                    <#if vipLevel.birthdayGiftId??&&vipLevel.birthdayGiftId!="">
+                                        <em class="iconfont">&#xe63a;</em>
+                                    </#if>
+                                    </td>
+                                    <td>
+                                    <#if vipLevel.exclusiveGiftId??&&vipLevel.exclusiveGiftId!="">
+                                        <em class="iconfont">&#xe63a;</em>
+                                    </#if>
+                                    </td>
+                                </tr>
+                                </#list>
+                            </table>
+                        </div>
+                    </div>                                         
+                </div>    
+        </div>
+    </div>  
+    <#include "/include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/common.js"></script>
+<script src="/vip.js"></script>
+</html>

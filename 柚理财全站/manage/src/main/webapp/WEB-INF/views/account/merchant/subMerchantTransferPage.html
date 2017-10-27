@@ -1,0 +1,92 @@
+<style>
+	table tr,table th,table td{
+		border:1px solid #ccc;
+		line-height: 35px;
+		padding-left: 30px;
+	}
+	.form-tips-content{padding:15px 50px !important;}
+	.inputbox{position: relative;}
+	.msg_tip{width:500px; position: absolute; top:0px; left:135px; }
+</style>
+<div class="form-tips-content">
+<form id="form"  method="post" action="/account/merchant/subMerchantTransfer.html" id="form" role="form">
+<div class="popForm" style="padding-top:0;">
+		<div class="clearfix account" style="padding:20px 0" >
+	            <table border="0" cellpadding="3" cellspacing="1" width="100%" align="center">
+	               <tr class="datagrid-header-row"><td field="id" class="">账户名称</td><td field="id" class="">账户余额</td><td field="id" class="">可用余额</td><td field="id" class="">冻结金额</td></tr>
+	                <#list accts as item>
+	                  <tr><td>${item.subAcctId!}</td><td>${item.acctBal}</td><td>${item.avlBal}</td><td>${item.frzBal}</td></tr>
+		            </#list>
+	            </table>
+	       </div>
+		<div class="clearfix account" style="padding:20px 0" >
+	            <label for="">付款账户：</label>
+	            <#list accts as item>
+	             <input type="radio" value="${item.subAcctId!}" name="account" <#if item_index == 0>checked="checked"</#if>> ${item.subAcctId!}
+	            </#list>
+	       </div>
+	       <div class="clearfix payAccount" style="padding:20px 0">
+	            <label for="">接收账户：</label>
+	            <#list accts as item>
+	             <input type="radio" value="${item.subAcctId!}" name="toAccount"<#if item_index == 1>checked="checked"</#if>> ${item.subAcctId!}
+	            </#list>
+	       </div>
+		<div class="other clearfix" style="padding:20px 0">
+            <label for="">转账金额<span style="color:red">*</span>：</label>
+            <span class="inputbox">
+	            <input type="text" name="money" id="money" autocomplete="off"maxlength="12"  style="width:130px;"/>
+	            <div class="msg_tip"></div>
+	        </span>
+        </div>	
+</div>
+</form>
+</div>
+<script type="text/javascript">
+$("#form").validate({
+	rules: {	
+					money:{
+						required:true,
+						isnumber:true
+					}
+				},
+		messages:{	
+					money:{
+						required:"请输入转账金额",
+						isnumber:"请输入正确的格式"
+					}
+				},
+		errorPlacement:function(error, element){
+		  	element.parents(".inputbox").find(".msg_tip").html(error);	
+		},
+		success:function(element){
+			element.parents(".inputbox").find(".msg_tip").html('');
+		},
+	submitHandler: function(form) {	
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						icon: 6,
+						cancel: function(index){
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入 
+  						}
+					}, function() {
+						layer.closeAll();
+						//刷新当前页面
+						//window.location.href = window.location.href;
+						gridobj.trigger("reloadGrid"); //重新载入  
+					});
+				} else {
+					layer.alert(data.msg, {
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+})
+</script>
+

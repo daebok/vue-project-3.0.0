@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="format-detection" content="telephone=no">
+    <title>开通支付账户-${web_name!""}</title>
+    <link rel="stylesheet" type="text/css" href="/common.css"/>
+    <link rel="stylesheet" type="text/css" href="/autoCreditInvestAuth.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+</head>
+<body data-vouch="${isVouch!}">
+    <#include "/include/header.html">
+    <input id="mobile" type="hidden" value="${mobile}" />
+    <input type="hidden" id="j-realNameStatus" value="${realNameStatus}" />
+    <div class="site-row account-content clearfix">
+        <div class="site-col-4 account-side" id="j-sider-menu">
+            
+        </div>
+        <div class="site-col-20 site-col-last" id="j-paydetailmain">
+            
+        </div>
+    </div> 
+    <#include "/include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/common.js"></script>
+<script src="/autoCreditInvestAuth.js"></script>
+</html>

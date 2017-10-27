@@ -1,0 +1,148 @@
+<div class="form-tips-content">
+	<input type="hidden" id="image_server_url" value="${image_server_url}">
+	<form class="form-horizontal" id="form" role="form">
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">名称：</label>
+					<div class="input-box-read">
+						<p>${rateRule.ruleName!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">发放条件：</label>
+					<div class="input-box-read">
+						<p>
+						 <#if activityList??>
+						    <#list activityList as item>
+						    	<#if rateRule??&&rateRule.activityCode == item.activityCode >${item.activityName!}</#if>
+						    </#list>
+						 </#if>
+						 <#if rateRule.grantUrl?? && rateRule.grantUrl != ""> &nbsp; &nbsp; &nbsp;链接地址：${rateRule.grantUrl!}</#if>
+						</p>						
+					</div>
+				</div>
+			</li>
+
+			<#if rateRule.activityCode == 'tender_suc'>
+			<li class="full-width">
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">发放产品类别：</label>
+					<div class="input-box-read">
+						<p>
+						<#if projectTypeList??>
+							<#list projectTypeList as item>
+								<#if rateRule.grantProjectType?contains(item.uuid)>
+									<input type="checkbox" name="grantProjectType" disabled="true" checked />${item.typeName!}
+								</#if>
+							</#list>
+				   		</#if>
+				   		</p>
+					</div>
+				</div>
+			</li>
+			</#if>
+			<li>
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">发放类型：</label>
+					<div class="input-box-read">
+						<p>
+							<#if rateRule.grantType == "1" >
+								固定值
+						   <#elseif rateRule.grantType == "2" >
+						   		金额满返
+						   <#else>
+						   		固定值
+						   </#if>
+						</p>
+					</div>
+				</div>
+			</li>
+			<#if rateRule.totalNum??>
+				<li>
+					<div class="form-group">
+						<label for="projectName" class="control-label form-label">发放数量：</label>
+						<div class="input-box-read">
+							<p>${rateRule.totalNum!}</p>						
+						</div>
+					</div>
+				</li>
+			</#if>
+			<li class="full-width">
+			<div class="form-group clearfix">
+				<#list ruleDetailList as item>
+					<#if rateRule.grantType == "1">
+						<div class="sectionAmountList clearfix ">
+							<label class="control-label form-label">固定值：</label><div class="pull-left"style="padding-top:7px;" >${item.upApr!''}%</div>
+							<label class="control-label form-label">投资满额：</label><div class="pull-left" style="padding-top:7px;" >${item.useTenderMoney!''}元</div>
+						</div>
+					<#elseif rateRule.grantType == "2">
+						<div class="sectionAmountList clearfix ">
+							<label class="control-label form-label">投资金额区间值：</label><div class="pull-left"style="padding-top:7px;" >${item.tenderMin!''}<#if item.tenderMax=='-1'>以上<#else>~${item.tenderMax!''}</#if></div>
+							<label class="control-label form-label">固定值：</label> <div class="pull-left"style="padding-top:7px;">${item.upApr!''}%</div>
+						    <label class="control-label form-label">投资满额：</label><div class="pull-left"style="padding-top:7px;">${item.useTenderMoney!''}元</div>
+						</div>
+				 </#if>
+				 </#list>
+			</div>
+			</li>
+			<#if rateRule.activityCode!='select_users' &&  rateRule.activityCode!='vip_level'>
+			<li>
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">发放时间：</label>
+					<div class="input-box-read">
+						<p>
+						<#if rateRule.grantTimestatus==0>
+							不限制
+						<#else>
+						    <#if rateRule.grantStartTime??>
+							${rateRule.grantStartTime?string('yyyy-MM-dd')!''}起
+							</#if>
+							<#if rateRule.grantEndTime??>
+							-${rateRule.grantEndTime?string('yyyy-MM-dd')!''}止
+							</#if>
+						</#if>
+						</p>						
+					</div>
+				</div>
+			</li>
+			</#if>
+			<li>
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">有效期：</label>
+					<div class="input-box-read">
+						<p>
+							<#if rateRule.expiryStatus==0>长期有效
+							<#elseif rateRule.expiryStatus==1>${rateRule.useValidDay!''}天
+							<#elseif rateRule.expiryStatus==2>${rateRule.useExpireTime?string('yyyy-MM-dd HH:mm:ss')!''}
+							</#if>
+						</p>						
+					</div>
+				</div>
+			</li>
+			<li class="full-width">
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">使用限制：</label>
+					<div class="input-box-read">
+						<p>
+							<#if rateRule.useStatus??&&rateRule.useStatus==0>不限制
+							<#elseif rateRule.useStatus==1>
+								<#if projectTypeList??>
+									<#list projectTypeList as item>
+									  <#if rateRule.useProjectType?contains(item.uuid)>
+									  <input type="checkbox" name="useProjectType" disabled="disabled" checked />${item.typeName!}
+									  </#if>
+									</#list>
+							    </#if>
+							</#if>
+						</p>						
+					</div>
+				</div>
+			</li>
+			
+		</ul>
+	</form>
+</div>
+

@@ -1,0 +1,135 @@
+<div class="form-tips-content">
+	<input type="hidden" id="image_server_url" value="${image_server_url}">
+	<form class="form-horizontal" action="/loan/credit/creditEstablishVerify.html" id="form" role="form">
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label for="userName" class="control-label form-label">用户名：</label>
+					<div class="input-box-read">
+						<p>${userCredit.userName!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="realName" class="control-label form-label">真实姓名：</label>
+					<div class="input-box-read">
+						<p>${userCredit.realName!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="mobile" class="control-label form-label">电话号码：</label>
+					<div class="input-box-read">						
+						<p>${userCredit.mobile!}</p>						
+					</div>
+				</div>
+			</li>			
+			<li>
+				<div class="form-group">
+					<label for="email" class="control-label form-label">邮箱：</label>
+					<div class="input-box-read">
+						<p>${userCredit.email!}</p>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="account" class="control-label form-label">申请额度(元)：</label>
+					<div class="input-box-read">
+						<p>${userCredit.account!}</p>						
+					</div>					
+				</div>
+			</li>		
+			<li>
+				<div class="form-group">
+					<label for="deduct" class="control-label form-label">扣除额度(元)：</label>
+					<div class="input-box-read">
+						<p>${userCredit.deduct!}</p>						
+					</div>					
+				</div>
+			</li>		
+			<li>
+				<div class="form-group">
+					<label for="content" class="control-label form-label">申请说明：</label>
+					<div class="input-box-read">
+						<p>${userCredit.content!}</p>
+					</div>					
+				</div>
+			</li>			
+			<li class="full-width">
+				<div class="form-group">
+					<label for="createTime" class="control-label form-label">添加时间：</label>
+					<div class="input-box-read">
+						<p>${userCredit.createTime?string("yyyy-MM-dd HH:mm:ss")}</p>
+					</div>
+				</div>
+			</li>
+			<li class="full-width">
+				<div class="form-group">
+					<label for="remark" class="control-label form-label">是否通过：</label>
+					<div class="input-checkbox-box">
+						<input type="radio" id="status2" value="2" name="status"><label for="status2">通过</label>
+						<input type="radio" id="status3" value="3" name="status" checked><label for="status3">不通过</label>
+					</div>
+				</div>
+			</li>
+			<li class="full-width">
+				<div class="form-group">
+					<label for="remark" class="control-label form-label">备注<span style="color:red;">*</span>：</label>
+					<div class="col-sm-8" style="height:55px;">
+						<textarea rows="" cols=""  class="form-control" name="remark" required maxLength="128"></textarea>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<input type="hidden" name="uuid" value="${userCredit.uuid}"/>
+		<@token name="verifyCreditToken"/>
+	</form>
+</div>
+<script src="${theme_dir}/static/js/plugins/jquery.suggest.js"></script>
+<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+<script src="${theme_dir}/static/js/upload.js"></script>
+<script type="text/javascript">
+var dd=0;
+$("#form").validate({
+	  submitHandler:function(form){
+		  dd++;
+		  if(dd>1){
+			  return false
+		  }
+			$(form).ajaxSubmit({
+				type:"post",
+				dataType:"json",
+				success:function(data){
+		        	if(data.result){
+		        		layer.alert(data.msg, {
+		        			zIndex:50000,
+							icon : 6,
+							cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入
+								dd=0
+	  						}
+						}, function() {
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入
+							dd=0
+						});
+		        	}else{
+		        		layer.alert(data.msg, {
+		        			zIndex:50000,
+		        			icon: 5,
+		        		},function() {
+		        			layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入
+							dd=0
+		        		});
+		        	} 			        	
+		    	}
+			});
+	    }    
+	});
+
+</script>

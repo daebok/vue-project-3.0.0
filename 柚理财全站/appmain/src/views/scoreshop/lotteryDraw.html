@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <#assign pageFlag="lotteryDraw">
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="format-detection" content="telephone=no">
+        <title>抽奖-${web_name!""}</title>
+        <link rel="stylesheet" type="text/css" href="/common.css"/>
+        <link rel="stylesheet" type="text/css" href="/lotteryDraw.css"/>
+        <!--[if lt IE 10]>
+        <script src="/themes/js/component.js"></script>
+        <![endif]-->
+        <!--[if lte IE 7]>
+        <script>
+            window.location = "/browserUpgrade.html"
+        </script>
+        <![endif]-->
+<body>
+<#include "include/header.html">
+    <div class="banner_lottery"></div>
+    <div class="bg_color01">
+        <div class="lottery_main lottery_draw clearfix">
+            <div class="left_box">
+                <div class="top clearfix">
+                    <span class="tit">幸运大转盘</span>
+                   <!--  <em>登陆<i style="color:#666">即可抽奖</i></em> -->
+                </div>
+                <div class="winningList">
+                    <h3 class="tit">中奖名单</h3>
+                    <div class="winningListM">
+                        <ul>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="right_box">
+                <div class="turntable">
+                    <div id="pointer" class="pointer"><img src="/themes/img/pointer.png" alt="pointer"/></div>
+                    <div class="rotate" ><img id="rotate" src="/themes/img/turntable.png" alt="turntable"/></div>
+                </div>
+                <#if session_user?? >
+                    <div class="txt">
+                        您还剩余<em class="lottery-num">0</em>次抽奖机会
+                    </div>
+                    <#else>
+                        <div class="txt">
+                            亲，请<a href="/user/login.html?redirectURL=/score/lotteryDraw.html">登录</a>后进行抽奖！
+                        </div>
+                </#if>
+            </div>
+        </div>
+    </div>
+    <div class="bg_color02 lotteryBox02">
+        <div class="lottery_main lottery_draw02">
+            <div class="tit">游戏规则</div>
+            <ul>
+                <li></li>
+            </ul>
+            <!-- <h2>您可以用以下方式分享给好友：</h2>
+            <dl class="link clearfix">
+                <dd>
+                    <a href="javascript:;">
+                        <em class="weixin"></em>
+                        <div class="topTips"><img src="/themes/img/wx.png"></div>
+                    </a>
+                </dd>
+                <dd><a href="javascript:QQShare()"><em class=" qq"> </em></a></dd>
+                <dd><a href="javascript:weiboShare()"><em class="weibo"></em></a></dd>
+                <dd><a href="javascript:QQZoneShare()"><em class="qzone"></em></a></dd>
+               <dd><a href="javascript:linkShare()"><em class="link"></em></a></dd>
+
+            </dl>
+            <input type="hidden" id="inviteUrl" value="${inviteUrl!''}" /> -->
+        </div>
+    </div>
+    <#include "include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/themes/plugins/layer-v1.8.4/layer.min.js"></script>
+<script src="/common.js"></script>
+<script src="/themes/js/awardRotate.js"></script>
+<script src="/lotteryDraw.js"></script>
+<script type="text/javascript">
+    function weiboShare(){
+        //var url=location.href;
+        var url="";
+        var appkey=''; /**您申请的应用appkey,显示分享来源(可选)*/
+        var title="幸运大转盘，好礼赚不停！！！"; /**分享的文字内容(可选，默认为所在页面的title)*/
+        var pic=''; /**分享图片的路径(可选)*/
+        var ralateUid=''; /**关联用户的UID，分享微博会@该用户(可选)*/
+        var language='zh_cn'; /**设置语言，zh_cn|zh_tw(可选)*/
+        window.open("http://service.weibo.com/share/share.php?url="+url+"&appkey="+appkey+"&title="+encodeURIComponent(title)+"&pic="+pic+"&ralateUid="+ralateUid+"&language="+language);
+    }
+    function QQShare(){
+        url=location.href;
+        desc="";
+        title="京圆柚理财邀您赚钱啦！"; /* 分享标题 */
+        summary="";/*分享描述(可选)*/
+        pics="";/*分享图片(可选)*/
+        flash="";/*视频地址(可选)*/
+        site="京圆柚理财金服"/*分享来源 (可选) ，如：QQ分享*/
+        window.open("http://connect.qq.com/widget/shareqq/index.html?url="+encodeURIComponent(url)+"&title="+encodeURIComponent(title)+"&desc="+desc+"&summary="+summary+"&site="+encodeURIComponent(site));
+    }
+    function QQZoneShare(){
+        url=location.href;
+        title="京圆柚理财邀您赚钱啦！";
+        desc="";
+        summary="";/*分享描述(可选)*/
+        site=encodeURIComponent("京圆柚理财");/*分享来源 (可选) ，如：QQ分享*/
+        window.open("http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url="+encodeURIComponent(url)+"&title="+encodeURIComponent(title)+"&desc="+desc+"&summary="+summary+"&site="+site);
+
+    }
+</script>
+</html>

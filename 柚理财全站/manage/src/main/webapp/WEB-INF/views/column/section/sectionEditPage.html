@@ -1,0 +1,96 @@
+<div class="form-tips-content">
+	<form class="form-horizontal" action="/column/section/sectionEdit.html" id="form" role="form">
+  	<ul class="form-item">
+  		<li>
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">栏目名称：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="sectionName" id="sectionName" value="${section.sectionName!}" maxlength="50" placeholder="请输入栏目名称" required>
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">栏目标识：</label>
+		      <div class="input-box">
+		      <input  type="text" class="form-control" name="sectionCode" id="sectionCode" value="${section.sectionCode!}"  readonly maxlength="20" placeholder="请输入栏目标识" required>
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">排序值：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="sort" id="sort" value="${section.sort!}" maxlength="40" placeholder="请输入排序值" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" 
+				onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'0')}else{this.value=this.value.replace(/\D/g,'')}">
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">栏目描述：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="remark" id="remark" value="${section.remark!}" maxlength="40" placeholder="请输入描述" >
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="username" class="control-label form-label">所属类别：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" readonly="readonly" name="parentName" id="parentName" data-url="/column/section/sectionTreePage.html?parentId=${parentId}" placeholder="请选择父级菜单" value="${parentName}" />
+		      <!--  <input type="text" class="form-control" readonly="readonly" name="parentName" id="parentName" onclick="$.fn.treeGridOptions.treeselect(this)" data-url="/column/section/sectionTreePage.html?parentId=${parentId}" placeholder="请选择父级菜单" value="${parentName}" /> -->
+		      <input type="hidden" name="parentId" id="parentId" value="${section.parentId}"/>
+		       <input type="hidden" name="sectionType" id="sectionType" value="${section.sectionType!}"/>
+		      </div>
+		    </div>	
+  		</li>
+  	</ul>
+		<input type="hidden" id="uuid" name="uuid" value="${section.uuid!}">
+  	<@token/>
+  </form>
+</div>
+<script type="text/javascript">
+	$("#form").validate({
+		submitHandler: function(form) {
+		  if($("#parentId").val() == $("#uuid").val()){
+		        top.layer.alert("所属类别不能为自身!", {
+					icon: 5,
+					shadeClose: true
+				});
+			return;
+		  }
+			$(form).ajaxSubmit({
+				type: "post",
+				dataType: "json",
+				success: function(data) {
+					if (data.result) {
+						layer.alert(data.msg, {
+							icon: 6,
+							cancel: function(index){
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入 
+  						},
+							yes:function () {
+								gridobj.jqGrid('setGridParam', {
+									datatype: 'json',
+									postData: {
+										'parentId': $("input[name='parentId']").val()
+									}, //发送数据
+									page: 1
+								}).trigger("reloadGrid");
+								top.editfn($("input[name='parentId']").val());
+								layer.closeAll();
+							}
+						});
+
+					} else {
+						layer.alert(data.msg, {
+							icon: 5
+						});
+					}
+				}
+			});
+		}
+	});
+</script>

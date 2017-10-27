@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.6.xsd
+           http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd"
+>
+
+    <description>spring-rabbmitmq Configuration</description>
+
+    <!-- spring amqp默认的是jackson 的一个插件,目的将生产者生产的数据转换为json存入消息队列 -->
+    <bean id="jsonMessageConverter" class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter"/>
+
+    <!-- 创建connectionFactory -->
+    <!-- org.springframework.amqp.rabbit.connection.CachingConnectionFactory-->
+    <task:executor id="mqExecutor" pool-size="20-100" keep-alive="600" queue-capacity="2000" rejection-policy="CALLER_RUNS"/>
+    <rabbit:connection-factory id="connectionFactory"
+                               addresses="${rabbit.addresses}"
+                               username="${rabbit.username}"
+                               password="${rabbit.password}"
+                               executor="mqExecutor"/>
+
+    <!-- org.springframework.amqp.rabbit.core.RabbitAdmin -->
+    <rabbit:admin connection-factory="connectionFactory"/>
+
+    <!-- queue 队列声明-->
+    <!-- org.springframework.amqp.core.Queue -->
+    <rabbit:queue id="queue_log" name="queue_log" durable="true" auto-delete="false" exclusive="false"/>
+    <rabbit:queue id="queue_message" name="queue_message" durable="true" auto-delete="false" exclusive="false"/>
+
+    <!--
+        queue_invest		投资
+        queue_auto_invest	自动投资业务
+        queue_user			用户
+        queue_cash			充值取现
+        queue_trade			第三方交易
+        queue_protocol   	协议监听
+        queue_actplan		活动方案
+        queue_account_log	账户日志
+     -->
+    <rabbit:queue id="queue_invest" name="queue_invest" durable="true" auto-delete="false" exclusive="false"/>
+    <rabbit:queue id="queue_auto_invest" name="queue_auto_invest" durable="true" auto-delete="false" exclusive="false"/>
+    <rabbit:queue id="queue_user" name="queue_user" durable="true" auto-delete="false" exclusive="false"/>
+    <rabbit:queue id="queue_cash" name="queue_cash" durable="true" auto-delete="false" exclusive="false"/>
+    <rabbit:queue id="queue_trade" name="queue_trade" durable="true" auto-delete="false" exclusive="false"/>
+    <rabbit:queue id="queue_protocol" name="queue_protocol" durable="true" auto-delete="false" exclusive="false"/>
+    <rabbit:queue id="queue_actplan" name="queue_actplan" durable="true" auto-delete="false" exclusive="false"/>
+    <rabbit:queue id="queue_loan" name="queue_loan" durable="true" auto-delete="false" exclusive="false"/>
+    <rabbit:queue id="queue_repay" name="queue_repay" durable="true" auto-delete="false" exclusive="false"/>
+    <rabbit:queue id="queue_trade_loan" name="queue_trade_loan" durable="true" auto-delete="false" exclusive="false"/>
+    <rabbit:queue id="queue_trade_repay" name="queue_trade_repay" durable="true" auto-delete="false" exclusive="false"/>
+    <rabbit:queue id="queue_trade_investFail" name="queue_trade_investFail" durable="true" auto-delete="false" exclusive="false"/>
+    <rabbit:queue id="queue_account_log" name="queue_account_log" durable="true" auto-delete="false" exclusive="false"/>
+    <rabbit:queue id="queue_cash_fee_mark_log" name="queue_cash_fee_mark_log" durable="true" auto-delete="false" exclusive="false"/>
+
+    <!-- exchange queue binging key 绑定 -->
+    <!-- 将Queue、Exchange设置为Durable即不会发生数据丢失问题 -->
+    <rabbit:direct-exchange id="rd-mq-exchange" name="rd-mq-exchange" durable="true" auto-delete="false">
+        <rabbit:bindings>
+            <rabbit:binding queue="queue_log" key="queue_log_key"/>
+            <rabbit:binding queue="queue_message" key="queue_message_key"/>
+            <rabbit:binding queue="queue_invest" key="queue_invest_key"/>
+            <rabbit:binding queue="queue_auto_invest" key="queue_auto_invest_key"/>
+            <rabbit:binding queue="queue_user" key="queue_user_key"/>
+            <rabbit:binding queue="queue_cash" key="queue_cash_key"/>
+            <rabbit:binding queue="queue_trade" key="queue_trade_key"/>
+            <rabbit:binding queue="queue_protocol" key="queue_protocol_key"/>
+            <rabbit:binding queue="queue_actplan" key="queue_actplan_key"/>
+            <rabbit:binding queue="queue_loan" key="queue_loan_key"/>
+            <rabbit:binding queue="queue_repay" key="queue_repay_key"/>
+            <rabbit:binding queue="queue_trade_loan" key="queue_trade_loan_key"/>
+            <rabbit:binding queue="queue_trade_repay" key="queue_trade_repay_key"/>
+            <rabbit:binding queue="queue_trade_investFail" key="queue_trade_investFail_key"/>
+            <rabbit:binding queue="queue_account_log" key="queue_account_log_key"/>
+            <rabbit:binding queue="queue_cash_fee_mark_log" key="queue_cash_fee_mark_log_key"/>
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+
+    <!-- 生产者配置:spring template声明 -->
+    <!-- org.springframework.amqp.rabbit.core.RabbitTemplate -->
+    <rabbit:template id="rabbitTemplate" exchange="rd-mq-exchange"
+                     connection-factory="connectionFactory" message-converter="jsonMessageConverter"/>
+
+    <!--
+        可为RabbitTemplate 配置使用 RetryTemplate 来帮助处理broker连接的问题
+
+    <rabbit:template　id="rabbitTemplate"　connection-factory="connectionFactory"　retry-template="retryTemplate"/>
+    <bean id="retryTemplate" class="org.springframework.retry.support.RetryTemplate">
+        <property name="backOffPolicy">
+            <bean class="org.springframework.retry.backoff.ExponentialBackOffPolicy">
+                <property 　 name="initialInterval" 　	value="500" />
+                <property 　 name="multiplier" 　		value="10" />
+                <property 　 name="maxInterval" 			value="10000" />
+            </bean>
+        </property>
+    </bean>
+     -->
+
+    <!-- 消费者监听:queue litener 观察 监听模式 当有消息到达时会通知监听在对应的队列上的监听对象 -->
+    <!-- org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory
+        acknowledge：none 异常时消息不重发/ auto 	 异常时消息重发
+    -->
+    <!-- 开启队列监听线程池服务
+    <task:executor id="myExecutor" pool-size="20-100" keep-alive="600" queue-capacity="2000" rejection-policy="CALLER_RUNS" />
+    <task:annotation-driven  scheduler="myScheduler"/>
+    <task:scheduler id="myScheduler" pool-size="10" />
+    -->
+
+    <!-- org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
+        acknowledge="none"  ack机制，具体参考org.springframework.amqp.core.AcknowledgeMode。
+                            系统默认auto，意味着容器会自动应答，除非MessageListener抛出异常。
+                            none意味着没有任何的应答会被发送。
+        requeue-rejected="false" ,决定由于监听器抛出异常而拒绝的消息是否被重新放回队列,默认值为true。
+    -->
+    <rabbit:listener-container connection-factory="connectionFactory" acknowledge="auto" requeue-rejected="false"
+                               message-converter="jsonMessageConverter"><!--  concurrency="10" task-executor="myExecutor" -->
+        <rabbit:listener ref="logListener" method="listen" queues="queue_log"/>
+        <rabbit:listener ref="messageListener" method="listen" queues="queue_message"/>
+        <rabbit:listener ref="protocolListener" method="listen" queues="queue_protocol"/>
+        <rabbit:listener ref="investListener" method="listen" queues="queue_invest"/>
+        <rabbit:listener ref="loanListener" method="listen" queues="queue_loan"/>
+        <rabbit:listener ref="autoInvestListener" method="listen" queues="queue_auto_invest"/>
+        <rabbit:listener ref="tradeListener" method="listen" queues="queue_trade"/>
+        <rabbit:listener ref="cashListener" method="listen" queues="queue_cash"/>
+        <rabbit:listener ref="userListener" method="listen" queues="queue_user"/>
+        <rabbit:listener ref="actPlanListener" method="listen" queues="queue_actplan"/>
+        <rabbit:listener ref="tradeListener" method="listen" queues="queue_trade_loan"/>
+        <rabbit:listener ref="tradeListener" method="listen" queues="queue_trade_investFail"/>
+        <rabbit:listener ref="accountLogListener" method="listen" queues="queue_account_log"/>
+        <rabbit:listener ref="tradeListener" method="listen" queues="queue_trade_repay"/>
+        <rabbit:listener ref="repayListener" method="listen" queues="queue_repay"/>
+        <rabbit:listener ref="cashFeeMarkLogListener" method="listen" queues="queue_cash_fee_mark_log"/>
+    </rabbit:listener-container>
+
+</beans>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>积分商品兑换订单跟踪页面</title>
+		<#include "include/resources.html">
+	</head>
+	<body>
+		<style>
+			.layui-layer-loading .layui-layer-loading3{width:200px!important;padding-left: 66px;color: #fff;line-height: 24px;}
+		</style>
+		<div class="wrapper">
+			<div class="row pt20">
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="用户名">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/operate/scoreshop/findListExceptWaitVerify.html">搜索</button>
+							    </span>
+						    </div>
+					    </form>
+					</div>
+					<div class="search-form-adv ml10">
+						<form>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+					$(document).ready(function() {
+						//表格初始化
+						$("#jqGrid").jqTreeGrid({
+							url: '/operate/scoreshop/findListExceptWaitVerify.html',
+							  multiselect : true,
+							  colModel: [
+			                    { label: 'id', name: 'uuid', width: 45, hidden:true},
+			                    { label: '用户名', name: 'userName',index:"user_name",width: 30,align:"center"},
+			                    { label: '商品名称', name: 'goodsName',index:"goods_name",width: 30,align:"center"},
+			                    { label: '兑换数量', name: 'num',index:"num",width: 20,align:"center"},
+			                    { label: '状态', name: 'status',index:"status",width: 30,align:"center",
+			                    	formatter: function(value,row,index){
+					            		   	if (value == '1'){
+						  						return "审核成功";
+						  					}else if (value == '2'){
+						  						return "审核失败";
+						  					}else if (value == '3'){
+						  						return "已发货";
+						  					}else if (value == '4'){
+						  						return "已收货";
+						  					}
+						  				}
+			                    },
+			                    { label: '使用积分值', name: 'score',index:"score",width: 30,align:"center"},
+			                    { label: '收货地址', name: 'receiveAddress',index:"receive_address",width: 30,align:"center"},
+			                    { label: '收货人电话', name: 'receivePhone',index:"receive_phone",width: 30,align:"center"},
+			                    { label: '收货人姓名', name: 'receiveUserName',index:"receive_user_name",width: 30,align:"center"},
+			                    { label: '兑换留言', name: 'receiveRemark',index:"receive_remark",width: 30,align:"center"},
+			                    { label: '兑换时间', name: 'createTime',index:"create_time",width: 30,align:"center",
+			                    	formatter: datetimeFormatter
+			                    },
+			                    { label: '审批人', name: 'verifyUser',index:"verify_user",width: 30,align:"center"},
+			                    { label: '审批备注', name: 'verifyRemark',index:"verify_remark",width: 30,align:"center"},
+			                    { label: '发送人', name: 'deliverUser',index:"deliver_user",width: 30,align:"center"},
+			                    { label: '物流名称', name: 'expressName',index:"express_name",width: 30,align:"center"},
+			                    { label: '物流单号', name: 'expressNo',index:"express_no",width: 30,align:"center"},
+			                    { label: '费用', name: 'money',index:"money",width: 30,align:"center"},
+			                    { label: '发货时间', name: 'deliverTime',index:"deliver_time",width: 30,align:"center",
+			                    	formatter: datetimeFormatter
+			                    },
+			                    {
+									label: "操作",
+									name: "cz",
+									width: 30,
+									align: "center",
+									formatter: function(val, options, rowObject){
+										var btns = '';
+										var	id = rowObject.id;
+										
+										if(rowObject.status==1){
+											btns += '<a href="javascript:;" onclick=$.fn.treeGridOptions.setFun(this,"'+id+'") data-tid="jqGrid" data-url="/operate/scoreshop/addDeliverInfoPage.html" data-title="录入发货信息">录入发货信息</a>';
+										}
+										else if(rowObject.status==3){
+											btns += '<a href="javascript:;" onclick=$.fn.treeGridOptions.lineOperFun(this,"'+id+'") data-tid="jqGrid" data-title="你确定已经收货了吗？" data-url="/operate/scoreshop/confirmReceive.html">确认收货</a>';
+										}else if(rowObject.status==4){
+											btns += '已收货';
+										}
+										else{
+											btns +="-";
+										}
+										return btns;
+									}
+								}
+			                ]
+						}) ;
+					});
+			</script>
+		</div>
+	</body>
+</html>

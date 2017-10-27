@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>江西银行提现跳转中......</title>
+    <meta http-equiv="content-Type" content="hidden/html; charset=utf-8"/>
+</head>
+
+<body>
+<div>江西银行提现跳转中,请您不要关闭页面......</div>
+<form action="${model.summitUrl}" method="post" id="frm1" style="display: none;">
+    <input type="hidden" name="version" value="${model.version!}"/>
+    <input type="hidden" name="txCode" value="${model.txCode!}"/>
+    <input type="hidden" name="instCode" value="${model.instCode!}"/>
+    <input type="hidden" name="bankCode" value="${model.bankCode!}"/>
+    <input type="hidden" name="txDate" value="${model.txDate!}"/>
+    <input type="hidden" name="txTime" value="${model.txTime!}"/>
+    <input type="hidden" name="seqNo" value="${model.seqNo!}"/>
+    <input type="hidden" name="channel" value="${model.channel!}"/>
+    <input type="hidden" name="accountId" value="${model.accountId!}"/>
+    <input type="hidden" name="orderId" value="${model.orderId!}"/>
+    <input type="hidden" name="txAmount" value="${model.txAmount!}"/>
+    <input type="hidden" name="txFee" value="${model.txFee!}"/>
+    <input type="hidden" name="tsfAmount" value="${model.tsfAmount!}"/>
+    <input type="hidden" name="forAccountId" value="${model.forAccountId!}"/>
+    <input type="hidden" name="orgOrderId" value="${model.orgOrderId!}"/>
+    <input type="hidden" name="orgTxAmount" value="${model.orgTxAmount!}"/>
+    <input type="hidden" name="productId" value="${model.productId!}"/>
+    <input type="hidden" name="remark" value="${model.remark!}"/>
+    <input type="hidden" name="forgotPwdUrl" value="${model.forgotPwdUrl!}"/>
+    <input type="hidden" name="retUrl" value="${model.retUrl!}"/>
+    <input type="hidden" name="notifyUrl" value="${model.notifyUrl!}"/>
+    <input type="hidden" name="acqRes" value="${model.acqRes!}"/>
+    <input type="hidden" name="sign" value="${sign!}"/>
+    <input type="submit" value="提交">
+</form>
+
+<script type="text/javascript">
+    document.getElementById("frm1").submit();
+</script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>用户积分页面</title>
+		<#include "include/resources.html">
+	</head>
+	<body>
+		<style>
+			.layui-layer-loading .layui-layer-loading3{width:200px!important;padding-left: 66px;color: #fff;line-height: 24px;}
+		</style>
+		<div class="wrapper">
+			<div class="row pt20">
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="商品名称">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/operate/scoreshop/goodsStoreList.html">搜索</button>
+							    </span>
+						    </div>
+					    </form>
+					</div>
+					<div class="search-form-adv ml10">
+						<form>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+					</div>
+					<div class="col-md-6">
+						<div class="tool-btns">
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.DiscounteditFun(this)" data-tid="jqGrid" data-url="/operate/scoreshop/editGoodsStorePage.html">修改</button>
+						</div>
+					</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+					$(document).ready(function() {
+						//表格初始化
+						$("#jqGrid").jqTreeGrid({
+							url: '/operate/scoreshop/goodsStoreList.html',
+							  multiselect : true,
+							  colModel: [
+			                    { label: 'id', name: 'uuid', width: 45, hidden:true},
+			                    { label: '商品id', name: 'goods_id',index:"goods_id",width: 30,hidden:true},
+			                    { label: '商品名称', name: 'goodsName',index:"goods_name",width: 15,align:"center"},
+			                    { label: '商品状态', name: 'statusStr',index:"status_str",width: 15,align:"center"},
+			                    { label: '商品库存', name: 'store',index:"store",width: 15,align:"center"},
+			                    { label: '冻结库存', name: 'freezeStore',index:"freeze_store",width: 15,align:"center"},
+			                    { label: '销售数量', name: 'soldAmount',index:"sold_amount",width: 15,align:"center"},
+			                ]
+						}) ;
+					});
+			</script>
+		</div>
+	</body>
+</html>

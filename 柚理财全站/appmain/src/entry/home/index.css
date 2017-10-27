@@ -1,0 +1,156 @@
+body{
+	background: #f1f1f1;
+}
+
+.header-info{
+	background-color: #f1f1f1;
+  border-bottom: solid 1px #eaeaea;
+}
+/*banner*/
+.banner-index{
+	width: 100%;
+	height: 350px;
+	/*background: url(../../style/images/banner.jpg) no-repeat center center;*/
+}
+.banner-index .bannerImg{
+	height: 350px;
+	width:100%;
+	background-position:right center;
+}
+.banner-index .bannerImg a{
+	display: inline-block;
+	line-height: 350px;
+}
+.banner-index .ant-carousel .slick-dots{
+	bottom:18px;
+}
+.banner-index .ant-carousel .slick-dots li button:before{
+	font-size:50px;
+	color:#fff;
+	opacity: 1;
+}
+.banner-index .ant-carousel .slick-dots li.slick-active button:before{
+	color:#fb6434;
+	opacity: 1;
+}
+.banner-index .ant-carousel .slick-slider{
+	padding-bottom: 0;
+}
+
+
+/*登录*/
+.login-index{
+	position: absolute;
+	left: 50%;
+	top: 18px;
+	margin-left:310px;
+	width: 300px;
+	height: 350px;
+	background:rgba(103,78,60,0.9);
+}
+.login-index ul{
+	padding-top: 45px;
+	width: 100%;
+}
+.login-index ul li{
+	margin-bottom: 10px;
+	text-align: center;
+}
+.login-index ul li span{
+	font-size: 14px;
+	color: #fff;
+}
+.login-index ul li .rate-number span{
+	font-size: 70px;
+	color: #f95a28;
+}
+.login-index ul li .rate-number i{
+	font-size: 20px;
+	color: #f95a28;
+}
+.login-index ul li .btn{	
+	margin: 20px auto;
+	display: block;
+	width: 264px;
+	height: 42px;
+	line-height: 42px;
+	font-size: 18px;
+	color: #fff;
+	background-color: #f95a28;
+	border: 1px solid #f95a28;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;	
+}
+.login-index ul li .login-hint a{
+	color: #ffba00;
+}
+
+/*网站公告*/
+.index-notice{
+	width:100%;
+	border-bottom:1px solid #f0f0f0;
+	line-height: 39px;
+	background: #fff;
+}
+.index-notice .con{
+	width:1180px;
+	margin: 0 auto;
+	overflow: hidden;
+	height: 39px;
+}
+.index-notice .con span{
+	display: block;
+	float: left;
+}
+.index-notice .con ul{
+	float: left;
+	margin-left: 5px;
+}
+.index-notice .con ul li{
+	line-height: 39px;
+}
+.index-notice .con ul li a{
+	color:#a0a0a0;
+}
+.index-notice .con ul li a:hover{
+	color:#ffba00;
+}
+.index-notice .con .more{
+	float: right;
+	color: #a0a0a0;
+}
+.index-notice .con .more:hover{
+	color:#ffba00;
+}
+
+/*网站特点*/
+.trait{
+	width:100%;
+	border-bottom:1px solid #f0f0f0;
+	background: #fff;
+}
+.trait .con{
+	width:1180px;
+	margin: 0 auto;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

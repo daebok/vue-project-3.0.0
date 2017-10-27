@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>还款记录</title>
+		<#include "include/resources.html">
+		<script type="text/javascript">
+			var url_list = "/loan/repayment/repaymentRecordList.html";
+			$(document).ready(function() {	
+				$('#keywordsSearch').attr('data-url',url_list);
+				$('#conditionSearch').attr('data-url',url_list);				
+			});
+		</script>
+		<style>
+		.layui-layer-loading .layui-layer-loading3{width:200px!important;padding-left: 66px;color: #fff;line-height: 24px;}
+		</style>
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form id="keySearchForm">
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入用户名、借款方或借款名称">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" id="keywordsSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form id="advSearchForm">
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							     <li class="input-group input-group-sm"><span>用户名</span><input type="text" class="form-control" name="userName" /></li>
+							    <li class="input-group input-group-sm"><span>借款方</span><input type="text" class="form-control" name="realName" /></li>
+							     <li class="input-group input-group-sm"><span>状态</span><@linkage name="status" nid="repayStatus" noselect="全部" class="form-control"/></li>
+							    <li class="input-group input-group-sm"><span>预计还款时间</span><input type="text" name="startTime" class="form-control layer-date" id="startTime"/></li>
+							    <li class="input-group input-group-sm"><span>截止时间</span><input type="text" name="endTime" class="form-control layer-date" id="endTime"/></li>
+							    <li><button class="btn btn-sm btn-primary" type="button" id="conditionSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+							<@shiro.hasPermission name="project:borrow:repayList:export">
+							<a href="javascript:" target="_blank" class="btn btn-info" onclick="exportExcel(this)" data-title='还款记录' data-url="/loan/repayment/exportRepaymentRecord.html" data-tid="jqGrid">导出</a>
+							</@shiro.hasPermission>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6" style=" float:right; text-align: right;">
+					<div class="repaymentRecord_money">预还金额总计：<em id="sumPaymentId"></em>&nbsp;元</div>
+				</div>
+			</div>
+			
+			<!-- 列表信息 -->
+			<div class="row mt20">
+			<div class="col-md-12">
+				<table id="jqGrid" class="table-td-NoOverflow"></table>
+				<div id="jqGridPager"></div>
+			</div>
+		</div>
+		<script type="text/javascript">
+
+			$(document).ready(function() {	
+				
+				//设置预计还款时间
+				var startTime= {
+					elem:'#startTime',
+					format: 'YYYY-MM-DD', //日期格式
+					istime: false, //是否开启时间选择
+					max:$('#endTime').val(),
+					event:'focus',
+					choose: function(dates){
+					    endTime.min=dates;
+					    endTime.start=dates;
+					}
+				};
+				//设置截止时间
+				var endTime=  {
+						elem:'#endTime',
+						format: 'YYYY-MM-DD', //日期格式
+						istime: false, //是否开启时间选择
+						min: $('#startTime').val(), //最小日期大于当前时间
+						event:'focus',
+						choose: function(dates){
+						    startTime.max=dates;
+					   }
+				};				
+				laydate(startTime);
+				laydate(endTime);
+				
+				//表格初始化		
+				$("#jqGrid").jqTreeGrid({
+						url : url_list,
+						multiselect : false,
+						colModel : [
+								{
+									label : "用户名",
+									name : "userName",
+									width : 200
+								},
+								{
+									label : "借款方",
+									name : "realName",
+									width : 100
+								},
+								{
+									label : "借款名称",
+									name : "projectName",
+									width : 150
+								},
+								{
+									label : "期数",
+									name : "periodsStr",
+									width : 80
+								},{
+									label : "预计还款日期",
+									name : "repayTime",
+									width : 100,
+									formatter: 'date',
+									formatoptions: {
+										srcformat: 'u',
+										newformat: 'Y-m-d'
+									}
+								},{
+									label : "实际还款时间",
+									name : "realRepayTime",
+									width : 140,
+									formatter: 'date',
+									formatoptions: {
+										srcformat: 'u',
+										newformat: 'Y-m-d H:i:s'
+									}
+								},
+								{
+									label : "预还金额(元)",
+									name : "payment",
+									width : 80
+								},
+								{
+									label : "实还金额(元)",
+									name : "payedAmount",
+									width : 80
+								},
+								{
+									label : "本金(元)",
+									name : "capital",
+									width : 80
+								},
+								{
+									label : "利息(元)",
+									name : "interest",
+									width : 80
+								},
+								{
+									label : "状态",
+									name : "statusStr",
+									width : 80
+								},
+								{
+									label: "操作",
+									name: "cz",
+									width: 100,
+									formatter: function(val, options, rowObject){	
+										var btns = '<a href="javascript:;" onclick=$.fn.treeGridOptions.checkFun(this,"'+rowObject.projectId+'") data-tid="jqGrid" data-url="/loan/collection/collectionList.html?projectId='+rowObject.projectId+'" data-title="待收记录">待收记录</a>';
+										if(rowObject.statusStr == "未还款")
+											btns += '&nbsp;|&nbsp;<a href="#" onclick=sendMsg("'+rowObject.id+'") >催收</a>';
+										return btns;
+									}									
+								}
+								],
+								gridComplete:function(){
+                        var rowNum=parseInt($(this).getGridParam("records"));
+                        /*var type = 2;
+                        if(${type!0}=='1' || ${type!0}=='2'){//今日待还及近期待还显示待还金额合计
+                       		type = ${type!0};
+                        
+                        }*/
+                            if(rowNum>0){
+                                var options = {
+                                    url:"/loan/repayment/getPaymentSum.html", // 默认是 form 的 action ，如果写的话，会覆盖 from 的 action.
+                                    dataType:"json", //'xml', 'script', or 'json' ( 接受服务端返回的类型 .)
+                                    type:"POST",
+                                    success: function (data){ // 成功后调用方法
+                                        $("#sumPaymentId").html(data);
+                                    }
+                                };
+                                //searchType在common.js中查询的时候设置的
+                                if(searchType==1){//关键字查询,默认值，
+                                    $("#keySearchForm").ajaxSubmit(options);
+                                }else if(searchType==2){//条件查询
+                                    $("#advSearchForm").ajaxSubmit(options);
+                                }//                            var sumAmount=$(this).getCol("payment",false,"sum"); //只能获取该页列总计
+                            }else{
+                                $("#sumPaymentId").html(0);
+                            }
+                    }
+					}).jqGrid("setFrozenColumns").navGrid(
+					'#jqGridPager',
+					{
+						edit : false,
+						add : false,
+						del : false,
+						search : false,
+						refresh : true,
+						view : false,
+						position : "left",
+						cloneToTop : false
+					});
+				});
+			
+			function sendMsg(id) {
+				$.ajax({
+					url:"/loan/repayment/urgeRpaymentPhoneCode.html",
+					type:"post",
+					data:{"id":id},
+					dataType:"json",
+					success:function(data) {
+						if(data.result){
+			        		layer.alert(data.msg, {
+			        			zIndex:50000,
+								icon : 6,
+								cancel: function(index){
+									layer.closeAll();
+									gridobj.trigger("reloadGrid"); //重新载入
+									dd=0
+		  						}
+							}, function() {
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入
+								dd=0
+							});
+			        	}else{
+			        		layer.alert(data.msg, {zIndex:50000,icon: 5});
+							dd=0
+			        	} 		
+					}
+				});
+			}
+			
+		</script>
+			
+		</div>
+	</body>
+</html>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.user.mapper.UserQualificationUploadMapper">
+	<resultMap type="com.rd.ifaes.core.user.domain.UserQualificationUpload" id="userQualificationUploadResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="qualificationApplyId" column="QUALIFICATION_APPLY_ID"/>
+		<result property="filePath" column="FILE_PATH"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="deleteFlag" column="DELETE_FLAG"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		QUALIFICATION_APPLY_ID,
+		FILE_PATH,
+		CREATE_TIME,
+		DELETE_FLAG
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{qualificationApplyId},
+		#{filePath},
+		#{createTime},
+		#{deleteFlag}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="qualificationApplyId != null and qualificationApplyId != ''">and QUALIFICATION_APPLY_ID = #{qualificationApplyId}</if>
+            <if test="filePath != null and filePath != ''">and FILE_PATH = #{filePath}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="deleteFlag != null and deleteFlag != ''">and DELETE_FLAG = #{deleteFlag}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.user.domain.UserQualificationUpload">
+		insert into user_qualification_upload( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into user_qualification_upload( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+			#{item.uuid},
+			#{item.userId},
+			#{item.qualificationApplyId},
+			#{item.filePath},
+			#{item.createTime},
+			#{item.deleteFlag}
+		)
+		</foreach>
+	</insert>
+
+	<update id="deleteBatch">
+		update user_qualification_upload set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="uuid" open="(" separator="," close=")">  
+            #{uuid}
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update user_qualification_upload set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.user.domain.UserQualificationUpload">
+		update user_qualification_upload 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="filePath != null and filePath != ''">FILE_PATH = #{filePath},</if>
+            <if test="deleteFlag != null and deleteFlag != ''">DELETE_FLAG = #{deleteFlag}</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="userQualificationUploadResultMap">
+        select <include refid="table_columns" />
+        from user_qualification_upload
+    </select>
+
+    <select id="findList" resultMap="userQualificationUploadResultMap">
+        select <include refid="table_columns" />
+        from user_qualification_upload
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from user_qualification_upload
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="userQualificationUploadResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_qualification_upload
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+
+</mapper>

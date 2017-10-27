@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>平台盈亏分析</title>
+<#include "include/resources.html">
+<link href="${theme_dir}/static/css/plugins/trirand/ui.jqgrid-bootstrap.css" rel="stylesheet">
+</head>
+<body class="overflowY">
+<div class="wrapper">
+    <div class="row pt20">
+      <div class="col-md-12">
+       <form class="form-horizontal">
+          <input type="hidden" name="" value="1" id="j-realNameStatus" />
+          <input type="hidden" name="dateType" value="1" id="dateType">
+          <div id="legend">
+            <legend>平台盈亏分析</legend>
+          </div>
+          <div class="col-md-16 mt20">
+            <ul id="myTab" class="nav nav-tabs">
+              <li class="active"><a  data-toggle="tab">平台整体收入（支出）统计</a></li>
+              <li><a  data-toggle="tab">平台盈亏统计</a></li>
+              <li><a  data-toggle="tab">平台坏账金额（笔数）统计</a></li>
+            </ul>
+          </div>        
+          <div class="control-group">
+          <label class="control-label">日期：</label>
+          <div class="controls">
+             <label class="checkbox inline selectTime"><input type="text" name="startDate" id="startTime" class="form-control"placeholder="开始日期" value="${startDate}" readonly="readonly" style="background:#fff;"/></label><label class="checkbox inline selectTime"><input type="text" name="endDate" id="endTime" class="form-control" placeholder="结束日期" value="${endDate}" readonly="readonly" style="background:#fff;"/></label>
+            <label class="checkbox inline selectTime"><input type="submit" name="button" class="btn btn-primary btn-block" value="搜索" /></label>
+          </div>
+        </div>
+        <div class="control-group types">
+          <label class="control-label">报表类型：</label>
+          <div class="controls">
+            <label class="checkbox inline selectTime"><select name="" id="type" class="form-control valid"  onchange="changeType()" aria-invalid="false" style="width:198px">
+              <option value="2">平台收入统计</option>
+              <option value="1">平台支出统计</option>
+            </select></label>
+          </div>
+        </div>
+      </form>
+      </div>
+    </div>
+    <div class="lineStyle col-md-12"></div>
+    <div class="row">
+      <div class="col-md-12">
+          <div class="content pt20 ml30">
+            <h3 class="text-right">
+              <div id="timeType" class="selectTime">
+                <a href="javascript:;" id="day" class="on">日</a>
+                <a href="javascript:;" id="week">周</a>
+                <a href="javascript:;" id="month">月</a>
+              </div>
+            </h3>
+          </div>
+          <div class="con1">
+            <div id="j-main1" class="chart-map mt20 ml30" style="width:1000px; margin:0 auto;"></div>
+            <div class="col-md-12 col-sm-12">
+              <div id="j-pie-1" class="chart-col-6 mt20 ml30" style="float:left;width:1000px; margin:0 auto;">
+              </div>
+            </div>
+          </div>
+          <div class="con2 hide">
+            <div id="j-main2" class="chart-map mt20 ml30" style="width:1000px; margin:0 auto;"></div>
+          </div>
+          <div class="con3 hide">
+            <div id="j-main3" class="chart-map mt20 ml30" style="width:1000px; margin:0 auto;"></div>
+            <div class="col-md-12 col-sm-12">
+              <div id="j-pie-2" class="chart-col-6 mt20 ml30 " style="float:left;width:1000px; margin:0 auto;">
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div class="con2 hide">
+        <div class="col-md-12 mt20">
+                  <div class="page-header">
+                      <h3>平台盈亏明细
+                          <small id="j-total"></small>
+                          <@shiro.hasPermission name="statistic:account:platProfit:export">
+                          <a onclick="exportExcel(this)" target="_blank" class="tool-btns">导出</a>
+                          </@shiro.hasPermission> 
+                      </h3>
+                  </div>
+                  <div class="col-md-12" id="j-tableContent">
+                    <table id="jqGrid" class="table-td-NoOverflow"></table>
+                    <div id="jqGridPager"></div>
+                  </div>
+              </div>
+    </div>
+</div>
+<script type="text/javascript">
+  var url = "/statistic/account/statisticPlatIncome.html?";
+  var pieurl = "/statistic/account/statisticPlatIncomeByType.html?";
+  var title = "平台收入统计";
+  var title1 = "平台坏账笔数统计";
+  var tips = "收入金额";
+  var tips1 = "坏账笔数";
+  var tipstitle = "笔数"
+
+  function changeType() {
+  if($('#type option:selected').val()==1){
+    title="平台支出统计";
+    url = "/statistic/account/statisticPlatPay.html?";
+    pieurl = "/statistic/account/statisticPlatPayByType.html?";
+    tips = "支出金额";
+  }
+  else{
+    title = "平台收入统计";
+    url = '/statistic/account/statisticPlatIncome.html?';
+    pieurl = "/statistic/account/statisticPlatIncomeByType.html?";
+    tips = "收入金额";
+  }
+  chartAjax($(".form-horizontal").serialize(),url,title,tips);
+  pieChartAjax($(".form-horizontal").serialize(),pieurl,title);
+}
+
+function changeTypes() {
+  if($('#statType option:selected').val()==1){
+    title1="平台坏账笔数统计";
+    tips1 = "坏账笔数";
+    tipstitle = "笔数";
+  }
+  else{
+    title1 = "平台坏账金额统计";
+    tips1 = "坏账金额";
+    tipstitle = "金额";
+  }
+  chartAjax3($(".form-horizontal").serialize(),title1,tips1);
+  pieChartAjax2($(".form-horizontal").serialize(),title1);
+}
+
+    //设置开始时间控件
+  var startTime= {
+    elem:'#startTime',
+    format: 'YYYY-MM-DD', //日期格式
+    max:$('#endTime').val(),
+    event:'focus',
+    choose: function(dates){
+        endTime.min=dates;
+        endTime.start=dates;
+    }
+  };
+  //设置发放结束时间
+  var endTime=  {
+      elem:'#endTime',
+      format: 'YYYY-MM-DD', //日期格式
+      min: $('#startTime').val(), //最小日期
+      event:'focus',
+      choose: function(dates){
+        startTime.max=dates;
+       }
+  };
+  laydate(startTime);
+  laydate(endTime);
+ 
+ /*平台整体收入支出统计*/ 
+  var myChart = echarts.init(document.getElementById('j-main1')),
+  option = {
+      title: {
+          text: '平台收入统计',
+          left: 'center'
+      },    
+      tooltip: {
+          trigger: 'axis'
+      },
+      legend: {
+          data:['收入金额','环比值'],
+          top:'50px',
+      },
+      grid:{
+          top:'25%'
+      },
+      xAxis: [
+          {
+              type: 'category',
+              data: []
+          }
+      ],
+      yAxis: [
+          {
+              type: 'value',
+              name: '金额',
+              axisLabel: {
+                  formatter: '{value} '
+              }
+          },
+          {
+              type: 'value',
+              name: '环比值',
+              axisLabel: {
+                  formatter: '{value} %'
+              }
+          }
+      ],
+      dataZoom: [
+       {   // 这个dataZoom组件，默认控制x轴。
+           type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+           startValue :0
+       },
+
+   ],
+      series: [
+           {
+              name:'收入金额',
+              type:'bar',
+              yAxisIndex: 0,
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#8266a3'
+                }
+              }
+          },{
+              name:'环比值',
+              type:'line',
+              yAxisIndex: 1,
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#afc97b'
+                }
+              }
+          }
+      ]
+  };
+  //['#76b7f9','#f8d15c','#ef826f','#92cb8b','#c3e9e1','#ffa879','#95a3ea','#ba7dd1']
+  chartAjax($(".form-horizontal").serialize(),url,title,tips);
+
+  function chartAjax(req,url,title,tips){
+      $.ajax({
+          url:url+req,
+          dataType:'json',
+          success:function(data){
+            //var timeLength=data.date.length;
+            option.xAxis[0].data=data.chart_amnt.chart_date;
+            option.series[0].data=data.chart_amnt.chart_amnt;
+            option.series[1].data=data.chart_amnt.chart_ratio;
+            option.series[0].name=tips;
+            option.title= {
+                text: title,
+                left: 'center'
+            }
+            myChart.setOption(option);
+          }
+      })
+  }
+
+  /*图1*/
+  var pieChart1 = echarts.init(document.getElementById('j-pie-1'))
+  var pieOption= {
+          title : {
+              text: '',
+              left: 'center',
+              top:'80px'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : '80%',
+              y : '40%',
+              data:[]
+          },
+          toolbox: {
+              show : false
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'访问来源',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  color:['#76b7f9','#f8d15c','#ef826f','#92cb8b','#c3e9e1','#ffa879','#95a3ea','#ba7dd1'],
+                  itemStyle : {
+                      normal : {
+                          label : {
+                              position : 'inner',
+                              formatter : function (params) {
+                               return params.percent + '%'
+                              }
+                          },
+                          labelLine : {
+                              show : false
+                          }
+                      },
+                      emphasis : {
+                          label : {
+                              show : false,
+                              formatter : "{b}\n{d}%"
+                          }
+                      }
+
+                  },
+                  data:[]
+              }
+          ]
+      };
+
+  var pieOption1 = jQuery.extend(true, {}, pieOption);
+
+
+  pieChartAjax($(".form-horizontal").serialize(),pieurl,title);
+
+  function pieChartAjax(req,pieurl,title){
+      $.ajax({
+          url:pieurl+req,
+          dataType:'json',
+          success:function(data){
+
+              var pie1 = [],legend1 = [];
+              var data= data.pieChart;
+
+              for( x in data)
+              {
+                pie1.push({value:data[x],name:x});
+                legend1.push(x);
+              }
+
+              pieOption1.title.text=title;
+              pieOption1.legend.data = legend1;
+              pieOption1.series[0].data = pie1;
+
+              pieChart1.setOption(pieOption1);
+
+          }
+      })
+  }
+
+
+/*平台盈亏统计*/
+  var myChart2 = echarts.init(document.getElementById('j-main2')),
+  option2 = {
+      title: {
+          text: '平台盈亏统计',
+          left: 'center'
+      },    
+      tooltip: {
+          trigger: 'axis'
+      },
+      legend: {
+          data:['收入金额','支出金额','盈亏'],
+          top:'50px',
+      },
+      grid:{
+          top:'25%'
+      },
+      xAxis: [
+          {
+              type: 'category',
+              data: []
+          }
+      ],
+      yAxis: [
+          {
+              type: 'value',
+              name: '金额',
+              axisLabel: {
+                  formatter: '{value} '
+              }
+          },
+          {
+              type: 'value',
+              name: '环比值',
+              axisLabel: {
+                  formatter: '{value} %'
+              }
+          }
+      ],
+      dataZoom: [
+       {   // 这个dataZoom组件，默认控制x轴。
+           type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+           startValue :0
+       },
+
+   ],
+      series: [
+           {
+              name:'收入金额',
+              type:'bar',
+              yAxisIndex: 0,
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#8266a3'
+                }
+              }
+          },{
+              name:'支出金额',
+              type:'bar',
+              yAxisIndex: 0,
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#c0504d'
+                }
+              }
+          },{
+              name:'盈亏',
+              type:'line',
+              yAxisIndex: 1,
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#afc97b'
+                }
+              }
+          }
+      ]
+  };
+  //['#76b7f9','#f8d15c','#ef826f','#92cb8b','#c3e9e1','#ffa879','#95a3ea','#ba7dd1']
+  //chartAjax2($(".form-horizontal").serialize());
+
+  function chartAjax2(req){
+      $.ajax({
+          url:'/statistic/account/statisticPlatProfit.html?'+req,
+          dataType:'json',
+          success:function(data){
+            //var timeLength=data.date.length;
+            option2.xAxis[0].data=data.chart_date;
+            option2.series[0].data=data.income;
+            option2.series[1].data=data.pay;
+            option2.series[2].data=data.profit;
+            myChart2.setOption(option2);
+          }
+      })
+  }
+
+/*平台坏账金额（笔数）统计*/
+
+var myChart3 = echarts.init(document.getElementById('j-main3')),
+  option3 = {
+      title: {
+          text: '平台坏账笔数统计',
+          left: 'center'
+      },    
+      tooltip: {
+          trigger: 'axis'
+      },
+      legend: {
+          data:[],
+          top:'50px',
+      },
+      grid:{
+          top:'25%'
+      },
+      xAxis: [
+          {
+              type: 'category',
+              data: []
+          }
+      ],
+      yAxis: [
+          {
+              type: 'value',
+              name: '笔数',
+              axisLabel: {
+                  formatter: '{value} '
+              }
+          }
+      ],
+      dataZoom: [
+       {   // 这个dataZoom组件，默认控制x轴。
+           type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+           startValue :0
+       },
+
+   ],
+      series: [
+           {
+              name:'收入金额',
+              type:'bar',
+              yAxisIndex: 0,
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#8266a3'
+                }
+              }
+          }
+      ]
+  };
+  //['#76b7f9','#f8d15c','#ef826f','#92cb8b','#c3e9e1','#ffa879','#95a3ea','#ba7dd1']
+  //chartAjax3($(".form-horizontal").serialize(),title1,tips1);
+
+  function chartAjax3(req,title1,tips1){
+      $.ajax({
+          url:'/statistic/account/statisticBadDebt.html?'+req,
+          dataType:'json',
+          success:function(data){
+            //var timeLength=data.date.length;
+            option3.xAxis[0].data=data.chart_date;
+            option3.series[0].data=data.chart_total;
+            option3.series[0].name = tips1;
+            option3.title= {
+                text: title1,
+                left: 'center'
+            }
+            option3.yAxis[0].name=tipstitle;
+            myChart3.setOption(option3);
+          }
+      })
+  }
+
+  /*图1*/
+  var pieChart2 = echarts.init(document.getElementById('j-pie-2'))
+  var pieOption2= {
+          title : {
+              text: '',
+              left: 'center',
+              top:'80px'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : '80%',
+              y : '40%',
+              data:[]
+          },
+          toolbox: {
+              show : false
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'访问来源',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  color:['#76b7f9','#f8d15c','#ef826f','#92cb8b','#c3e9e1','#ffa879','#95a3ea','#ba7dd1'],
+                  itemStyle : {
+                      normal : {
+                          label : {
+                              position : 'inner',
+                              formatter : function (params) {
+                               return params.percent + '%'
+                              }
+                          },
+                          labelLine : {
+                              show : false
+                          }
+                      },
+                      emphasis : {
+                          label : {
+                              show : false,
+                              formatter : "{b}\n{d}%"
+                          }
+                      }
+
+                  },
+                  data:[]
+              }
+          ]
+      };
+
+  var pieOption3 = jQuery.extend(true, {}, pieOption2);
+
+
+  //pieChartAjax2($(".form-horizontal").serialize(),title1);
+
+  function pieChartAjax2(req){
+      $.ajax({
+          url:"/statistic/account/statisticBadDebt.html?"+req,
+          dataType:'json',
+          success:function(data){
+
+              var pie1 = [],legend1 = [];
+              var data= data.pieChart;
+
+              for( x in data)
+              {
+                pie1.push({value:data[x],name:x});
+                legend1.push(x);
+              }
+
+              pieOption3.title.text=title1;
+              pieOption3.legend.data = legend1;
+              pieOption3.series[0].data = pie1;
+
+              pieChart2.setOption(pieOption3);
+
+          }
+      })
+  }
+
+  
+
+ $("#timeType a").on('click',function(e){
+
+    $("#timeType a").removeClass('on');
+    $(this).addClass('on')
+    
+   switch (e.target.id) {
+     case 'day':
+        $("#dateType").val(1);
+        chartAjax($(".form-horizontal").serialize(),url,title,tips);
+        pieChartAjax($(".form-horizontal").serialize(),pieurl,title);
+        chartAjax2($(".form-horizontal").serialize());
+        chartAjax3($(".form-horizontal").serialize(),title,tips1);
+        pieChartAjax2($(".form-horizontal").serialize(),title);
+        jqGridSet($(".form-horizontal").serialize());
+        break;
+     case 'week':
+        $("#dateType").val(2);
+        chartAjax($(".form-horizontal").serialize(),url,title,tips);
+        pieChartAjax($(".form-horizontal").serialize(),pieurl,title);
+        chartAjax2($(".form-horizontal").serialize());
+        chartAjax3($(".form-horizontal").serialize(),title,tips1);
+        pieChartAjax2($(".form-horizontal").serialize(),title);
+        jqGridSet($(".form-horizontal").serialize());
+        break;
+     case 'month':
+        $("#dateType").val(3);
+        chartAjax($(".form-horizontal").serialize(),url,title,tips);
+        pieChartAjax($(".form-horizontal").serialize(),pieurl,title);
+        chartAjax2($(".form-horizontal").serialize());
+        chartAjax3($(".form-horizontal").serialize(),title,tips1);
+        pieChartAjax2($(".form-horizontal").serialize(),title);
+        jqGridSet($(".form-horizontal").serialize());
+       break;
+     default:
+   }
+ });
+
+/* submit事件 */
+ $('.form-horizontal').submit(function (e) {
+   e.preventDefault()
+   if( $("#j-realNameStatus").val() == "1" ){
+     chartAjax($(this).serialize(),url,title,tips);
+     pieChartAjax($(this).serialize(),pieurl,title);
+   }
+   else if($("#j-realNameStatus").val() == "2"){
+    chartAjax2($(this).serialize());
+    $("#j-tableContent").html('<table id="jqGrid" class="table-td-NoOverflow"></table><div id="jqGridPager"></div>');
+    jqGridSet($(".form-horizontal").serialize());
+   }
+   else{
+     chartAjax3($(this).serialize(),title,tips1);
+     pieChartAjax2($(this).serialize(),title);
+   }
+   //chartAjaxMap($('.form-horizontal').serialize());
+ });
+
+ $("#myTab li").on("click",function(){
+    $("#j-realNameStatus").val($(this).index()+1);
+    if( $("#j-realNameStatus").val() == "1" ){
+    $(".con1").removeClass('hide');
+    $(".con2").addClass('hide');
+    $(".con3").addClass('hide');
+    $(".types").html('<label class="control-label">报表类型：</label><div class="controls"><label class="checkbox inline selectTime"><select name="" id="type" class="form-control valid"  onchange="changeType()" aria-invalid="false" style="width:198px"><option value="2">平台收入统计</option><option value="1">平台支出统计</option></select></label></div>');
+    $('.form-horizontal').submit();
+   }
+   else if($("#j-realNameStatus").val() == "2"){
+    $(".con1").addClass('hide');
+    $(".con2").removeClass('hide');
+    $(".con3").addClass('hide');
+    $(".types").html('');
+    $('.form-horizontal').submit();
+   }else{
+    $(".con1").addClass('hide');
+    $(".con2").addClass('hide');
+    $(".con3").removeClass('hide');
+    $(".types").html('<label class="control-label">报表类型：</label><div class="controls"><label class="checkbox inline selectTime"><select name="statType" id="statType" class="form-control valid"  onchange="changeTypes()" aria-invalid="false" style="width:198px"><option value="1">平台坏账笔数统计</option><option value="2">平台坏账金额统计</option></select></label></div>');
+    $('.form-horizontal').submit();
+   } 
+ });
+
+ var exportTitle = '平台盈亏明细';
+      function getFieldsAndHearders(){
+        var hearders = '', fields = '';
+        var colModel = $("#jqGrid").jqGrid("getGridParam","colModel");        
+        $.each(colModel,function(index,obj){
+          if(obj.colmenu && !obj.hidden){//自定义非隐藏列
+            hearders += obj.label+",";
+            fields  += obj.name+",";
+          }
+        });   
+        return '&hearders='+hearders+"&fields="+fields;
+      } 
+
+ var exportData;
+ function progress(){
+        var url = "/statistic/account/exportMertLogExcel.html";
+        $.ajax({
+                  type: "POST",
+                  url:"/sys/export/progress.html",
+                  data:{'exportUrl':url},
+                  async: false,
+                  error: function(request) {
+                       clearTimeout(exportData)  
+                  },
+                  success: function(data) {
+                    exportData=setTimeout("progress()",2000);
+                     if(data.msg==100){
+                       layer.closeAll('loading')
+                       clearTimeout(exportData)
+                     }
+                  }
+              });
+      }
+
+   function exportExcel(){
+        var params = 'exportTitle=' + exportTitle + getFieldsAndHearders();
+        console.log(params)
+        params += '&'+$('.form-horizontal').serialize();        
+        var url = "/statistic/account/exportMertLogExcel.html?";
+        var hrefval = url + params;
+        window.location.href=hrefval;
+        layer.load(3,{
+          shade: 0.5,
+          content:'<span>请等待，正在导出中...</span>'
+        });
+        progress();
+      }
+
+ //表格初始化
+function jqGridSet(d){
+
+  $.ajax({
+    url: '/statistic/account/getStatisticMertLogList.html',
+    type: 'POST',
+    dataType: 'json',
+    data:d,
+  })
+  .done(function(data){
+
+       $("#jqGrid").jqTreeGrid({
+            data:data.rows,
+            datatype : 'local',
+            multiselect: false,
+            height:500,
+            colModel : [
+                {
+                  label : "日期",
+                  name : "statDate",
+                  width : 380
+                },{
+                  label : "收入金额",
+                  name : "incomeAmnt",
+                  width : 380
+                },{
+                  label : "支出金额",
+                  name : "payAmnt",
+                  width : 380
+                },{
+                  label : "盈亏金额",
+                  name : "totalAmnt",
+                  width : 380
+                }],
+          }).jqGrid("setFrozenColumns").navGrid(
+          '#jqGridPager',
+          {
+            edit : false,
+            add : false,
+            del : false,
+            search : false,
+            refresh : true,
+            view : false,
+            position : "left",
+            cloneToTop : false
+          });
+ 
+  });  
+
+    
+}
+
+//jqGridSet($(".form-horizontal").serialize()); 
+
+</script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.project.mapper.UrgeRepayLogMapper">
+	<resultMap type="com.rd.ifaes.core.project.domain.UrgeRepayLog" id="urgeRepayLogResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="repaymentId" column="REPAYMENT_ID"/>
+		<result property="remark" column="REMARK"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="operatorId" column="OPERATOR_ID"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		REPAYMENT_ID,
+		REMARK,
+		CREATE_TIME,
+		OPERATOR_ID
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{repaymentId},
+		#{remark},
+		#{createTime},
+		#{operatorId}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="repaymentId != null and repaymentId != ''">and REPAYMENT_ID = #{repaymentId}</if>
+            <if test="remark != null and remark != ''">and REMARK = #{remark}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="operatorId != null and operatorId != ''">and OPERATOR_ID = #{operatorId}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by CREATE_TIME desc</if> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.project.domain.UrgeRepayLog">
+		insert into urge_repay_log( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into urge_repay_log( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+		#{item.uuid},
+				#{item.repaymentId},
+				#{item.remark},
+				#{item.createTime},
+				#{item.operatorId}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from urge_repay_log
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update urge_repay_log set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="uuid" open="(" separator="," close=")">  
+            #{uuid} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update urge_repay_log set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.project.domain.UrgeRepayLog">
+		update urge_repay_log 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="repaymentId != null and repaymentId != ''">REPAYMENT_ID = #{repaymentId},</if>
+            <if test="remark != null and remark != ''">REMARK = #{remark},</if>
+			<if test="createTime != null">CREATE_TIME = #{createTime},</if>
+            <if test="operatorId != null and operatorId != ''">OPERATOR_ID = #{operatorId},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="urgeRepayLogResultMap">
+        select <include refid="table_columns" />
+        from urge_repay_log
+    </select>
+
+    <select id="findList" resultMap="urgeRepayLogResultMap">
+        select <include refid="table_columns" />
+        from urge_repay_log
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from urge_repay_log
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="urgeRepayLogResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from urge_repay_log
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+
+
+</mapper>

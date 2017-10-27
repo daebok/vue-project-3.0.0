@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.operate.mapper.UserGiftGrantMapper">
+	<resultMap type="com.rd.ifaes.core.operate.domain.UserGiftGrant" id="userGiftGrantResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="giftName" column="GIFT_NAME"/>
+		<result property="giftType" column="GIFT_TYPE"/>
+		<result property="giftLevel" column="GIFT_LEVEL"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="redenvelopeRuleId" column="REDENVELOPE_RULE_ID"/>
+		<result property="rateCouponRuleId" column="RATE_COUPON_RULE_ID"/>
+		<result property="status" column="STATUS"/>
+		<result property="createTime" column="CREATE_TIME"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		GIFT_NAME,
+		GIFT_TYPE,
+		GIFT_LEVEL,
+		USER_ID,
+		REDENVELOPE_RULE_ID,
+		RATE_COUPON_RULE_ID,
+		STATUS,
+		CREATE_TIME
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{giftName},
+		#{giftType},
+		#{giftLevel},
+		#{userId},
+		#{redenvelopeRuleId},
+		#{rateCouponRuleId},
+		#{status},
+		#{createTime}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="giftName != null and giftName != ''">and GIFT_NAME = #{giftName}</if>
+            <if test="giftType != null and giftType != ''">and GIFT_TYPE = #{giftType}</if>
+            <if test="giftLevel != null and giftLevel != ''">and GIFT_LEVEL = #{giftLevel}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="redenvelopeRuleId != null and redenvelopeRuleId != ''">and REDENVELOPE_RULE_ID = #{redenvelopeRuleId}</if>
+            <if test="rateCouponRuleId != null and rateCouponRuleId != ''">and RATE_COUPON_RULE_ID = #{rateCouponRuleId}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.operate.domain.UserGiftGrant">
+		insert into user_gift_grant( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into user_gift_grant( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+			#{item.uuid},
+			#{item.giftName},
+			#{item.giftType},
+			#{item.giftLevel},
+			#{item.userId},
+			#{item.redenvelopeRuleId},
+			#{item.rateCouponRuleId},
+			#{item.status},
+			#{item.createTime}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from user_gift_grant
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update user_gift_grant set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update user_gift_grant set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.operate.domain.UserGiftGrant">
+		update user_gift_grant 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="giftName != null and giftName != ''">GIFT_NAME = #{giftName},</if>
+            <if test="giftType != null and giftType != ''">GIFT_TYPE = #{giftType},</if>
+            <if test="giftLevel != null and giftLevel != ''">GIFT_LEVEL = #{giftLevel},</if>
+            <if test="userId != null and userId != ''">USER_ID = #{userId},</if>
+            <if test="redenvelopeRuleId != null and redenvelopeRuleId != ''">REDENVELOPE_RULE_ID = #{redenvelopeRuleId},</if>
+            <if test="rateCouponRuleId != null and rateCouponRuleId != ''">RATE_COUPON_RULE_ID = #{rateCouponRuleId},</if>
+            <if test="status != null and status != ''">STATUS = #{status},</if>
+			<if test="createTime != null">CREATE_TIME = #{createTime},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="userGiftGrantResultMap">
+        select <include refid="table_columns" />
+        from user_gift_grant
+    </select>
+
+    <select id="findList" resultMap="userGiftGrantResultMap">
+        select <include refid="table_columns" />
+        from user_gift_grant
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from user_gift_grant
+        <include refid="page_where" />
+    </select>
+
+    <select id="get" resultMap="userGiftGrantResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_gift_grant
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<!-- 获取可领取礼包 -->
+	<select id="getAvailableUserGift" resultMap="userGiftGrantResultMap">
+		select <include refid="table_columns" />
+		from user_gift_grant
+		<trim prefix="where" prefixOverrides="and | or ">
+			and user_id = #{userId} 
+			and status = '0'
+            <if test="giftType != null and giftType != ''">and gift_type = #{giftType}</if>
+        </trim>
+		order by create_time asc, gift_level asc limit 1
+	</select>
+	
+	<!-- 更新礼包领取状态 -->
+	<update id="updateGiftStatus">
+		update user_gift_grant set status = #{status} where uuid = #{uuid} and status = #{preStatus}
+	</update>
+
+	<!-- 专享礼包过期处理 vip升级后的一个月 -->
+	<update id="overdueExclusiveGift">
+		update user_gift_grant  set status = '3' where status = '0' and gift_type = '1' and create_time &gt; #{lastMonth} and create_time &lt; #{month}
+	</update>
+	 
+	<!-- 生日礼包过期处理 生日当月时间段内 -->
+	<update id="overdueBirthdayGift">
+		update user_gift_grant ug inner join user_base_info ub on ug.user_id = ub.user_id 
+		set ug.status = '3'	
+		where ug.status = '0' and ug.gift_type = '0' and MONTH(ub.birthday) != MONTH(now())
+	</update>
+	 
+
+</mapper>

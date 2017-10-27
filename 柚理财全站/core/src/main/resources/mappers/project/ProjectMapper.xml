@@ -1,0 +1,970 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.project.mapper.ProjectMapper">
+	<resultMap type="com.rd.ifaes.core.project.domain.Project" id="projectResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="projectNo" column="PROJECT_NO"/>
+		<result property="projectName" column="PROJECT_NAME"/>
+		<result property="projectType" column="PROJECT_TYPE"/>
+		<result property="raiseAccount" column="RAISE_ACCOUNT"/>
+		<result property="account" column="ACCOUNT"/>
+		<result property="accountYes" column="ACCOUNT_YES"/>
+		<result property="apr" column="APR"/>
+		<result property="addApr" column="ADD_APR"/>
+		<result property="interestStyle" column="INTEREST_STYLE"/>
+		<result property="interestStartDays" column="INTEREST_START_DAYS"/>
+		<result property="repayStyle" column="REPAY_STYLE"/>
+		<result property="fixedRepayDay" column="FIXED_REPAY_DAY"/>
+		<result property="timeType" column="TIME_TYPE"/>
+		<result property="timeLimit" column="TIME_LIMIT"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="publishVerifyTime" column="PUBLISH_VERIFY_TIME"/>
+		<result property="updateTime" column="UPDATE_TIME"/>
+		<result property="showTime" column="SHOW_TIME"/>
+		<result property="stopTime" column="STOP_TIME"/>
+		<result property="saleTime" column="SALE_TIME"/>
+		<result property="vouchVerifyTime" column="VOUCH_VERIFY_TIME"/>
+		<result property="raiseTimeLimit" column="RAISE_TIME_LIMIT"/>
+		<result property="raiseEndTime" column="RAISE_END_TIME"/>
+		<result property="reviewTime" column="REVIEW_TIME"/>
+		<result property="borrowManageRate" column="BORROW_MANAGE_RATE"/>
+		<result property="interestManageRate" column="INTEREST_MANAGE_RATE"/>
+		<result property="overdueFeeRate" column="OVERDUE_FEE_RATE"/>
+		<result property="novice" column="NOVICE"/>
+		<result property="choice" column="CHOICE"/>
+		<result property="saleStyle" column="SALE_STYLE"/>
+		<result property="lowestAccount" column="LOWEST_ACCOUNT"/>
+		<result property="mostAccount" column="MOST_ACCOUNT"/>
+	     <result property="stepAccount" column="STEP_ACCOUNT"/>
+		<result property="totalCopies" column="TOTAL_COPIES"/>
+		<result property="copyAccount" column="COPY_ACCOUNT"/>
+		<result property="lowestCopies" column="LOWEST_COPIES"/>
+		<result property="mostCopies" column="MOST_COPIES"/>
+		<result property="riskLevel" column="RISK_LEVEL"/>
+		<result property="redEnvelopeUseful" column="RED_ENVELOPE_USEFUL"/>
+		<result property="redEnvelopeRate" column="RED_ENVELOPE_RATE"/>
+		<result property="additionalRateUseful" column="ADDITIONAL_RATE_USEFUL"/>
+		<result property="projectTypeId" column="PROJECT_TYPE_ID"/>
+		<result property="protocolId" column="PROTOCOL_ID"/>
+		<result property="status" column="STATUS"/>
+		<result property="isVouch" column="IS_VOUCH"/>
+		<result property="vouchId" column="VOUCH_ID"/>
+		<result property="borrowFlag" column="BORROW_FLAG"/>
+		<result property="realizeFlag" column="REALIZE_FLAG"/>
+		<result property="saleChannel" column="SALE_CHANNEL"/>
+		<result property="specificSale" column="SPECIFIC_SALE"/>
+		<result property="specificSaleRule" column="SPECIFIC_SALE_RULE"/>
+		<result property="repayAmount" column="REPAY_AMOUNT"/>
+		<result property="repayYesAccount" column="REPAY_YES_ACCOUNT"/>
+		<result property="repayYesInterest" column="REPAY_YES_INTEREST"/>
+		<result property="vouchStatus" column="VOUCH_STATUS"/>
+		<result property="interestTime" column="INTEREST_TIME"/>
+		<result property="totalPeriod" column="TOTAL_PERIOD"/>
+		<result property="repayedPeriod" column="REPAYED_PERIOD"/>
+		<result property="nextRepayTime" column="NEXT_REPAY_TIME"/>
+		<result property="lastRepayTime" column="LAST_REPAY_TIME"/>
+		<result property="realLastRepayTime" column="REAL_LAST_REPAY_TIME"/>
+		<result property="costManage" column="COST_MANAGE"/>
+		
+		<result property="redenvelopeRuleId" column="redenvelope_rule_id"/>
+		<result property="rateCouponRuleId" column="rate_coupon_rule_id"/>
+		<!-- 扩展属性 -->
+		<result property="realName" column="REAL_NAME"/>
+		<result property="mobile" column="MOBILE"/>
+		<result property="projectTypeName" column="project_type_name"/>
+		<result property="statusCount" column="status_count"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		PROJECT_NO,
+		PROJECT_NAME,
+		RAISE_ACCOUNT,
+		ACCOUNT,
+		ACCOUNT_YES,
+		APR,
+		ADD_APR,
+		INTEREST_STYLE,
+		INTEREST_START_DAYS,
+		REPAY_STYLE,
+		FIXED_REPAY_DAY,
+		TIME_TYPE,
+		TIME_LIMIT,
+		CREATE_TIME,
+		PUBLISH_VERIFY_TIME,
+		UPDATE_TIME,
+		SHOW_TIME,
+		STOP_TIME,
+		SALE_TIME,
+		VOUCH_VERIFY_TIME,
+		RAISE_TIME_LIMIT,
+		RAISE_END_TIME,
+		REVIEW_TIME,
+		BORROW_MANAGE_RATE,
+		INTEREST_MANAGE_RATE,
+		OVERDUE_FEE_RATE,
+		NOVICE,
+		CHOICE,
+		SALE_STYLE,
+		LOWEST_ACCOUNT,
+		MOST_ACCOUNT,
+		STEP_ACCOUNT,
+		TOTAL_COPIES,
+		COPY_ACCOUNT,
+		LOWEST_COPIES,
+		MOST_COPIES,
+		RISK_LEVEL,
+		RED_ENVELOPE_USEFUL,
+		RED_ENVELOPE_RATE,
+		ADDITIONAL_RATE_USEFUL,
+		PROJECT_TYPE_ID,
+		PROTOCOL_ID,
+		STATUS,
+		IS_VOUCH,
+		VOUCH_ID,
+		VOUCH_STATUS,
+		INTEREST_TIME,
+		BORROW_FLAG,
+		REALIZE_FLAG,
+		SALE_CHANNEL,
+		SPECIFIC_SALE,
+		SPECIFIC_SALE_RULE,
+		REPAY_AMOUNT,
+		REPAY_YES_ACCOUNT,
+		REPAY_YES_INTEREST,
+		TOTAL_PERIOD,
+		REPAYED_PERIOD,
+		NEXT_REPAY_TIME,
+		LAST_REPAY_TIME,
+		REAL_LAST_REPAY_TIME,
+		redenvelope_rule_id,
+		rate_coupon_rule_id,
+		COST_MANAGE,
+		PROJECT_TYPE
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{projectNo},
+		#{projectName},
+		#{raiseAccount},
+		#{account},
+		#{accountYes},
+		#{apr},
+		#{addApr},
+		#{interestStyle},
+		#{interestStartDays},
+		#{repayStyle},
+		#{fixedRepayDay},
+		#{timeType},
+		#{timeLimit},
+		#{createTime},
+		#{publishVerifyTime},
+		#{updateTime},
+		#{showTime},
+		#{stopTime},
+		#{saleTime},
+		#{vouchVerifyTime},
+		#{raiseTimeLimit},
+		#{raiseEndTime},
+		#{reviewTime},
+		#{borrowManageRate},
+		#{interestManageRate},
+		#{overdueFeeRate},
+		#{novice},
+		#{choice},
+		#{saleStyle},
+		#{lowestAccount},
+		#{mostAccount},
+		#{stepAccount},
+		#{totalCopies},
+		#{copyAccount},
+		#{lowestCopies},
+		#{mostCopies},
+		#{riskLevel},
+		#{redEnvelopeUseful},
+		#{redEnvelopeRate},
+		#{additionalRateUseful},
+		#{projectTypeId},
+		#{protocolId},
+		#{status},
+		#{isVouch},
+		#{vouchId},
+		#{vouchStatus},
+		#{interestTime},
+		#{borrowFlag},
+		#{realizeFlag},
+		#{saleChannel},
+		#{specificSale},
+		#{specificSaleRule},
+		#{repayAmount},
+		#{repayYesAccount},
+		#{repayYesInterest},
+		#{totalPeriod},
+		#{repayedPeriod},
+		#{nextRepayTime},
+		#{lastRepayTime},
+		#{realLastRepayTime},
+		#{redenvelopeRuleId},
+		#{rateCouponRuleId},
+		#{costManage},
+		#{projectType}
+	</sql>
+
+   <sql id="queryConditionSql">
+      <choose>
+		         <when test="timeCondition != null and timeCondition == 1"> 
+		          <![CDATA[ and  time_type='1'  and time_limit <30]]> 
+		        </when>
+		         <when test="timeCondition != null and timeCondition == 2"> 
+		          <![CDATA[ and(( time_type='1'  and  time_limit >=30 and time_limit<90 ) or  (time_type='0' and time_limit <3))  ]]> 
+		        </when>
+		        <when test="timeCondition != null and timeCondition ==3"> 
+		          <![CDATA[ and (( time_type='1'  and  time_limit >=90 and time_limit<180 ) or ( time_type='0' and time_limit  >2 and time_limit < 6 ))  ]]> 
+		        </when>
+		       <when test="timeCondition != null and timeCondition ==4"> 
+		           <![CDATA[ and (( time_type='1'  and  time_limit >=180 and time_limit<365 ) or   (time_type='0' and time_limit  > 5 and time_limit < 12 ))  ]]> 
+		        </when>
+		          <when test="timeCondition != null and timeCondition ==5"> 
+		           <![CDATA[ and (( time_type='1'  and  time_limit >=365) or (time_type='0' and time_limit  >11 ) )   ]]> 
+		        </when>
+		        <otherwise>
+		        </otherwise>
+		   </choose>
+	        <choose>
+			         <when test="amountCondition != null and amountCondition == 1"> 
+			          <![CDATA[   and  account < 10000   ]]> 
+			        </when>
+			         <when test="amountCondition != null and amountCondition == 2"> 
+			          <![CDATA[  and  (account  >9999 and  account < 50000)  ]]> 
+			        </when>
+			        <when test="amountCondition != null and amountCondition ==3"> 
+			             <![CDATA[  and  (account  >49999  and  account < 100000)  ]]> 
+			        </when>
+			       <when test="amountCondition != null and amountCondition ==4">  
+			          <![CDATA[  and  account > 99999  ]]> 
+			        </when>
+			        <otherwise>
+			        </otherwise>
+	        </choose>
+    </sql>
+    
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="projectNo != null and projectNo != ''">and PROJECT_NO = #{projectNo}</if>
+			<if test="raiseAccount != null">and RAISE_ACCOUNT = #{raiseAccount}</if>
+			<if test="account != null">and ACCOUNT = #{account}</if>
+			<if test="accountYes != null">and ACCOUNT_YES = #{accountYes}</if>
+			<if test="apr != null">and APR = #{apr}</if>
+			<if test="addApr != null">and ADD_APR = #{addApr}</if>
+            <if test="interestStyle != null and interestStyle != ''">and INTEREST_STYLE = #{interestStyle}</if>
+			<if test="interestStartDays != null">and INTEREST_START_DAYS = #{interestStartDays}</if>
+            <if test="repayStyle != null and repayStyle != 0 ">and REPAY_STYLE = #{repayStyle}</if>
+			<if test="fixedRepayDay != null">and FIXED_REPAY_DAY = #{fixedRepayDay}</if>
+            <if test="timeType != null and timeType != ''">and TIME_TYPE = #{timeType}</if>
+			<if test="timeLimit != null">and TIME_LIMIT = #{timeLimit}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+			<if test="publishVerifyTime != null">and PUBLISH_VERIFY_TIME = #{publishVerifyTime}</if>
+			<if test="updateTime != null">and UPDATE_TIME = #{updateTime}</if>
+			<if test="showTime != null">and SHOW_TIME = #{showTime}</if>
+			<if test="stopTime != null">and STOP_TIME = #{stopTime}</if>
+			<if test="saleTime != null">and SALE_TIME = #{saleTime}</if>
+			<if test="raiseTimeLimit != null">and RAISE_TIME_LIMIT = #{raiseTimeLimit}</if>
+			<if test="raiseEndTime != null">and RAISE_END_TIME = #{raiseEndTime}</if>
+			<if test="reviewTime != null">and REVIEW_TIME = #{reviewTime}</if>
+			<if test="borrowManageRate != null">and BORROW_MANAGE_RATE = #{borrowManageRate}</if>
+			<if test="interestManageRate != null">and INTEREST_MANAGE_RATE = #{interestManageRate}</if>
+			<if test="overdueFeeRate != null">and OVERDUE_FEE_RATE = #{overdueFeeRate}</if>
+            <if test="novice != null and novice != ''">and NOVICE = #{novice}</if>
+            <if test="choice != null and choice != ''">and CHOICE = #{choice}</if>
+            <if test="saleStyle != null and saleStyle != ''">and SALE_STYLE = #{saleStyle}</if>
+			<if test="lowestAccount != null">and LOWEST_ACCOUNT = #{lowestAccount}</if>
+			<if test="mostAccount != null">and MOST_ACCOUNT = #{mostAccount}</if>
+			<if test="stepAccount != null">and STEP_ACCOUNT = #{stepAccount}</if>
+			<if test="totalCopies != null">and TOTAL_COPIES = #{totalCopies}</if>
+			<if test="copyAccount != null">and COPY_ACCOUNT = #{copyAccount}</if>
+			<if test="lowestCopies != null">and LOWEST_COPIES = #{lowestCopies}</if>
+			<if test="mostCopies != null">and MOST_COPIES = #{mostCopies}</if>
+            <if test="riskLevel != null and riskLevel != ''">and RISK_LEVEL = #{riskLevel}</if>
+            <if test="redEnvelopeUseful != null and redEnvelopeUseful != ''">and RED_ENVELOPE_USEFUL = #{redEnvelopeUseful}</if>
+            <if test="additionalRateUseful != null and additionalRateUseful != ''">and ADDITIONAL_RATE_USEFUL = #{additionalRateUseful}</if>
+            <if test="projectTypeIdStr != null and projectTypeIdStr != ''">and PROJECT_TYPE_ID IN (${projectTypeIdStr})</if>
+            <if test="projectTypeId != null and projectTypeId != ''">and PROJECT_TYPE_ID = #{projectTypeId}</if>
+            <if test="protocolId != null and protocolId != ''">and PROTOCOL_ID = #{protocolId}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+            <if test="isVouch != null and isVouch != ''">and IS_VOUCH = #{isVouch}</if>
+            <if test="vouchId != null and vouchId != ''">and VOUCH_ID = #{vouchId}</if>
+            <if test="borrowFlag != null and borrowFlag != ''">and BORROW_FLAG = #{borrowFlag}</if>
+            <if test="realizeFlag != null and realizeFlag != ''">and REALIZE_FLAG = #{realizeFlag}</if>
+            <if test="specificSale != null and specificSale != ''">and SPECIFIC_SALE = #{specificSale}</if>
+            <if test="specificSaleRule != null and specificSaleRule != ''">and SPECIFIC_SALE_RULE = #{specificSaleRule}</if>
+			<if test="repayAmount != null">and REPAY_AMOUNT = #{repayAmount}</if>
+			<if test="repayYesAccount != null">and REPAY_YES_ACCOUNT = #{repayYesAccount}</if>
+			<if test="repayYesInterest != null">and REPAY_YES_INTEREST = #{repayYesInterest}</if>
+			<if test="vouchStatus != null">and VOUCH_STATUS = #{vouchStatus}</if>
+			<if test="interestTime != null">and INTEREST_TIME = #{interestTime}</if>
+			<if test="totalPeriod != null and totalPeriod != 0 ">and TOTAL_PERIOD = #{totalPeriod}</if>
+			<if test="repayedPeriod != null and repayedPeriod != 0">and REPAYED_PERIOD = #{repayedPeriod}</if>
+			<if test="nextRepayTime != null">and NEXT_REPAY_TIME = #{nextRepayTime}</if>
+			<if test="lastRepayTime != null">and LAST_REPAY_TIME = #{lastRepayTime}</if>
+			<if test="realLastRepayTime != null">and REAL_LAST_REPAY_TIME = #{realLastRepayTime}</if>
+			<if test="costManage != null">and COST_MANAGE = #{costManage}</if>
+			<if test="statusSet != null">
+	          and STATUS in
+		         <foreach collection="statusSet" item="status" open="(" separator="," close=")">  
+		            #{status} 
+		        </foreach>	
+            </if>
+            <if test="projectName != null and projectName != ''">and PROJECT_NAME  like concat('%',#{projectName},'%')   </if>
+            <if test="saleChannel != null and saleChannel != ''">and SALE_CHANNEL  like concat('%',#{saleChannel},'%') </if>
+            <if test="keywords != null and keywords != ''">
+        	      and  PROJECT_NAME like concat('%',#{keywords},'%')  
+             </if>
+			<include refid="queryConditionSql" />
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+         <if test="page == null or page.sort == null or page.sort == ''">order by create_time desc </if>  
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.project.domain.Project">
+		insert into project( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	 
+   <!-- 后台批量作废项目 -->
+	<update id="deleteBatch">
+		update project set  status = 30
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	   </update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.project.domain.Project">
+		update project 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="projectName != null and projectName != ''">PROJECT_NAME = #{projectName},</if>
+			<if test="raiseAccount != null">RAISE_ACCOUNT = #{raiseAccount},</if>
+			<if test="account != null">ACCOUNT = #{account},</if>
+			<if test="accountYes != null">ACCOUNT_YES = #{accountYes},</if>
+			<if test="apr != null">APR = #{apr},</if>
+			<if test="addApr != null">ADD_APR = #{addApr},</if>
+            <if test="interestStyle != null and interestStyle != ''">INTEREST_STYLE = #{interestStyle},</if>
+			<if test="interestStartDays != null">INTEREST_START_DAYS = #{interestStartDays},</if>
+            <if test="repayStyle != null and repayStyle != ''">REPAY_STYLE = #{repayStyle},</if>
+			<if test="fixedRepayDay != null">FIXED_REPAY_DAY = #{fixedRepayDay},</if>
+            <if test="timeType != null and timeType != ''">TIME_TYPE = #{timeType},</if>
+			<if test="timeLimit != null">TIME_LIMIT = #{timeLimit},</if>
+			<if test="publishVerifyTime != null">PUBLISH_VERIFY_TIME = #{publishVerifyTime},</if>
+			UPDATE_TIME = now(),
+			<if test="showTime != null">SHOW_TIME = #{showTime},</if>
+			<if test="stopTime != null">STOP_TIME = #{stopTime},</if>
+			<if test="status != null and status != ''">STATUS = #{status},</if>
+			<if test="saleTime != null">SALE_TIME = #{saleTime},</if>
+			<if test="raiseTimeLimit != null">RAISE_TIME_LIMIT = #{raiseTimeLimit},</if>
+			<if test="raiseEndTime != null">RAISE_END_TIME = #{raiseEndTime},</if>
+			<if test="reviewTime != null">REVIEW_TIME = #{reviewTime},</if>
+			<if test="borrowManageRate != null">BORROW_MANAGE_RATE = #{borrowManageRate},</if>
+			<if test="interestManageRate != null">INTEREST_MANAGE_RATE = #{interestManageRate},</if>
+			<if test="overdueFeeRate != null">OVERDUE_FEE_RATE = #{overdueFeeRate},</if>
+            <if test="novice != null and novice != ''">NOVICE = #{novice},</if>
+            <if test="choice != null and choice != ''">CHOICE = #{choice},</if>
+            <if test="saleStyle != null and saleStyle != ''">SALE_STYLE = #{saleStyle},</if>
+			<if test="lowestAccount != null">LOWEST_ACCOUNT = #{lowestAccount},</if>
+			<if test="mostAccount != null">MOST_ACCOUNT = #{mostAccount},</if>
+			<if test="stepAccount != null">STEP_ACCOUNT = #{stepAccount},</if>
+			<if test="totalCopies != null">TOTAL_COPIES = #{totalCopies},</if>
+			<if test="copyAccount != null">COPY_ACCOUNT = #{copyAccount},</if>
+			<if test="lowestCopies != null">LOWEST_COPIES = #{lowestCopies},</if>
+			<if test="mostCopies != null">MOST_COPIES = #{mostCopies},</if>
+            <if test="riskLevel != null and riskLevel != ''">RISK_LEVEL = #{riskLevel},</if>
+            <if test="redEnvelopeUseful != null and redEnvelopeUseful != ''">RED_ENVELOPE_USEFUL = #{redEnvelopeUseful},</if>
+            <if test="redEnvelopeRate != null and redEnvelopeRate != ''">RED_ENVELOPE_RATE = #{redEnvelopeRate},</if>
+            <if test="additionalRateUseful != null and additionalRateUseful != ''">ADDITIONAL_RATE_USEFUL = #{additionalRateUseful},</if>
+            <if test="projectTypeId != null and projectTypeId != ''">PROJECT_TYPE_ID = #{projectTypeId},</if>
+            <if test="protocolId != null and protocolId != ''">PROTOCOL_ID = #{protocolId},</if>
+            <if test="isVouch != null and isVouch != ''">IS_VOUCH = #{isVouch},</if>
+            <if test="vouchId != null and vouchId != ''">VOUCH_ID = #{vouchId},</if>
+            <if test="vouchStatus != null and vouchStatus != ''">VOUCH_STATUS = #{vouchStatus},</if>
+            <if test="interestTime != null and interestTime != ''">INTEREST_TIME = #{interestTime},</if>
+            <if test="saleChannel != null and saleChannel != ''">SALE_CHANNEL = #{saleChannel},</if>
+            <if test="specificSale != null and specificSale != ''">SPECIFIC_SALE = #{specificSale},</if>
+            <if test="specificSaleRule != null and specificSaleRule != ''">SPECIFIC_SALE_RULE = #{specificSaleRule},</if>
+			<if test="repayAmount != null">REPAY_AMOUNT = #{repayAmount},</if>
+			<if test="repayYesAccount != null">REPAY_YES_ACCOUNT = #{repayYesAccount},</if>
+			<if test="repayYesInterest != null">REPAY_YES_INTEREST = #{repayYesInterest},</if>
+			<if test="totalPeriod != null and totalPeriod != 0 "> TOTAL_PERIOD = #{totalPeriod},</if>
+			<if test="repayedPeriod != null and repayedPeriod != 0 "> REPAYED_PERIOD = #{repayedPeriod},</if>
+			<if test="nextRepayTime != null"> NEXT_REPAY_TIME = #{nextRepayTime},</if>
+			<if test="lastRepayTime != null"> LAST_REPAY_TIME = #{lastRepayTime},</if>
+			<if test="realLastRepayTime != null"> REAL_LAST_REPAY_TIME = #{realLastRepayTime},</if>
+			<if test="redenvelopeRuleId != null"> redenvelope_rule_id = #{redenvelopeRuleId},</if>
+			<if test="rateCouponRuleId != null"> rate_coupon_rule_id = #{rateCouponRuleId},</if>
+			<if test="stage != null"> stage = #{stage},</if>
+			<if test="costManage != null"> COST_MANAGE = #{costManage},</if>
+			<if test="projectType != null and projectType != ''"> PROJECT_TYPE = #{projectType},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="projectResultMap">
+        select <include refid="table_columns" />
+        from project
+    </select>
+
+    <select id="findList" resultMap="projectResultMap">
+        select <include refid="table_columns" />
+        from project        
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from project
+        <include refid="page_where" />
+    </select>
+
+    <select id="get" resultMap="projectResultMap" parameterType="String" >
+		select <include refid="table_columns" /> 
+		from project
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<!-- 包含项目分类名称  -->
+	  <select id="getDetail" resultMap="projectResultMap" parameterType="String" >
+		select   p.UUID,
+		p.USER_ID,
+		p.PROJECT_NO,
+		p.PROJECT_NAME,
+		p.RAISE_ACCOUNT,
+		p.ACCOUNT,
+		p.ACCOUNT_YES,
+		p.APR,
+		p.ADD_APR,
+		p.INTEREST_STYLE,
+		p.INTEREST_START_DAYS,
+		p.REPAY_STYLE,
+		p.FIXED_REPAY_DAY,
+		p.TIME_TYPE,
+		p.TIME_LIMIT,
+		p.CREATE_TIME,
+		p.PUBLISH_VERIFY_TIME,
+		p.SHOW_TIME,
+	   p.STOP_TIME,
+		p.SALE_TIME,
+		p.RAISE_TIME_LIMIT,
+		p.RAISE_END_TIME,
+		p.REVIEW_TIME,
+		p.BORROW_MANAGE_RATE,
+		p.INTEREST_MANAGE_RATE,
+		p.OVERDUE_FEE_RATE,
+		p.NOVICE,
+		p.CHOICE,
+		p.SALE_STYLE,
+		p.LOWEST_ACCOUNT,
+		p.MOST_ACCOUNT,
+		p.STEP_ACCOUNT,
+		p.TOTAL_COPIES,
+		p.COPY_ACCOUNT,
+		p.LOWEST_COPIES,
+		p.MOST_COPIES,
+		p.RISK_LEVEL,
+		p.RED_ENVELOPE_USEFUL,
+		p.RED_ENVELOPE_RATE,
+		p.ADDITIONAL_RATE_USEFUL,
+		p.PROJECT_TYPE_ID,
+		p.PROTOCOL_ID,
+		p.STATUS,
+		p.IS_VOUCH,
+		p.VOUCH_ID,
+		p.VOUCH_STATUS,
+		p.INTEREST_TIME,
+		p.BORROW_FLAG,
+		p.REALIZE_FLAG,
+		p.SALE_CHANNEL,
+		p.SPECIFIC_SALE,
+		p.SPECIFIC_SALE_RULE,
+		p.REPAY_AMOUNT,
+		p.REPAY_YES_ACCOUNT,
+		p.REPAY_YES_INTEREST,
+		p.TOTAL_PERIOD,
+		p.REPAYED_PERIOD,
+		p.NEXT_REPAY_TIME,
+		p.LAST_REPAY_TIME,
+		p.REAL_LAST_REPAY_TIME,
+		p.redenvelope_rule_id,
+		p.rate_coupon_rule_id,
+		p.cost_manage,
+        t.type_name project_type_name
+	    from project p
+	    left join project_type t
+	    on p.project_type_id =t.uuid 
+		where p.uuid = #{uuid}
+	</select>
+	
+	<select id="getMaxProjectNo" resultType="String" >
+		select max(PROJECT_NO) from project 
+		where create_time &gt;= #{startDate} and create_time &lt;= #{endDate}
+	</select>
+	
+	<!-- 不可编辑数量 -->
+	<select id="getNotEditableCount" resultType="int" >
+		select count(uuid) from project 
+		where uuid in
+		<foreach collection="uuids" item="uuid" open="(" separator="," close=")">  
+            #{uuid} 
+        </foreach>	
+        <if test="statusArray != null">
+          and status not in
+	         <foreach collection="statusArray" item="status" open="(" separator="," close=")">  
+	            #{status} 
+	        </foreach>	
+        </if>
+	</select>
+	
+	<!-- 更新状态 -->
+	<update id="updateStatus">
+		update project set status = #{status} , UPDATE_TIME = now()
+		where uuid = #{uuid} and status = #{preStatus}
+	</update>
+
+   <!-- 根据项目编号查询-->
+   <select id="getProjectByNo" resultMap="projectResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from project
+		where project_no = #{projectNo}
+	</select>
+ 
+	<update id="updateAccountYes">
+		update project set  account_yes = round(account_yes + #{amount}, 2) 
+		where  uuid = #{projectId}  
+	</update>
+
+   <!-- 查询项目列表-->
+    <select id="findProject" resultMap="projectResultMap">
+       select p.*,u.real_name,u.mobile 
+       from  project p LEFT JOIN user u on u.uuid = p.user_id 
+        <include refid="page_where" />
+	</select>
+	 <!-- 修改项目担保审核状态-->
+	 
+	<update id="updateVouchStatus" parameterType="com.rd.ifaes.core.project.domain.Project">
+	    update project set vouch_status = #{vouchStatus},status=#{status},vouch_verify_time=#{vouchVerifyTime} where uuid = #{uuid} and vouch_status != #{vouchStatus} 
+	</update>
+	
+	<!-- 查询借款总额 -->
+	<select id="getAccountTotalByUserId" resultType="java.math.BigDecimal">
+       select IFNULL(sum(account),0) from project where user_id = #{userId} and realize_flag = '0'
+       <if test="projectStatus != null">
+          and status in
+	         <foreach collection="projectStatus" item="status" open="(" separator="," close=")">  
+	            #{status} 
+	        </foreach>	
+        </if>
+	</select>
+	
+	<select id="getContent" resultType="map" >
+       <if test="borrowFlag !=null and borrowFlag==1">
+	       select borrow_use borrowUse,content 
+	        from borrow
+       </if> 
+       <if test="borrowFlag !=null and borrowFlag !=1">
+	       select '' borrowUse,content
+	        from product
+       </if>
+        where project_id = #{projectId}
+	</select>
+	
+	<!-- 根据日期查询记录 -->
+    <select id="findByDate" resultMap="projectResultMap" parameterType="com.rd.ifaes.core.project.domain.Project">
+        select p.protocol_id,p.overdue_fee_rate,p.uuid,p.user_id,p.project_no,p.project_name,p.raise_account,p.account,p.account_yes,p.apr,p.add_apr,p.interest_style,p.interest_start_days,p.repay_style,
+		p.fixed_repay_day,p.time_type,p.time_limit,p.create_time,p.project_type_id,p.is_vouch,p.vouch_id,p.borrow_flag,p.realize_flag,p.repay_amount,p.cost_manage,
+		p.repay_yes_account,p.repay_yes_interest,p.total_period,p.repayed_period,p.next_repay_time,p.last_repay_time,p.real_last_repay_time,
+				(case when ( p.status ='2'  or (p.status ='4' and p.show_time > now() ) ) then 40
+			         when  ( p.status ='4'  and p.show_time &lt;= now() and  p.sale_time > now() ) then 41
+			         else p.status end)  status
+     	from project p
+        <where>
+        	and p.realize_flag = 0
+	        <if test="userId != null and userId != ''">and p.user_id = #{userId}</if>
+	        <choose>
+	             <when test="status == null  or status ==''"></when>
+	             <when test="status != null and status==1">  and (p.status in ('0','11','1')  or (p.status ='2'  or (p.status ='4' and p.show_time &gt; now() ) )) </when>
+	             <when test="status != null and status==2 ">  and p.status in ('12','3','30') </when>
+	             <when test="status != null and status==3 ">  and (p.status = '4' and  p.show_time &lt; now() ) </when>
+	             <when test="status != null and status==4 ">  and p.status = '5' </when>
+	             <when test="status != null and status==5 ">  and p.status = '7'  </when>
+	             <when test="status != null and status==6 ">  and  p.status in ('6','8','87','88') </when>
+	             <when test="status != null and status==7 ">  and p.status = '9'  </when>
+	       </choose>
+	        <if test="dateTypeTime != null and dateTypeTime != ''">and p.create_time &gt; #{dateTypeTime}</if>
+	        <if test="dateType == null or dateType == ''">
+			     <if test="startTime != null and startTime != ''">and p.create_time &gt;= #{startTime}</if>
+			     <if test="endTime != null and endTime != ''">and p.create_time &lt;= #{endTime}</if>        
+	        </if>
+        </where>
+        order by p.create_time desc
+	</select>
+	
+	<!-- 查询精选产品或者新手标，在上架管理的时候设置 -->
+	<select id="findWebProjectList" resultMap="projectResultMap" parameterType="com.rd.ifaes.core.project.domain.Project">
+       select <include refid="table_columns" /> from project where delete_flag = #{deleteFlag}
+       <if test="novice != null and novice != ''">and novice = #{novice}</if>
+       <if test="choice != null and choice != ''">and choice = #{choice}</if>  
+       <if test="statusSet != null">
+	          and STATUS in
+		         <foreach collection="statusSet" item="status" open="(" separator="," close=")">  
+		            #{status} 
+		        </foreach>	
+       </if> 
+       and show_time &gt; now() order by show_time    
+	</select>
+	
+	<!-- 担保用户统计相关sql start-->
+     <!--担保中金额为已垫付而尚未收回的本金、利息，值保留两位小数-->
+    <select id="vouchAccount" resultType="java.math.BigDecimal">
+        SELECT
+			SUM(pr.payed_amount)
+		FROM
+			project_repayment pr
+		LEFT JOIN 
+			project p ON pr.project_id = p.uuid
+		WHERE
+			p.vouch_id = #{vouchId}
+			AND pr.repay_type = 2
+			AND pr.status = 1
+   </select>
+     <!-- 计算待审核项目 /已经审核项目个数-->
+    <select id="toAuditCount" resultType="int" parameterType="String">
+        select count(uuid) toAuditCount from project p  where p.is_vouch=#{isVouch}
+       <if test="vouchId != null and vouchId !=''"> and p.vouch_id=#{vouchId} </if>
+       <if test="vouchStatus != null and vouchStatus !=''"> and p.vouch_status=#{vouchStatus} </if>
+   </select>
+	 <!-- 计算担保中项目  -审核已经通过 并且未还款项目-->
+	<select id="auditingCount" resultType="int" parameterType="java.lang.Object">
+        select count(uuid) auditingCount from project p  where p.is_vouch=#{isVouch} and p.vouch_status=#{vouchStatus}
+        <if test="projectStatus != null">
+          and p.status in
+	         <foreach collection="projectStatus" item="status" open="(" separator="," close=")">  
+	            #{status} 
+	        </foreach>	
+        </if>
+        <if test="vouchId != null and vouchId !=''"> and p.vouch_id=#{vouchId} </if>
+   </select>
+     <!-- 计算待垫付项目项目  -审核已经通过 并且逾期项目-->
+   <select id="toAdvanceCount" resultType="int" parameterType="String">
+        select count(p.uuid) from project_repayment repay right join   project p on p.uuid=repay.project_id 
+        where p.is_vouch=#{isVouch} and repay.status=#{repayStatus} and p.vouch_status=#{vouchStatus} and  repay.late_days>0
+       <if test="vouchId != null and vouchId !=''"> and p.vouch_id=#{vouchId} </if>
+   </select>
+   <!-- 统计借款金额-->
+    <select id="sumProjectAccount" resultType="java.math.BigDecimal" >
+		select sum(account)
+		from project  
+        <if test="projectStatus != null">
+          where  status in
+	         <foreach collection="projectStatus" item="status" open="(" separator="," close=")">  
+	            #{status} 
+	        </foreach>	
+        </if>
+	</select>
+	<!-- 统计日期范围内借款金额-->
+    <select id="sumProjectAccountByDate" resultType="java.math.BigDecimal" >
+		select sum(account)
+		from project  
+        <if test="projectStatus != null">
+          where  status in
+	         <foreach collection="projectStatus" item="status" open="(" separator="," close=")">  
+	            #{status} 
+	        </foreach>	
+	      and review_time &gt; #{startDate} and review_time &lt;= #{endDate}
+        </if>
+	</select>
+	<!-- 根据状态开售时间获取产品列表 -->
+    <select id="findListByStatusTime" resultMap="projectResultMap" >
+        select <include refid="table_columns" /> 
+        from project 
+        where status = #{status} and sale_time &gt; #{startDate} and sale_time &lt;= #{endDate}
+	</select>
+	<!--前台 产品列表的产品信息 -->
+	<resultMap type="com.rd.ifaes.core.project.model.ProjectRecord" id="projectRecordResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="projectNo" column="PROJECT_NO"/>
+		<result property="projectName" column="PROJECT_NAME"/>
+		<result property="raiseAccount" column="RAISE_ACCOUNT"/>
+		<result property="account" column="ACCOUNT"/>
+		<result property="accountYes" column="ACCOUNT_YES"/>
+		<result property="apr" column="APR"/>
+		<result property="addApr" column="ADD_APR"/>
+		<result property="interestStyle" column="INTEREST_STYLE"/>
+		<result property="repayStyle" column="REPAY_STYLE"/>
+		<result property="fixedRepayDay" column="FIXED_REPAY_DAY"/>
+		<result property="timeType" column="TIME_TYPE"/>
+		<result property="timeLimit" column="TIME_LIMIT"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="showTime" column="SHOW_TIME"/>
+		<result property="saleTime" column="SALE_TIME"/>
+		<result property="raiseTimeLimit" column="RAISE_TIME_LIMIT"/>
+		<result property="raiseEndTime" column="RAISE_END_TIME"/>
+		<result property="novice" column="NOVICE"/>
+		<result property="choice" column="CHOICE"/>
+		<result property="saleStyle" column="SALE_STYLE"/>
+		<result property="lowestAccount" column="LOWEST_ACCOUNT"/>
+		<result property="mostAccount" column="MOST_ACCOUNT"/>
+	     <result property="stepAccount" column="STEP_ACCOUNT"/>
+		<result property="totalCopies" column="TOTAL_COPIES"/>
+		<result property="copyAccount" column="COPY_ACCOUNT"/>
+		<result property="lowestCopies" column="LOWEST_COPIES"/>
+		<result property="mostCopies" column="MOST_COPIES"/>
+		<result property="riskLevel" column="RISK_LEVEL"/>
+		<result property="redEnvelopeUseful" column="RED_ENVELOPE_USEFUL"/>
+		<result property="redEnvelopeRate" column="RED_ENVELOPE_RATE"/>
+		<result property="additionalRateUseful" column="ADDITIONAL_RATE_USEFUL"/>
+		<result property="projectTypeId" column="PROJECT_TYPE_ID"/>
+		<result property="status" column="STATUS"/>
+		<result property="isVouch" column="IS_VOUCH"/>
+		<result property="borrowFlag" column="BORROW_FLAG"/>
+		<result property="realizeFlag" column="REALIZE_FLAG"/>
+		<result property="specificSale" column="SPECIFIC_SALE"/>
+		<result property="specificSaleRule" column="SPECIFIC_SALE_RULE"/>
+		<result property="periods" column="PERIODS"/>
+		<result property="repayedPeriods" column="REPAYED_PERIODS"/>
+		<result property="bespeak" column="BESPEAK"/>
+		<result property="lastRepayTime" column="LAST_REPAY_TIME"/>
+	 	<result property="projectTypeName" column="project_type_name"/>
+	</resultMap>
+	
+	<!--前台 产品列表查询 -->
+	<select id="findProjectPage" parameterType="com.rd.ifaes.core.project.model.ProjectRecord" resultMap="projectRecordResultMap" >
+           select p.protocol_id,p.overdue_fee_rate,p.uuid,p.user_id,p.project_no,p.project_name,p.raise_account,p.account,
+              p.account_yes,p.apr,p.add_apr,p.interest_style,p.repay_style,p.fixed_repay_day,
+              p.time_type,p.time_limit,p.create_time,p.show_time,p.sale_time,p.raise_time_limit,
+              p.raise_end_time,p.novice,p.choice,p.sale_style,p.lowest_account,p.most_account,
+              p.step_account,p.total_copies,p.copy_account,p.lowest_copies,p.most_copies,p.risk_level,
+              p.red_envelope_useful,p.additional_rate_useful,p.project_type_id,p.status,
+              p.is_vouch,p.borrow_flag,p.realize_flag, p.specific_sale, 
+          <![CDATA[      (case when  p.specific_sale <> 2  then null else p.specific_sale_rule end ) specific_sale_rule,    ]]> 
+               ifnull(r.periods,0) periods,ifnull(r.repayed_periods,0) repayed_periods,r.last_repay_time ,
+              ifnull(d.lock_time_limit,0) lock_time_limit,ifnull(d.sale_time_limit,0) sale_time_limit
+		  <![CDATA[ 
+			  ,(case 
+				when (p.stage = 3 or p.status = 5) then 3 
+				when (now() < p.sale_time and now() >= p.show_time and p.stop_time is null and p.review_time is null) then 2 
+				when (now() >= p.sale_time and account > IFNULL(p.account_yes,0)  and p.status not in (6, 7, 8,9)) then 1	
+				else 4 end	
+			) as invest_stage, 
+			(case when p.novice=1 then now() else p.sale_time end) as stage_time
+			 ]]>          
+			 ,t.type_name project_type_name
+           from  project p 
+           inner join project_type t on  p.project_type_id =t.uuid 
+           left join ( 
+					select project_id,max(periods) periods,
+					  sum( CASE status WHEN 1 THEN 1 else 0 end) repayed_periods ,
+					  max( real_repay_time )  last_repay_time
+					from project_repayment
+					group by project_id  ) r  on p.uuid=r.project_id
+			 left join product  d on p.uuid=d.project_id
+            <trim prefix="where" prefixOverrides="and | or "> 
+				  <if test="repayStyle != null and repayStyle != ''">and REPAY_STYLE = #{repayStyle}</if>  
+				  <if test="novice != null and novice != ''">and NOVICE = #{novice}</if>  
+				  <if test="choice != null and choice != ''">and CHOICE = #{choice}</if>  
+				  <if test="riskLevel != null and riskLevel != ''">and RISK_LEVEL = #{riskLevel}</if>  
+				  <if test="projectTypeIdStr != null and projectTypeIdStr != ''">and PROJECT_TYPE_ID IN (${projectTypeIdStr})</if>  
+				  <if test="projectTypeId != null and projectTypeId != ''">and PROJECT_TYPE_ID = #{projectTypeId}</if>  
+				  <if test="isVouch != null and isVouch != ''">and IS_VOUCH = #{isVouch}</if>  
+				  <if test="borrowFlag != null and borrowFlag != ''">and BORROW_FLAG = #{borrowFlag}</if>  
+				  <if test="realizeFlag != null and realizeFlag != ''">and REALIZE_FLAG = #{realizeFlag}</if>  
+				  <if test="saleChannel != null and saleChannel != ''">and SALE_CHANNEL  like concat('%',#{saleChannel},'%') </if>
+				  <if test="specificSaleStatus != null">
+				  	<foreach collection="specificSaleStatus" item="specificSale" open="and (p.specific_sale is null or" separator="or" close=")">  
+			             <choose>  
+				            <when test="specificSale == 4">  
+				               (p.specific_sale = #{specificSale} and p.specific_sale_rule = #{userAccountType})
+				            </when>  
+				            <otherwise>  
+				               p.specific_sale = #{specificSale}
+				            </otherwise>  
+        				 </choose>
+			        </foreach>	
+				  </if>
+				  <![CDATA[   and ( status >'3' and status not in ( '7','71') ) and show_time < now()  ]]> 
+				  <include refid="queryConditionSql"/> 
+			</trim>	
+            order by 
+             <if test="page != null and page.sort!=null and page.sort!=''">
+             	<if test="page.sort=='time_limit'">
+             		(case time_type when '0' then 30 else 1 end) * time_limit ${page.order},
+             	</if>
+             	<if test="page.sort!='time_limit'">
+        	     ${page.sort} ${page.order},
+             	</if>
+             </if> 
+            invest_stage asc,
+			(case when invest_stage=2 then stage_time end ) asc,
+			(case when invest_stage in (1,3,4) then stage_time end) desc
+	</select>
+	
+	<select id="findExpireRealize" resultMap="projectResultMap">
+		select uuid,status from project
+		where realize_flag = '1' and status in ('4','5')
+		and  stop_time &lt; #{endTime}
+	</select>
+	
+	 <!--  自动下架使用（修改项目状态为募集结束，已投为0改为未成立）  -->
+	 
+	 <select id="findAutoStopSaleUuids" resultType="String">
+	 	<![CDATA[  
+	 	select uuid from project
+				where status='4' 
+				and raise_time_limit > 0
+				and date_add(sale_time,INTERVAL raise_time_limit DAY) < now()
+		]]> 
+	 </select>
+	 <update  id="autoStopSale">
+		update project  set raise_end_time=now(), stop_time=now(),
+		 status= (CASE  WHEN account_yes > 0 THEN 5 ELSE 7 END ), stage = 4
+		 where uuid in
+			 <foreach collection="array" item="id" open="(" separator="," close=")">  
+	            #{id} 
+	        </foreach>	
+	</update>
+	
+	<!-- 取得已上架待展示的项目数量 -->
+	<select id="getShowingCount" resultType="int">
+		select count(uuid) from project where status='4' and show_time &lt;= now() and  date_add(show_time, interval #{delaySeconds} second) &gt; now()
+	</select>
+	
+	<!-- 获取担保项目个数 -->
+	<select id="countVouchProject" resultType="int">
+		select count(uuid) from project
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="vouchId != null">and is_vouch = #{isVouch}</if>
+			<if test="vouchId != null">and vouch_id = #{vouchId}</if>
+			<if test="vouchStatus != null">and vouch_status = #{vouchStatus}</if>
+			<if test="statusSet != null">
+         		and status in
+	        	<foreach collection="statusSet" item="status" open="(" separator="," close=")">  
+	           		#{status} 
+	        	</foreach>	
+       		</if>
+		</trim>	
+	</select>
+	
+	<!-- 根据状态获取数据 -->
+    <select id="findListByStatus" resultMap="projectResultMap" parameterType="String">
+        select <include refid="table_columns" /> 
+        from project 
+        where status = #{status} 
+	</select>
+	
+	<select id="getBespeakInfo" resultType="map" >
+        SELECT ifnull(count(uuid),0) bespeak_num,ifnull(sum(case user_id when #{userId}  then 1 else 0 end),0)  bespeak
+        FROM project_invest_bespeak 
+        WHERE project_id = #{projectId}
+	</select>
+	
+	<!-- 查找可转让项目 -->
+	<select id="findBondUsefulByProjectIds" resultType="String">
+		select project_id from borrow where project_id in (${value}) and bond_useful=1
+	</select>
+	<!-- 查找可变现项目 -->
+	<select id="findRealizeUsefulByProjectIds" resultType="String">
+		select project_id from product where project_id in (${value}) and realize_useful=1
+	</select>
+	<!-- 根据riskLevelVal 查询产品的个数 -->
+	<select id="getProjectCount" resultType="int" parameterType="String">
+		select count(uuid) from project where RISK_LEVEL = ${riskLevelVal}
+	</select>
+	
+	<!-- 更新项目投资阶段 -->
+	<update id="updateStage">
+		update project set stage= #{stage} where project_no = #{projectNo}
+	</update>
+	<!-- 下架后移除预约信息 -->
+	<delete id="removeInvestBespeak" parameterType="String">
+		delete from
+			project_invest_bespeak 
+		where
+			project_invest_bespeak.project_id=#{uuid}
+		
+	</delete>
+	<select id="projectNoExists" resultType="int" parameterType="String">
+		select count(uuid) from project where project_no = #{projectNo}
+	</select>
+	
+	<!-- 根据用户id获取借款个数 -->
+	<select id="getProjectNumByUserId" resultType="int" parameterType="String">
+		select count(uuid) from project where user_id = #{userId}
+	</select>
+	<!-- 查询还款中的项目它的成立审核时间在一定范围内的标 -->
+	<select id="findListByReviewTime" resultMap="projectResultMap">
+		select <include refid="table_columns" />  from project where status = 8 and review_time &gt;= #{startTime} and review_time &lt;=  #{endTime} 
+	</select>
+	
+	<!-- 首页稳赚系列查询数据MODEL -->
+	<resultMap type="com.rd.ifaes.core.home.model.SureProfitModel" id="sureProfitMap">
+		<result property="typeId" column="UUID"/>
+		<result property="typeName" column="TYPE_NAME"/>
+		<result property="features" column="FEATURES"/>
+		<result property="minApr" column="MIN_APR"/>
+		<result property="maxApr" column="MAX_APR"/>
+	</resultMap>
+	<!-- 首页稳赚系列查询数据 -->
+	<select id="getSureProfit" resultMap="sureProfitMap">
+	 select  o.uuid ,o.type_name,o.features,o.sort, min(p.apr) min_apr, max(p.apr) max_apr
+	 from project_type t,project p,(
+			   select  uuid, type_name,features,sort
+			     from  project_type  
+			  where  type_level =1
+			      and  delete_flag = '0'
+			    order by sort asc
+			    limit 2
+			  ) o
+	  where  p.project_type_id = t.uuid
+		 and (t.uuid=o.uuid  or t.parent_id=o.uuid) 
+		 and p.status in ('4', '6', '8', '9')
+	 group by o.uuid,o.type_name,o.features,o.sort
+     order by o.sort asc
+	</select>
+	
+	<select id="countOverdueProjectNum" parameterType="String" resultType="int">
+		SELECT
+			count(0)
+		FROM
+			project_repayment pr
+		LEFT JOIN 
+			project p 
+		ON 
+			pr.project_id = p.uuid
+		WHERE
+			p.vouch_id = #{vouchId}
+			AND p.vouch_status = 1
+			AND pr.late_days > 0
+			AND pr. STATUS = 0
+	</select>
+	
+    <!-- 统计状态数 -->	
+    <select id="getCountByStatus" resultMap="projectResultMap">
+        select status, count(status) as status_count from project
+    	<trim prefix="where" prefixOverrides="and | or ">
+			<if test="borrowFlag != null and borrowFlag != ''">and borrow_flag = #{borrowFlag}</if>
+			<if test="statusSet != null">
+         		and status in
+	        	<foreach collection="statusSet" item="status" open="(" separator="," close=")">  
+	           		#{status} 
+	        	</foreach>	
+       		</if>
+		</trim>	
+        group by status
+    </select>
+	
+</mapper>

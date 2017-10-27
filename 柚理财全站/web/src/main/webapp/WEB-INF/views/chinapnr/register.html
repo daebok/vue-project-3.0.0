@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>开通托管账户页面</title>
+</head>
+<body>
+
+    <div align="center">开通托管账户页面跳转中，请不要关闭页面...</div>
+	<form action="${reg.ufxSubmitUrl!}" method="post" id="frm1" style="display: none;">
+		<input type="text" value="${reg.service!}" name="service" /> 
+		<input type="text" value="${reg.orderNo!}" name="orderNo" /> 
+		<input type="text" value="${reg.ufxCustomerId!}" name="ufxCustomerId" /> 
+		<input type="text" value="${reg.businessWay!}" name="businessWay" /> 
+		<input type="text" value="${reg.signInfo!}" name="signInfo" /> 
+		<input type="text" value="${reg.userId!}" name="userId" /> 
+		<input type="text" value="${reg.realName!}" name="realName" /> 
+		<input type="text" value="${reg.phone!}" name="phone" /> 
+		<input type="text" value="${reg.email!}" name="email" /> 
+		<input type="text" value="${reg.sex!}" name="sex" /> 
+		<input type="text" value="${reg.idNo!}" name="idNo" /> 
+		<input type="text" value="${reg.reqExt!}" name="reqExt" />
+		<input type="text" value="${reg.merPriv!}" name="merPriv" /> 
+		<input type="text" value="${reg.returnUrl!}" name="returnUrl" /> 
+		<input type="text" value="${reg.notifyUrl!}" name="notifyUrl" /> 
+		<input type="submit" value="提交">
+	</form>
+	<script language="javascript">
+		document.getElementById("frm1").submit();
+	</script>
+</body>
+</html>

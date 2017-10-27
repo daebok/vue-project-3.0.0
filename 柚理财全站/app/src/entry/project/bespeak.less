@@ -1,0 +1,196 @@
+@import (reference)'../../style/common.less';
+@import '../../style/account.less';
+body{
+  background-color: #f5f9fc;
+}
+  .subbutton{
+    .form-button(@padding: 0px,@width: 320px,@fontsize: 18px,@lineheight:40px);
+    color: #fff;
+    font-weight: bold;
+  }
+.bespeak-title{
+  color:#fff;
+  .f18();
+  font-weight: bold;
+  line-height: 58px;
+  padding: 0 0 8px;
+}
+.form-themes .form-laber{
+  color: #ccc;
+}
+.ant-input{
+  color: #999;
+}
+.ant-select-open .ant-select-selection {
+    border-color: #f95b29;
+    outline: 0;
+    box-shadow: 0 0 0 1px #daaa9a;
+}
+.bespeak-header{
+  background: url(../../style/images/bespeakBg.jpg) no-repeat top center;
+  overflow: hidden;
+  clear:both;
+  .bespeak-content{
+    background: url(../../style/images/bespeakBg.jpg) no-repeat center center;
+    .bespeak-form{
+      height: 530px;
+      filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#40000000",endColorstr="#40000000");
+      background:rgba(0,0,0,0.4);
+      padding:35px 30px 0;
+    }
+  }
+  .flow{
+    height: 77px;
+    overflow: hidden;
+    background: #fff;
+    li{
+      float: left;
+      .f14();
+      position: relative;
+      text-align: center;
+      color: #666;
+      padding-top: 26px;
+      width: 236px;
+      border-right: solid 2px #f1f1f1;
+      height: 77px;
+      em{
+        color: #c5c5c5;
+        font-size: 28px;
+        line-height: 25px;
+        margin: 0 10px 0 0;
+        vertical-align: sub;      
+      }
+      &.last{
+        border:none;
+      }   
+    }
+  }     
+}
+.bespeak-index-main{
+  margin:80px auto 90px;
+  overflow: hidden;
+  position: relative;
+  .showlink{
+    position: absolute;
+    width:350px;
+    height:498px;
+    padding: 42px 0 0 0;
+    top: 0;
+    left: 0;
+    background: url(../../style/images/bespeakLinkBg.jpg) #bc361b no-repeat center center;
+    box-shadow:3px 3px 10px rgba(188, 54, 27, 0.5);
+    text-align: center;
+    .title{
+      font-size: 46px;
+      color: #fff;
+      font-weight: bold;
+    }
+    .btn{
+      padding:0 60px;
+      display: inline-block;
+      background-color: #fff;
+      border-radius: 3px;
+      line-height: 44px;
+      text-align: center;
+      font-size: 18px;
+      color: @color-main;
+      font-weight: bold;
+      margin: 147px 0 0 0;
+    }
+    .text{
+      .f14();
+      line-height: 22px;
+      color: #fff;
+    }
+    .number{
+      height: 30px;
+      max-width: 300px;
+      margin: 15px 0 15px 10px;
+      display: inline-block;
+      line-height: 32px;
+      color: #fff;
+      font-size: 20px;
+      background: url(../../style/images/numberBg.png) repeat-x;
+      letter-spacing: 19px;
+      padding: 0 0 0 4px;
+      position: relative; 
+      &:after{
+        position:absolute;
+        content: " ";
+        top: 0;
+        right: 0;
+        width: 10px;
+        height: 30px;
+        background-color:#f48772;
+      }    
+    }
+  }
+  .list{
+    background: #fff;
+    margin: 30px 0 0 30px;
+    padding-left: 350px;
+    ul{
+      padding: 0 30px 0 0;
+      li{
+        height: 200px;
+        border-bottom:solid 1px #f0f0f0;
+        dl{
+          .clearfix();
+          dt,dd{
+            .fl();
+          }
+          dt{
+            width: 120px;
+            padding: 30px 0 0 0;
+            .f18();
+            color:@color-p;
+            font-weight: bold;
+            text-align: center;            
+            em{
+              display:block;
+              font-weight: normal;
+              .f22();
+              color:#fa764c;
+            }
+          }
+          dd{
+            width: 230px;
+            padding: 34px 0 0 0;
+            line-height: 25px;
+            margin: 0 0 6px;
+            .f14();
+            color: @color-text;
+            span.title{
+              display: block;
+              .f14();
+              line-height: 26px;
+              color:#333;
+
+            }
+          }
+          dd.introduce{
+            width: 380px;
+            margin: 0 40px 0 0;
+          }
+        }
+      }
+    }
+  }
+}
+
+.codeimg{
+  cursor: pointer;
+}
+
+.ant-input:focus, .ant-input:hover, .has-success .ant-input:not([disabled]):hover {
+    border-color: #f95b29;
+    box-shadow: none;
+}
+
+.has-error .ant-input {
+    border-color: #f50;
+    box-shadow: none;
+}
+.has-error .ant-select-selection {
+    box-shadow: none;
+}

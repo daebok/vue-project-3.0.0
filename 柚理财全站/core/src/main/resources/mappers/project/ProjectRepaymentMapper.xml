@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.project.mapper.ProjectRepaymentMapper">
+	<resultMap type="com.rd.ifaes.core.project.domain.ProjectRepayment" id="projectRepaymentResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="investId" column="INVEST_ID"/>
+		<result property="repayTime" column="REPAY_TIME"/>
+		<result property="realRepayTime" column="REAL_REPAY_TIME"/>
+		<result property="payment" column="PAYMENT"/>
+		<result property="payedAmount" column="PAYED_AMOUNT"/>
+		<result property="capital" column="CAPITAL"/>
+		<result property="interest" column="INTEREST"/>
+		<result property="status" column="STATUS"/>
+		<result property="repayType" column="REPAY_TYPE"/>
+		<result property="period" column="PERIOD"/>
+		<result property="periods" column="PERIODS"/>
+		<result property="lateDays" column="LATE_DAYS"/>
+		<result property="lateInterest" column="LATE_INTEREST"/>
+		<result property="merchantLateInterest" column="MERCHANT_LATE_INTEREST"/>
+		<result property="repayUserId" column="REPAY_USER_ID"/>
+		<result property="repayTradeNo" column="REPAY_TRADE_NO"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="timeLimit" column="TIME_LIMIT"/>
+		<result property="projectName" column="PROJECT_NAME"/>
+		<result property="projectStatus" column="PROJECTStATUS"/>
+		<result property="overdueFeeRate" column="OVERDUE_FEE_RATE"/>
+	   <result property="urgeRepayCount" column="URGE_REPAY_COUNT"/>
+        <result property="borrowManageFee" column="BORROW_MANAGE_FEE"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		PROJECT_ID,
+		INVEST_ID,
+		REPAY_TIME,
+		REAL_REPAY_TIME,
+		PAYMENT,
+		PAYED_AMOUNT,
+		CAPITAL,
+		INTEREST,
+		STATUS,
+		REPAY_TYPE,
+		PERIOD,
+		PERIODS,
+		LATE_DAYS,
+		LATE_INTEREST,
+		MERCHANT_LATE_INTEREST,
+		REPAY_USER_ID,
+		REPAY_TRADE_NO,
+		CREATE_TIME,
+        BORROW_MANAGE_FEE
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{projectId},
+		#{investId},
+		#{repayTime},
+		#{realRepayTime},
+		#{payment},
+		#{payedAmount},
+		#{capital},
+		#{interest},
+		#{status},
+		#{repayType},
+		#{period},
+		#{periods},
+		#{lateDays},
+		#{lateInterest},
+		#{merchantLateInterest},
+		#{repayUserId},
+		#{repayTradeNo},
+		#{createTime},
+        #{borrowManageFee}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="projectId != null and projectId != ''">and PROJECT_ID = #{projectId}</if>
+            <if test="investId != null and investId != ''">and INVEST_ID = #{investId}</if>
+			<if test="repayTime != null">and REPAY_TIME = #{repayTime}</if>
+			<if test="realRepayTime != null">and REAL_REPAY_TIME = #{realRepayTime}</if>
+			<if test="payment != null">and PAYMENT = #{payment}</if>
+			<if test="payedAmount != null">and PAYED_AMOUNT = #{payedAmount}</if>
+			<if test="capital != null">and CAPITAL = #{capital}</if>
+			<if test="interest != null">and INTEREST = #{interest}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+            <if test="repayType != null and repayType != ''">and REPAY_TYPE = #{repayType}</if>
+			<if test="period != null">and PERIOD = #{period}</if>
+			<if test="lateDays != null">and LATE_DAYS = #{lateDays}</if>
+			<if test="lateInterest != null">and LATE_INTEREST = #{lateInterest}</if>
+			<if test="merchantLateInterest != null">and MERCHANT_LATE_INTEREST = #{merchantLateInterest}</if>
+            <if test="repayUserId != null and repayUserId != ''">and REPAY_USER_ID = #{repayUserId}</if>
+            <if test="repayTradeNo != null and repayTradeNo != ''">and REPAY_TRADE_NO = #{repayTradeNo}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+    
+    <sql id="query_where">
+    	<where>
+    		<if test="projectId != null and projectId != ''">and pr.PROJECT_ID = #{projectId}</if>
+			<if test="status != null and status != ''">and pr.STATUS = #{status}</if>
+			<if test="isVouch != null and isVouch != ''">and p.IS_VOUCH = #{isVouch}</if>
+	        <if test="vouchId != null and vouchId != ''">and p.VOUCH_ID = #{vouchId}</if>
+	        <if test="borrowFlag != null and borrowFlag != ''">and p.BORROW_FLAG = #{borrowFlag}</if>
+	      	<if test="vouchStatus != null">and p.VOUCH_STATUS = #{vouchStatus}</if>
+	        <if test="isOverdue != null and isOverdue != ''">and pr.late_Days >0</if>
+			<if test="projectStatus != null and projectStatus != ''">and p.STATUS != #{projectStatus}</if>
+			<if test="projectName != null and projectName != ''">and p.PROJECT_NAME like concat('%', #{projectName},'%')</if>
+			<if test="userName != null and userName != ''">and u.user_name like concat('%', #{userName},'%')</if>
+	        <if test="realName != null and realName != ''">and u.real_name like concat('%',#{realName},'%') </if>
+			<if test="startTime != null and startTime != ''">and pr.REPAY_TIME &gt;= #{startTime}</if>
+			<if test="endTime != null and endTime != ''">and pr.REPAY_TIME &lt;= #{endTime}</if>
+			<if test="repayType != null and repayType != ''">and pr.repay_type= #{repayType}</if>
+			<if test="repayTypeAdvance != null and repayTypeAdvance =='1'">and pr.repay_type in ('2','3')</if>
+			<if test="keywords != null and keywords != ''">
+	        	and (p.PROJECT_NAME like concat('%',#{keywords},'%') 
+		        	or u.USER_NAME like concat('%',#{keywords},'%') 
+	        		or u.real_name like concat('%',#{keywords},'%') )
+	       </if>
+		</where>
+		<if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by pr.user_id, pr.REPAY_TIME asc </if>
+        
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.project.domain.ProjectRepayment">
+		insert into project_repayment( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into project_repayment( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+			#{item.uuid},
+			#{item.userId},
+			#{item.projectId},
+			#{item.investId},
+			#{item.repayTime},
+			#{item.realRepayTime},
+			#{item.payment},
+			#{item.payedAmount},
+			#{item.capital},
+			#{item.interest},
+			#{item.status},
+			#{item.repayType},
+			#{item.period},
+			#{item.periods},
+			#{item.lateDays},
+			#{item.lateInterest},
+			#{item.merchantLateInterest},
+			#{item.repayUserId},
+			#{item.repayTradeNo},
+			#{item.createTime},
+            #{item.borrowManageFee}
+		)
+		</foreach>
+	</insert>
+
+	<update id="update" parameterType="com.rd.ifaes.core.project.domain.ProjectRepayment">
+		update project_repayment 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="realRepayTime != null">REAL_REPAY_TIME = #{realRepayTime},</if>
+			<if test="payedAmount != null">PAYED_AMOUNT = #{payedAmount},</if>
+            <if test="status != null and status != ''">STATUS = #{status},</if>
+            <if test="repayType != null and repayType != ''">REPAY_TYPE = #{repayType},</if>
+			<if test="lateDays != null">LATE_DAYS = #{lateDays},</if>
+			<if test="lateInterest != null">LATE_INTEREST = #{lateInterest},</if>
+			<if test="merchantLateInterest != null">MERCHANT_LATE_INTEREST = #{merchantLateInterest},</if>
+            <if test="repayUserId != null and repayUserId != ''">REPAY_USER_ID = #{repayUserId},</if>
+            <if test="repayTradeNo != null and repayTradeNo != ''">REPAY_TRADE_NO = #{repayTradeNo}</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+	
+	<!-- 批量更新待还逾期利息 -->
+	<update id="updateBatchLateInterest" parameterType="java.util.List">
+		<foreach collection="list" item="item" open="" separator=";" close="">  
+			update project_repayment 
+			<trim prefix="set" suffixOverrides=",">
+				<if test="item.lateDays != null">LATE_DAYS = #{item.lateDays},</if>
+				<if test="item.lateInterest != null">LATE_INTEREST = #{item.lateInterest},</if>
+				<if test="item.merchantLateInterest != null">MERCHANT_LATE_INTEREST = #{item.merchantLateInterest},</if>
+			</trim>
+			where uuid = #{item.uuid} 
+        </foreach>	
+	</update>
+	
+    <select id="findAll" resultMap="projectRepaymentResultMap">
+        select <include refid="table_columns" />
+        from project_repayment
+    </select>
+
+    <select id="findList" resultMap="projectRepaymentResultMap">
+    	select  u.user_name, u.real_name real_name,u.mobile, p.project_name,p.status projectStatus,p.overdue_fee_rate,u.mobile, t.type_name project_type_name,
+    		p.project_no,pr.uuid, pr.user_id, pr.project_id, pr.invest_id, pr.repay_time, pr.real_repay_time, pr.payment, pr.payed_amount, pr.capital, pr.interest, 
+    		pr.status, pr.repay_type, pr.period, pr.periods, pr.late_days, pr.late_interest, pr.repay_user_id, pr.repay_trade_no, pr.create_time,pr.MERCHANT_LATE_INTEREST
+    		<if test="isOverdue !=null  and isOverdue !=''  and  status ==0">
+    		 ,( SELECT count(1)
+				from urge_repay_log
+				where repayment_id=pr.uuid) URGE_REPAY_COUNT
+    		</if>
+		from project_repayment pr
+			left join project p on pr.project_id = p.uuid
+			inner join project_type t on  p.project_type_id =t.uuid 
+			left join user u on pr.user_id = u.uuid
+		<include refid="query_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(pr.uuid) 
+        	from project_repayment pr
+			left join project p on pr.project_id = p.uuid
+			left join user u on pr.user_id = u.uuid
+		<include refid="query_where" />
+    </select>
+
+
+    <select id="get" resultMap="projectRepaymentResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from project_repayment
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+
+     <!-- 查询待还总额 : 预计还款 - 已还 + 逾期 -->
+    <select id="getWaitRepayAccountTotal" resultType="BigDecimal" parameterType="String" >
+		select IFNULL(sum(pr.payment - pr.payed_amount + pr.late_interest + pr.merchant_late_interest), 0)
+		from project_repayment pr,project p 
+		where pr.project_id = p.uuid and p.realize_flag = '0' and  pr.status = 0 and pr.user_id = #{userId}
+	</select>
+	
+	<!-- 根据userId查询下一条还款记录 -->
+    <select id="getNextRepayByUserId" resultMap="projectRepaymentResultMap" parameterType="String" >
+		select pr.repay_time,IFNULL(pr.payment - pr.payed_amount + pr.late_interest + pr.merchant_late_interest, 0) as payment
+		from project_repayment pr,project p 
+		where pr.project_id = p.uuid and p.realize_flag = '0' and pr.status = 0 and pr.user_id = #{userId}  order by pr.repay_time asc limit 1
+	</select>
+	
+	<!-- 查询下一个还款日的还款金额-->
+    <select id="getNextRepayAccountByTime" resultType="BigDecimal" parameterType="com.rd.ifaes.core.project.domain.ProjectRepayment" >
+		select IFNULL(sum(payment-payed_amount+late_interest+MERCHANT_LATE_INTEREST),0)
+		from project_repayment
+		where status = 0 and user_id = #{userId} and DATE_FORMAT(repay_time,'%Y-%m-%d') = DATE_FORMAT(#{repayTime},'%Y-%m-%d')
+	</select>
+	<!-- 根据项目Id找到项目待还 -->
+	 <select id="getRepayByProject" resultMap="projectRepaymentResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from project_repayment
+		where status = 0 and project_id  =#{projectId} and  repay_time >= now() order by repay_time asc limit 1
+	</select> 
+	
+	<select id="countUnpayRecord" resultType="int"   parameterType="com.rd.ifaes.core.project.domain.ProjectRepayment" >
+	  	select  count(uuid)
+		from project_repayment
+		where status = 0 
+		    and project_id = #{projectId}  
+		  <if test="period != null and period >=0 "> and period &lt; #{period} </if>
+		  <if test="investId != null and investId != ''"> and invest_id = #{investId} </if>
+		  <if test="repayTime != null">and repay_time = #{repayTime}</if>
+	</select>
+	<!-- 更新状态 -->
+	<update id="updateStatus"  >
+		update project_repayment set status = #{status}
+	    where uuid = #{uuid} and status = #{preStatus}
+	</update>
+	
+	<!-- 根据日期查询记录 -->
+    <select id="findByDate" resultMap="projectRepaymentResultMap" parameterType="com.rd.ifaes.core.project.domain.ProjectRepayment">
+        select  pr.uuid,pr.project_id,p.project_name,pr.period,p.time_limit,pr.capital,pr.interest,pr.late_interest late_interest,pr.repay_time,pr.real_repay_time,pr.borrow_manage_fee,
+        (case when pr.status=0  and pr.invest_id is  null and p.next_repay_time != pr.repay_time then -1 else pr.status end) status,pr.late_days,pr.repay_type,pr.periods,pr.MERCHANT_LATE_INTEREST
+         from project_repayment pr, project p where pr.project_id=p.uuid
+         and p.realize_flag = '0'
+        <if test="userId != null and userId != ''">and pr.user_id = #{userId}</if>
+        <if test="status != null and status != ''">
+	        <!-- 待还 -->
+	        <if test="status==0">
+	            <!-- 全选 -->
+	            <if test="statusType == null or statusType == '' or statusType == '00'">
+                    and (pr.status = #{status} or pr.repay_type = #{repayTypeAdvance})
+                </if>
+                    <!-- 待还-->
+	             <if test="statusType == '01'">
+	                  and (pr.late_days is null or pr.late_days='') and pr.status = #{status}
+	             </if>
+	             <!-- 逾期待还 -->
+	             <if test="statusType == '02'">
+	                  and (pr.late_days is not null and pr.late_days &gt; 0) and pr.status = #{status}
+	             </if>
+	             <!-- 担保垫付-->
+	             <if test="statusType == '03'">
+	                  and pr.repay_type = #{repayTypeAdvance}
+	             </if>
+                <if test="dateTypeTime != null and dateTypeTime != ''">and #{dateTypeTime} &gt; pr.repay_time</if>
+	           <if test="dateType == null or dateType == ''">
+			     <if test="startTime != null and startTime != ''">and pr.repay_time &gt;= #{startTime}</if>
+			     <if test="endTime != null and endTime != ''">and pr.repay_time &lt;= #{endTime}</if>       
+	           </if>
+	        </if>
+	        
+	        <!-- 已还 -->
+	        <if test="status==1">
+	             and pr.status = #{status} and (pr.repay_type is null or pr.repay_type != #{repayTypeAdvance})
+	             <if test="dateTypeTime != null and dateTypeTime != ''">and pr.real_repay_time &gt; #{dateTypeTime}</if>
+		         <if test="dateType == null or dateType == ''">
+				     <if test="startTime != null and startTime != ''">and pr.real_repay_time &gt;= #{startTime}</if>
+				     <if test="endTime != null and endTime != ''">and pr.real_repay_time &lt;= #{endTime}</if>        
+		         </if>
+	        </if>
+        </if>
+        <if test="page.sort == null or page.sort == '' ">order by p.project_no desc, pr.repay_time asc</if>
+        <if test="page.sort != null and page.sort != '' "> order by ${page.sort} ${page.order} </if>
+	</select>
+	
+	<!-- 根据projectId和userId查询记录列表 -->
+    <select id="findByProjectId" resultMap="projectRepaymentResultMap" parameterType="com.rd.ifaes.core.project.domain.ProjectRepayment">
+        select pr.period,p.time_limit,pr.repay_time,(pr.payment+IFNULL(pr.late_interest,0)+IFNULL(pr.MERCHANT_LATE_INTEREST,0)) payment,pr.real_repay_time,
+        		pr.payed_amount,pr.status,pr.capital,pr.interest,pr.late_interest,pr.late_days,pr.periods,pr.MERCHANT_LATE_INTEREST
+         from project_repayment pr, project p 
+         where pr.project_id=p.uuid  
+             and pr.project_id= #{projectId}
+         order by pr.period asc
+	</select>
+	
+	<select id="findRepayByProjectIdAndPeriod" resultMap="projectRepaymentResultMap">
+       select <include refid="table_columns" />
+		from project_repayment
+		where project_id = #{projectId} and period = #{period} and status = #{status} limit 1
+	</select>
+	<!-- 更新逾期信息 -->
+	<update id="updateOverdueInfo"  >
+		update project_repayment set late_days = #{lateDays},late_interest=#{lateInterest}
+	    where uuid = #{uuid}
+	</update>
+	<!-- 更新还款类型 -->
+	<update id="updateRepayType"  >
+		update project_repayment set repay_type = #{repayType},real_repay_time=now()  where uuid = #{uuid} and repay_type = #{preRepayType}
+	</update>
+	
+	<!--根据项目ID和状态查询还款列表的总期数 未还期数 已还期数  -->
+	<select id="getRepayPeriodsByProjectIdAndStatus" resultType="int">
+		select count(uuid) from project_repayment where project_id = #{projectId} and status = #{status}
+	</select>
+	
+	<select id="getLastRepayDay"   parameterType="string"  resultType="date">
+	     select  max( real_repay_time )  last_repay_time
+		  from project_repayment
+		where project_id=#{projectId}
+	</select>
+	
+	<!-- 前台逾期列表 -->	
+    <select id="findOverdueList" resultMap="projectRepaymentResultMap"> 
+    	select  u.user_name, u.real_name real_name, p.project_name,p.status projectStatus,u.mobile,t.type_name project_type_name, 
+    		p.project_no,pr.uuid, pr.user_id, pr.project_id, pr.invest_id, pr.repay_time, pr.real_repay_time, pr.payment, pr.payed_amount, pr.capital, pr.interest, 
+    		(case when pr.status=0 and p.next_repay_time != pr.repay_time then -1 else pr.status end) status,
+    		pr.repay_type, pr.period, pr.periods, pr.late_days, pr.late_interest, pr.repay_user_id, pr.repay_trade_no, pr.create_time,pr.MERCHANT_LATE_INTEREST
+		from project_repayment pr
+			left join project p on pr.project_id = p.uuid
+			inner join project_type t on  p.project_type_id =t.uuid 
+			left join user u on pr.user_id = u.uuid
+		<where>
+			<if test="status != null and status != ''">and pr.STATUS = #{status}</if>
+			<if test="isVouch != null and isVouch != ''">and p.IS_VOUCH = #{isVouch}</if>
+	        <if test="vouchId != null and vouchId != ''">and p.VOUCH_ID = #{vouchId}</if>
+	        <if test="borrowFlag != null and borrowFlag != ''">and p.BORROW_FLAG = #{borrowFlag}</if>
+	      	<if test="vouchStatus != null">and p.VOUCH_STATUS = #{vouchStatus}</if>
+	        <if test="isOverdue != null and isOverdue != ''">and pr.late_Days >0</if>
+			<if test="projectStatus != null and projectStatus != ''">and p.STATUS != #{projectStatus}</if>
+			<if test="projectName != null and projectName != ''">and p.PROJECT_NAME like concat('%', #{projectName},'%')</if>
+			<if test="userName != null and userName != ''">and u.user_name like concat('%', #{userName},'%')</if>
+	        <if test="realName != null and realName != ''">and u.real_name like concat('%',#{realName},'%') </if>
+			<if test="startTime != null and startTime != ''">and pr.REPAY_TIME &gt;= #{startTime}</if>
+			<if test="endTime != null and endTime != ''">and pr.REPAY_TIME &lt;= #{endTime}</if>
+			<if test="repayType != null and repayType != ''">and pr.repay_type= #{repayType}</if>
+			<if test="repayTypeAdvance != null and repayTypeAdvance =='1'">and pr.repay_type in (2,3)</if>
+			<if test="keywords != null and keywords != ''">
+	        	and (p.PROJECT_NAME like concat('%',#{keywords},'%') 
+		        	or u.USER_NAME like concat('%',#{keywords},'%') 
+	        		or u.real_name like concat('%',#{keywords},'%') )
+	       </if>
+		</where>
+		<if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by p.review_time desc</if>
+	</select>
+	<!-- 查询前台列表专用 end -->
+		
+	<!-- 查询今日待自动还款记录(含逾期)-->
+	<select id="findTodayRepay"  resultMap="projectRepaymentResultMap"> 
+		select pr.uuid, pr.project_id, p.project_name,pr.invest_id,pr.period,p.time_limit,pr.capital,pr.interest,pr.late_interest,pr.MERCHANT_LATE_INTEREST,pr.repay_time,pr.real_repay_time,
+                   pr.late_days,pr.repay_type,pr.periods,pr.status
+		from project_repayment pr , project p ,product r
+     where pr.project_id = p.uuid 
+         and p.uuid=r.project_id
+         and r.auto_repay='1'
+		 and pr.status ='0'
+	     and p.realize_flag = '0'
+	     and p.borrow_flag= '0'	     
+		 and pr.repay_time &lt; now()  
+		 order by pr.repay_time 
+	</select>
+	
+	<!-- 查询下一还款日期 -->
+    <select id="findNextRepayTime"   parameterType="com.rd.ifaes.core.project.domain.ProjectRepayment"   resultType="date">
+	  select repay_time
+		 from project_repayment 
+		where  project_id =#{projectId}
+		 and repay_time  &gt;  #{repayTime}
+		 and status =0
+	   order by repay_time asc
+		limit 1
+	</select>
+	
+	<select id="countOverDueByUser" resultType="int" parameterType="String" > 
+		select count(uuid) from project_repayment where status= 0 and late_days &gt; 0 and user_id= #{userId}
+	</select>
+	<select id="findAdvance" resultMap="projectRepaymentResultMap"  parameterType="com.rd.ifaes.core.project.domain.ProjectRepayment">
+		select  u.user_name, u.real_name real_name, p.project_name,p.status projectStatus,p.overdue_fee_rate,u.mobile, t.type_name project_type_name,
+    		p.project_no,pr.uuid, pr.user_id, pr.project_id, pr.invest_id, pr.repay_time, pr.real_repay_time, pr.payment, pr.payed_amount, pr.capital, pr.interest, 
+    		pr.status, pr.repay_type, pr.period, pr.periods, pr.late_days, pr.late_interest, pr.repay_user_id, pr.repay_trade_no, pr.create_time,pr.MERCHANT_LATE_INTEREST
+    		<if test="isOverdue !=null  and isOverdue !=''  and  status ==0">
+    		 ,( SELECT count(1)
+				from urge_repay_log
+				where repayment_id=pr.uuid) URGE_REPAY_COUNT
+    		</if>
+		from project_repayment pr
+			left join project p on pr.project_id = p.uuid
+			inner join project_type t on  p.project_type_id =t.uuid 
+			left join user u on pr.user_id = u.uuid
+		where
+			p.is_vouch=1 and 
+			pr.repay_type in (2,3)
+		<if test="keywords != null and keywords != ''">
+	        	and (p.PROJECT_NAME like concat('%',#{keywords},'%') 
+		        	or u.USER_NAME like concat('%',#{keywords},'%') 
+	        		or u.real_name like concat('%',#{keywords},'%') )
+	     </if>
+	     <if test="userName != null and userName != ''">and u.user_name like concat('%', #{userName},'%')</if>
+	     <if test="realName != null and realName != ''">and u.real_name like concat('%',#{realName},'%') </if>
+		 <if test="startTime != null and startTime != ''">and pr.REPAY_TIME &gt;= #{startTime}</if>
+		 <if test="endTime != null   and endTime != ''">and pr.REPAY_TIME &lt;= #{endTime}</if>
+		 <!-- 增加状态查询 -->
+		 <if test="repayType != null   and repayType != ''">and pr.repayType like concat('%',#{repayType},'%') </if>
+		 <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+         </if>	
+	</select>
+	
+	<!-- 查询待还总额 : 预计还款 - 已还 + 逾期-->
+	<select id="getTotalCollection" resultType="BigDecimal">
+		select sum(payment - payed_amount + late_interest)
+		from project_repayment
+		where status = 0 ;
+	</select>
+	
+	<!-- 根据日期查询待还总额 -->
+	<select id="sumTotalCollectionByDate" resultType="BigDecimal">
+		select sum(payment - payed_amount + late_interest)
+		from project_repayment
+		where create_time &gt; #{startDate} and create_time &lt;= #{endDate} and status = 0
+	</select>
+	
+</mapper>

@@ -1,0 +1,173 @@
+<div class="form-tips-content">
+	<form class="form-horizontal" action="/risk/riskQuestionAdd.html" id="form" role="form">
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">问卷名称：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="papersName" id="papersName" placeholder="问卷名称" value="${papers.papersName!''}" required readonly>
+					</div>
+				</div>
+			</li>
+			<#-- <li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">问卷编号：</label>
+					<div class="input-box">
+						<input type="text" maxlength="100" class="form-control" name="papersNo" id="papersNo" placeholder="问卷名称" value="${papers.papersNo!''}" required readonly>
+					</div>
+				</div>
+			</li> -->
+			
+			<li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">题号：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="sort" id="sort" placeholder="题号" maxlength="3" data-rule-digits="true" data-msg-digits="请输入整数"  required onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" 
+				onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'0')}else{this.value=this.value.replace(/\D/g,'')}">
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">题型：</label>
+					<div class="input-box">
+						<@linkage name="isSingle" id="isSingle" nid="isSingle" class="form-control" />
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">题目：</label>
+					<div class="input-box" style="height:55px;">
+						<textarea rows="" cols=""  class="form-control"  name="questionName" maxlength="1024" placeholder="题目" required></textarea>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<br/>
+		<div class="editquestion-con">
+			<div class="question-list" style="padding:0;">
+				<ul>
+		  			<li>
+		  			<div class="form-group">
+		  				<input name="answerContent" type="hidden"  value="" id="answerContent1"/>
+	  					<label class="selectlabel">选项：</label>
+		  				<div class="input-box sort-box">
+		  					<select name="aSort" class="form-control" id="aSort1">
+		  						<option value="A">A</option>
+		  						<option value="B">B</option>
+		  						<option value="C">C</option>
+		  						<option value="D">D</option>
+		  						<option value="E">E</option>
+		  						<option value="F">F</option>
+		  						<option value="G">G</option>
+		  					</select>
+		  				</div>
+			  				<label class="answerlabel">内容：</label>
+			  				<div class="input-box answer-box">
+			  					<input type="text" class="answer form-control" name="answer" id="answer1" placeholder="输入选项内容" maxlength="100" required />
+			  					<label class="error"></label>
+			  				</div>
+			  				<label class="scoreTitle">分值：</label>
+			  				<div class="input-box score-box">
+			  					<input type="text" class="score form-control" name="score" id="score1" placeholder="请输入分值"  data-rule-isnumber="true" data-msg-isnumber="请输入正确的分值" required  maxlength="2"  onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" 
+				onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'0')}else{this.value=this.value.replace(/\D/g,'')}"/>
+			  					<label class="error"></label>
+			  				</div>
+		  				</div>
+		  			</li>
+		  			<li>
+		  				<div class="form-group">
+		  					<input name="answerContent" type="hidden"  value="" id="answerContent2"/>
+		  					<label class="selectlabel">选项：</label>
+		  				<div class="input-box sort-box">
+		  					<select name="aSort" class="form-control" id="aSort2">
+		  						<option value="A">A</option>
+		  						<option value="B">B</option>
+		  						<option value="C">C</option>
+		  						<option value="D">D</option>
+		  						<option value="E">E</option>
+		  						<option value="F">F</option>
+		  						<option value="G">G</option>
+		  					</select>
+		  				</div>
+			  				<label class="answerlabel">内容：</label>
+			  				<div class="input-box answer-box">
+			  					<input type="text" class="answer form-control" name="answer2" id="answer2" maxlength="100" placeholder="输入选项内容"  />
+			  					<label class="error"></label>
+			  				</div>
+			  				<label class="scoreTitle">分值：</label>
+			  				<div class="input-box score-box">
+			  					<input type="text" class="score form-control" name="score" id="score2" placeholder="请输入分值" data-rule-isnumber="true" data-msg-isnumber="请输入正确的分值" maxlength="2" 
+			  					onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" 
+								onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'0')}else{this.value=this.value.replace(/\D/g,'')}"/>
+			  					<label class="error"></label>
+			  				</div>
+			  				<button type="button" class="btn btn-primary add-answer" onclick="">+ 增加答案</button>
+			  			</div>
+		  			</li>
+		  		</ul>
+			</div>
+		</div>
+		<input type="hidden" name="papersId" value="${papers.uuid!''}"/>
+		<@token name="addSingleQuestionToken"/>
+	</form>
+</div>
+<script>
+var i = 2;
+$(".layui-layer-content").on("click",'.add-answer',function(e){
+	i+=1;
+	var str ='<li><div class="form-group"><input name="answerContent" type="hidden"  value="" id="answerContent'+i
+	+'"/><label class="selectlabel">选项：</label><div class="input-box sort-box"><select name="aSort" class="form-control" id="aSort'+i
+	+'"><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option></select></div>'
+	+'<label class="answerlabel">内容：</label><div class="input-box answer-box"><input type="text" class="answer form-control" name="answer" id="answer'+i+'" placeholder="输入选项内容" maxlength="100"><label class="error"></label></div>'
+	+'<label class="scoreTitle">分值：</label><div class="input-box score-box"><input type="text" class="score form-control" name="score"  id="score'+i
+	+'"  value=""  placeholder="请输入分值" maxlength="2"  onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'+'\'\''+')}else{this.value=this.value.replace(/\D/g,'+'\'\''+')}" '
+	+' onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'+'\'0\''+')}else{this.value=this.value.replace(/\D/g,'+'\'\''+')}"  data-rule-isnumber="true" data-msg-isnumber="请输入正确的分值"><label class="error"></label></div>'
+	+'<button type="button" class="btn btn-primary add-answer" onclick="">+ 增加答案</button><button type="button" class="btn btn-primary remove-answer" onclick="">- 删除答案</button></div></li>';
+	$(this).parent().parent().after(str);
+})
+
+$(".layui-layer-content").on("click",'.remove-answer',function(e){
+	i-=1;
+	$(this).parent().parent().remove();
+})
+
+$("#form").validate({
+	submitHandler: function(form) {	
+		for (var j = 1; j < i+1; j++) {
+			var aSort = $("#aSort"+j).val();
+			var answer =  $("#answer"+j).val();
+			var score =  $("#score"+j).val();
+			var array = new Array();
+			array[0] = aSort;
+			array[1] = answer;
+			array[2] = score;
+			$("#answerContent"+j).val(array);
+		}
+		
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						icon: 6,
+						cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+					}, function() {
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入  
+					});
+				} else {
+					layer.alert(data.msg, {
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+})
+</script>

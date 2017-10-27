@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.sys.mapper.LogTemplateMapper">
+	<resultMap type="com.rd.ifaes.core.sys.domain.LogTemplate" id="logTemplateResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="logType" column="LOG_TYPE"/>
+		<result property="code" column="CODE"/>
+		<result property="templateName" column="TEMPLATE_NAME"/>
+		<result property="templateContent" column="TEMPLATE_CONTENT"/>
+		<result property="deleteFlag" column="DELETE_FLAG"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="remark" column="REMARK"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		LOG_TYPE,
+		CODE,
+		TEMPLATE_NAME,
+		TEMPLATE_CONTENT,
+		DELETE_FLAG,
+		CREATE_TIME,
+		REMARK
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{logType},
+		#{code},
+		#{templateName},
+		#{templateContent},
+		#{deleteFlag},
+		#{createTime},
+		#{remark}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="logType != null and logType != ''">and LOG_TYPE = #{logType}</if>
+            <if test="code != null and code != ''">and CODE = #{code}</if>
+            <if test="templateName != null and templateName != ''">and TEMPLATE_NAME = #{templateName}</if>
+            <if test="templateContent != null and templateContent != ''">and TEMPLATE_CONTENT = #{templateContent}</if>
+            <if test="deleteFlag != null and deleteFlag != ''">and DELETE_FLAG = #{deleteFlag}</if>
+            <if test="deleteFlag == null or deleteFlag == ''">and DELETE_FLAG = 0</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="remark != null and remark != ''">and REMARK = #{remark}</if>
+            <if test="keywords != null and keywords != ''">and ( TEMPLATE_NAME like '%'||#{keywords}||'%'  OR CODE like '%'||#{keywords}||'%' )</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.sys.domain.LogTemplate">
+		insert into sys_log_template( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">
+		BEGIN		
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into sys_log_template( <include refid="table_columns" /> ) 
+		values 
+		( 
+			#{item.uuid},
+			#{item.logType},
+			#{item.code},
+			#{item.templateName},
+			#{item.templateContent},
+			#{item.deleteFlag},
+			#{item.createTime},
+			#{item.remark}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from sys_log_template
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update sys_log_template set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="uuid" open="(" separator="," close=")">  
+            #{uuid}
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update sys_log_template set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.sys.domain.LogTemplate">
+		update sys_log_template 
+		<trim prefix="set" suffixOverrides=",">
+		    <if test="logType != null and logType != ''">LOG_TYPE = #{logType},</if>
+          <!--   <if test="code != null and code != ''">CODE = #{code},</if> -->
+            <if test="templateName != null and templateName != ''">TEMPLATE_NAME = #{templateName},</if>
+            <if test="templateContent != null and templateContent != ''">TEMPLATE_CONTENT = #{templateContent},</if>
+            <if test="deleteFlag != null and deleteFlag != ''">DELETE_FLAG = #{deleteFlag},</if>
+            <if test="remark != null and remark != ''">REMARK = #{remark}</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="logTemplateResultMap">
+        select <include refid="table_columns" />
+        from sys_log_template where delete_flag=0
+    </select>
+
+    <select id="findList" resultMap="logTemplateResultMap">
+        select <include refid="table_columns" />
+        from sys_log_template
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from sys_log_template
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="logTemplateResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from sys_log_template
+		where uuid = #{uuid} and delete_flag=0
+	</select>
+	
+	<!-- 其他自定义SQL -->
+
+
+</mapper>

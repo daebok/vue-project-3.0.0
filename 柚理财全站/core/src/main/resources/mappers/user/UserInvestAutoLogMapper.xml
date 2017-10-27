@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.user.mapper.UserInvestAutoLogMapper">
+	<resultMap type="com.rd.ifaes.core.user.domain.UserInvestAutoLog" id="userInvestAutoLogResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="investMoney" column="INVEST_MONEY"/>
+		<result property="status" column="STATUS"/>
+		<result property="investTime" column="INVEST_TIME"/>
+		<result property="remark" column="REMARK"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		PROJECT_ID,
+		INVEST_MONEY,
+		STATUS,
+		INVEST_TIME,
+		REMARK
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{projectId},
+		#{investMoney},
+		#{status},
+		#{investTime},
+		#{remark}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="projectId != null and projectId != ''">and PROJECT_ID = #{projectId}</if>
+			<if test="investMoney != null">and INVEST_MONEY = #{investMoney}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+			<if test="investTime != null">and INVEST_TIME = #{investTime}</if>
+            <if test="remark != null and remark != ''">and REMARK = #{remark}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.user.domain.UserInvestAutoLog">
+		insert into user_invest_auto_log( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into user_invest_auto_log( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+		#{item.uuid},
+				#{item.userId},
+				#{item.projectId},
+				#{item.investMoney},
+				#{item.status},
+				#{item.investTime},
+				#{item.remark}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from user_invest_auto_log
+		where uuid = #{uuid}
+	</delete>
+
+	<update id="update" parameterType="com.rd.ifaes.core.user.domain.UserInvestAutoLog">
+		update user_invest_auto_log 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="projectId != null and projectId != ''">PROJECT_ID = #{projectId},</if>
+			<if test="investMoney != null">INVEST_MONEY = #{investMoney},</if>
+            <if test="remark != null and remark != ''">REMARK = #{remark},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="userInvestAutoLogResultMap">
+        select <include refid="table_columns" />
+        from user_invest_auto_log
+    </select>
+
+    <select id="findList" resultMap="userInvestAutoLogResultMap">
+        select <include refid="table_columns" />
+        from user_invest_auto_log
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from user_invest_auto_log
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="userInvestAutoLogResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_invest_auto_log
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+
+
+</mapper>

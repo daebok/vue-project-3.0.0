@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.tpp.mapper.TppTradeMapper">
+    <resultMap type="com.rd.ifaes.core.tpp.domain.TppTrade" id="tppTradeResultMap">
+        <result property="uuid" column="UUID"/>
+        <result property="status" column="STATUS"/>
+        <result property="serviceType" column="SERVICE_TYPE"/>
+        <result property="tppType" column="TPP_TYPE"/>
+        <result property="userId" column="USER_ID"/>
+        <result property="tppUserCustId" column="TPP_USER_CUST_ID"/>
+        <result property="toUserId" column="TO_USER_ID"/>
+        <result property="toTppUserCustId" column="TO_TPP_USER_CUST_ID"/>
+        <result property="money" column="MONEY"/>
+        <result property="servFee" column="SERV_FEE"/>
+        <result property="orderNo" column="ORDER_NO"/>
+        <result property="orderDate" column="ORDER_DATE"/>
+        <result property="tradeNo" column="TRADE_NO"/>
+        <result property="tradeDate" column="TRADE_DATE"/>
+        <result property="projectId" column="PROJECT_ID"/>
+        <result property="investId" column="INVEST_ID"/>
+        <result property="params" column="PARAMS"/>
+        <result property="returnUrl" column="RETURN_URL"/>
+        <result property="noticeUrl" column="NOTICE_URL"/>
+        <result property="respDesc" column="RESP_DESC"/>
+        <result property="investProjectId" column="INVEST_PROJECT_ID"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="preTradeId" column="PRE_TRADE_ID"/>
+        <result property="updateTime" column="UPDATE_TIME"/>
+        <result property="notifyTime" column="NOTIFY_TIME"/>
+        <result property="authCode" column="AUTH_CODE"/>
+        <result property="projectRepaymentId" column="PROJECT_REPAYMENT_ID"/>
+    </resultMap>
+
+    <resultMap type="com.rd.ifaes.core.tpp.domain.TppTrade" id="tppTradeResult" extends="tppTradeResultMap">
+        <result property="realName" column="real_Name"/>
+        <result property="toRealName" column="to_real_name"/>
+    </resultMap>
+
+    <sql id="table_columns">
+        UUID,
+        STATUS,
+        SERVICE_TYPE,
+        TPP_TYPE,
+        USER_ID,
+        TPP_USER_CUST_ID,
+        TO_USER_ID,
+        TO_TPP_USER_CUST_ID,
+        MONEY,
+        SERV_FEE,
+        ORDER_NO,
+        ORDER_DATE,
+        TRADE_NO,
+        TRADE_DATE,
+        PROJECT_ID,
+        INVEST_ID,
+        PARAMS,
+        RETURN_URL,
+        NOTICE_URL,
+        RESP_DESC,
+        INVEST_PROJECT_ID,
+        CREATE_TIME,
+        PRE_TRADE_ID,
+        UPDATE_TIME,
+        NOTIFY_TIME,
+        AUTH_CODE,
+        PROJECT_REPAYMENT_ID
+    </sql>
+    <sql id="entity_properties">
+        #{uuid},
+        #{status},
+        #{serviceType},
+        #{tppType},
+        #{userId},
+        #{tppUserCustId},
+        #{toUserId},
+        #{toTppUserCustId},
+        #{money},
+        #{servFee},
+        #{orderNo},
+        #{orderDate},
+        #{tradeNo},
+        #{tradeDate},
+        #{projectId},
+        #{investId},
+        #{params},
+        #{returnUrl},
+        #{noticeUrl},
+        #{respDesc},
+        #{investProjectId},
+        #{createTime},
+        #{preTradeId},
+        #{updateTime},
+        #{notifyTime},
+        #{authCode},
+        #{projectRepaymentId}
+    </sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            and redo_flag = '0'
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+            <if test="serviceType != null and serviceType != ''">and SERVICE_TYPE = #{serviceType}</if>
+            <if test="tppType != null and tppType != ''">and TPP_TYPE = #{tppType}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="tppUserCustId != null and tppUserCustId != ''">and TPP_USER_CUST_ID = #{tppUserCustId}</if>
+            <if test="toUserId != null and toUserId != ''">and TO_USER_ID = #{toUserId}</if>
+            <if test="toTppUserCustId != null and toTppUserCustId != ''">and TO_TPP_USER_CUST_ID = #{toTppUserCustId}</if>
+            <if test="money != null">and MONEY = #{money}</if>
+            <if test="servFee != null">and SERV_FEE = #{servFee}</if>
+            <if test="orderNo != null and orderNo != ''">and ORDER_NO = #{orderNo}</if>
+            <if test="orderDate != null">and ORDER_DATE = #{orderDate}</if>
+            <if test="tradeNo != null and tradeNo != ''">and TRADE_NO = #{tradeNo}</if>
+            <if test="tradeDate != null">and TRADE_DATE = #{tradeDate}</if>
+            <if test="projectId != null and projectId != ''">and PROJECT_ID = #{projectId}</if>
+            <if test="investId != null and investId != ''">and INVEST_ID = #{investId}</if>
+            <if test="noticeUrl != null and noticeUrl != ''">and NOTICE_URL = #{noticeUrl}</if>
+            <if test="investProjectId != null and investProjectId != ''">and INVEST_PROJECT_ID = #{investProjectId}</if>
+            <if test="authCode != null and authCode != ''">and AUTH_CODE = #{authCode}</if>
+            <if test="projectRepaymentId != null and projectRepaymentId != ''">and PROJECT_REPAYMENT_ID = #{projectRepaymentId}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+            order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> -->
+    </sql>
+
+    <insert id="insert" parameterType="com.rd.ifaes.core.tpp.domain.TppTrade">
+        insert into tpp_trade(
+        <include refid="table_columns"/>
+        )
+        values (
+        <include refid="entity_properties"/>
+        )
+    </insert>
+
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into tpp_trade(
+        <include refid="table_columns"/>
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.uuid},
+            #{item.status},
+            #{item.serviceType},
+            #{item.tppType},
+            #{item.userId},
+            #{item.tppUserCustId},
+            #{item.toUserId},
+            #{item.toTppUserCustId},
+            #{item.money},
+            #{item.servFee},
+            #{item.orderNo},
+            #{item.orderDate},
+            #{item.tradeNo},
+            #{item.tradeDate},
+            #{item.projectId},
+            #{item.investId},
+            #{item.params},
+            #{item.returnUrl},
+            #{item.noticeUrl},
+            #{item.respDesc},
+            #{item.investProjectId},
+            #{item.createTime},
+            #{item.preTradeId},
+            #{item.updateTime},
+            #{item.notifyTime},
+            #{item.authCode},
+            #{item.projectRepaymentId}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="delete" parameterType="String">
+        DELETE FROM tpp_trade
+        WHERE uuid = #{uuid}
+    </delete>
+
+    <update id="deleteBatch">
+        update tpp_trade set delete_flag = 1
+        where uuid in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="deleteLogic" parameterType="String">
+        UPDATE tpp_trade
+        SET delete_flag = 1
+        WHERE uuid = #{uuid}
+    </update>
+
+    <update id="updateRedoFlagBatch">
+        update tpp_trade set redo_flag = '1'
+        where uuid in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="update" parameterType="com.rd.ifaes.core.tpp.domain.TppTrade">
+        update tpp_trade
+        <trim prefix="set" suffixOverrides=",">
+            <if test="status != null and status != ''">STATUS = #{status},</if>
+            <if test="money != null">MONEY = #{money},</if>
+            <if test="servFee != null">SERV_FEE = #{servFee},</if>
+            <if test="orderNo != null and orderNo != ''">ORDER_NO = #{orderNo},</if>
+            <if test="orderDate != null and orderDate != ''">ORDER_DATE = #{orderDate},</if>
+            <if test="tradeNo != null and tradeNo != ''">TRADE_NO = #{tradeNo},</if>
+            <if test="tradeDate != null and tradeDate != ''">TRADE_DATE = #{tradeDate},</if>
+            <if test="respDesc != null and respDesc != ''">RESP_DESC = #{respDesc},</if>
+            <if test="updateTime != null and updateTime != ''">UPDATE_TIME = #{updateTime},</if>
+            <if test="params != null">PARAMS = #{params},</if>
+        </trim>
+        <where>uuid = #{uuid}</where>
+    </update>
+
+    <update id="updateBatch" parameterType="java.util.List">
+        <foreach collection="list" item="item" open="" separator=";" close="">
+            update tpp_trade
+            <trim prefix="set" suffixOverrides=",">
+                <if test="item.status != null and item.status != ''">STATUS = #{item.status},</if>
+                <if test="item.money != null">MONEY = #{item.money},</if>
+                <if test="item.servFee != null">SERV_FEE = #{item.servFee},</if>
+                <if test="item.orderNo != null and item.orderNo != ''">ORDER_NO = #{item.orderNo},</if>
+                <if test="item.orderDate != null and item.orderDate != ''">ORDER_DATE = #{item.orderDate},</if>
+                <if test="item.tradeNo != null and item.tradeNo != ''">TRADE_NO = #{item.tradeNo},</if>
+                <if test="item.tradeDate != null and item.tradeDate != ''">TRADE_DATE = #{item.tradeDate},</if>
+                <if test="item.respDesc != null and item.respDesc != ''">RESP_DESC = #{item.respDesc},</if>
+                <if test="item.updateTime != null and item.updateTime != ''">UPDATE_TIME = #{item.updateTime},</if>
+            </trim>
+            <where>uuid = #{item.uuid}</where>
+        </foreach>
+    </update>
+
+    <select id="findAll" resultMap="tppTradeResultMap">
+        select
+        <include refid="table_columns"/>
+        from tpp_trade
+    </select>
+
+    <select id="findList" resultMap="tppTradeResultMap">
+        select
+        <include refid="table_columns"/>
+        from tpp_trade
+        <include refid="page_where"/>
+    </select>
+
+    <select id="getCount" resultType="int">
+        select count(uuid) from tpp_trade
+        <include refid="page_where"/>
+    </select>
+
+
+    <select id="get" resultMap="tppTradeResultMap" parameterType="String">
+        select
+        <include refid="table_columns"/>
+        from tpp_trade
+        where uuid = #{uuid}
+    </select>
+
+    <!-- 其他自定义SQL -->
+    <!-- 查询待处理交易 -->
+    <select id="findTodoList" resultMap="tppTradeResultMap">
+        select
+        <include refid="table_columns"/>
+        from tpp_trade
+        where status in (0, 2)
+        and redo_flag = '0'
+        and uuid in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <!-- 调度任务分页查询 -->
+    <select id="findRecord" resultMap="tppTradeResult">
+        select t.uuid,
+        t.invest_project_id,
+        t.tpp_user_cust_id,
+        t.to_tpp_user_cust_id,
+        t.status,
+        t.service_type,
+        t.tpp_type,
+        t.user_id, u.real_name real_name,
+        t.to_user_id, tu.real_name to_real_name,
+        t.money,
+        t.serv_fee,
+        t.order_no,
+        t.trade_no,
+        t.resp_desc,
+        t.create_time,
+        t.update_time,
+        t.notify_time
+        from tpp_trade t
+        left join user u on u.uuid = t.user_id
+        left join user tu on tu.uuid = t.to_user_id
+        <where>
+            and redo_flag = '0'
+            <if test="status != null and status != ''">and t.STATUS = #{status}</if>
+            <if test="serviceType != null and serviceType != ''">and t.SERVICE_TYPE = #{serviceType}</if>
+            <if test="tppType != null and tppType != ''">and t.TPP_TYPE = #{tppType}</if>
+            <if test="tppUserCustId != null and tppUserCustId != ''">and t.TPP_USER_CUST_ID = #{tppUserCustId}</if>
+            <if test="toTppUserCustId != null and toTppUserCustId != ''">and t.TO_TPP_USER_CUST_ID = #{toTppUserCustId}</if>
+            <if test="userCustId != null and userCustId != ''">and (t.TPP_USER_CUST_ID = #{userCustId} or t.TO_TPP_USER_CUST_ID = #{userCustId})</if>
+            <if test="investProjectId != null and investProjectId != ''">and t.invest_project_id like concat('%', #{investProjectId},'%')</if>
+            <if test="orderNo != null and orderNo != ''">and t.order_no like concat('%', #{orderNo},'%')</if>
+            <if test="tradeNo != null and tradeNo != ''">and t.trade_no like concat('%', #{tradeNo},'%')</if>
+            <if test="realName != null and realName != ''">and u.real_name like concat('%',#{realName},'%')</if>
+            <if test="toRealName != null and toRealName != ''">and tu.real_name like concat('%',#{toRealName},'%')</if>
+            <if test="startTime != null and startTime != ''">and t.create_time &gt;= #{startTime}</if>
+            <if test="endTime != null and endTime != ''">and t.create_time &lt;= #{endTime}</if>
+            <if test="keywords != null and keywords != ''">and (u.real_name like concat('%',#{keywords},'%') OR tu.real_name like concat('%',#{keywords},'%') OR t.invest_project_id like concat('%', #{keywords},'%') )</if>
+        </where>
+        <if test="page!=null and page.sort!=null and page.sort!=''">
+            order by ${page.sort} ${page.order}
+        </if>
+        <if test="page==null or page.sort==null or page.sort==''">
+            order by t.create_time desc
+        </if>
+    </select>
+
+    <!-- 三方回调更新 -->
+    <update id="updateCallback" parameterType="java.util.List">
+        <foreach collection="list" item="item" open="" separator=";" close="">
+            update tpp_trade set
+            <if test="!( item.status != 1  and ( item.tppType.equals('loan') or item.tppType.equals('repay') )) ">
+                STATUS = #{item.status}, RESP_DESC = #{item.respDesc} ,
+            </if>
+            UPDATE_TIME = now()
+            where uuid = #{item.uuid}
+        </foreach>
+    </update>
+
+    <!-- 更新状态 -->
+    <update id="updateStatus">
+        UPDATE tpp_trade
+        SET status = #{status}, UPDATE_TIME = now()
+        WHERE uuid = #{uuid} AND status = #{preStatus}
+    </update>
+    <!-- 异步回调处理 -->
+    <update id="callbackHandle">
+        UPDATE tpp_trade
+        SET status = #{status}, notify_time = now(), RESP_DESC = #{respDesc}
+        WHERE uuid = #{uuid}
+    </update>
+
+    <update id="updateStatusByTradeNo">
+        UPDATE tpp_trade
+        SET status = #{status}, resp_desc = #{remark}, update_time = now()
+        WHERE status = #{preStatus} AND trade_no = #{tradeNo}
+    </update>
+
+    <update id="updateStatusByTradeNoAndType">
+        UPDATE tpp_trade
+        SET status = #{status}, update_time = now()
+        WHERE service_type = #{type} AND trade_no = #{tradeNo}
+    </update>
+
+    <update id="bailRepaySuccessHandle">
+        UPDATE tpp_trade
+        SET status = '1', update_time = now(), auth_code = #{authCode}, resp_desc = 'success'
+        WHERE uuid = #{uuid}
+    </update>
+
+    <!-- 根据订单号查找记录 -->
+    <select id="findByOrderNo" resultMap="tppTradeResultMap" parameterType="String">
+        select
+        <include refid="table_columns"/>
+        from tpp_trade
+        where order_no = #{orderNo}
+    </select>
+
+    <select id="findByTradeNoAndType" resultMap="tppTradeResultMap">
+        select
+        <include refid="table_columns"/>
+        from tpp_trade
+        where trade_no = #{tradeNo} and service_type = #{type}
+        <if test="status != null and status != ''">
+        and status = #{status}
+        </if>
+    </select>
+    <select id="getListByTradeNoAndType" resultMap="tppTradeResultMap">
+        select
+        <include refid="table_columns"/>
+        from tpp_trade
+        where trade_no = #{tradeNo} and service_type = #{type}
+        <if test="status != null and status != ''">
+            and status = #{status}
+        </if>
+    </select>
+    <select id="countByTradeNoAndType" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM tpp_trade
+        WHERE trade_no = #{tradeNo} AND service_type = #{type}
+        <if test="status != null and status != ''">
+            and status = #{status}
+        </if>
+    </select>
+    <select id="countUnSuccessByTradeNoAndType" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM tpp_trade
+        WHERE trade_no = #{tradeNo} AND service_type = #{type}
+            and status in ("0","2","3")
+    </select>
+    <select id="countByTypeAndProjectId" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM tpp_trade
+        WHERE service_type = #{type} and project_id = #{projectId}
+    </select>
+    <select id="findListByTypeAndRepaymentId" resultMap="tppTradeResultMap">
+        select
+        <include refid="table_columns"/>
+        from tpp_trade
+        where service_type = #{type} and project_repayment_id = #{repaymentId}
+    </select>
+    <select id="countByTypeAndProjectIdAndStatus" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM tpp_trade
+        WHERE service_type = #{type} and project_id = #{projectId}  and status in ("0","2","3")
+    </select>
+</mapper>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.risk.mapper.RiskUserLogMapper">
+	<resultMap type="com.rd.ifaes.core.risk.domain.RiskUserLog" id="riskUserLogResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="papersId" column="PAPERS_ID"/>
+		<result property="score" column="SCORE"/>
+		<result property="riskLevel" column="RISK_LEVEL"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="status" column="STATUS"/>
+		<result property="riskAnswers" column="RISK_ANSWERS"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		PAPERS_ID,
+		SCORE,
+		RISK_LEVEL,
+		CREATE_TIME,
+		STATUS,
+		RISK_ANSWERS
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{papersId},
+		#{score},
+		#{riskLevel},
+		#{createTime},
+		#{status},
+		#{riskAnswers}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="papersId != null and papersId != ''">and PAPERS_ID = #{papersId}</if>
+			<if test="score != null">and SCORE = #{score}</if>
+			<if test="riskLevel != null">and RISK_LEVEL = #{riskLevel}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+			<if test="status != null">and STATUS = #{status}</if>
+            <if test="riskAnswers != null and riskAnswers != ''">and RISK_ANSWERS = #{riskAnswers}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.risk.domain.RiskUserLog">
+		insert into risk_user_log( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into risk_user_log( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+		#{item.uuid},
+				#{item.userId},
+				#{item.papersId},
+				#{item.score},
+				#{item.riskLevel},
+				#{item.createTime},
+				#{item.status},
+				#{item.riskAnswers}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from risk_user_log
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update risk_user_log set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{uuid} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update risk_user_log set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.risk.domain.RiskUserLog">
+		update risk_user_log 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="userId != null and userId != ''">USER_ID = #{userId},</if>
+            <if test="papersId != null and papersId != ''">PAPERS_ID = #{papersId},</if>
+			<if test="score != null">SCORE = #{score},</if>
+			<if test="riskLevel != null">RISK_LEVEL = #{riskLevel},</if>
+			<if test="status != null">STATUS = #{status},</if>
+            <if test="riskAnswers != null and riskAnswers != ''">RISK_ANSWERS = #{riskAnswers},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="riskUserLogResultMap">
+        select <include refid="table_columns" />
+        from risk_user_log
+         order by create_time desc
+    </select>
+
+    <select id="findList" resultMap="riskUserLogResultMap">
+        select l.uuid,l.user_id,l.papers_id,l.score,l.risk_level,l.create_time,l.status,l.risk_answers,
+        u.user_name as userName,u.real_name as realName,p.papers_name as papersName,c.user_risk_level_name as riskLevelName
+        from risk_user_log l left join user u on u.uuid = l.user_id
+        left join risk_papers p on p.uuid = l.papers_id 
+        left join risk_level_config c on c.user_risk_level_val = l.risk_level
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and l.UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and l.USER_ID = #{userId}</if>
+            <if test="keywords != null and keywords != ''">
+	        	and (u.user_name like concat('%',#{keywords},'%')  or
+	        	     u.real_name like concat('%',#{keywords},'%')  or 
+	        	    p.papers_name like concat('%',#{keywords},'%')
+	        	    )
+	       </if>
+	       <if test="papersName != null and papersName != ''">and p.papers_name like concat('%',#{papersName},'%')</if>
+            <if test="userName != null and userName != ''">and u.user_name like concat('%',#{userName},'%')</if>
+            <if test="realName != null and realName != ''">and u.real_name like concat('%',#{realName},'%')</if>
+            <if test="papersId != null and papersId != ''">and l.PAPERS_ID = #{papersId}</if>
+			<if test="score != null">and l.SCORE = #{score}</if>
+			<if test="riskLevel != null and riskLevel != -1">and l.RISK_LEVEL = #{riskLevel}</if>
+			<if test="createTime != null">and l.CREATE_TIME = #{createTime}</if>
+			<if test="status != null">and l.STATUS = #{status}</if>
+            <if test="riskAnswers != null and riskAnswers != ''">and l.RISK_ANSWERS = #{riskAnswers}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        order by l.create_time desc
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from risk_user_log
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="riskUserLogResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from risk_user_log
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+
+
+</mapper>

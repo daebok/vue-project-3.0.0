@@ -1,0 +1,52 @@
+@import (reference)'../../../style/common.less';
+@import '../../../style/account.less';
+.account-content{
+  .subbutton{
+    .form-button(@padding: 0px,@width: 280px,@fontsize: 16px,@lineheight:40px);
+  }
+  .selectcard-title{
+    .f16();
+    color:@color-text;
+    padding:21px 0 25px 0;
+  }
+  .form-themes{
+      margin: 20px 0 20px -44px;
+      .row{
+      height:66px;
+      }
+      .surplus{
+        position: absolute;
+        top: 11px;
+        left: 315px;
+        width: 245px;
+      }
+  }
+  .subBtn{
+      width: 280px;
+      height: 44px;
+      line-height: 34px;
+      text-align: center;
+      background-image:-webkit-linear-gradient(to right, #ff794e, #ffb131);
+      background-image:linear-gradient(to right,#ff794e, #ffb131);
+      border: none;
+      border-radius: 5px;
+      font-size: 18px;
+      color: #fff;
+      &:hover{
+        /*background-color: #f95b29;
+        color: #fff;*/
+      }
+  }
+}
+
+.ant-btn-primary[disabled]{
+  border: none;
+}
+.ant-form-extra{
+  .f14();
+}
+form.form-themes .ant-input-lg{
+  // .f18();
+  // color: @color-title;
+}
+

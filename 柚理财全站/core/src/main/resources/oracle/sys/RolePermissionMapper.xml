@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.sys.mapper.RolePermissionMapper">
+	<resultMap type="com.rd.ifaes.core.sys.domain.RolePermission" id="rolePermissionResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="roleId" column="ROLE_ID"/>
+		<result property="permissionId" column="PERMISSION_ID"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		ROLE_ID,
+		PERMISSION_ID
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{roleId},
+		#{permissionId}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#columnName#||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+             <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="roleId != null and roleId != ''">and ROLE_ID = #{roleId}</if>
+            <if test="permissionId != null and permissionId != ''">and PERMISSION_ID = #{permissionId}</if>
+        </trim>
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.sys.domain.RolePermission">
+		insert into sys_role_permission( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">
+		BEGIN		
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into sys_role_permission( <include refid="table_columns" /> ) 
+		values 
+		( 
+				#{item.uuid},
+				#{item.roleId},
+				#{item.permissionId}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String" >
+		delete from sys_role_permission
+		where uuid = #{uuid}
+	</delete>
+
+	<update id="update" parameterType="com.rd.ifaes.core.sys.domain.RolePermission">
+		update sys_role_permission 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="roleId != null and roleId != ''">ROLE_ID = #{roleId},</if>
+			<if test="permissionId != null and permissionId != ''">PERMISSION_ID = #{permissionId},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="rolePermissionResultMap">
+        select <include refid="table_columns" />
+        from sys_role_permission
+    </select>
+
+    <select id="findList" resultMap="rolePermissionResultMap">
+        select <include refid="table_columns" />
+        from sys_role_permission
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from sys_role_permission
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="rolePermissionResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from sys_role_permission
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<delete id="deleteByRoleId" parameterType="String" >
+		delete from sys_role_permission
+		where ROLE_ID = #{value}
+	</delete>
+	
+
+</mapper>

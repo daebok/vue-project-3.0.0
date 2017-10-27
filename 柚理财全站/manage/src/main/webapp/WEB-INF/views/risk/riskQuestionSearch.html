@@ -1,0 +1,18 @@
+<div class="form-tips-content">
+	<form class="form-horizontal" id="form" role="form">
+		<div class="questionnaire-title">${question.questionName!"默认问题"}</div>
+		<ul class="form-item" id="questionnaire-con">
+			<li>
+				<dl>
+					<dt><span style="color:blue;">(<#if question.isSingle == 1>单选<#else>多选</#if>)&nbsp;</span>${question.sort!0}.${question.questionName!"默认问题"}<span>(分值：${question.score!''})</span></dt>
+					<#if question.list??>
+						<#list question.list as item>
+							<dd><input type="<#if question.isSingle==1>radio<#else>checkbox</#if>" name="sort" value="${item.sort!''}">${item.sort!''}. ${item.content!"默认答案"}(分值：${item.score!''})</dd>
+						</#list>
+					</#if>
+				</dl>
+			</li>
+		</ul>
+		<@token/>
+	</form>
+</div>

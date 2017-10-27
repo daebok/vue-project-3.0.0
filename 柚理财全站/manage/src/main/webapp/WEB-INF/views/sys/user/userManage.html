@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>用户基本信息</title>
+<#include "include/resources.html">
+</head>
+<body>
+<div class="wrapper">
+	<div class="row pt20">		
+		<div class="col-md-6">
+			<div class="search-form">
+				<form>
+					<div class="input-group">
+						<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入登录名、姓名或手机">
+						<span class="input-group-btn search-span">
+					    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/user/userList.html">搜索</button>
+					    </span>						    
+				    </div>
+			    </form>	
+			</div>
+			<div class="search-form-adv ml10">
+				<form>
+					<div class="btn-group">
+					  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+					  <ul class="dropdown-menu search-menu">
+					    <li class="input-group input-group-sm"><span>用户名</span><input type="text" class="form-control" name="userName" /></li>
+					    <li class="input-group input-group-sm"><span>姓名</span><input type="text" class="form-control" name="realName" /></li>
+					    <li class="input-group input-group-sm"><span>手机</span><input type="text" class="form-control" name="mobile" /></li>							    
+					    <li><button class="btn btn-sm btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/user/userList.html">查询</button></li>
+					  </ul>							  
+					</div>
+					<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+				</form>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="tool-btns">
+				<@shiro.hasPermission name="set:sys:user:add">
+				<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.addFun(this)" data-tid="jqGrid" data-url="/sys/operator/operatorAddPage.html">新增</button>
+				</@shiro.hasPermission>
+				<@shiro.hasPermission name="set:sys:user:edit">
+				<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.editFun(this)" data-tid="jqGrid" data-url="/sys/operator/operatorEditPage.html">编辑</button>
+				</@shiro.hasPermission>
+				<@shiro.hasPermission name="set:sys:user:del">
+				<button type="button" class="btn btn-warning" onclick="$.fn.treeGridOptions.deleteFun(this)" data-tid="jqGrid" data-url="/sys/operator/operatorDel.html">删除</button>
+				</@shiro.hasPermission>
+			</div>			
+		</div>
+	</div>
+	<div class="row mt20">
+		<div class="col-md-12">
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+	</div>
+    <script type="text/javascript"> 	
+    	<@dictFormatter type = "userStatus" />	
+        $(document).ready(function () {
+        	//表格初始化
+        	$("#jqGrid").jqTreeGrid({
+        		url: '/user/userList.html',
+        		
+        		idField:"id",
+                colModel: [
+                    { label: 'id', name: 'id', width: 150,hidden:true },
+					{ label: '用户名', name: 'userName', width: 150 },
+					{ label: '姓名', name: 'realName', width: 150 },
+					{ label: '手机', name: 'mobile', width: 150 },
+					{ label: '添加时间', name: 'createTime', width: 200,
+						formatter: 'date',
+						formatoptions: {
+							srcformat: 'u',
+							newformat: 'Y-m-d'
+						} },
+					{ label: '用户状态', name: 'status', width: 120,formatter: userStatusFormatter },				
+                ],
+        	}).jqGrid("setFrozenColumns").navGrid('#jqGridPager',		            
+		            { edit: false, add: false, del: false, search: false, refresh: true, view: false, position: "left", cloneToTop: false }
+		   	);
+       });
+  </script>	
+</body>
+</html>

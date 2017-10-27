@@ -1,0 +1,300 @@
+<div class="form-tips-content">
+	<input type="hidden" id="image_server_url" value="${image_server_url}">
+	<form class="form-horizontal" action="/loan/borrow/borrowVerify.html" id="form" role="form">
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">借款名称：</label>
+					<div class="input-box-read">
+						<p>${borrow.projectName!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="riskLevelName" class="control-label form-label">风险等级：</label>
+					<div class="input-box-read">
+						<p>${borrow.riskLevelName!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="userName" class="control-label form-label">借款方：</label>
+					<div class="input-box-read">						
+						<p>${borrow.userName!}</p>						
+					</div>
+				</div>
+			</li>			
+			<li>
+				<div class="form-group">
+					<label for="account" class="control-label form-label">借款总金额：</label>
+					<div class="input-box-read">
+						<p>${borrow.account!}元</p>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="apr" class="control-label form-label">年化利率：</label>
+					<div class="input-box-read">
+						<p>${borrow.apr!}&nbsp;%</p>						
+					</div>					
+				</div>
+			</li>			
+			<li>
+				<div class="form-group">
+					<label for="borrowUse" class="control-label form-label">借款用途：</label>
+					<div class="input-box-read">
+						<p>${borrow.borrowUse!}</p>
+					</div>					
+				</div>
+			</li>		
+			<li>
+				<div class="form-group">
+					<label for="borrowUse" class="control-label form-label">标的类别：</label>
+					<div class="input-box-read">
+						<p>${borrow.projectType!}</p>
+					</div>					
+				</div>
+			</li>	
+			<li>
+				<div class="form-group">
+					<label for="timeLimit" class="control-label form-label">借款期限：</label>
+					<div class="input-box-read">
+						<p>${borrow.timeLimit!} <#if borrow.timeType == 0 >个月<#else>天</#if></p>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="lowestAccount" class="control-label form-label">最低起投金额：</label>
+					<div class="input-box-read">
+						<p>${borrow.lowestAccount!}元</p>
+					</div>					
+				</div>
+			</li>
+			<#if (borrow.stepAccount?? && borrow.stepAccount > 0) >
+			<li>
+				<div class="form-group">
+					<label for="lowestAccount" class="control-label form-label">递增金额：</label>
+					<div class="input-box-read">
+						<p>${borrow.stepAccount}元</p>
+					</div>					
+				</div>
+			</li>
+			</#if>
+			<li>
+				<div class="form-group">
+					<label for="mostAccount" class="control-label form-label">最高投资总额：</label>
+					<div class="input-box-read">
+						<p>${borrow.mostAccount!}元</p>
+					</div>
+				</div>
+			</li>
+	  		<li>
+				<div class="form-group">
+			      <label for="sort" class="control-label form-label">计息方式：</label>
+			      <div class="input-box-read">
+						<p><#if borrow.interestStyle == '1'>
+							 成立计息
+						<#else>
+							<b>T</b>+${borrow.interestStartDays!}计息  （T为交易登记日，交易登记日时间段 ${borrow.interestTime!'00'} +24h）
+						</#if>
+						</p>
+			      </div>
+			    </div>	
+	  		</li>	  					
+			<li>
+				<div class="form-group">
+			      	<label for="sort" class="control-label form-label">还款方式：</label>
+			      	<div class="input-box-read">
+			      		<p><@linkage name="repayStyle" id="repayStyle" plantext="plantext" nid="repayStyle" class="form-control" default="${borrow.repayStyle}" /></p>					
+					</div>
+			    </div>	
+	  		</li>
+	  		<li <#if borrow.repayStyle=='3' || borrow.repayStyle=='5'>style="display:black;"<#else>style="display:none;"</#if>  >
+				<div class="form-group" >
+				<label for="fixedRepayDay" class="control-label form-label">固定还款日：</label>
+					<div class="input-box-read">
+						<p>${borrow.fixedRepayDay!'无'}</p>
+					</div>					
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="isPawn" class="control-label form-label">是否有抵押物：</label>
+					<div class="input-box-read">
+						<p><#if (mtgList?size > 0) >是<#else>否</#if></p>
+					</div>					
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="borrowUse" class="control-label form-label">抵押物资料：</label>
+					<div class="" style="padding-top: 7px;">
+						<div id="uploadGuaranteeBox1" class="uploadWrap" data-arr="uploadFile1">
+					    	<ul id="businessPagePic1" class="photoUpload">	
+					    		<#if (mtgList?size > 0) >				        	
+					            <#list mtgList as item>
+					            <li data-mum="${item.uuid!}">
+					               <img src="${image_server_url}${item.filePath!}"/>
+					           	</li>
+								</#list>
+								<#else>无
+								</#if>								
+					        </ul>
+					    </div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="isVouch" class="control-label form-label">是否担保：</label>
+					<div class="input-box-read">
+						<p><#if (borrow.isVouch?? && borrow.isVouch==1) >是<#else>否</#if></p>
+					</div>					
+				</div>
+			</li>
+			<#if (borrow.isVouch?? && borrow.isVouch==1) && vouchUser??>			
+			<li>
+				<div class="form-group">
+					<label for="vouchId" class="control-label form-label">担保机构：</label>
+					<div class="input-box-read">
+						<p>${vouchUser}</p>
+					</div>				
+				</div>
+			</li>
+			</#if>
+			<li>
+				<div class="form-group">
+					<label for="borrowManageRate" class="control-label form-label">借款管理费：</label>
+					<div class="input-box-read">
+						<p>${borrow.borrowManageRate}&nbsp;%</p>
+					</div>					
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="interestManageRate" class="control-label form-label">利息管理费：</label>
+					<div class="input-box-read">
+						<p>${borrow.interestManageRate}&nbsp;%</p>
+					</div>					
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="interestManageRate" class="control-label form-label">逾期罚息利率：</label>
+					<div class="input-box-read">
+						<p>${borrow.overdueFeeRate*100}&nbsp;%</p>
+					</div>					
+				</div>
+			</li>
+			<li class="full-width">
+				<div class="form-group">
+					<label for="pwd" class="control-label form-label">借款资料：</label>
+					<div class="">
+						<div id="uploadGuaranteeBox2" class="uploadWrap" data-arr="uploadFile2">
+					    	<ul id="borrowPagePic2" class="photoUpload">					        						            
+					            <#if picList??><#list picList as item>
+					            <li data-mum="${item.uuid!}">
+					               <img src="${image_server_url}${item.filePath!}"/>
+					           	</li>
+								</#list></#if>	
+					            
+					        </ul>
+					    </div>
+					</div>
+				</div>
+			</li>
+			
+			<li class="full-width">
+				<div class="form-group">
+					<label for="remark" class="control-label form-label">借款详情：</label>
+					<div class="textarea-box-read">
+						${borrow.content}
+					</div>
+				</div>
+			</li>
+			<li class="full-width">
+				<div class="form-group">
+					<label for="remark" class="control-label form-label">添加时间：</label>
+					<div class="input-box-read">
+						<p>${borrow.createTime?string("yyyy-MM-dd HH:mm:ss")}</p>
+					</div>
+				</div>
+			</li>
+			<li class="full-width">
+				<div class="form-group">
+					<label for="remark" class="control-label form-label">是否通过：</label>
+					<div class="input-checkbox-box">
+						<input type="radio" id="status2" value="2" name="status"><label for="status2">通过</label>
+						<input type="radio" id="status3" value="3" name="status" checked><label for="status3">不通过</label>
+					</div>
+				</div>
+			</li>
+			<li class="full-width">
+				<div class="form-group">
+					<label for="remark" class="control-label form-label">备注<span style="color:red;">*</span>：</label>
+					<div class="col-sm-8" style="height:55px;">
+						<textarea rows="" cols=""  class="form-control" name="verifyRemark" required maxLength="128"></textarea>
+					</div>
+				</div>
+			</li>
+			
+		</ul>
+		<div class="detail" style="display:none;"> 
+			<h3>请确认审核信息：</h3>
+			<p style="padding-top:10px;">产品名称：${borrow.projectName!}</p>
+			<p>年利率：${borrow.apr!}%</p>
+			<p>资金账户：${borrow.userName!}</p>
+			<p>产品金额：${borrow.account!}元</p>
+		</div>
+		<input type="hidden" name="uuid" value="${borrow.uuid}"/>
+		<input type="hidden" name="projectId" value="${borrow.projectId}"/>
+		<@token name="verifyBorrowToken"/>
+	</form>
+</div>
+<script src="${theme_dir}/static/js/plugins/jquery.suggest.js"></script>
+<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+<script src="${theme_dir}/static/js/upload.js"></script>
+<script>
+var str =  $(".detail").html();
+$("#form").validate({
+	submitHandler: function(form) {
+		layer.alert(str, {
+			icon: 6,
+			cancel: function(index){
+				layer.close(index);
+				return false; 
+			}
+		}, function(index) {						
+			layer.close(index);
+			$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						icon: 6,
+						cancel: function(index){
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入 
+  						}
+					}, function() {
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入  
+					});
+				} else {
+					layer.alert(data.msg, {
+						icon: 5
+					});
+				}
+			}
+		});
+		});	
+		
+	}
+})
+
+</script>

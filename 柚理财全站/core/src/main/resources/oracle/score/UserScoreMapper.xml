@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.score.mapper.UserScoreMapper">
+	<resultMap type="com.rd.ifaes.core.score.domain.UserScore" id="userScoreResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="totalScore" column="TOTAL_SCORE"/>
+		<result property="useScore" column="USE_SCORE"/>
+		<result property="noUseScore" column="NO_USE_SCORE"/>
+		<result property="expenseScore" column="EXPENSE_SCORE"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="userName" column="USER_NAME"/>
+		<result property="mobile" column="MOBILE"/>
+		<result property="realName" column="REAL_NAME"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		TOTAL_SCORE,
+		USE_SCORE,
+		NO_USE_SCORE,
+		EXPENSE_SCORE,
+		CREATE_TIME
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{totalScore},
+		#{useScore},
+		#{noUseScore},
+		#{expenseScore},
+		#{createTime}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="keywords != null and keywords != ''">and u.USER_NAME like '%'||#{keywords}||'%'</if>
+			<if test="totalScore != null">and TOTAL_SCORE = #{totalScore}</if>
+			<if test="useScore != null">and USE_SCORE = #{useScore}</if>
+			<if test="noUseScore != null">and NO_USE_SCORE = #{noUseScore}</if>
+			<if test="expenseScore != null">and EXPENSE_SCORE = #{expenseScore}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if>  -->
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.score.domain.UserScore">
+		insert into user_score( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">	
+		BEGIN	
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into user_score( <include refid="table_columns" /> ) 
+		values 
+		( 
+		#{item.uuid},
+				#{item.userId},
+				#{item.totalScore},
+				#{item.useScore},
+				#{item.noUseScore},
+				#{item.expenseScore},
+				#{item.createTime}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from user_score
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update user_score set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update user_score set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.score.domain.UserScore">
+		update user_score 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="totalScore != null">TOTAL_SCORE = #{totalScore},</if>
+			<if test="useScore != null">USE_SCORE = #{useScore},</if>
+			<if test="noUseScore != null">NO_USE_SCORE = #{noUseScore},</if>
+			<if test="expenseScore != null">EXPENSE_SCORE = #{expenseScore},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="userScoreResultMap">
+        select <include refid="table_columns" />
+        from user_score
+    </select>
+    <select id="findList" resultMap="userScoreResultMap">
+        select 
+        	us.UUID,
+			us.USER_ID,
+			us.TOTAL_SCORE,
+			us.USE_SCORE,
+			us.NO_USE_SCORE,
+			us.EXPENSE_SCORE,
+			us.CREATE_TIME,
+			u.user_name
+        from 
+        	user_score  us 
+        inner join users u
+        on
+        	us.user_id = u.uuid
+        <include refid="page_where" />
+    </select>
+
+    <select id="findByUserIds" resultMap="userScoreResultMap">
+         select UUID,USER_ID,TOTAL_SCORE,USE_SCORE,NO_USE_SCORE,EXPENSE_SCORE,CREATE_TIME
+         from user_score
+         <where>
+		    user_id in 
+		    <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+		       #{item.uuid}
+		    </foreach>
+		 </where>
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from user_score
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="userScoreResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_score
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+    <select id="getUserScore" resultMap="userScoreResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_score
+		where user_id = #{userId}
+	</select>
+	<update id="updateUserScore">
+		update user_score set  total_score = total_score + #{useScore}+#{noUseScore},use_score = use_score + #{useScore},
+		no_use_score = no_use_score + #{noUseScore},expense_score = expense_score + #{expenseScore}
+		where user_id = #{userId} 
+		and total_score + #{useScore}+#{noUseScore} &gt;=0 
+		and use_score + #{useScore} &gt;=0 
+		and no_use_score + #{noUseScore} &gt;=0 
+		and expense_score + #{expenseScore} &gt;=0   
+	</update>
+
+</mapper>

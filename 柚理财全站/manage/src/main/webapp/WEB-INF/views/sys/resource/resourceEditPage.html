@@ -1,0 +1,62 @@
+<div class="form-tips-content">
+	<form class="form-horizontal" action="/sys/resource/resourceEdit.html" id="form" role="form">
+		<ul class="form-item">
+			<li class="full-width">
+				<div class="form-group">
+					<label for="resName" class="control-label form-label">名称：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="resName" id="resName" value="${resource.resName}" placeholder="请输入名称" required>
+					</div>
+				</div>
+			</li>
+			<li class="full-width">
+				<div class="form-group">
+					<label for="resText" class="control-label form-label">值：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="resText" id="resText" value="${resource.resText}" placeholder="请输入值" required>
+					</div>
+				</div>
+			</li>
+			<li class="full-width">
+				<div class="form-group">
+					<label for="resLanguage" class="control-label form-label">类型：</label>
+					<div class="input-box input-radio">
+						<@linkage name="resLanguage" nid="interLanguage" default="${resource.resLanguage}" class="form-control" />
+					</div>
+				</div>
+			</li>
+
+		</ul>
+		<input type="hidden" name="uuid" value="${resource.uuid}" />
+		<@token/>
+
+	</form>
+</div>
+<script>
+$("#form").validate({
+	submitHandler: function(form) {	
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						icon: 6,
+						cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+					}, function() {
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入  
+					});
+				} else {
+					layer.alert(data.msg, {
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+})
+</script>

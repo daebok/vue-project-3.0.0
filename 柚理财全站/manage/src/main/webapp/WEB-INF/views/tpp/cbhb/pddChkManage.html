@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>充值对账</title>
+		<#include "include/resources.html">
+		<script type="text/javascript">
+			var url_list = "/tpp/cbhb/pddChkList.html";
+			$(document).ready(function() {	
+				$('#keywordsSearch').attr('data-url',url_list);
+				$('#conditionSearch').attr('data-url',url_list);	
+			});
+		</script>
+		<style>
+			.layui-layer-loading .layui-layer-loading3{width:200px!important;padding-left: 66px;color: #fff;line-height: 24px;}
+		</style>
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<!-- <form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入用户名、真实姓名来搜索">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/tpp/ufx/list.html">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	 -->
+					</div>					
+					<div class="search-form-adv ml10">
+						<form>
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							    <li class="input-group input-group-sm"><span>三方流水号</span><input type="text" class="form-control" name="tradeNo" /></li>							    
+							    <li class="input-group input-group-sm"><span>投资开始时间</span><input type="text" name="startTime" class="form-control layer-date" id="startTime"/></li>
+							    <li class="input-group input-group-sm"><span>投资截止时间</span><input type="text" name="endTime" class="form-control layer-date" id="endTime"/></li>
+							    <li><button class="btn btn-sm btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/tpp/ufx/list.html">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+						<div class="ulval hide"></div>
+						<input type="hidden" value="noval" class="noval">
+					</div>		
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+			<@dictFormatter type = "investType" />
+			<@dictFormatter type = "investStatus" />
+			<@dictFormatter type = "saleChannel" />
+
+			$(document).ready(function() {	
+				
+				//设置投资时间
+				var startTime= {
+					elem:'#startTime',
+					format: 'YYYY-MM-DD', //日期格式
+					istime: false, //是否开启时间选择
+					max:$('#endTime').val(),
+					event:'focus',
+					choose: function(dates){
+					    endTime.min=dates;
+					    endTime.start=dates;
+					}
+				};
+				//设置截止时间
+				var endTime=  {
+						elem:'#endTime',
+						format: 'YYYY-MM-DD', //日期格式
+						istime: false, //是否开启时间选择
+						min: $('#startTime').val(), //最小日期大于当前时间
+						event:'focus',
+						choose: function(dates){
+						    startTime.max=dates;
+					   }
+				};				
+				laydate(startTime);
+				laydate(endTime);
+				<@dictFormatter type = "userNature" />
+				<@dictFormatter type = "rechargeStatus" />
+				<@dictFormatter type = "rechargePayWay" />
+				<@dictFormatter type = "rechargeFeeType" />
+				//表格初始化		
+				$("#jqGrid").jqTreeGrid({
+						url : url_list,
+						multiselect : false,
+						colModel : [
+						       { label: 'id', name: 'uuid', width: 65, hidden:true},
+			                    { label: 'id', name: 'fee', width: 65, hidden:true},
+			                    { label: '用户名', name: 'userName',index:"user_name",width: 30},
+			                    { label: '认证名称', name: 'realName',index:"real_name",width: 15},
+			                    { label: '用户类型', name: 'userNature',index:"user_nature",width: 15,formatter: userNatureFormatter},
+								{ label: '充值金额', name: 'amount',index:"amount", width: 15
+								},
+								{ label: '到账金额', name: 'amount',index:"amount", width: 15,
+									formatter: function(value,index,row){
+										var fee = 0; 
+				            		  	if(row.fee == NaN || row.fee == undefined){
+				            		  	
+				            		  	}else{
+				            		  		fee = row.fee;
+				            		  	}
+					  					return value - fee;
+					  					
+					  				}
+								},
+								{ label: '手续费', name: 'fee',index:"fee", width: 15,
+									formatter: function(value,index,row){
+										var fee = 0;
+				            		  	if(row.fee == NaN || row.fee == undefined){
+				            		  	
+				            		  	}else{
+				            		  		fee = row.fee;
+				            		  	}
+					  					return fee;
+					  					
+					  				}
+					  			},
+								{ label: '承担方', name: 'feeType',index:"fee_type", width: 20,formatter: rechargeFeeTypeFormatter},
+								{ label: '充值类型', name: 'payWay',index:"pay_way", width: 15,formatter: rechargePayWayFormatter},
+								{ label: '状态', name: 'status',index:"status", width: 20,formatter: rechargeStatusFormatter},
+			                    { label: '交易流水号', name: 'orderNo',index:"order_no",width: 30},	
+								{ label: '充值时间', name: 'createTime',index:"create_time", width: 20,formatter: datetimeFormatter}
+			                    ],
+					}).jqGrid("setFrozenColumns").navGrid(
+					'#jqGridPager',
+					{
+						edit : false,
+						add : false,
+						del : false,
+						search : false,
+						refresh : true,
+						view : false,
+						position : "left",
+						cloneToTop : false
+					});
+				});
+			</script>
+		</div>
+	</body>
+</html>

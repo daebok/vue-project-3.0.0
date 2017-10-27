@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>债权列表</title>
+</head>
+<body>
+	<table>
+		<tr>
+			<td>债权名称</td>
+			<td>预期年化收益率</td>
+			<td>剩余期限</td>
+			<td>起投金额</td>
+			<td>债权总额</td>
+			<td>操作</td>
+		</tr>
+		<#if list??>
+			<#list list as item>
+				<tr>
+					<td>${item.bondName}</td>
+					<td>${item.apr}</td>
+					<td>${item.remainDays}</td>
+					<td>${item.bondLowestMoney}</td>
+					<td><#if item.soldCapital == 0><#else>剩余</#if>${item.remainMoney}</td>
+					<td><a href="/member/myBond/inBondModelDetail.html?id=${item.uuid}">立即投资</a></td>
+				</tr>
+			</#list>
+		</#if>
+	</table>
+</body>
+</html>

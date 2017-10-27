@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>${sectionName!''}</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
+    <meta content="telephone=no" name="format-detection" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <link rel="stylesheet" href="https://unpkg.com/mint-ui/lib/style.css">
+    <link rel="stylesheet" type="text/css" href="${mobileUrl}/themes/app/css/common.css" />
+    <link rel="stylesheet" type="text/css" href="${mobileUrl}/themes/app/css/theme.css" />
+    <link rel="stylesheet" type="text/css" href="${mobileUrl}/themes/app/css/base.css" />
+    <script type="text/javascript" src="${mobileUrl}/themes/app/js/get_client_width.min.js"></script>
+	<script type="text/javascript" src="${mobileUrl}/themes/app/js/jquery-3.1.1.min.js"></script>
+</head>
+<style>
+    body{
+        background: #F5F5F5;
+    }
+    .help-detail{
+        height: 100%;
+    }
+    .question{
+        width: 100%;
+        padding: 0 .15rem;
+        background: #fff;
+        height: .48rem;
+    }
+    .que-icon{
+        width: .15rem;
+        height: .18rem;
+        margin-top: .15rem;
+        float: left;
+        margin-right: .12rem;
+    }
+    .question span{
+        line-height: .48rem;
+    }
+    .knob{
+        width: .14rem;
+        float: right;
+        margin-top: .17rem;
+    }
+    .answer{
+        padding: .12rem .15rem;
+		display: none;
+    }
+    .answer p{
+        line-height: .2rem;
+        color: #666;
+    }
+
+</style>
+<body>
+    <div class="page" id="pageDetail">
+    	<mt-header class="bar-nav aui-border-b" title="充值提现">
+            <mt-button slot="left" icon="back"></mt-button>
+        </mt-header>
+        <div class="help-detail">
+            <ul>
+				<#if articleList?? && (articleList?size > 0)>
+					<#list articleList as item>
+						<li>
+							<div class="question aui-border-b clearfix">
+								<img src="${mobileUrl}/themes/app/images/me/icon_question.png" class="que-icon"/>
+								<span>${item.title!''}</span>
+								<img src="${mobileUrl}/themes/app/images/me/arrow_down.png" class="knob"/>
+							</div>
+							<div class="answer">
+								${item.content!''}
+							</div>
+						</li>
+					</#list>
+                </#if>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+	$(".help-detail ul li .question").click(function(){
+		if($(this).find(".knob").hasClass("switch")){
+			$(this).find(".knob").removeClass("switch").attr("src","${mobileUrl}/themes/app/images/me/arrow_down.png");
+		}else{
+			$(this).find(".knob").addClass("switch").attr("src","${mobileUrl}/themes/app/images/me/arrow_up.png");
+		}
+		$(this).siblings().toggle();
+	})
+</script>

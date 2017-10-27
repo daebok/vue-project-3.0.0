@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.user.mapper.UserSecurityAnswerMapper">
+	<resultMap type="com.rd.ifaes.core.user.domain.UserSecurityAnswer" id="userSecurityAnswerResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="questionFlag" column="QUESTION_FLAG"/>
+		<result property="answer" column="ANSWER"/>
+		<result property="sort" column="SORT"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="addIp" column="ADD_IP"/>
+		<result property="deleteFlag" column="DELETE_FLAG"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		QUESTION_FLAG,
+		ANSWER,
+		SORT,
+		CREATE_TIME,
+		ADD_IP,
+		DELETE_FLAG
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{questionFlag},
+		#{answer},
+		#{sort},
+		#{createTime},
+		#{addIp},
+		#{deleteFlag}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="questionFlag != null and questionFlag != ''">and QUESTION_FLAG = #{questionFlag}</if>
+            <if test="answer != null and answer != ''">and ANSWER = #{answer}</if>
+			<if test="sort != null">and SORT = #{sort}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="addIp != null and addIp != ''">and ADD_IP = #{addIp}</if>
+            <if test="deleteFlag != null and deleteFlag != ''">and DELETE_FLAG = #{deleteFlag}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by sort </if>
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.user.domain.UserSecurityAnswer">
+		insert into user_security_answer( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into user_security_answer( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+			#{item.uuid},
+			#{item.userId},
+			#{item.questionFlag},
+			#{item.answer},
+			#{item.sort},
+			#{item.createTime},
+			#{item.addIp},
+			#{item.deleteFlag}
+		)
+		</foreach>
+	</insert>
+	
+	<update id="deleteBatch">
+		update user_security_answer set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="uuid" open="(" separator="," close=")">  
+            #{uuid} 
+        </foreach>		
+	</update>
+	
+	<delete id="delete" parameterType="String">
+		delete from user_security_answer
+		where uuid = #{uuid}
+	</delete>
+
+	<update id="deleteLogic" parameterType="String">
+		update user_security_answer set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.user.domain.UserSecurityAnswer">
+		update user_security_answer 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="questionFlag != null and questionFlag != ''">QUESTION_FLAG = #{questionFlag},</if>
+            <if test="answer != null and answer != ''">ANSWER = #{answer},</if>
+			<if test="sort != null">SORT = #{sort},</if>
+            <if test="deleteFlag != null and deleteFlag != ''">DELETE_FLAG = #{deleteFlag}</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="userSecurityAnswerResultMap">
+        select <include refid="table_columns" />
+        from user_security_answer
+    </select>
+
+    <select id="findList" resultMap="userSecurityAnswerResultMap">
+        select <include refid="table_columns" />
+        from user_security_answer
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from user_security_answer
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="userSecurityAnswerResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_security_answer
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<!-- 获得一条随机问题 -->
+    <select id="getRandomQuestion" resultMap="userSecurityAnswerResultMap" parameterType="com.rd.ifaes.core.user.domain.UserSecurityAnswer" >
+		select <include refid="table_columns" />
+		from user_security_answer where user_id=#{userId} and delete_flag = #{deleteFlag}
+		<if test="questionFlag != null and questionFlag != ''">and QUESTION_FLAG != #{questionFlag}</if>
+		order by rand() limit 1
+	</select>	
+	
+</mapper>

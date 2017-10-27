@@ -1,0 +1,589 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.0.xsd
+	 	http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+     	http://www.springframework.org/schema/aop  http://www.springframework.org/schema/aop/spring-aop-4.0.xsd"
+	 	default-lazy-init="true">
+	   
+	    <!-- 自动扫描路径 -->
+	    <context:component-scan base-package="com.rd.ifaes" />
+
+        <!-- 配置调度任务-->
+	    <bean name="quartzScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	        <property name="configLocation" value="classpath:quartz.properties"/>
+	        <property name="applicationContextSchedulerContextKey" value="applicationContextKey"/>
+	        <property name="startupDelay" value="5" /> 
+	        <property name="triggers">
+	            <list>
+                    <ref bean="repaymentTimeoutHandleTrigger"/>
+	                <ref bean="investTimeoutHandleTrigger"/>
+	                <ref bean="bondInvestOverTimeHandleTrigger"/>
+	                <ref bean="projectCreateProtocolTrigger"/>
+	                <ref bean="autoStopSaleProjectTrigger"/>
+	                <ref bean="bondRemainDaysChangeByDayTrigger"/>
+	                <ref bean="bondMaxBondAprChangeByDayTrigger"/>
+	                <ref bean="autoCancleBondTrigger"/>
+	                <ref bean="doAutoInvestTrigger"/>
+	                <ref bean="calcuYesterdayEarnTrigger"/>
+	                <!-- <ref bean="setAccountCashTrigger"/> -->
+	                <ref bean="setAccountRechargeTrigger"/>
+	                <ref bean="doCouponExpiredHandleTrigger"/>
+	                <ref bean="doInvestBespeakRemindTrigger"/>
+	                <ref bean="overdueInterestHandleTrigger"/>
+	                <ref bean="autoRemoveProjectCacheTrigger"/>
+	                <ref bean="autoDealExclusiveTrigger"/>
+	                <ref bean="autoDealBirthdayTrigger"/>
+	                <ref bean="deductionVipGrowthValueTrigger"/>
+	                <ref bean="scannerAccountCompareErrorTrigger"/>
+	                <ref bean="doUnFreezeAccountTrigger"/>
+                    <ref bean="doStatisticTrigger"/>
+                    <ref bean="queryCbhbCashStatusTrigger"/>
+	            </list>
+	        </property>
+	        <property name="jobDetails">
+	            <list>
+                    <ref bean="repaymentTimeoutHandle"/>
+	                <ref bean="investTimeoutHandle"/>
+	                <ref bean="bondInvestOverTimeHandle"/>
+	                <ref bean="projectCreateProtocol"/>
+	                <ref bean="autoStopSaleProject"/>
+	                <ref bean="bondRemainDaysChangeByDay"/>
+	                <ref bean="bondMaxBondAprChangeByDay"/>
+	                <ref bean="autoCancleBond"/>
+	                <ref bean="doAutoInvest"/>
+	                <ref bean="calcuYesterdayEarn"/>
+	                <!-- <ref bean="setAccountCash"/> -->
+	                <ref bean="setAccountRecharge"/>
+	                <ref bean="doCouponExpiredHandle"/>
+	                <ref bean="doInvestBespeakRemind"/>
+	                <ref bean="overdueInterestHandle"/>
+	                <ref bean="autoRemoveProjectCache"/>
+	                <ref bean="autoDealExclusive"/>
+	                <ref bean="autoDealBirthday"/>
+	                <ref bean="deductionVipGrowthValue"/>
+	                <ref bean="scannerAccountCompareError"/>
+	                <ref bean="doUnFreezeAccount"/>
+                    <ref bean="doStatistic"/>
+                    <ref bean="queryCbhbCashStatus"/>
+	            </list>
+	        </property>
+	    </bean>
+	    
+	    <bean name="repaymentTimeoutHandleTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+            <property name="jobDetail" ref="repaymentTimeoutHandle"/>
+            <property name="cronExpression">
+                <value>0 30 10 * * ?</value>
+            </property>
+        </bean>
+        
+        <bean id="repaymentTimeoutHandle" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+            <property name="jobClass">  
+                <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+            </property>   
+            <property name="jobDataAsMap">
+                <map>
+                    <entry key="targetObject" value="quartzJob" />
+                    <entry key="targetMethod" value="repaymentTimeoutHandle" />
+                 </map>
+             </property>
+            <property name="durability" value="true" />     
+            <property name="requestsRecovery" value="true" />
+        </bean>
+	    
+        <!-- 投资订单超时处理(订单状态从待支付=》超时取消） 时间间隔(5分钟)  -->
+	    <bean name="investTimeoutHandleTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	        <property name="jobDetail" ref="investTimeoutHandle"/>
+	        <property name="cronExpression">
+	            <value>0 0/5 * * * ?</value>
+	        </property>
+	    </bean>
+	    
+		<bean id="investTimeoutHandle" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+			<property name="jobClass">  
+	            <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+	        </property>   
+	        <property name="jobDataAsMap">
+	            <map>
+	                <entry key="targetObject" value="quartzJob" />
+	                <entry key="targetMethod" value="investTimeoutHandle" />
+	             </map>
+	         </property>
+			<property name="durability" value="true" />     
+	        <property name="requestsRecovery" value="true" />
+		</bean> 
+		
+		<!-- 债权投资订单超时处理(订单状态从待支付=》超时取消） 时间间隔(5分钟) -->
+	    <bean name="bondInvestOverTimeHandleTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	        <property name="jobDetail" ref="bondInvestOverTimeHandle"/>
+	        <property name="cronExpression">
+	            <value>0 0/5 * * * ?</value>
+	        </property>
+	    </bean>
+	    
+		<bean id="bondInvestOverTimeHandle" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+			<property name="jobClass">  
+	            <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+	        </property>   
+	        <property name="jobDataAsMap">
+	            <map>
+	                <entry key="targetObject" value="quartzJob" />
+	                <entry key="targetMethod" value="bondInvestOverTimeHandle" />
+	             </map>
+	         </property>
+			<property name="durability" value="true" />     
+	        <property name="requestsRecovery" value="true" />
+		</bean> 
+		
+		
+		<!--  每隔30分钟  搜索前30分钟  已经成立审核的产品和借贷 进行生成协议处理  -->
+	    <bean name="projectCreateProtocolTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	        <property name="jobDetail" ref="projectCreateProtocol"/>
+	        <property name="cronExpression">
+	            <value>0 0/30 * * * ?</value>
+	        </property>
+	    </bean>
+	    
+		<bean id="projectCreateProtocol" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+			<property name="jobClass">  
+	            <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+	        </property>   
+	        <property name="jobDataAsMap">
+	            <map>
+	                <entry key="targetObject" value="quartzJob" />
+	                <entry key="targetMethod" value="projectCreateProtocol" />
+	             </map>
+	         </property>
+			<property name="durability" value="true" />     
+	        <property name="requestsRecovery" value="true" />
+		</bean> 
+		
+		<!-- 项目自动下架 -->
+	    <bean name="autoStopSaleProjectTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	        <property name="jobDetail" ref="autoStopSaleProject"/>
+	        <property name="cronExpression">
+	            <value>0/10 * * * * ?</value>
+	        </property>
+	    </bean>
+	    
+		<bean id="autoStopSaleProject" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+			<property name="jobClass">  
+	            <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+	        </property>   
+	        <property name="jobDataAsMap">
+	            <map>
+	                <entry key="targetObject" value="quartzJob" />
+	                <entry key="targetMethod" value="autoStopSaleProject" />
+	             </map>
+	         </property>
+			<property name="durability" value="true" />     
+	        <property name="requestsRecovery" value="true" />
+		</bean> 
+		
+		<!-- 债权剩余期限每日更新 每日0点10分更新 0 10 0 * * ? -->
+	    <bean name="bondRemainDaysChangeByDayTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	        <property name="jobDetail" ref="bondRemainDaysChangeByDay"/>
+	        <property name="cronExpression">
+	            <value>0 0/30 * * * ?</value>
+	        </property>
+	    </bean>
+	    
+		<bean id="bondRemainDaysChangeByDay" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+			<property name="jobClass">  
+	            <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+	        </property>   
+	        <property name="jobDataAsMap">
+	            <map>
+	                <entry key="targetObject" value="quartzJob" />
+	                <entry key="targetMethod" value="bondRemainDaysChangeByDay" />
+	             </map>
+	         </property>
+			<property name="durability" value="true" />     
+	        <property name="requestsRecovery" value="true" />
+		</bean> 
+		
+		<!-- 由于剩余期限的利息每天变化导致最高折溢价率的改变 所以债权的折溢价率等于最高折溢价率的标 需要更新掉他的债权折溢价率 -->
+	    <bean name="bondMaxBondAprChangeByDayTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	        <property name="jobDetail" ref="bondMaxBondAprChangeByDay"/>
+	        <property name="cronExpression">
+	            <value>* 0/30 * * * ?</value>
+	        </property>
+	    </bean>
+	    
+		<bean id="bondMaxBondAprChangeByDay" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+			<property name="jobClass">  
+	            <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+	        </property>   
+	        <property name="jobDataAsMap">
+	            <map>
+	                <entry key="targetObject" value="quartzJob" />
+	                <entry key="targetMethod" value="bondMaxBondAprChangeByDay" />
+	             </map>
+	         </property>
+			<property name="durability" value="true" />     
+	        <property name="requestsRecovery" value="true" />
+		</bean> 
+		
+		<!-- 债权标超过有效期和还款日 自动撤回 30分钟执行一次 0 0/30 * * * ? -->
+	    <bean name="autoCancleBondTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	        <property name="jobDetail" ref="autoCancleBond"/>
+	        <property name="cronExpression">
+	            <value>* 0/30 * * * ?</value>
+	        </property>
+	    </bean>
+	    
+		<bean id="autoCancleBond" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+			<property name="jobClass">  
+	            <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+	        </property>   
+	        <property name="jobDataAsMap">
+	            <map>
+	                <entry key="targetObject" value="quartzJob" />
+	                <entry key="targetMethod" value="autoCancleBond" />
+	             </map>
+	         </property>
+			<property name="durability" value="true" />     
+	        <property name="requestsRecovery" value="true" />
+		</bean> 
+		
+		<!-- 每5分钟 针对倒计时产品执行自动投标使用 -->
+	    <bean name="doAutoInvestTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	        <property name="jobDetail" ref="doAutoInvest"/>
+	        <property name="cronExpression">
+	            <value>0 */5 * * * ?</value>
+	        </property>
+	    </bean>
+	    
+		<bean id="doAutoInvest" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+			<property name="jobClass">  
+	            <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+	        </property>   
+	        <property name="jobDataAsMap">
+	            <map>
+	                <entry key="targetObject" value="quartzJob" />
+	                <entry key="targetMethod" value="doAutoInvest" />
+	             </map>
+	         </property>
+			<property name="durability" value="true" />     
+	        <property name="requestsRecovery" value="true" />
+		</bean> 
+		
+		 <!-- 统计昨日收益 -->
+	    <bean name="calcuYesterdayEarnTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	        <property name="jobDetail" ref="calcuYesterdayEarn"/>
+	        <property name="cronExpression">
+	            <value>0 0 1 * * ?</value>
+	        </property>
+	    </bean>
+	    
+		<bean id="calcuYesterdayEarn" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+			<property name="jobClass">  
+	            <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+	        </property>   
+	        <property name="jobDataAsMap">
+	            <map>
+	                <entry key="targetObject" value="quartzJob" />
+	                <entry key="targetMethod" value="calcuYesterdayEarn" />
+	             </map>
+	         </property>
+			<property name="durability" value="true" />     
+	        <property name="requestsRecovery" value="true" />
+		</bean> 
+		
+		<!-- 每隔30分钟处理一次提现失效订单 -->
+	    <!-- <bean name="setAccountCashTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	        <property name="jobDetail" ref="setAccountCash"/>
+	        <property name="cronExpression">
+	            <value>0 0/30 * * * ?</value>
+	        </property>
+	    </bean> 
+	    
+		<bean id="setAccountCash" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+			<property name="jobClass">  
+	            <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+	        </property>   
+	        <property name="jobDataAsMap">
+	            <map>
+	                <entry key="targetObject" value="quartzJob" />
+	                <entry key="targetMethod" value="setAccountCash" />
+	             </map>
+	         </property>
+			<property name="durability" value="true" />     
+	        <property name="requestsRecovery" value="true" />
+		</bean> -->
+		
+		<!-- 修改充值状态 -->
+	    <bean name="setAccountRechargeTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	        <property name="jobDetail" ref="setAccountRecharge"/>
+	        <property name="cronExpression">
+	            <value>0 0 1 * * ?</value>
+	        </property>
+	    </bean>
+	    
+		<bean id="setAccountRecharge" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+			<property name="jobClass">  
+	            <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+	        </property>   
+	        <property name="jobDataAsMap">
+	            <map>
+	                <entry key="targetObject" value="quartzJob" />
+	                <entry key="targetMethod" value="setAccountRecharge" />
+	             </map>
+	         </property>
+			<property name="durability" value="true" />     
+	        <property name="requestsRecovery" value="true" />
+		</bean> 
+		
+		<!-- 每5分钟 红包加息券过期处理 -->
+	    <bean name="doCouponExpiredHandleTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	        <property name="jobDetail" ref="doCouponExpiredHandle"/>
+	        <property name="cronExpression">
+	            <value>0 */5 * * * ?</value>
+	        </property>
+	    </bean>
+	    
+		<bean id="doCouponExpiredHandle" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+			<property name="jobClass">  
+	            <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+	        </property>   
+	        <property name="jobDataAsMap">
+	            <map>
+	                <entry key="targetObject" value="quartzJob" />
+	                <entry key="targetMethod" value="doCouponExpiredHandle" />
+	             </map>
+	         </property>
+			<property name="durability" value="true" />     
+	        <property name="requestsRecovery" value="true" />
+		</bean> 
+		
+		<!-- 每5分钟 投资预约提醒 -->
+	    <bean name="doInvestBespeakRemindTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	        <property name="jobDetail" ref="doInvestBespeakRemind"/>
+	        <property name="cronExpression">
+	            <value>0 */5 * * * ?</value>
+	        </property>
+	    </bean>
+	    
+		<bean id="doInvestBespeakRemind" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+			<property name="jobClass">  
+	            <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+	        </property>   
+	        <property name="jobDataAsMap">
+	            <map>
+	                <entry key="targetObject" value="quartzJob" />
+	                <entry key="targetMethod" value="doInvestBespeakRemind" />
+	             </map>
+	         </property>
+			<property name="durability" value="true" />     
+	        <property name="requestsRecovery" value="true" />
+		</bean> 
+		
+		<!-- 每天凌晨2点整 逾期利息处理 -->
+	    <bean name="overdueInterestHandleTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	        <property name="jobDetail" ref="overdueInterestHandle"/>
+	        <property name="cronExpression">
+	            <value>0 0/10 * * * ?</value>
+	        </property>
+	    </bean>
+	    
+		<bean id="overdueInterestHandle" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+			<property name="jobClass">  
+	            <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+	        </property>   
+	        <property name="jobDataAsMap">
+	            <map>
+	                <entry key="targetObject" value="quartzJob" />
+	                <entry key="targetMethod" value="overdueInterestHandle" />
+	             </map>
+	         </property>
+			<property name="durability" value="true" />     
+	        <property name="requestsRecovery" value="true" />
+		</bean> 
+		
+		<!-- 自动清除项目缓存 -->
+	    <bean name="autoRemoveProjectCacheTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	        <property name="jobDetail" ref="autoRemoveProjectCache"/>
+	        <property name="cronExpression">
+	            <value>0/10 * * * * ?</value>
+	        </property>
+	    </bean>
+	    
+		<bean id="autoRemoveProjectCache" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+			<property name="jobClass">  
+	            <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+	        </property>   
+	        <property name="jobDataAsMap">
+	            <map>
+	                <entry key="targetObject" value="quartzJob" />
+	                <entry key="targetMethod" value="autoRemoveProjectCache" />
+	             </map>
+	         </property>
+			<property name="durability" value="true" />     
+	        <property name="requestsRecovery" value="true" />
+		</bean> 
+		
+		<!-- 处理过期VIP专享礼包(每天0点10份) -->
+	    <bean name="autoDealExclusiveTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	        <property name="jobDetail" ref="autoDealExclusive"/>
+	        <property name="cronExpression">
+	            <value>0 0 */1 * * ?</value>
+	        </property>
+	    </bean>
+	    
+		<bean id="autoDealExclusive" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+			<property name="jobClass">  
+	            <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+	        </property>   
+	        <property name="jobDataAsMap">
+	            <map>
+	                <entry key="targetObject" value="quartzJob" />
+	                <entry key="targetMethod" value="autoDealExclusive" />
+	             </map>
+	         </property>
+			<property name="durability" value="true" />     
+	        <property name="requestsRecovery" value="true" />
+		</bean> 
+		
+		<!-- 处理过期生日礼包(每个月第一天) -->
+	    <bean name="autoDealBirthdayTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	        <property name="jobDetail" ref="autoDealBirthday"/>
+	        <property name="cronExpression">
+	            <value>0 0 */1 * * ?</value>
+	        </property>
+	    </bean>
+	    
+		<bean id="autoDealBirthday" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+			<property name="jobClass">  
+	            <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+	        </property>   
+	        <property name="jobDataAsMap">
+	            <map>
+	                <entry key="targetObject" value="quartzJob" />
+	                <entry key="targetMethod" value="autoDealBirthday" />
+	             </map>
+	         </property>
+			<property name="durability" value="true" />     
+	        <property name="requestsRecovery" value="true" />
+		</bean> 
+		
+		<!-- 扣除VIP成长值 -->
+	    <bean name="deductionVipGrowthValueTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	        <property name="jobDetail" ref="deductionVipGrowthValue"/>
+	        <property name="cronExpression">
+	            <value>0 0 1 * * ?</value>
+	        </property>
+	    </bean>
+	    
+		<bean id="deductionVipGrowthValue" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+			<property name="jobClass">  
+	            <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+	        </property>   
+	        <property name="jobDataAsMap">
+	            <map>
+	                <entry key="targetObject" value="quartzJob" />
+	                <entry key="targetMethod" value="deductionVipGrowthValue" />
+	             </map>
+	         </property>
+			<property name="durability" value="true" />     
+	        <property name="requestsRecovery" value="true" />
+		</bean> 
+		
+		<!-- 每天下午17点30扫描昨天17点30~今天17点30 所有有资金操作的用户的本地和第三方资金的对比 找出差异的用户 并发短信通知运维人员 -->
+	    <bean name="scannerAccountCompareErrorTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	        <property name="jobDetail" ref="scannerAccountCompareError"/>
+	        <property name="cronExpression">
+	            <value>0 30 18 * * ?</value>
+	        </property>
+	    </bean>
+	    
+		<bean id="scannerAccountCompareError" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+			<property name="jobClass">  
+	            <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+	        </property>   
+	        <property name="jobDataAsMap">
+	            <map>
+	                <entry key="targetObject" value="quartzJob" />
+	                <entry key="targetMethod" value="scannerAccountCompareError" />
+	             </map>
+	         </property>
+			<property name="durability" value="true" />     
+	        <property name="requestsRecovery" value="true" />
+		</bean> 
+		
+		<!-- 每10分钟 进行一次解冻操作 -->
+	    <bean name="doUnFreezeAccountTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	        <property name="jobDetail" ref="doUnFreezeAccount"/>
+	        <property name="cronExpression">
+	            <value>0 */10 * * * ?</value>
+	        </property>
+	    </bean>
+	    
+		<bean id="doUnFreezeAccount" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+			<property name="jobClass">  
+	            <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+	        </property>   
+	        <property name="jobDataAsMap">
+	            <map>
+	                <entry key="targetObject" value="quartzJob" />
+	                <entry key="targetMethod" value="doUnFreezeAccount" />
+	             </map>
+	         </property>
+			<property name="durability" value="true" />     
+	        <property name="requestsRecovery" value="true" />
+		</bean> 
+		
+		
+		<!-- 每10分钟 进行一次解冻操作 -->
+        <bean name="doStatisticTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+            <property name="jobDetail" ref="doStatistic"/>
+            <property name="cronExpression">
+                <value>0 0 1 * * ?</value>
+            </property>
+        </bean>
+        
+        <bean id="doStatistic" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+            <property name="jobClass">  
+                <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+            </property>   
+            <property name="jobDataAsMap">
+                <map>
+                    <entry key="targetObject" value="quartzJob" />
+                    <entry key="targetMethod" value="doStatistic" />
+                 </map>
+             </property>
+            <property name="durability" value="true" />     
+            <property name="requestsRecovery" value="true" />
+        </bean> 
+        
+        <!-- 每10分钟 进行一次解冻操作 -->
+        <bean name="queryCbhbCashStatusTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+            <property name="jobDetail" ref="queryCbhbCashStatus"/>
+            <property name="cronExpression">
+                <value>0 */30 * * * ?</value>
+            </property>
+        </bean>
+        
+        <bean id="queryCbhbCashStatus" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+            <property name="jobClass">  
+                <value>com.rd.ifaes.job.CustomQuartzJobBean</value>  
+            </property>   
+            <property name="jobDataAsMap">
+                <map>
+                    <entry key="targetObject" value="quartzJob" />
+                    <entry key="targetMethod" value="queryCbhbCashStatus" />
+                 </map>
+             </property>
+            <property name="durability" value="true" />     
+            <property name="requestsRecovery" value="true" />
+        </bean> 
+</beans>

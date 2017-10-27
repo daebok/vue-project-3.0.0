@@ -1,0 +1,258 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.rd.ifaes</groupId>
+		<artifactId>common-parent</artifactId>
+		<version>3.0.0.0</version>
+		<relativePath>../common-parent/pom.xml</relativePath>
+	</parent>
+	<artifactId>common-supports</artifactId>
+	<packaging>jar</packaging>
+	
+	<properties>
+		<!-- environment -->
+		<spring.version>4.2.5.RELEASE</spring.version>
+		<spring-data-redis.version>1.7.1.RELEASE</spring-data-redis.version>
+		<jedis.version>2.8.1</jedis.version>
+		<validation-api.version>1.1.0.Final</validation-api.version>
+		<hibernate-validator.version>5.1.1.Final</hibernate-validator.version>
+		<freemarker.version>2.3.20</freemarker.version>
+		<shiro.version>1.2.4</shiro.version>
+		<mybatis.version>3.2.8</mybatis.version>
+		<druid.version>1.0.27</druid.version>
+		<jcaptcha.version>1.0</jcaptcha.version>
+		<aspectj.version>1.8.5</aspectj.version>
+		<poi.version>3.15</poi.version>
+		<spring-rabbit-version>1.6.0.RELEASE</spring-rabbit-version> 
+	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>com.rd.ifaes</groupId>
+			<artifactId>common</artifactId>
+			<version>3.0.0.0</version>
+		</dependency>
+		
+		
+		<!-- validator -->
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>${validation-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate-validator.version}</version>
+		</dependency>
+
+		<!-- redis libs -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
+			<version>${spring-data-redis.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>spring-tx</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-context-support</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-core</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-aop</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-context</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>${jedis.version}</version>
+		</dependency>
+		<!-- redisson redis分布式事务锁 -->
+		<dependency>
+		   <groupId>org.redisson</groupId>
+		   <artifactId>redisson</artifactId>
+		   <version>2.2.21</version>
+		</dependency>
+		
+		<!-- spring libs -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<!-- freemarker engine -->
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>${freemarker.version}</version>
+		</dependency>
+		<!-- SECURITY begin -->
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-core</artifactId>
+			<version>${shiro.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-spring</artifactId>
+			<version>${shiro.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-cas</artifactId>
+			<version>${shiro.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-web</artifactId>
+			<version>${shiro.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-ehcache</artifactId>
+			<version>${shiro.version}</version>
+		</dependency>
+		<!-- SECURITY end -->
+		
+		<!-- db libs -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
+			<version>${druid.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+			<version>${mybatis.version}</version>
+		</dependency>
+		
+		<!-- xss lib -->
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr-runtime</artifactId>
+			<version>3.0</version>
+		</dependency>
+		
+		<!-- jcaptcha -->
+		<dependency>
+		    <groupId>com.octo.captcha</groupId>
+		    <artifactId>jcaptcha</artifactId>
+		    <version>${jcaptcha.version}</version>
+		    <exclusions>
+		    	<exclusion>
+		    		<groupId>javax.servlet</groupId>
+		    		<artifactId>servlet-api</artifactId>
+		    	</exclusion>
+		    </exclusions>
+		</dependency>
+		
+		<dependency>
+		  <groupId>org.aspectj</groupId>
+		  <artifactId>aspectjrt</artifactId>
+		  <version>${aspectj.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>${aspectj.version}</version>
+		</dependency>
+		
+		<!-- redisson redis分布式事务锁 -->
+		<dependency>
+		   <groupId>org.redisson</groupId>
+		   <artifactId>redisson</artifactId>
+		   <version>2.2.21</version>
+		</dependency>
+		 <!-- UFX签名，加密类 start -->
+		<dependency>
+		  <groupId>com.rongdu</groupId>
+		  <artifactId>RSAUtil-rongdu</artifactId>
+		  <version>1.0</version>
+		</dependency>
+		<!-- UFX签名，加密类 end -->
+		<!-- poi libs -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>${poi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-examples</artifactId>
+			<version>${poi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>${poi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml-schemas</artifactId>
+			<version>${poi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-scratchpad</artifactId>
+			<version>${poi.version}</version>
+		</dependency>
+		<!-- sftp -->
+		<dependency>
+		  <groupId>com.jcraft</groupId>
+		  <artifactId>jsch</artifactId>
+		  <version>0.1.53</version>
+		</dependency>
+		<!-- ftp begin -->
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+			<version>3.3</version>
+		</dependency>
+		<!-- ftp end -->
+		<!-- spring-binding -->
+		<dependency>
+		    <groupId>org.springframework.webflow</groupId>
+		    <artifactId>spring-binding</artifactId>
+		    <version>2.4.4.RELEASE</version>
+		</dependency>
+		
+		<!-- rabbitmq -->
+		<dependency>
+		    <groupId>org.springframework.amqp</groupId>
+		    <artifactId>spring-rabbit</artifactId>
+		    <version>${spring-rabbit-version}</version>
+		</dependency>	
+		
+  </dependencies>
+</project>

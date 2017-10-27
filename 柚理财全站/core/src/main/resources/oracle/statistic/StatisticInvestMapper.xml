@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.statistic.mapper.StatisticInvestMapper">
+	<resultMap type="com.rd.ifaes.core.statistic.domain.StatisticInvest" id="statisticInvestResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="investDate" column="INVEST_DATE"/>
+		<result property="investId" column="INVEST_ID"/>
+		<result property="investAmount" column="INVEST_AMOUNT"/>
+		<result property="investArea" column="INVEST_AREA"/>
+		<result property="investChannel" column="INVEST_CHANNEL"/>
+		<result property="projectType" column="PROJECT_TYPE"/>
+		<result property="projectApr" column="PROJECT_APR"/>
+		<result property="projectTimeLimit" column="PROJECT_TIME_LIMIT"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="userNature" column="USER_NATURE"/>
+		<result property="realAmount" column="REAL_AMOUNT"/>
+		<result property="isUseRed" column="IS_USE_RED"/>
+		<result property="isUseRate" column="IS_USE_RATE"/>
+		<result property="isAddApr" column="IS_ADD_APR"/>		
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		INVEST_DATE,
+		INVEST_ID,
+		INVEST_AMOUNT,
+		INVEST_AREA,
+		INVEST_CHANNEL,
+		PROJECT_TYPE,
+		PROJECT_APR,
+		PROJECT_TIME_LIMIT,
+		USER_ID,
+		USER_NATURE,
+		REAL_AMOUNT,
+		IS_USE_RED,
+		IS_USE_RATE,
+		IS_ADD_APR
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{investDate},
+		#{investId},
+		#{investAmount},
+		#{investArea},
+		#{investChannel},
+		#{projectType},
+		#{projectApr},
+		#{projectTimeLimit},
+		#{userId},
+		#{userNature},
+		#{realAmount},
+		#{isUseRed},
+		#{isUseRate},
+		#{isAddApr}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#columnName#||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="investDate != null and investDate != ''">and INVEST_DATE = #{investDate}</if>
+            <if test="investId != null and investId != ''">and INVEST_ID = #{investId}</if>
+            <if test="investAmount != null">and INVEST_AMOUNT = #{investAmount}</if>
+            <if test="investArea != null and investArea != ''">and INVEST_AREA = #{investArea}</if>
+            <if test="investChannel != null and investChannel != ''">and INVEST_CHANNEL = #{investChannel}</if>
+            <if test="projectType != null and projectType != ''">and PROJECT_TYPE = #{projectType}</if>
+            <if test="projectApr != null and projectApr != ''">and PROJECT_APR = #{projectApr}</if>
+            <if test="projectTimeLimit != null and projectTimeLimit != ''">and PROJECT_TIME_LIMIT = #{projectTimeLimit}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="userNature != null and userNature != ''">and USER_NATURE = #{userNature}</if>
+            <if test="realAmount != null">and REAL_AMOUNT = #{realAmount}</if>
+            <if test="isUseRed != null and isUseRed != ''">and IS_USE_RED = #{isUseRed}</if>
+            <if test="isUseRate != null and isUseRate != ''">and IS_USE_RATE = #{isUseRate}</if>
+            <if test="isAddApr != null and isAddApr != ''">and IS_ADD_APR = #{isAddApr}</if>            
+        </trim>
+    </sql>
+
+	<!-- 适用于主键自增类型 -->
+	<insert id="insert" parameterType="com.rd.ifaes.core.statistic.domain.StatisticInvest">
+		insert into statistic_invest( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">	
+		BEGIN	
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into statistic_invest( <include refid="table_columns" /> ) 
+		values 
+		( 
+			#{item.uuid},
+			#{item.investDate},
+			#{item.investId},
+			#{item.investAmount},
+			#{item.investArea},
+			#{item.investChannel},
+			#{item.projectType},
+			#{item.projectApr},
+			#{item.projectTimeLimit},
+			#{item.userId},
+			#{item.userNature},
+			#{item.realAmount},
+			#{item.isUseRed},
+			#{item.isUseRate},
+			#{item.isAddApr}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="int">
+		delete from statistic_invest
+		where uuid = #{uuid}
+	</delete>
+
+	<update id="deleteLogic" parameterType="int">
+		update statistic_invest set is_delete = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.statistic.domain.StatisticInvest">
+		update statistic_invest 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="investDate != null and investDate != ''">INVEST_DATE = #{investDate},</if>
+			<if test="investId != null and investId != ''">INVEST_ID = #{investId},</if>
+			<if test="investAmount != null and investAmount != ''">INVEST_AMOUNT = #{investAmount},</if>
+			<if test="investArea != null and investArea != ''">INVEST_AREA = #{investArea},</if>
+			<if test="investChannel != null and investChannel != ''">INVEST_CHANNEL = #{investChannel},</if>
+			<if test="projectType != null and projectType != ''">PROJECT_TYPE = #{projectType},</if>
+			<if test="projectApr != null and projectApr != ''">PROJECT_APR = #{projectApr},</if>
+			<if test="projectTimeLimit != null and projectTimeLimit != ''">PROJECT_TIME_LIMIT = #{projectTimeLimit},</if>
+			<if test="userId != null and userId != ''">USER_ID = #{userId},</if>
+			<if test="userNature != null and userNature != ''">USER_NATURE = #{userNature},</if>
+			<if test="realAmount != null and realAmount != ''">REAL_AMOUNT = #{realAmount},</if>
+			<if test="isUseRed != null and isUseRed != ''">IS_USE_RED = #{isUseRed},</if>
+			<if test="isUseRate != null and isUseRate != ''">IS_USE_RATE = #{isUseRate},</if>
+			<if test="isAddApr != null and isAddApr != ''">IS_ADD_APR = #{isAddApr},</if>			
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="statisticInvestResultMap">
+        select <include refid="table_columns" />
+        from statistic_invest
+    </select>
+
+    <select id="findList" resultMap="statisticInvestResultMap">
+        select <include refid="table_columns" />
+        from statistic_invest
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from statistic_invest
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="statisticInvestResultMap" parameterType="int" >
+		select <include refid="table_columns" />
+		from statistic_invest
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<resultMap type="com.rd.ifaes.core.statistic.model.StatisticResultModel" id="statisticResultModelResultMap">
+		<result property="statDate" column="STAT_DATE"/>
+		<result property="totalCount" column="TOTAL_COUNT"/>
+		<result property="totalAmnt" column="TOTAL_AMNT"/>
+		<result property="type" column="TYPE"/>
+		<result property="area" column="AREA"/>
+		<result property="userNum" column="USER_NUM"/>
+	</resultMap>
+	
+	<!-- 根据统计类型查询统计信息 -->
+    <select id="findInvestByStatType" resultMap="statisticResultModelResultMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel">
+        select <include refid="select_dateType" /> as statDate, <include refid="statistic_type" /> as totalCount 
+        from statistic_invest
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="startDate != null and startDate != ''">and <include refid="select_dateType" /> &gt;= #{startDate}</if>
+			<if test="endDate != null and endDate != ''">and <include refid="select_dateType" /> &lt;= #{endDate}</if>
+			<include refid="condition_customers" />
+        </trim>
+        group by <include refid="select_dateType" /> order by statDate
+	</select>
+	
+	<!-- 统计前一天的数据 -->
+	<select id="findInvestDayBefore" resultType="java.math.BigDecimal" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel">
+        select <include refid="statistic_type" />
+        from statistic_invest
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="beforeStartDate != null and beforeStartDate != ''">and <include refid="select_dateType" /> = #{beforeStartDate}</if>
+            <include refid="condition_customers" />
+        </trim>
+	</select>	
+	
+	<!-- 统计时间段内的投资总数 -->
+	<select id="getTotalCountByDate" resultType="java.math.BigDecimal" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel">
+        select <include refid="statistic_type" />
+        from statistic_invest
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="startDate != null and startDate != ''">and <include refid="select_dateType" /> &gt;= #{startDate}</if>
+			<if test="endDate != null and endDate != ''">and <include refid="select_dateType" /> &lt;= #{endDate}</if>
+            <include refid="condition_customers" />
+        </trim>
+	</select>
+	
+	<!-- 日期格式 -->
+	<sql id="select_dateType">
+	   <choose> 
+            <when test="3==dateType ">  
+                to_char(invest_date,'yyyymm')  
+            </when >  
+            <when test="2==dateType ">  
+                to_char(invest_date,'yyyyWW')  
+            </when >  
+            <otherwise>
+                to_char(invest_date,'yyyymmdd')  
+            </otherwise> 
+	   </choose>
+	</sql>
+	
+	<!-- 查询类型 -->
+	<sql id="statistic_type">
+	   <choose> 
+            <when test="3==statType ">  
+                count(user_id) 
+            </when >  
+            <when test="2==statType ">  
+                sum(invest_amount) 
+            </when >  
+            <otherwise>
+                count(distinct user_id)
+            </otherwise> 
+	   </choose>
+	</sql>	
+	
+	<!-- 查询条件 -->
+    <sql id="condition_customers">
+		<if test="projectType != null and projectType.length &gt; 0">
+	        and PROJECT_TYPE in
+	        <foreach collection="projectType" item="item" open="(" separator="," close=")">  
+	          #{item} 
+	        </foreach>	
+	    </if>
+	    <if test="aprArr != null and aprArr.length &gt; 0">
+	        and ( false 
+	        <foreach collection="aprArr" item="apr"> 
+	          or (
+	          <if test="dictList != null and dictList.size() &gt; 0">
+	              <foreach collection="dictList" item="dict" separator="," >
+	                  <if test="apr==dict.itemValue">
+	                     <trim prefixOverrides="and | or ">
+				        	<if test="dict.minValue != null and dict.minValue != ''">and project_apr &gt;= #{dict.minValue}</if>
+				        	<if test="dict.maxValue != null and dict.maxValue != ''">and project_apr &lt; #{dict.maxValue}</if>
+			        	 </trim>
+	                  </if>
+	              </foreach>
+	          </if>
+	          )
+	        </foreach>
+	        )
+	    </if>
+	    <if test="channelArr != null and channelArr.length &gt; 0">
+	        and invest_channel in
+	        <foreach collection="channelArr" item="item" open="(" separator="," close=")">  
+	          #{item} 
+	        </foreach>	
+	    </if>
+	    <if test="userNatureArr != null and userNatureArr.length &gt; 0">
+	        and user_nature in
+	        <foreach collection="userNatureArr" item="item" open="(" separator="," close=")">  
+	          #{item} 
+	        </foreach>	
+	    </if>	    
+    </sql>
+    
+    <select id="countByProjectType" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel">
+        select
+        <if test="dictList != null and dictList.size() &gt; 0">
+	        <foreach collection="dictList" item="data" separator="," >  
+	        	count(case when project_type = #{data.itemValue} then 1 ELSE null end) as #{data.itemName}
+	        </foreach>
+	    </if>        
+        from statistic_invest
+        <include refid="statistic_date" />
+	</select>
+    <select id="sumByProjectType" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel">
+        select
+        <if test="dictList != null and dictList.size() &gt; 0">
+	        <foreach collection="dictList" item="data" separator="," >  
+	        	nvl(sum(case when project_type = #{data.itemValue} then invest_amount ELSE 0 end),0) as #{data.itemName}
+	        </foreach>
+	    </if>        
+        from statistic_invest
+        <include refid="statistic_date" />
+	</select>
+    <select id="countByProjectApr" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel">
+        select
+        <if test="dictList != null and dictList.size() &gt; 0">
+	        <foreach collection="dictList" item="data" separator="," >  
+	        	count(case when
+	        	<trim prefixOverrides="and | or ">
+		        	<if test="data.minValue != null and data.minValue != ''">and project_apr &gt;= #{data.minValue}</if>
+		        	<if test="data.maxValue != null and data.maxValue != ''">and project_apr &lt; #{data.maxValue}</if>
+	        	</trim>
+	        	then 1 ELSE null end) as #{data.itemName}
+	        </foreach>
+	    </if>
+		from statistic_invest
+		<include refid="statistic_date" />
+	</select>
+    <select id="sumByProjectApr" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel">
+        select
+        <if test="dictList != null and dictList.size() &gt; 0">
+	        <foreach collection="dictList" item="data" separator="," >  
+	        	nvl(sum(case when
+	        	<trim prefixOverrides="and | or ">
+		        	<if test="data.minValue != null and data.minValue != ''">and project_apr &gt;= #{data.minValue}</if>
+		        	<if test="data.maxValue != null and data.maxValue != ''">and project_apr &lt; #{data.maxValue}</if>
+	        	</trim>
+	        	then invest_amount ELSE 0 end),0) as #{data.itemName}
+	        </foreach>
+	    </if>        
+		from statistic_invest
+		<include refid="statistic_date" />
+	</select>
+    <select id="countByProjectTimeLimit" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel">
+        select
+        <if test="dictList != null and dictList.size() &gt; 0">
+	        <foreach collection="dictList" item="data" separator="," >  
+	        	count(case when
+	        	<trim prefixOverrides="and | or ">
+		        	<if test="data.minValue != null and data.minValue != ''">and project_time_limit &gt;= #{data.minValue}</if>
+		        	<if test="data.maxValue != null and data.maxValue != ''">and project_time_limit &lt; #{data.maxValue}</if>
+	        	</trim>
+	        	then 1 ELSE null end) as #{data.itemName}
+	        </foreach>
+	    </if>        
+		from statistic_invest
+        <include refid="statistic_date" />
+	</select>
+    <select id="sumByProjectTimeLimit" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel">
+        select
+        <if test="dictList != null and dictList.size() &gt; 0">
+	        <foreach collection="dictList" item="data" separator="," >  
+	        	nvl(sum(case when
+	        	<trim prefixOverrides="and | or ">
+		        	<if test="data.minValue != null and data.minValue != ''">and project_time_limit &gt;= #{data.minValue}</if>
+		        	<if test="data.maxValue != null and data.maxValue != ''">and project_time_limit &lt; #{data.maxValue}</if>
+	        	</trim>
+	        	then invest_amount ELSE 0 end),0) as #{data.itemName}
+	        </foreach>
+	    </if>
+		from statistic_invest
+        <include refid="statistic_date" />
+	</select>
+    <select id="countByProjectAmnt" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel">
+		select
+        <if test="dictList != null and dictList.size() &gt; 0">
+	        <foreach collection="dictList" item="data" separator="," >  
+	        	count(case when
+	        	<trim prefixOverrides="and | or ">
+		        	<if test="data.minValue != null and data.minValue != ''">and invest_amount &gt;= #{data.minValue}</if>
+		        	<if test="data.maxValue != null and data.maxValue != ''">and invest_amount &lt;= #{data.maxValue}</if>
+	        	</trim>
+	        	then 1 ELSE null end) as #{data.itemName}
+	        </foreach>
+	    </if>		
+		from statistic_invest
+        <include refid="statistic_date" />
+	</select>
+    <!-- 查询时间 -->
+	<sql id="statistic_date">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="startDate != null and startDate != ''">and <include refid="select_dateType" /> &gt;= #{startDate}</if>
+			<if test="endDate != null and endDate != ''">and <include refid="select_dateType" /> &lt;= #{endDate}</if>
+        </trim>
+	</sql>
+	
+    <!-- 统计投资地区  -->
+	<select id="getInvestArea" resultMap="statisticResultModelResultMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select invest_area as area,count(distinct user_id) as userNum,sum(invest_amount) as totalAmnt,count(uuid) as totalCount
+		from statistic_invest
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="startDate != null and startDate != ''">and invest_date &gt;= to_date(#{startDate},'yyyy-mm-dd hh24:mi:ss')</if>
+        	<if test="endDate != null and endDate != ''">and invest_date &lt;= to_date(#{endDate},'yyyy-mm-dd hh24:mi:ss')</if>
+		    <if test="userNatureArr != null and userNatureArr.length &gt; 0">
+		        and user_nature in
+		        <foreach collection="userNatureArr" item="item" open="(" separator="," close=")">  
+		          #{item} 
+		        </foreach>	
+		    </if>
+        </trim>
+        group by invest_area
+        order by userNum desc
+	</select>
+	
+	<!-- 用户活跃度 -->
+	<select id="getUserActiveByInvest" resultMap="statisticResultModelResultMap" >
+		select
+		<include refid="select_dateType" /> as statDate,count(DISTINCT si.user_id) as totalCount
+		from statistic_invest si
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="startDate != null and startDate != ''">and <include refid="select_dateType" /> &gt;= #{startDate}</if>
+        	<if test="endDate != null and endDate != ''">and <include refid="select_dateType" />  &lt;= #{endDate}</if>
+			<if test="channelArr != null and channelArr.length &gt; 0">
+		        and si.invest_channel in
+		        <foreach collection="channelArr" item="item" open="(" separator="," close=")">  
+		          #{item} 
+		        </foreach>	
+			</if>
+        </trim>
+         GROUP BY <include refid="select_dateType" />
+	</select>
+	
+	<!-- 用户活跃度地区列表  -->
+	<select id="getUserActiveAreaByInvest" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select si.invest_area as area,count(DISTINCT si.user_id) as totalCount
+		from statistic_invest si
+		<trim prefix="where" prefixOverrides="and | or ">
+				and si.invest_area is not null
+			<if test="startDate != null and startDate != ''">and <include refid="select_dateType" /> &gt;= #{startDate}</if>
+        	<if test="endDate != null and endDate != ''">and <include refid="select_dateType" />  &lt;= #{endDate}</if>
+        	<if test="channelArr != null and channelArr.length &gt; 0">
+		        and si.invest_channel in
+		        <foreach collection="channelArr" item="item" open="(" separator="," close=")">  
+		          #{item} 
+		        </foreach>	
+			</if>
+        </trim>
+        group by invest_area
+	</select>
+	
+	<!-- 用户活跃度总计列表  -->
+	<select id="getUserActiveCountByInvest" resultType="java.util.LinkedHashMap" >
+		select
+		count(DISTINCT user_id,case when invest_date &gt;= #{lastSevenDay}  then 1 else null end) lastSevenDay,
+		count(DISTINCT user_id,case when invest_date &gt;= #{lastThirtyDay} then 1 else null end) lastThirtyDay,
+		count(DISTINCT user_id,case when invest_date &gt;= #{lastNinetyDay}  then 1 else null end) lastNinetyDay,
+		count(DISTINCT user_id,case when invest_date &gt;= #{lastHalfYear}  then 1 else null end) lastHalfYear
+		from statistic_invest
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="channelArr != null and channelArr.length &gt; 0">
+		        and invest_channel in
+		        <foreach collection="channelArr" item="item" open="(" separator="," close=")">  
+		          #{item} 
+		        </foreach>	
+			</if>
+        </trim>
+	</select>
+	
+	<!-- 根据统计类型查询统计信息 -->
+    <select id="findRealAmntByDate" resultMap="statisticResultModelResultMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel">
+        select <include refid="select_dateType" /> as statDate, sum(real_amount) as totalCount 
+        from statistic_invest
+        <include refid="statistic_date" />
+        <if test="operateArr != null and operateArr.length &gt; 0">
+        and (false 
+		       <foreach collection="operateArr" item="item"> 
+		         <if test="item == 1">or is_use_red = 1</if>
+		         <if test="item == 2">or is_use_rate = 1</if>
+		         <if test="item == 3">or is_add_apr = 1</if>
+		       </foreach>		
+		    )
+		</if> 
+		<if test="operateArr==null or operateArr.length==0">
+           and (is_use_red = 1 or is_use_rate = 1 or is_add_apr = 1)
+		</if> 
+        group by <include refid="select_dateType" /> order by statDate
+	</select>
+	
+	<!-- 统计所有金额 -->
+	<select id="getTotalRealAmnt" resultType="BigDecimal" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel">
+        select sum(real_amount) 
+        from statistic_invest
+        <include refid="statistic_date" />
+        <if test="operateArr != null and operateArr.length &gt; 0">
+        and (false 
+		       <foreach collection="operateArr" item="item"> 
+		         <if test="item == 1">or is_use_red = 1</if>
+		         <if test="item == 2">or is_use_rate = 1</if>
+		         <if test="item == 3">or is_add_apr = 1</if>
+		       </foreach>	
+		    )
+		</if>   
+		<if test="operateArr==null or operateArr.length==0">
+           and (is_use_red = 1 or is_use_rate = 1 or is_add_apr = 1)
+		</if>    
+	</select>
+	
+	<!-- 统计所有金额 -->
+	<select id="getRealAmntMap" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel">
+		select
+		nvl(sum(case when is_use_red=1 then real_amount ELSE 0 end),0) as '红包',   
+		nvl(sum(case when is_use_rate=1 then real_amount ELSE 0 end),0) as '加息券',
+		nvl(sum(case when is_add_apr=1 then real_amount ELSE 0 end),0) as '产品加息'
+        from statistic_invest
+        <include refid="statistic_date" />
+	</select>
+</mapper>

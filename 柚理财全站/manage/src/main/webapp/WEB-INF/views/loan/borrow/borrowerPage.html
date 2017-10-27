@@ -1,0 +1,121 @@
+<style type="text/css">
+		.ui-jqgrid .ui-jqgrid-hdiv{
+			position: relative;
+		}
+		.ui-jqgrid .ui-jqgrid-bdiv{
+			margin-top: 0!important;
+		}
+      @media (max-height: 768px){
+        .ui-jqgrid .ui-jqgrid-bdiv {
+            margin-top: 39px;
+            padding-bottom: 0px;
+            max-height: 100px!important;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+      }
+      .ui-jqgrid .ui-jqgrid-pager {
+          position: relative;
+          bottom: 0px!important;
+          background: #fff;
+          border: 1px solid #EBEBEB;
+          border-radius: 3px;
+          z-index: 1000;
+      } 
+      @media (max-height: 1080px){
+        .ui-jqgrid .ui-jqgrid-bdiv {
+            margin-top: 39px;
+            padding-bottom: 0px;
+            max-height: 460px!important;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+      }
+</style>
+<div class="wrapper">
+	<div class="row pt20">				
+		<div class="col-md-6">
+			<div class="search-form">
+				<form>
+					<div class="input-group">
+						<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入用户名/认证名称/手机号码">
+						<span class="input-group-btn search-span">
+					    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/loan/borrow/borrowerList.html">搜索</button>
+					    </span>		    
+				    </div>
+			    </form>	
+			</div>
+		</div>		
+	</div>
+	<div class="row mt20">
+		<div class="col-md-12">
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		<@dictFormatter type = "userNature" />		
+		$(document).ready(function() {		
+			//表格初始化
+			$("#jqGrid").jqTreeGrid({
+				multiselect: false,
+				url: '/loan/borrow/borrowerList.html',
+				width: 600,
+				height: $(window).height()*0.8*0.52,							
+				colModel: [{
+					label: "标识",
+					name: "userNo",
+					width: 50,
+					hidden:true
+				},{
+					label: "用户名",
+					name: "userName",
+					width: 100 /*, frozen: true*/
+				},{
+					label: "认证名称",
+					name: "realName",
+					width: 100
+				},{
+					label: "手机号码",
+					name: "mobile",
+					width: 120
+				},{
+					label: "用户类型",
+					name: "userNature",
+					formatter: userNatureFormatter,
+					width: 100
+				}],
+			}).jqGrid("setFrozenColumns").navGrid('#jqGridPager',
+				// the buttons to appear on the toolbar of the grid
+				{
+					edit: false,
+					add: false,
+					del: false,
+					search: false,
+					refresh: true,
+					view: false,
+					position: "left",
+					cloneToTop: false
+				}
+			);						
+		});
+	$(window).bind('resize', function() {				
+		$("#jqGrid").setGridHeight($(window).height()*0.8*0.52);
+	});
+	jQuery(function(){
+	//调整弹框上的分页组件位置
+	    $(".ui-jqgrid .ui-jqgrid-pager").css("bottom",$(window).height()*0.23);
+	});
+	
+	$(function(){
+		if( $(".search-form form").length ){
+			$(".search-form form").submit(function() {
+
+				$(".search-form form").find(".search-span button").click();			
+				return false;
+				
+			});
+		}
+	});
+	</script>
+</div>

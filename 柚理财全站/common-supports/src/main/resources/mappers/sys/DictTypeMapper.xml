@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.sys.mapper.DictTypeMapper">
+	<resultMap type="com.rd.ifaes.core.sys.domain.DictType" id="dictTypeResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="dictType" column="DICT_TYPE"/>
+		<result property="typeName" column="TYPE_NAME"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="remark" column="REMARK"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		DICT_TYPE,
+		TYPE_NAME,
+		CREATE_TIME,
+		REMARK
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{dictType},
+		#{typeName},
+		#{createTime},
+		#{remark}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="dictType != null and dictType != ''">and DICT_TYPE = #{dictType}</if>
+            <if test="typeName != null and typeName != ''">and TYPE_NAME = #{typeName}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="remark != null and remark != ''">and REMARK = #{remark}</if>
+            <if test="keywords != null and keywords != ''">and ( DICT_TYPE like concat('%',#{keywords},'%') OR TYPE_NAME like concat('%',#{keywords},'%') )</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.sys.domain.DictType">
+		insert into sys_dict_type( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into sys_dict_type( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+			#{item.uuid},
+			#{item.dictType},
+			#{item.typeName},
+			#{item.createTime},
+			#{item.remark}
+		)
+		</foreach>
+	</insert>
+
+	<update id="update" parameterType="com.rd.ifaes.core.sys.domain.DictType">
+		update sys_dict_type 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="dictType != null and dictType != ''">DICT_TYPE = #{dictType},</if>
+            <if test="typeName != null and typeName != ''">TYPE_NAME = #{typeName},</if>
+            <if test="remark != null and remark != ''">REMARK = #{remark}</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="dictTypeResultMap">
+        select <include refid="table_columns" />
+        from sys_dict_type
+    </select>
+
+    <select id="findList" resultMap="dictTypeResultMap">
+        select <include refid="table_columns" />
+        from sys_dict_type
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from sys_dict_type
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="dictTypeResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from sys_dict_type
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<!-- 根据uuid查找对应的DictType对象 -->
+	<select id="findByDictType" resultMap="dictTypeResultMap" parameterType="String">
+		select <include refid="table_columns" /> from sys_dict_type
+		where dict_type = #{dictType}
+	</select>
+
+</mapper>

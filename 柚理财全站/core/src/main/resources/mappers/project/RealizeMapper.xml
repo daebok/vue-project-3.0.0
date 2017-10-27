@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.project.mapper.RealizeMapper">
+	<resultMap type="com.rd.ifaes.core.project.domain.Realize" id="realizeResultMap">
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="investId" column="INVEST_ID"/>
+		<result property="oldProjectId" column="OLD_PROJECT_ID"/>
+		<result property="originalProjectId" column="ORIGINAL_PROJECT_ID"/>
+		<result property="deadline" column="DEADLINE"/>
+		<result property="ruleId" column="RULE_ID"/>
+		<result property="realizeAmount" column="REALIZE_AMOUNT"/>
+		<result property="realizeInterest" column="REALIZE_INTEREST"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		PROJECT_ID,
+		INVEST_ID,
+		OLD_PROJECT_ID,
+		ORIGINAL_PROJECT_ID,
+		DEADLINE,
+		RULE_ID,
+		REALIZE_AMOUNT,
+		REALIZE_INTEREST
+    </sql>
+	<sql id="entity_properties">
+		#{projectId},
+		#{investId},
+		#{oldProjectId},
+		#{originalProjectId},
+		#{deadline},
+		#{ruleId},
+		#{realizeAmount},
+		#{realizeInterest}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="projectId != null and projectId != ''">and PROJECT_ID = #{projectId}</if>
+            <if test="investId != null and investId != ''">and INVEST_ID = #{investId}</if>
+            <if test="oldProjectId != null and oldProjectId != ''">and OLD_PROJECT_ID = #{oldProjectId}</if>
+            <if test="originalProjectId != null and originalProjectId != ''">and ORIGINAL_PROJECT_ID = #{originalProjectId}</if>
+			<if test="deadline != null">and DEADLINE = #{deadline}</if>
+            <if test="ruleId != null and ruleId != ''">and RULE_ID = #{ruleId}</if>
+            <if test="realizeAmount != null">and REALIZE_AMOUNT = #{realizeAmount}</if>
+			<if test="realizeInterest != null">and REALIZE_INTEREST = #{realizeInterest}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.project.domain.Realize">
+		insert into realize( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into realize( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+		#{item.projectId},
+				#{item.investId},
+				#{item.oldProjectId},
+				#{item.originalProjectId},
+				#{item.deadline},
+				#{item.ruleId},
+				#{item.realizeAmount},
+				#{item.realizeInterest}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from realize
+		where project_id = #{projectId}
+	</delete>
+	
+	<update id="deleteBatch">
+		update realize set delete_flag = 1
+		where project_id in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update realize set delete_flag = 1 
+		where project_id = #{projectId}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.project.domain.Realize">
+		update realize 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="investId != null and investId != ''">INVEST_ID = #{investId},</if>
+            <if test="oldProjectId != null and oldProjectId != ''">OLD_PROJECT_ID = #{oldProjectId},</if>
+            <if test="originalProjectId != null and originalProjectId != ''">ORIGINAL_PROJECT_ID = #{originalProjectId},</if>
+			<if test="deadline != null">DEADLINE = #{deadline},</if>
+            <if test="ruleId != null and ruleId != ''">RULE_ID = #{ruleId},</if>
+            <if test="realizeAmount != null">REALIZE_AMOUNT = #{realizeAmount},</if>
+			<if test="realizeInterest != null">REALIZE_INTEREST = #{realizeInterest},</if>
+		</trim>
+		<where>project_id = #{projectId}</where>
+	</update>
+
+    <select id="findAll" resultMap="realizeResultMap">
+        select <include refid="table_columns" />
+        from realize
+    </select>
+
+    <select id="findList" resultMap="realizeResultMap">
+        select <include refid="table_columns" />
+        from realize
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(project_id) from realize
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="realizeFullResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from realize
+		where project_id = #{uuid}
+	</select>
+	<!-- 其他自定义SQL -->
+	<sql id="queryRealizeConditionSqlExt">
+		<choose>
+			<when test="realizeAmountCondition != null and realizeAmountCondition ==1"> 
+	          <![CDATA[  and  p.account < 10000   ]]>
+			</when>
+			<when test="realizeAmountCondition != null and realizeAmountCondition ==2"> 
+	          <![CDATA[  and  (p.account  >=10000 and  p.account < 50000)  ]]>
+			</when>
+			<when test="realizeAmountCondition != null and realizeAmountCondition ==3"> 
+	          <![CDATA[  and  (p.account  >=50000  and  p.account < 100000)  ]]>
+			</when>
+			<when test="realizeAmountCondition != null and realizeAmountCondition ==4">  
+	          <![CDATA[  and  p.account >= 100000  ]]>
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="realizeDayCondition != null and realizeDayCondition == 1">
+				<![CDATA[  and   p.time_limit < 30  ]]>
+			</when>
+			<when test="realizeDayCondition != null and realizeDayCondition == 2"> 
+	        	<![CDATA[  and   (p.time_limit  >= 30 and  p.time_limit < 90)  ]]>
+			</when>
+			<when test="realizeDayCondition != null and realizeDayCondition ==3"> 
+	        	<![CDATA[  and   (p.time_limit  >= 90 and  p.time_limit < 180) ]]>
+			</when>
+			<when test="realizeDayCondition != null and realizeDayCondition ==4"> 
+	        	<![CDATA[  and   (p.time_limit  >= 180 )  ]]>
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="realizeAprCondition != null and realizeAprCondition == 1">
+				<![CDATA[  and   p.apr < 6  ]]>
+			</when>
+			<when test="realizeAprCondition != null and realizeAprCondition == 2"> 
+	        	<![CDATA[  and   (p.apr  >= 6 and  p.apr < 10)  ]]>
+			</when>
+			<when test="realizeAprCondition != null and realizeAprCondition ==3"> 
+	        	<![CDATA[  and   (p.apr  >= 10 and  p.apr < 14) ]]>
+			</when>
+			<when test="realizeAprCondition != null and realizeAprCondition ==4"> 
+	        	<![CDATA[  and   (p.apr  >= 14 )  ]]>
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</sql>
+	
+	<select id="findRealizeList" resultMap="realizeFullResultMap">
+       	select p.uuid,p.user_id,p.project_no,p.project_name,p.raise_account,p.account,p.account_yes,p.apr,p.add_apr,p.interest_style,p.interest_start_days,
+		p.repay_style,p.fixed_repay_day,p.time_type,p.time_limit,p.create_time,p.publish_verify_time,p.update_time,p.show_time,p.stop_time,p.sale_time,
+		p.vouch_verify_time,p.raise_time_limit,p.raise_end_time,p.review_time,p.borrow_manage_rate,p.interest_manage_rate,p.overdue_fee_rate,p.novice,p.choice,
+		p.sale_style,p.lowest_account,p.most_account,p.step_account,p.total_copies,p.copy_account,p.lowest_copies,p.most_copies,p.risk_level,p.red_envelope_useful,
+		p.red_envelope_rate,p.additional_rate_useful,p.project_type_id,p.status,p.is_vouch,p.vouch_id,p.vouch_status,p.interest_time,p.borrow_flag,p.realize_flag,
+		p.sale_channel,p.specific_sale,p.specific_sale_rule,p.repay_amount,p.repay_yes_account,p.repay_yes_interest,p.total_period,p.repayed_period,p.next_repay_time,
+		p.last_repay_time,p.real_last_repay_time,p.redenvelope_rule_id,p.rate_coupon_rule_id,p.protocol_id,
+		r.project_id,r.invest_id,r.old_project_id,r.original_project_id,r.deadline,r.rule_id,r.realize_amount,r.realize_interest
+		from realize r left join project p on r.project_id = p.uuid 
+      <where>
+	        <if test="projectId != null and projectId != ''">and r.project_id = #{projectId}</if>
+	        <if test="userId != null and userId != ''">and p.user_id = #{userId}</if>
+	        <if test="status != null and status != ''">and p.status = #{status}</if>
+	        <if test="statusSet != null">and p.status in 
+				<foreach collection="statusSet" item="status" open="(" separator="," close=")">#{status}</foreach>
+			</if> 
+	        <if test="projectName != null and projectName != ''">and p.project_name like concat('%', #{projectName},'%')</if>
+	        <if test="dateTypeTime != null and dateTypeTime != ''">and p.create_time &gt; #{dateTypeTime}</if>
+	        <include refid="com.rd.ifaes.core.project.mapper.RealizeMapper.queryRealizeConditionSqlExt" />
+	       	<if test="dateType == null or dateType == ''">
+			     <if test="startTime != null and startTime != ''">and p.create_time &gt;= #{startTime}</if>
+			     <if test="endTime != null and endTime != ''">and p.create_time &lt;= #{endTime}</if>        
+	        	</if>
+	   </where>  	
+		    <if test="page != null and page.sort!=null and page.sort!=''">
+	        	order by ${page.sort} ${page.order}
+	        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by p.CREATE_TIME desc </if>
+	 </select>
+
+	<select id="findRealize" resultMap="realizeFullResultMap" parameterType="String" >
+		select p.uuid,p.user_id,p.project_no,p.project_name,p.raise_account,p.account,p.account_yes,p.apr,p.add_apr,p.interest_style,p.interest_start_days,
+		p.repay_style,p.fixed_repay_day,p.time_type,p.time_limit,p.create_time,p.publish_verify_time,p.update_time,p.show_time,p.stop_time,p.sale_time,
+		p.vouch_verify_time,p.raise_time_limit,p.raise_end_time,p.review_time,p.borrow_manage_rate,p.interest_manage_rate,p.overdue_fee_rate,p.novice,p.choice,
+		p.sale_style,p.lowest_account,p.most_account,p.step_account,p.total_copies,p.copy_account,p.lowest_copies,p.most_copies,p.risk_level,p.red_envelope_useful,
+		p.red_envelope_rate,p.additional_rate_useful,p.project_type_id,p.status,p.is_vouch,p.vouch_id,p.vouch_status,p.interest_time,p.borrow_flag,p.realize_flag,
+		p.sale_channel,p.specific_sale,p.specific_sale_rule,p.repay_amount,p.repay_yes_account,p.repay_yes_interest,p.total_period,p.repayed_period,p.next_repay_time,
+		p.last_repay_time,p.real_last_repay_time,p.redenvelope_rule_id,p.rate_coupon_rule_id,p.protocol_id,
+		r.project_id,r.invest_id,r.old_project_id,r.original_project_id,r.deadline,r.rule_id,r.realize_amount,r.realize_interest
+		from realize r left join project p on r.project_id = p.uuid 
+		where p.uuid = #{uuid}
+	</select>
+
+	<resultMap type="com.rd.ifaes.core.project.domain.Realize" id="realizeFullResultMap" 
+		extends="com.rd.ifaes.core.project.mapper.ProjectMapper.projectResultMap">
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="investId" column="INVEST_ID"/>
+		<result property="oldProjectId" column="OLD_PROJECT_ID"/>
+		<result property="originalProjectId" column="ORIGINAL_PROJECT_ID"/>
+		<result property="deadline" column="DEADLINE"/>
+		<result property="ruleId" column="RULE_ID"/>
+		<result property="realizeAmount" column="REALIZE_AMOUNT"/>
+		<result property="realizeInterest" column="REALIZE_INTEREST"/>
+	</resultMap>
+
+	<!-- 查询前台列表专用 start-->
+	<resultMap type="com.rd.ifaes.core.project.domain.Realize"
+		id="realizeWebResultMap" extends="com.rd.ifaes.core.project.mapper.ProjectMapper.projectResultMap">
+		<result property="projectId" column="PROJECT_ID" />
+		<result property="investId" column="INVEST_ID" />
+		<result property="oldProjectId" column="OLD_PROJECT_ID" />
+		<result property="originalProjectId" column="ORIGINAL_PROJECT_ID" />
+		<result property="deadline" column="DEADLINE" />
+		<result property="ruleId" column="RULE_ID" />
+		<result property="realizeAmount" column="REALIZE_AMOUNT"/>
+		<result property="realizeInterest" column="REALIZE_INTEREST"/>
+		<result property="lastRepayTime" column="LAST_REPAY_TIME"/>
+		<result property="periods" column="PERIODS"/>
+		<result property="repayedPeriods" column="REPAYED_PERIODS"/>
+	</resultMap>
+	<select id="findWebRealizeList" resultMap="realizeFullResultMap">
+       	select 
+       	p.uuid,p.user_id,p.project_no,p.project_name,p.raise_account,p.account,p.account_yes,p.apr,p.add_apr,p.interest_style,p.interest_start_days,
+		p.repay_style,p.time_type,p.time_limit,p.publish_verify_time,p.update_time,p.show_time,p.stop_time,p.sale_time,p.raise_time_limit,p.raise_end_time,
+		p.review_time,p.novice,p.choice,p.sale_style,p.lowest_account,p.most_account,p.risk_level,p.project_type_id,p.status,p.is_vouch,p.vouch_id,
+		p.vouch_status,p.interest_time,p.borrow_flag,p.realize_flag,p.sale_channel,p.specific_sale,p.specific_sale_rule,p.repay_amount,p.repay_yes_account,
+		p.repay_yes_interest,p.total_period,p.repayed_period,p.next_repay_time,p.last_repay_time,p.real_last_repay_time,
+       	r.project_id,r.invest_id,r.old_project_id,r.original_project_id,r.deadline,r.rule_id
+		from realize r 
+		left join project p on r.project_id = p.uuid
+		<where>
+			<if test="projectId != null and projectId != ''">and r.project_id = #{projectId}</if>
+			<if test="userId != null and userId != ''">and p.user_id = #{userId}</if>
+			<if test="status != null and status != ''">and p.status = #{status}</if>
+			<if test="statusSet != null">and p.status in 
+				<foreach collection="statusSet" item="status" open="(" separator="," close=")">#{status}</foreach>
+			</if>  
+			<if test="projectName != null and projectName != ''">and p.project_name like concat('%', #{projectName},'%')</if>
+			<include refid="com.rd.ifaes.core.project.mapper.RealizeMapper.queryRealizeConditionSqlExt" />
+		</where>  	
+			<if test="page != null and page.sort!=null and page.sort!=''">
+				order by ${page.sort} ${page.order}
+			</if>
+			<if test="page == null or page.sort == null or page.sort == ''"> 
+				order by (case p.account when  p.account>p.account_yes  then 1 else 0 end ) desc, p.status asc,p.show_time desc,p.sale_time asc
+			</if>
+	</select>
+	<!-- 查询前台列表专用 end -->
+	<!-- 查询今日待还款变现 start -->
+	<select id="findRealizeRepay" resultMap="realizeFullResultMap">
+		select p.uuid
+		from realize r 
+		inner join project p on r.project_id = p.uuid
+		inner join project orp on r.old_project_id = orp.uuid
+		<where> 
+		<![CDATA[ and p.last_repay_time <= #{nowTime} ]]>
+			and orp.status in (9,91)
+			and p.status in (8,87)
+		</where> 
+	</select>
+	<!-- 查询今日待还款变现 end-->	
+	<select id="countSuccessRealize" resultType="int">
+		select count(p.uuid) from realize r 
+		left join project p on r.project_id = p.uuid 
+		where r.invest_id = #{investId} and p.status in (4,5,6,8,87,9,90,91)
+	</select>
+</mapper>

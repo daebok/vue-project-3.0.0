@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <title>江西银行提现跳转中......</title>
+	    <meta http-equiv="content-Type" content="hidden/html; charset=utf-8" />
+	</head>
+	
+	<body>
+	    <div>江西银行提现跳转中,请您不要关闭页面......</div>
+	    <form action="${apiCash.summitUrl}" method="post" id="frm1" style="display: none;">
+	        <input type="hidden" name="version" value="${apiCash.version!}" />       	         
+			<input type="hidden" name="txCode" value="${apiCash.txCode!}" />
+			<input type="hidden" name="instCode" value="${apiCash.instCode!}" />
+			<input type="hidden" name="bankCode" value="${apiCash.bankCode!}" />
+			<input type="hidden" name="txDate" value="${apiCash.txDate!}" />
+			<input type="hidden" name="txTime" value="${apiCash.txTime!}" />
+	        <input type="hidden" name="seqNo" value="${apiCash.seqNo!}" />
+	        <input type="hidden" name="channel" value="${apiCash.channel!}" />
+	        <input type="hidden" name="accountId" value="${apiCash.accountId!}" />
+	        <input type="hidden" name="idType" value="${apiCash.idType!}" />
+	        <input type="hidden" name="idNo" value="${apiCash.idNo!}" />
+            <input type="hidden" name="name" value="${apiCash.name!}" />
+            <input type="hidden" name="mobile" value="${apiCash.mobile!}" />
+            <input type="hidden" name="cardNo" value="${apiCash.cardNo!}" />
+	        <input type="hidden" name="txAmount" value="${apiCash.txAmount!}" />
+            <input type="hidden" name="cardBankCnaps" value="${apiCash.cardBankCnaps!}" />
+	        <input type="hidden" name="txFee" value="${apiCash.txFee}" />
+            <input type="hidden" name="routeCode" value="${apiCash.routeCode}" />
+	        <input type="hidden" name="forgotPwdUrl" value="${apiCash.forgotPwdUrl!}" />
+            <input type="hidden" name="retUrl" value="${apiCash.retUrl!}" />
+            <input type="hidden" name="notifyUrl" value="${apiCash.notifyUrl!}" />
+            <input type="text" name="sign" value="${sign!}" />
+	        <input type="submit" value="提交">
+	    </form>
+	
+	    <script type="text/javascript">
+ 	    	document.getElementById("frm1").submit();
+	    </script>
+	</body>
+</html>

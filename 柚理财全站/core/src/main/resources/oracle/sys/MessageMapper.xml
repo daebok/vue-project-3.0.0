@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.sys.mapper.MessageMapper">
+	<resultMap type="com.rd.ifaes.core.sys.domain.Message" id="messageResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="messageType" column="MESSAGE_TYPE"/>
+		<result property="sendUser" column="SEND_USER"/>
+		<result property="receiveUser" column="RECEIVE_USER"/>
+		<result property="receiveAddr" column="RECEIVE_ADDR"/>
+		<result property="sendType" column="SEND_TYPE"/>
+		<result property="title" column="TITLE"/>
+		<result property="content" column="CONTENT"/>
+		<result property="status" column="STATUS"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="remark" column="REMARK"/>
+		<result property="receiveUserName" column="RECEIVE_USER_NAME"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		MESSAGE_TYPE,
+		SEND_USER,
+		RECEIVE_USER,
+		RECEIVE_ADDR,
+		SEND_TYPE,
+		TITLE,
+		CONTENT,
+		STATUS,
+		CREATE_TIME,
+		REMARK
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{messageType},
+		#{sendUser},
+		#{receiveUser},
+		#{receiveAddr},
+		#{sendType},
+		#{title},
+		#{content},
+		#{status},
+		#{createTime},
+		#{remark}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="messageType != null and messageType != ''">and MESSAGE_TYPE = #{messageType}</if>
+            <if test="sendUser != null and sendUser != ''">and SEND_USER  like '%'||#{sendUser}||'%'</if>
+            <if test="receiveUser != null and receiveUser != ''">and RECEIVE_USER like '%'||#{receiveUser}||'%'</if>
+            <if test="receiveAddr != null and receiveAddr != ''">and RECEIVE_ADDR like '%'||#{receiveAddr}||'%'</if>
+            <if test="sendType != null and sendType != ''">and SEND_TYPE = #{sendType}</if>
+            <if test="title != null and title != ''">and TITLE like '%'||#{title}||'%'</if>
+            <if test="content != null and content != ''">and CONTENT = #{content}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="remark != null and remark != ''">and REMARK = #{remark}</if>
+            <if test="keywords != null and keywords != ''">and (SEND_USER like '%'||#{keywords}||'%' or RECEIVE_USER like '%'||#{keywords}||'%' or TITLE like '%'||#{keywords}||'%' )</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''"> ORDER BY CREATE_TIME DESC </if> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.sys.domain.Message">
+		insert into sys_message( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">	
+		BEGIN	
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into sys_message( <include refid="table_columns" /> ) 
+		values 
+		( 
+		#{item.uuid},
+				#{item.messageType},
+				#{item.sendUser},
+				#{item.receiveUser},
+				#{item.receiveAddr},
+				#{item.sendType},
+				#{item.title},
+				#{item.content},
+				#{item.status},
+				#{item.createTime},
+				#{item.remark}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<update id="update" parameterType="com.rd.ifaes.core.sys.domain.Message">
+		update sys_message 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="title != null and title != ''">TITLE = #{title},</if>
+            <if test="content != null and content != ''">CONTENT = #{content},</if>
+            <if test="status != null and status != ''">STATUS = #{status},</if>
+            <if test="remark != null and remark != ''">REMARK = #{remark},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="messageResultMap">
+        select <include refid="table_columns" />
+        from sys_message
+    </select>
+
+    <select id="findList" resultMap="messageResultMap">
+        select <include refid="table_columns" />
+        from sys_message
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from sys_message
+        <include refid="page_where" />
+    </select>
+
+    <select id="get" resultMap="messageResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from sys_message
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	
+	<!-- 查看最新发送时间 -->
+	<select id="getNewestSendTime" resultMap="messageResultMap" parameterType="com.rd.ifaes.core.sys.domain.Message" >
+		SELECT * FROM (
+			SELECT ROW_NUMBER() OVER( ORDER BY CREATE_TIME DESC) RN, <include refid="table_columns" /> 
+			from sys_message
+			where message_type=#{messageType} and receive_addr=#{receiveAddr} 
+		) WHERE RN = 1		
+	</select>
+
+	<select id="findMessageList" resultMap="messageResultMap">
+        select m.uuid,m.message_type,m.send_user,m.receive_user,m.receive_addr,m.send_type,m.title,
+        m.content,m.status,m.create_time,m.remark,u.user_name as receive_user_name
+        from sys_message m left join users u on m.receive_user = u.uuid
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="messageType != null and messageType != ''">and m.message_type = #{messageType}</if>
+            <if test="receiveUser != null and receiveUser != ''">and m.receive_user like '%'||#{receiveUser}||'%'</if>
+            <if test="receiveUserName != null and receiveUserName != ''">and u.user_name like '%'||#{receiveUserName}||'%'</if>
+            <if test="receiveAddr != null and receiveAddr != ''">and m.receive_addr like '%'||#{receiveAddr}||'%'</if>
+            <if test="sendType != null and sendType != ''">and m.send_type = #{sendType}</if>
+            <if test="title != null and title != ''">and m.title like '%'||#{title}||'%'</if>
+            <if test="content != null and content != ''">and m.content = #{content}</if>
+            <if test="status != null and status != ''">and m.status = #{status}</if>
+			<if test="createTime != null">and m.create_time = #{createTime}</if>
+            <if test="remark != null and remark != ''">and m.remark = #{remark}</if>
+            <if test="keywords != null and keywords != ''">and u.user_name like '%'||#{keywords}||'%' or m.title like '%'||#{keywords}||'%' </if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''"> ORDER BY m.create_time DESC </if> 
+	</select>
+	
+
+</mapper>

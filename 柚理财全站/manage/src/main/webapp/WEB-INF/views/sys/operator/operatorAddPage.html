@@ -1,0 +1,132 @@
+<div class="form-tips-content">
+  <form class="form-horizontal" action="/sys/operator/operatorAdd.html" id="form" role="form">
+  	<ul class="form-item">
+  		<li class="full-width">
+			<div class="form-group">
+		      <label for="loginName" class="control-label form-label">用户角色：</label>
+		      <div class="input-box input-checkbox-box">
+		      	<#if roleList??>
+					 <#list roleList as item>
+						<input type="checkbox" name="roleIds" value="${item.uuid!}" id="roleId_${item.uuid!}" />
+						<label for="roleId_${item.uuid!}">${item.roleName!}</label>
+					</#list>
+			   </#if>		      
+		      </div>
+		    </div>	
+  		</li>  	
+  		
+  		<li>
+			<div class="form-group">
+		      <label for="loginName" class="control-label form-label">用户名<span style="color:red;">*</span>：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="loginName" id="loginName" placeholder="请输入用户名" data-rule-username="true" data-msg-username="只能输入字母和数字" maxlength="20" minlength="6" required>
+		      </div>
+		    </div>	
+  		</li>  		
+  		<li>
+			<div class="form-group">
+		      <label for="pwd" class="control-label form-label">初始密码<span style="color:red;">*</span>：</label>
+		      <div class="input-box">
+		      <input id="fstPass" type="password" name="pwd" class="form-control" data-options="required: true,validType:'password'" minlength="8" maxlength="16" regexPassword="true" required/>
+		      </div>
+		    </div>	
+  		</li> 
+  		
+  		<li>
+			<div class="form-group">
+		      <label for="realName" class="control-label form-label">姓名<span style="color:red;">*</span>：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="realName" id="realName" placeholder="请输入姓名"  maxlength="16" minlength="2" required>
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="empNo" class="control-label form-label">工号：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="empNo" id="empNo" placeholder="请输入工号" maxlength="20" minlength="2" >
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="username" class="control-label form-label">组织机构<span style="color:red;">*</span>：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" readonly="readonly" onclick="$.fn.treeGridOptions.treeselect(this)" data-url="/sys/org/orgTreePage.html?orgIdField=orgId&orgNameField=orgName" name="orgName" id="orgName" placeholder="请选择组织机构" required/>
+		      <input type="hidden" name="orgId" id="orgId" required/>
+		      </div>
+		    </div>	
+  		</li>
+   		<li>
+			<div class="form-group">
+		      <label for="telephone" class="control-label form-label">电话：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="telephone" id="telephone" maxlength="13" placeholder="请输电话号码" data-rule-fixNumber="true" data-msg-fixNumber="请输入正确的电话号码">
+		      </div>
+		    </div>	
+  		</li>
+  		
+   		<li>
+			<div class="form-group">
+		      <label for="mobile" class="control-label form-label">手机<span style="color:red;">*</span>：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="mobile" id="mobile" maxlength="11" placeholder="请输手机号码" data-rule-isMobile="true" data-msg-isMobile="请输入正确的手机号码" required>
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="qq" class="control-label form-label">QQ：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="qq" id="qq"  maxlength="12" placeholder="请输QQ号码">
+		      </div>
+		    </div>	
+  		</li>
+   		<li>
+			<div class="form-group">
+		      <label for="email" class="control-label form-label">邮箱：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="email" id="email" maxlength="32" email="true" placeholder="请输邮箱">
+		      </div>
+		    </div>	
+  		</li>   		
+  		<li>
+			<div class="form-group">
+		      <label for="remark" class="control-label form-label">备注：</label>
+		      <div class="input-box">
+		      <textarea rows="" cols="" class="form-control" name="remark" maxlength="512" id="remark"></textarea>
+		      </div>
+		    </div>	
+  		</li>	
+  	</ul>
+  	<@token/>
+  </form>
+</div>
+<script>
+	$("#form").validate({
+	  submitHandler:function(form){ 
+			$(form).ajaxSubmit({
+				type:"post",
+				dataType:"json",
+				success:function(data){
+        	if(data.result){
+        		layer.alert(data.msg, {
+        			icon: 6,
+        			cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+        		}, function(){	        			
+        			layer.closeAll();
+        			gridobj.trigger("reloadGrid"); //重新载入  
+        		});
+        	}
+        	else
+        	{
+        		layer.alert(data.msg, {icon: 5});
+        	}	        	
+	    	}
+			});
+	  }    
+	});
+</script>

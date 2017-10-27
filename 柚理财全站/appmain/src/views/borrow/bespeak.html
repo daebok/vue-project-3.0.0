@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<#assign pageFlag="bespeak">
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="format-detection" content="telephone=no">
+    <title>借款-${web_name!""}</title>
+    <link rel="stylesheet" type="text/css" href="/common.css"/>
+    <link rel="stylesheet" type="text/css" href="/bespeak.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+    <script type="text/javascript">
+        var areajson = ${areaJson};
+        var bespeakTimeList = ${bespeakTimeList};      
+        var borrowMinAccount = ${borrowMinAccount};      
+        var borrowMaxAccount = ${borrowMaxAccount};
+    </script>
+    <!--[if lte IE 7]> 
+    	<script>
+    		window.location = "/browserUpgrade.html"
+    	</script>
+    <![endif]-->
+<body style="background: #fff;">
+    <#include "/include/header.html">
+    <@token name="borrowBespeakAddToken"/>
+    <div class="bespeak-header">
+        <div class="site-row bespeak-content">
+        <div class="site-col-8 site-col-offset-16 bespeak-form" id="j-bespeakForm" <#if session_user_cache?exists && session_user_cache.userNature == '3'> style="visibility: hidden;" </#if> >
+                <div class="loading"></div>
+        </div>
+        </div>       
+    </div>
+    <div class="wrap bespeak-index-main">
+        <div class="showlink">
+            <div class="title">借款产品</div>
+            <div class="number">${account!0}</div>
+            <div class="text">截止目前已为平台借款人提供借款（元）</div>
+            <a href="/borrow/qualification.html" class="btn">立即申请</a>
+        </div>
+        <div class="list">
+            <ul>
+                <li>
+                    <dl>
+                        <dt>
+                            <em class="iconfont">&#xe675;</em>担保贷
+                        </dt>
+                        <dd class="introduce">
+                            <p>是由担保机构为借款人提供担保后发布的借款产品。平台合作的担保机构根据借款人扫描上传的资料进行审核，审核通过后为借款人提供担保，若借款人有逾期则由担保机构进行代偿。</p>
+                            <p>
+                                <span class="title">申请要求</span><span class="text">年龄：21-55岁，拥有担保机构做担保，无不良信用记录。</span>
+                            </p>
+                        </dd>
+                    </dl>
+                </li>
+                <li>
+                    <dl>
+                        <dt>
+                            <em class="iconfont" style="font-size:26px;">&#xe676;</em>抵押贷
+                        </dt>
+                        <dd class="introduce">
+                            <p>抵押贷是借款人在办理好资产抵押、质押等手续后发布的借款产品。平台对抵押物进行有效监管，抵押借款逾期后， 将由合作企业进行回购并处理后续事宜。</p>
+                            <p><span class="title">申请要求</span><span class="text">年龄：21-55岁，拥有抵押物，无不良信用记录。</span></p>
+                        </dd>
+                    </dl>
+                </li>
+                <li class="lastLi">
+                    <dl>
+                        <dt>
+                            <em class="iconfont">&#xe677;</em>信用贷
+                        </dt>
+                        <dd class="introduce">
+                            <p>信用贷的借款人无需抵押也无需担保，通过上传资料，经平台审核后，取得信用借款。是一种免抵押、免担保、纯信用的小额个人信用借款产品。</p>
+                            <p><span class="title">申请要求</span><span class="text">年龄：21-55岁，拥有借款所需信用证明，无不良信用记录。</span></p>
+                        </dd>
+                    </dl>
+                </li>                                
+            </ul>
+        </div>
+    </div>
+    <#include "/include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/common.js"></script>
+<script src="/bespeak.js"></script>
+</html>

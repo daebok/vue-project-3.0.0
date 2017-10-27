@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.statistic.mapper.StatisticEarnMapper">
+	<resultMap type="com.rd.ifaes.core.statistic.domain.StatisticEarn" id="statisticEarnResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="statDate" column="STAT_DATE"/>
+		<result property="amount" column="AMOUNT"/>
+		<result property="accountType" column="ACCOUNT_TYPE"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		STAT_DATE,
+		AMOUNT,
+		ACCOUNT_TYPE
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{statDate},
+		#{amount},
+		#{accountType}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#columnName#||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="statDate != null and statDate != ''">and STAT_DATE = #{statDate}</if>
+            <if test="amount != null and amount != ''">and AMOUNT = #{amount}</if>
+            <if test="accountType != null and accountType != ''">and ACCOUNT_TYPE = #{accountType}</if>
+        </trim>
+    </sql>
+
+
+	<!-- 适用于主键自增类型 -->
+	<insert id="insert" parameterType="com.rd.ifaes.core.statistic.domain.StatisticEarn" useGeneratedKeys="true" keyProperty="id">
+		insert into statistic_earn( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">
+		BEGIN		
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into statistic_earn( <include refid="table_columns" /> )  
+		values 
+		( 
+			#{item.uuid},
+			#{item.userId},
+			#{item.statDate},
+			#{item.amount},
+			#{item.accountType}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="int">
+		delete from statistic_earn
+		where uuid = #{uuid}
+	</delete>
+
+	<update id="deleteLogic" parameterType="int">
+		update statistic_earn set is_delete = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.statistic.domain.StatisticEarn">
+		update statistic_earn 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="userId != null and userId != ''">USER_ID = #{userId},</if>
+			<if test="statDate != null and statDate != ''">STAT_DATE = #{statDate},</if>
+			<if test="amount != null and amount != ''">AMOUNT = #{amount},</if>
+			<if test="accountType != null and accountType != ''">ACCOUNT_TYPE = #{accountType},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <update id="updateSelective" parameterType="com.rd.ifaes.core.statistic.domain.StatisticEarn">
+        update statistic_earn
+        <trim prefix="set" suffixOverrides=",">
+            <if test="userId != null and userId != ''">USER_ID = #{userId},</if>
+            <if test="statDate != null and statDate != ''">STAT_DATE = #{statDate},</if>
+            <if test="amount != null and amount != ''">AMOUNT = #{amount},</if>
+            <if test="accountType != null and accountType != ''">ACCOUNT_TYPE = #{accountType},</if>
+        </trim>
+        <include refid="page_where" />
+    </update>
+
+
+    <select id="findAll" resultMap="statisticEarnResultMap">
+        select <include refid="table_columns" />
+        from statistic_earn
+    </select>
+
+    <select id="findList" resultMap="statisticEarnResultMap">
+        select <include refid="table_columns" />
+        from statistic_earn
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from statistic_earn
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="statisticEarnResultMap" parameterType="int" >
+		select <include refid="table_columns" />
+		from statistic_earn
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<resultMap type="com.rd.ifaes.core.statistic.model.StatisticResultModel" id="statisticResultModelResultMap">
+		<result property="statDate" column="STAT_DATE"/>
+		<result property="totalCount" column="TOTAL_COUNT"/>
+	</resultMap>
+	
+	<!-- 根据查询类型统计数据 -->
+ 	<select id="findByStatDate" resultMap="statisticResultModelResultMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select <include refid="select_dateType" /> as statDate, sum(amount) as totalCount
+		from statistic_earn 
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="startDate != null and startDate != ''">and <include refid="select_dateType" /> &gt;= #{startDate}</if>
+        	<if test="endDate != null and endDate != ''">and <include refid="select_dateType" /> &lt;= #{endDate}</if>
+        </trim>
+        group by <include refid="select_dateType" />
+	</select>
+	<!-- 获取起始日期前一天数值 -->
+	<select id="getCountBeforeStartDate" resultMap="statisticResultModelResultMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select sum(amount) from statistic_earn 
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="beforeStartDate != null and beforeStartDate != ''">and <include refid="select_dateType" /> = #{beforeStartDate}</if>
+        </trim>
+	</select>
+	<!-- 根据账户类型获取金额分布情况 -->
+    <select id="getAmntByAccountType" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel">
+        select
+		nvl(sum(case when account_type='collect_interest' then amount ELSE 0 end),0) as '投资利息',   
+		nvl(sum(case when (account_type='bond_sell_capital' or account_type='collect_capital') then amount ELSE 0 end),0) as '投资红包',
+		nvl(sum(case when account_type='collect_add_interest' then amount ELSE 0 end),0) as '加息利息',
+		nvl(sum(case when account_type='bond_sell_interest' then amount ELSE 0 end),0) as '债权转让收回利息',
+		nvl(sum(case when account_type='bond_sell_earn' then amount ELSE 0 end),0) as '债权转让溢价金额',
+		nvl(sum(case when account_type='collect_late_interest' then amount ELSE 0 end),0) as '逾期罚息'
+		from statistic_earn
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="startDate != null and startDate != ''">and <include refid="select_dateType" /> &gt;= #{startDate}</if>
+        	<if test="endDate != null and endDate != ''">and <include refid="select_dateType" /> &lt;= #{endDate}</if>
+        </trim>
+	</select>
+	<!-- 日期格式 -->
+	<sql id="select_dateType">
+	   <choose> 
+            <when test="3==dateType ">  
+                to_char(stat_date,'yyyymm')  
+            </when >  
+            <when test="2==dateType ">  
+                to_char(stat_date,'yyyyWW')  
+            </when >  
+            <otherwise>
+                to_char(stat_date,'yyyymmdd')  
+            </otherwise> 
+	   </choose>
+	</sql>
+</mapper>

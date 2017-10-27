@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.user.mapper.UserOpinionMapper">
+	<resultMap type="com.rd.ifaes.core.user.domain.UserOpinion" id="userOpinionResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="title" column="TITLE"/>
+		<result property="attachmentPath" column="ATTACHMENT_PATH"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="remark" column="REMARK"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="addIp" column="ADD_IP"/>
+		<result property="status" column="STATUS"/>
+		<result property="content" column="CONTENT"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		TITLE,
+		ATTACHMENT_PATH,
+		USER_ID,
+		REMARK,
+		CREATE_TIME,
+		ADD_IP,
+		STATUS,
+		CONTENT
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{title},
+		#{attachmentPath},
+		#{userId},
+		#{remark},
+		#{createTime},
+		#{addIp},
+		#{status},
+		#{content}
+	</sql>
+
+    <select id="findList" resultMap="userOpinionResultMap">
+        select 
+			uo.UUID,
+			uo.TITLE,
+			uo.ATTACHMENT_PATH,
+			uo.USER_ID,
+			uo.REMARK,
+			uo.CREATE_TIME,
+			uo.ADD_IP,
+			uo.STATUS,
+			uo.CONTENT,
+			u.USER_NAME,
+			u.REAL_NAME,
+			u.MOBILE
+        from user_opinion uo left outer join user u on uo.user_id = u.uuid
+        <include refid="page_where" />
+	</select>
+
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+         	<if test="uuid != null and uuid != ''">and uo.UUID=#{uuid}</if>
+            <if test="keywords != null and keywords != ''">and uo.TITLE like concat('%',#{keywords},'%')</if>
+           <!--  <if test="startTime != null and startTime != ''">and  create_time &gt;= #{startTime}</if>
+		    <if test="endTime != null and endTime != ''">and  create_time  &lt;= #{endTime}</if>         -->
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by uo.create_time desc</if> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.user.domain.UserOpinion">
+		insert into user_opinion( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<!-- 根据id查询单条语句 -->
+	<select id="get" parameterType="string" resultType="com.rd.ifaes.core.user.domain.UserOpinion">
+		select * from user_opinion where uuid = #{uuid}
+	</select>
+	
+	<!-- 根据id修改反馈状态 -->
+	<update id="updateById" parameterType="com.rd.ifaes.core.user.domain.UserOpinion">
+		update user_opinion 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="title != null">TITLE = #{title},</if>
+			<if test="attachmentPath != null">ATTACHMENT_PATH = #{attachmentPath},</if>
+            <if test="status != null and status != ''">STATUS = #{status},</if>
+            <if test="userId != null">USER_ID = #{userId},</if>
+			<if test="remark != null">REMARK = #{remark},</if>
+			<if test="content != null">CONTENT = #{content}</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+</mapper>

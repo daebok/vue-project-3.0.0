@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<meta http-equiv="Content-Type"
+	content="application/xhtml+xml; charset=utf-8" />
+<meta http-equiv="Cache-Control" content="no-cache" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="-1" />
+<meta name="viewport"
+	content="width=device-width, minimum-scale=1.0, initial-scale=1.0, maximum-scale=1.0, user-scalable=1" />
+<meta name="format-detection" content="telephone=no" />
+
+<body>
+
+	<div id="main" class="clearfix">
+		<div class="box">
+			<div class="box-con">
+				<p class="reg-pro">系统提示信息</p>
+				<div align="center" id="msg_content">
+					<br> <br> <span class="sysTipsTxt">${res_msg!"处理中..."}</span>
+				</div>
+				<div id="useragent"></div>
+				<input id="resmsg"  value="${res_msg}">${res_msg}</input>
+				<input id="rescode"  value="${res_code}">${res_code}</input>
+			</div>
+		</div>
+		<!-- <a
+			href="mobile://toinvest?res_code=encodeURIComponent('${res_code!}')&res_msg=encodeURIComponent('${res_msg!"
+			处理中..."}')" id="success"></a> -->
+			<!--  <a
+			href="mobile://toinvest?res_code=0&res_msg=encodeURIComponent('${res_msg!"
+			处理中..."}')" id="error"></a> -->
+	</div>
+	<script type="text/javascript">
+	 	var ua = navigator.userAgent;
+	 	/*var timer = setInterval("testTime()", 500);
+		var reqTimesLimit = 100;
+		var reqTimes = 1;
+		var data_var = 'success'
+		function testTime() {
+			$.ajax({
+				type : "post",//使用get方法访问后台
+				dataType : "json",//返回json格式的数据
+				async : false,
+				url : "/public/getResult.html?randomTime="
+						+ (new Date()).getTime(),//要访问的后台地址
+				data : "resultFlag=" + '${resultFlag!}',//要发送的数据
+				timeout : 1000 * 1,
+				success : function(msg) {//msg为返回的数据，在这里做数据绑定
+					var data = msg.msg_data;
+					reqTimes++;
+					if (reqTimes >= reqTimesLimit) {
+						$(".sysTipsTxt").html("服务器响应过慢，请您1分钟后查看");
+						clearInterval(timer);
+					}
+					if (data) {
+						if (data == 'success') {
+							$(".sysTipsTxt").html("${r_msg!}");
+						} else {
+							$(".sysTipsTxt").html('${res_msg!"处理中..."}');
+						}
+						clearInterval(timer);
+						//	alert(1);
+						data_var = data;
+
+					}
+				},
+				error : function(XMLHttpRequest) {
+					$(".sysTipsTxt").html("服务器响应过慢，请您1分钟后查看");
+					clearInterval(timer);
+				}
+			});
+		} */
+		setTimeout("returnApp()", 100);
+			function returnApp() {
+				var msg=document.getElementById("resmsg").value;
+				var code=document.getElementById("rescode").value;
+				   alert(msg);
+				if (ua.indexOf('Android') > -1) {
+					//window.webReturn.webReturn(${res_code!}, ${r_msg!});
+					window.webkit.messageHandlers.showSendMsg.postMessage(msg,code)
+				} else if (ua.indexOf('iPhone') > -1 || ua.indexOf('iPod') > -1
+						|| ua.indexOf('iPad') > -1) {
+			/* 		var ret;
+					if (data == 'success') {
+						ret = document.getElementById("success");
+					} else {
+						ret = document.getElementById("error");
+					}
+					//alert(2);
+					ret.click(); */
+					//window.webReturn.webReturn(${res_code!}, ${res_msg!});
+					window.webkit.messageHandlers.showSendMsg.postMessage(msg)
+			}
+		}
+	</script>
+</body>
+</html>

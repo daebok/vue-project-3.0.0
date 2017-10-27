@@ -1,0 +1,390 @@
+<div class="form-tips-content">
+	<input type="hidden" id="image_server_url" value="${image_server_url}">
+	<form class="form-horizontal" action="/loan/borrow/borrowStop.html" id="form" role="form">
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">借款名称：</label>
+					<div class="input-box-read">
+						<p>${borrow.projectName!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="riskLevelName" class="control-label form-label">风险等级：</label>
+					<div class="input-box-read">
+						<p>${borrow.riskLevelName!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="userName" class="control-label form-label">借款方：</label>
+					<div class="input-box-read">						
+						<p>${borrow.userName!}</p>						
+					</div>
+				</div>
+			</li>			
+			<li>
+				<div class="form-group">
+					<label for="account" class="control-label form-label">借款总金额：</label>
+					<div class="input-box-read">
+						<p>${borrow.account!}元</p>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="apr" class="control-label form-label">年化利率(%)：</label>
+					<div class="input-box-read">
+						<p>${borrow.apr!}</p>						
+					</div>					
+				</div>
+			</li>	
+			
+			<li>
+				<div class="form-group">
+					<label for="addApr" class="control-label form-label">加息率(%)：</label>
+					<div class="input-box-read">
+						<p>${borrow.addApr!0}</p>		
+					</div>
+				</div>
+			</li>
+					
+			<li>
+				<div class="form-group">
+					<label for="borrowUse" class="control-label form-label">借款用途：</label>
+					<div class="input-box-read">
+						<p>${borrow.borrowUse!}</p>
+					</div>					
+				</div>
+			</li>			
+			<li>
+				<div class="form-group">
+					<label for="timeLimit" class="control-label form-label">借款期限：</label>
+					<div class="input-box-read">
+						<p>${borrow.timeLimit!} <#if borrow.timeType == 0 >个月<#else>天</#if></p>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="lowestAccount" class="control-label form-label">最低起投金额：</label>
+					<div class="input-box-read">
+						<p>${borrow.lowestAccount!}元</p>
+					</div>					
+				</div>
+			</li>
+			<#if (borrow.stepAccount?? && borrow.stepAccount > 0) >
+			<li>
+				<div class="form-group">
+					<label for="lowestAccount" class="control-label form-label">递增金额：</label>
+					<div class="input-box-read">
+						<p>${borrow.stepAccount}元</p>
+					</div>					
+				</div>
+			</li>
+			</#if>
+			<li>
+				<div class="form-group">
+					<label for="mostAccount" class="control-label form-label">最高投资总额：</label>
+					<div class="input-box-read">
+						<p>${borrow.mostAccount!}元</p>
+					</div>
+				</div>
+			</li>
+	  		<li>
+				<div class="form-group">
+			      <label for="sort" class="control-label form-label">计息方式：</label>
+			      <div class="input-box-read">
+			      	<p><#if borrow.interestStyle == '1'>
+							 成立计息
+						<#else>
+							<b>T</b>+${borrow.interestStartDays!}计息  （T为交易登记日，交易登记日时间段 ${borrow.interestTime!'00'} +24h）
+						</#if>
+						</p>
+			      </div>
+			    </div>	
+	  		</li>	  					
+			<li>
+				<div class="form-group">
+			      	<label for="sort" class="control-label form-label">还款方式：</label>
+			      	<div class="input-box-read">
+			      		<p><@linkage name="repayStyle" id="repayStyle" plantext="plantext" nid="repayStyle" class="form-control" default="${borrow.repayStyle}" /></p>					
+					</div>
+			    </div>	
+	  		</li>
+	  		<li>
+				<div class="form-group">
+					<label for="fixedRepayDay" class="control-label form-label">固定还款日：</label>
+					<div class="input-box-read">
+					<#if borrow.fixedRepayDay?? && borrow.fixedRepayDay=='0'>
+						<p>无</p>
+					<#else>
+						<p>${borrow.fixedRepayDay!'无'}</p>
+					</#if>
+					</div>					
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="isPawn" class="control-label form-label">是否有抵押物：</label>
+					<div class="input-box-read">
+						<p><#if (mtgList?size > 0) >是<#else>否</#if></p>
+					</div>					
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="borrowUse" class="control-label form-label">抵押物资料：</label>
+					<div class="">
+						<div id="uploadGuaranteeBox1" class="uploadWrap" data-arr="uploadFile1">
+					    	<ul id="businessPagePic1" class="photoUpload">					        	
+					            <#if mtgList?size gt 0><#list mtgList as item>
+					            <li data-mum="${item.uuid!}">
+					               <img src="${image_server_url}${item.filePath!}"/>
+					           	</li>
+								</#list></#if>	
+					        </ul>
+					    </div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="isVouch" class="control-label form-label">是否担保：</label>
+					<div class="input-box-read">
+						<p><#if (borrow.isVouch?? && borrow.isVouch==1) >是<#else>否</#if></p>
+					</div>					
+				</div>
+			</li>
+			<#if (borrow.isVouch?? && borrow.isVouch==1) && vouchUser??>				
+			<li>
+				<div class="form-group">
+					<label for="vouchId" class="control-label form-label">担保机构：</label>
+					<div class="input-box-read">
+						<p>${vouchUser}</p>
+					</div>					
+				</div>
+			</li>
+			</#if>	
+			<li>
+				<div class="form-group">
+					<label for="borrowManageRate" class="control-label form-label">借款管理费：</label>
+					<div class="input-box-read">
+						<p>${borrow.borrowManageRate}%</p>
+					</div>					
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="interestManageRate" class="control-label form-label">利息管理费：</label>
+					<div class="input-box-read">
+						<p>${borrow.interestManageRate}%</p>
+					</div>					
+				</div>
+			</li>
+						
+			<li class="full-width">
+				<div class="form-group">
+					<label for="content" class="control-label form-label">借款详情：</label>
+					<div class="textarea-box-read">
+						${borrow.content}
+					</div>
+				</div>
+			</li>
+			
+			<li>
+				<div class="form-group">
+					<label for="account" class="control-label form-label">所属类别：</label>
+					<div class="input-box-read">
+						<p>${projectType.typeName!''}</p>
+					</div>
+				</div>
+			</li>				
+			<li>
+				<div class="form-group">
+					<label for="account" class="control-label form-label">募集期：</label>
+					<div class="input-box-read">
+						<p>${borrow.raiseTimeLimit!0} 天</p>
+					</div>		
+				</div>
+			</li>	
+			<li>
+				<div class="form-group">
+					<label for="account" class="control-label form-label">投资进度：</label>
+					<div class="input-box-read">
+						<p>${borrow.scales!0} %</p>
+					</div>		
+				</div>
+			</li>	
+			
+			<li>
+				<div class="form-group">
+					<label for="account" class="control-label form-label">优惠券使用：</label>
+					<div class="input-checkbox-box">						
+						<input type="checkbox" name="redEnvelopeUseful" id="redEnvelopeUseful" disabled="disabled" <#if borrow.redEnvelopeUseful?? && borrow.redEnvelopeUseful==1> checked="checked"</#if> /><label for="redEnvelopeUseful">红包</label>
+						<input type="checkbox" name="additionalRateUseful" id="additionalRateUseful" disabled="disabled" <#if borrow.additionalRateUseful?? && borrow.additionalRateUseful==1> checked="checked"</#if>  /><label for="additionalRateUseful">加息券</label>						
+					</div>
+				</div>
+			</li>
+			<li id="redEnvelopeRateli" <#if borrow.redEnvelopeUseful==1><#else>style="display:none;" </#if> > 
+				<div class="form-group">
+					<label for="realizeUseful" class="control-label form-label">红包可用比例：</label>
+					<div class="input-box-read"><p>${borrow.redEnvelopeRate!0}%</p></div>
+				</div>
+			</li>	
+			<li >
+				<div class="form-group">
+					<label for="isVouch" class="control-label form-label">允许转让：</label>
+					<div class="input-box-read">
+						<p>
+						<#if borrow.bondUseful?? && borrow.bondUseful==0>
+							不允许
+						<#elseif borrow.bondMaxTurn?? && borrow.bondMaxTurn==0>
+							无限次
+						<#else>
+							允许转让${borrow.bondMaxTurn}次
+						</#if>
+						</p>
+					</div>
+				</div>
+			</li>
+			
+			<li>
+				<div class="form-group">
+					<label for="isVouch" class="control-label form-label">设置精选：</label>
+					<div class="input-checkbox-box">
+						<#if borrow.choice! == 1>是<#else>否</#if>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="choice" class="control-label form-label">新手专享：</label>
+					<div class="input-checkbox-box">
+						<#if borrow.novice! == 1>是<#else>否</#if>
+					</div>
+				</div>
+			</li>
+			
+			<li>
+				<div class="form-group">
+					<label for="saleChannel" class="control-label form-label">上架渠道：</label>
+					<div class="input-checkbox-box">
+				        <input type="checkbox"  id="saleChannel1" name="ckSaleChannel" value="1" disabled="disabled" <#if borrow.saleChannel?index_of("1")!=-1> checked</#if> />
+				        <label for="saleChannel1">PC</label>
+				        <input type="checkbox"  id="saleChannel2" name="ckSaleChannel" value="2" disabled="disabled" <#if borrow.saleChannel?index_of("2")!=-1> checked</#if> />
+				        <label for="saleChannel2">APP</label>
+				        <input type="checkbox"  id="saleChannel3" name="ckSaleChannel" value="3" disabled="disabled" <#if borrow.saleChannel?index_of("3")!=-1> checked</#if> />
+				        <label for="saleChannel3">微信</label>
+					</div>
+				</div>
+			</li>
+			
+			<li >
+				<div class="form-group">
+					<label class="control-label form-label">定向销售：</label>
+					<div class="input-box-read">
+						<p><@linkage name="specificSale" id="specificSale" nid="specificSale" default="${borrow.specificSale!'0'}" plantext="plantext" class="form-control" /></p>
+					</div>
+				</div>
+			</li>
+			<li >
+				<div class="form-group" >
+			      <label class="control-label form-label">
+			      	<#if borrow.specificSale=="1">定向密码：</#if> 
+		     		<#if borrow.specificSale=="2">定向等级：</#if> 
+		     		<#if borrow.specificSale=="3">定向邮箱域名：</#if> 
+		     		<#if borrow.specificSale=="4">定向用户：</#if> 
+			      </label>
+			      <div class="input-box-read">
+			      	<p><#if borrow.specificSaleRule?? >
+			      			<#if borrow.specificSale==2>
+			      				VIP${borrow.specificSaleRule!''}及以上
+			      			<#else>
+			      				<#if borrow.specificSale==4>
+			      					${borrow.specificSaleRule}
+			      				<#else>
+			      				${borrow.specificSaleRule!''}
+			      				</#if>
+			      			</#if>
+			      			
+			      		</#if>
+			      	</p>
+			      </div>
+			    </div>	
+	  		</li>
+			<li>
+				<div class="form-group">
+					<label for="account" class="control-label form-label">上架时间：</label>
+					<div class="input-box-read">
+						<p>${borrow.showTime?string("yyyy-MM-dd HH:mm:ss")!''}</p>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="account" class="control-label form-label">开售时间：</label>
+					<div class="input-box-read">
+						<p>${borrow.saleTime?string("yyyy-MM-dd HH:mm:ss")!''}</p>
+					</div>
+				</div>
+			</li>
+			
+			<li class="full-width">
+				<div class="form-group">
+					<label for="verifyRemark" class="control-label form-label">下架原因：</label>
+					<div class="input-box">
+						 <textarea rows="" cols="" class="form-control" name="verifyRemark" required onkeyup="if(this.value.search(/\s/) >= 0)this.value=(this.value2)?this.value2:'';else this.value2=this.value;"></textarea>
+					</div>
+				</div>
+			</li>
+			
+		</ul>
+		<input type="hidden" name="uuid" value="${borrow.uuid}"/>
+		<input type="hidden" name="projectId" value="${borrow.projectId}"/>
+		<input type="hidden" name="borrowFlag" value="${borrow.borrowFlag}"/>
+		<@token  name="stopBorrowToken"/>
+	</form>
+</div>
+<script src="${theme_dir}/static/js/plugins/jquery.suggest.js"></script>
+<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+<script src="${theme_dir}/static/js/upload.js"></script>
+<script>
+
+$("#form").validate({	
+	submitHandler: function(form) {
+		layer.confirm('募集未完成，是否确定下架？', {
+			btn: ['确定','取消'] //按钮
+		}, function(){
+			$(form).ajaxSubmit({
+				type: "post",
+				dataType: "json",
+				success: function(data) {
+					if (data.result) {
+						layer.alert(data.msg, {
+							icon: 6,
+							cancel: function(index){
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入 
+  						}
+						}, function() {
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入
+						});
+					} else {
+						layer.alert(data.msg, {
+							icon: 5
+						});
+					}
+				}
+			});
+		}, function(){
+			layer.close();
+		});
+
+	}
+})
+</script>

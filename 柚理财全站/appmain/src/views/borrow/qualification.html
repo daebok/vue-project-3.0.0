@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<#assign pageFlag="bespeak">
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="format-detection" content="telephone=no">
+    <title>上传资质资料-${web_name!""}</title>
+    <link rel="stylesheet" type="text/css" href="/common.css"/>
+    <link rel="stylesheet" type="text/css" href="/qualification.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+    <!--[if lte IE 7]> 
+    	<script>
+    		window.location = "/browserUpgrade.html"
+    	</script>
+    <![endif]-->
+<body data-token="${webBorrowQualificationAddToken!}" data-tokenname="webBorrowQualificationAddToken" data-flag='${data}'>
+    <#include "/include/header.html">
+    <div class="wrap qualification-index-main" >
+        <div class="header">
+            <ul>
+                <li class="on"><span>1</span><em class="iconfont solid">&#xe658;</em><em class="iconfont hollow">&#xe657;</em>上传资质资料</li>
+                <li><span>2</span><em class="iconfont solid">&#xe658;</em><em class="iconfont hollow">&#xe657;</em>填写借款需求</li>
+                <li><span>3</span><em class="iconfont solid">&#xe658;</em><em class="iconfont hollow">&#xe657;</em>确认借款需求</li>
+            </ul>
+        </div>
+        <div class="list" id="j-qualification">
+            <div class="loading"></div>
+        </div>
+    </div>
+    <#include "/include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/themes/plugins/uploadify/jquery.uploadify.min.js"></script>
+<script src="/themes/js/fancybox/jquery.fancybox.js"></script>
+<script src="/common.js"></script>
+<script src="/qualification.js"></script>
+</html>

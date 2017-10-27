@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>试卷评估</title>
+<script  type="text/javascript" src="${theme_dir}/static/js/jquery/jquery-1.9.1.min.js"></script>
+<script type="text/javascript">
+	function to_change(quuid,isSingle,auuid){
+		var aVal = document.getElementById("auuid"+auuid).value;
+		var qVal = document.getElementById("quuid"+quuid).value;
+		var cval = document.getElementById("questionContent"+quuid).value;
+		if(isSingle == 1){
+			cval = document.getElementById("questionContent"+quuid).value= "{"+aVal+","+qVal+"}";
+		}else{
+			cval += document.getElementById("questionContent"+quuid).value= "{"+aVal+","+qVal+"}";
+		}
+		
+	}
+</script>
+</head>
+<body>
+<div class="form-tips-content">
+	<form class="form-horizontal" id="form" role="form" action="/risk/doUserRiskPapers.html" method="post">
+		<div class="questionnaire-title">${papers.papersName!"默认问卷"}
+			<input type="hidden" name="uuid" value="${papers.uuid!''}">
+		</div>
+		<ul class="form-item" id="questionnaire-con">
+			<#if qList??>
+				<#list qList as qItem>
+					<input type="hidden" name='questionContent' id="questionContent${qItem.uuid!''}"  value="">
+					<input type="hidden" name='quuid${qItem.uuid!''}' id="quuid${qItem.uuid!''}"  value="${qItem.uuid!''}">
+					<li>
+						<dl>
+							<dt><span style="color:blue;">(<#if qItem.isSingle == 1>单选<#else>多选</#if>)&nbsp;</span>${qItem.sort!0}.${qItem.questionName!"默认问题"}</dt>
+							<#if aList??>
+								<#list aList as aItem>
+									<#if aItem.questionId == qItem.uuid>
+										<dd><input type="<#if qItem.isSingle==1>radio<#else>checkbox</#if>" name="uuid${qItem.uuid!''}" id="auuid${aItem.uuid!''}" value="${aItem.uuid!''}" onClick="return to_change('${qItem.uuid}','${qItem.isSingle}','${aItem.uuid}')">${aItem.sort!''}. ${aItem.content!"默认答案"}</dd>
+									</#if>
+								</#list>
+							</#if>
+						</dl>
+					</li>
+				</#list>
+			</#if>
+		</ul>
+		<@token/>
+		<input type="submit" value="提交试卷" id="submit"> 
+	</form>
+</div>
+<@token/>
+</body>
+</html>

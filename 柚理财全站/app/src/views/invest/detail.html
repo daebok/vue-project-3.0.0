@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>产品详情</title>
+    <link rel="stylesheet" type="text/css" href="/common.css"/>
+    <link rel="stylesheet" type="text/css" href="/investDetail.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <#include "/include/header.html">
+    <input type="hidden" id="id" value="${id!}" />
+    <input type="hidden" id="projectId" value="${projectId!}" />
+    <input type="hidden" id="preview" value="${preview!}" />
+    <input type="hidden" id="isSelectedTip" value="0" />
+    <div class="wrap-full">
+        <div id="j-investDetail" class="invest-detail">
+            <div class="wrap site-row invest-detail-header">
+                <div class="site-col-17 invest-header-info">
+                    <div class="info-title"><span class="title-name"><em class="iconfont">&#xe622;</em>融抵盈-RDY16051601</span><span class="protocol">协议预览</span></div>
+                    <div class="info-main">
+                        <ul>
+                            <li class="profit">
+                                <span>15.12</span>%+1.0%<s>预期年化收益率</s>
+                            </li>
+                            <li class="time">
+                                <span>12</span>个月<s>产品期限</s>
+                            </li>
+                            <li class="min">
+                                <span>100</span>元<s>起投金额</s>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="info-basic">
+                        <ul>
+                            <li>
+                                <span>产品金额</span>1000000元
+                            </li>
+                            <li>
+                                <span>计息方式</span>T（满额日）+0
+                            </li>
+                             <li>
+                                <span>收益方式</span>每月等额本息
+                            </li>
+                            <li>
+                                <span>剩余时间</span>71时28分30秒
+                            </li>
+                            <li>
+                                <span>安全等级</span>极低风险
+                            </li>
+                            <li>
+                                <span>投资条件</span>“保守型”及以上
+                            </li>                                                                                                   
+                        </ul>
+                    </div>
+                </div>
+                <div class="header-from site-col-7 site-col-last">
+
+                </div>            
+            </div>        
+            <div class="wrap invest-main">
+                <div class="invest-main-nav">
+                  <ul class="invest-detail-nav clearfix">
+                    <li class="on">产品详情</li>
+                    <li>投资记录</li>
+                  </ul>
+                </div>
+                <div class="invest-main-cont">
+                    <dl class="module">
+                        <dt>借款详情</dt>
+                        <dd></dd>
+                    </dl>
+                    <dl class="module">
+                        <dt>借款方信息</dt>
+                        <dd></dd>
+                    </dl>            
+                    <dl class="module">
+                        <dt>借款资料</dt>
+                        <dd></dd>
+                    </dl>
+                    <dl class="module">
+                        <dt>担保机构</dt>
+                        <dd></dd>
+                    </dl>            
+                </div>
+            </div>
+        </div>
+    </div>
+    <#include "/include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/common.js"></script>
+<script src="/investDetail.js"></script>
+</html>

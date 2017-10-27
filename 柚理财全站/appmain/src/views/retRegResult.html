@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>系统信息提示-${web_name!""}</title>
+    <link rel="stylesheet" type="text/css" href="/common.css"/>
+    <link rel="stylesheet" type="text/css" href="/msg.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+    <!--[if lte IE 7]> 
+    	<script>
+    		window.location = "/browserUpgrade.html"
+    	</script>
+    <![endif]-->
+<body>
+    <#include "include/header.html">
+    <div class="systemPrompt">
+        <div class="con">
+            <div class="investTips">
+                <em class="${picType}"></em>
+                  <#if msg ==''>
+                      <div class="tip" id="sysTipsTxt"><span class="font1">客官请稍等片刻，小二拼命处理中…………</span></div>
+                      <div id="sysTipsBtns"></div>
+                  <#else>
+                      <div class="tip">${msg!}</div>
+                      <a href="${resultUrl!}" class="btn">返回</a>
+                  </#if>
+                </div>
+            </div>            
+        </div>
+    </div> 
+    <script type="text/javascript"> 
+    var resultFlag = "${resultFlag!}";
+    if(resultFlag != ''){
+      var timer =  setInterval("testTime()",500); 
+	  var reqTimesLimit = 100;
+	  var reqTimes = 1;
+	  function testTime() {
+		  $.ajax({
+	                type: "post",//使用get方法访问后台
+	                dataType: "json",//返回json格式的数据
+	                async:false,
+	                url: "/public/getResult.html?randomTime=" + (new Date()).getTime(),//要访问的后台地址
+	                data: "resultFlag=" + '${resultFlag!}',//要发送的数据
+	                timeout:1000*1,
+	                success: function(msg){//msg为返回的数据，在这里做数据绑定
+	                    var data = msg.msg_data;
+	                    reqTimes++;
+	                    if(reqTimes>=reqTimesLimit){
+	                              $("#sysTipsTxt").html("服务器响应过慢，请您1分钟后查看");
+	                              $("#sysTipsBtns").html("<a href='${resultUrl!}' class='btn'>返回</a>");
+	                              clearInterval(timer);
+	                    };
+	                    if(data){
+	                   	    if(data == 'success'){
+	                       		 $("#sysTipsTxt").html("恭喜您开户成功，请前往 <a href='${resultUrl!}'>${resultName!}</a> 查看");
+	                        }else{
+	                             $("#sysTipsTxt").html(data);
+	                             $("#sysTipsBtns").html("<a href='${resultUrl!}' class='btn'>返回</a>");
+	                        } 
+	                        clearInterval(timer);
+	                    }
+	                },
+	                 error:function(XMLHttpRequest){
+	               		$(".sysTipsTxt").html("服务器响应过慢，请您1分钟后查看");
+	               		$("#sysTipsBtns").html("<a href='${resultUrl!}' class='btn'>返回</a>");
+	                    clearInterval(timer);
+	                }
+	    });
+	  } 
+    }
+	</script>
+    <#include "include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/common.js"></script>
+<script src="/msg.js"></script>
+</html>

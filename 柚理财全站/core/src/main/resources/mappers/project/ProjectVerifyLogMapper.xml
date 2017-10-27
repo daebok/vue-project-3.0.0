@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.project.mapper.ProjectVerifyLogMapper">
+	<resultMap type="com.rd.ifaes.core.project.domain.ProjectVerifyLog" id="ProjectVerifyLogResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="verifyName" column="VERIFY_NAME"/>
+		<result property="processNode" column="PROCESS_NODE"/>
+		<result property="processResult" column="PROCESS_RESULT"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="remark" column="REMARK"/>
+	</resultMap>
+	<resultMap type="com.rd.ifaes.core.project.domain.ProjectVerifyLog" id="ProjectVerifyLogResult" extends="ProjectVerifyLogResultMap" >
+		<result property="operatorName" column="OPERATOR_NAME"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		PROJECT_ID,
+		VERIFY_NAME,
+		PROCESS_NODE,
+		PROCESS_RESULT,
+		CREATE_TIME,
+		REMARK
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{projectId},
+		#{verifyName},
+		#{processNode},
+		#{processResult},
+		#{createTime},
+		#{remark}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#columnName#,'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="projectId != null and projectId != ''">and PROJECT_ID = #{projectId}</if>
+            <if test="verifyName != null and verifyName != ''">and VERIFY_NAME = #{verifyName}</if>
+            <if test="processNode != null and processNode != ''">and PROCESS_NODE = #{processNode}</if>
+            <if test="processResult != null and processResult != ''">and PROCESS_RESULT = #{processResult}</if>
+            <if test="createTime != null and createTime != ''">and CREATE_TIME = #{createTime}</if>
+            <if test="remark != null and remark != ''">and REMARK = #{remark}</if>
+        </trim>
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.project.domain.ProjectVerifyLog">
+		insert into project_verify_log( <include refid="table_columns" /> ) 
+		values ( 
+				#{uuid},
+				#{projectId},
+				#{verifyName},
+				#{processNode},
+				#{processResult},
+				now(),
+				#{remark}
+		 )
+	</insert>
+
+	<delete id="delete" parameterType="int">
+		delete from project_verify_log
+		where uuid = #{uuid}
+	</delete>
+
+    <select id="findList" resultMap="ProjectVerifyLogResultMap">
+        select <include refid="table_columns" />
+        from project_verify_log
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from project_verify_log
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="ProjectVerifyLogResultMap" parameterType="int" >
+		select <include refid="table_columns" />
+		from project_verify_log
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<select id="findByProjectId" resultMap="ProjectVerifyLogResult">
+		SELECT
+			l.uuid,
+			l.project_id,
+			l.verify_name,
+			(SELECT o.real_name FROM sys_operator o WHERE o.uuid = l.verify_name) operator_name,
+			l.process_node,
+			l.process_result,
+			l.create_time,
+			l.remark
+		FROM
+			project_verify_log l
+		WHERE
+			l.project_id = #{id}
+		order by create_time
+	</select>
+	
+	<!-- 查询备注信息 -->
+	<select id="getRemarkCreateTime" resultMap="ProjectVerifyLogResult">
+		SELECT l.remark,l.create_time FROM
+			project_verify_log l
+		WHERE
+			l.project_id = #{projectId} and l.process_node=#{processNode}
+		ORDER BY create_time desc limit 1
+	</select>
+	
+	
+	<!-- 获取最新审核记录 -->
+	<select id="getRemarkByProjectId" resultType="String" parameterType="String">
+		select l.remark from project_verify_log l where l.project_id = #{projectId} order by l.create_time desc limit 1
+	</select>
+	
+	<!-- 查询最新的审核记录集合，分组查询第一条记录 -->
+	<select id="findRemarkByProjectIds" resultMap="ProjectVerifyLogResult">
+		select * from (
+			select l.project_id,l.remark from project_verify_log l 
+			where l.project_id in  
+			<foreach collection="array" item="uuid" open="(" separator="," close=")">  
+	            #{uuid} 
+	        </foreach>	
+	        order by l.create_time desc
+		)
+		f group by project_id 
+	</select >
+
+</mapper>

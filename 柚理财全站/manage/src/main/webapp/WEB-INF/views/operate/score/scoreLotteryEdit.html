@@ -1,0 +1,97 @@
+<div class="form-tips-content" id="redpackage">
+<input type="hidden" id="image_server_url" value="${image_server_url}">
+  <form class="form-horizontal" action="/operate/score/scoreLotteryDoEdit.html"   method="post" id="form" >
+  <input type="hidden" name="uuid" id="uuid" value=${scoreLottery.uuid}>
+  <ul class="form-item">
+        <li class="heightLimit">
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">奖品：</label>
+		      <div class="input-box">
+		        <input type="text" class="form-control" name="lotteryName" id="lotteryName" value=${scoreLottery.lotteryName} required>
+		    </div>
+  		</li>
+  		<li class="heightLimit">
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">中奖概率：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="rate" id="rate" data-rule-digits="true" data-msg-digits="请输入正整数" value=${scoreLottery.rate} required>
+		      </div>
+		    </div>
+  		</li>
+  		<li class="heightLimit">
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">中奖区域：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="lotteryArea" id="lotteryArea" data-rule-digits="true" data-msg-digits="请输入正整数" value=${scoreLottery.lotteryArea} required>
+		      </div>
+		    </div>
+  		</li>
+  		<li class="heightLimit">
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">中奖类型：</label>
+		      <div class="input-box">
+		      <@linkage name="lotteryType" nid="lotteryType" class="form-control" default="${scoreLottery.lotteryType}"/>
+		      </div>
+		    </div>
+  		</li>
+  		<li class="heightLimit">
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">中奖值：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="lotteryValue" id="lotteryValue" data-rule-digits="true" data-msg-digits="请输入正整数" required value=${scoreLottery.lotteryValue!0} >
+		      </div>
+		    </div>
+  		</li>
+  		<li style="width:100%;">
+		<div class="form-group" >
+				<label for="loginName" class="control-label form-label" style="width:13%;">备注：</label>
+				<div class="input-box" style="width:87%;">
+					<textarea name="remark" id="remark" rows="4"  class="text" maxlength="256" style="width:100%;border:1px solid #e5e6e7;padding:10px;">${goodsCategory.remark}</textarea>
+				</div>
+			</div>
+		</li>
+  		</ul>
+</form>
+ </div>
+<script src="${theme_dir}/static/js/plugins/jquery.suggest.js"></script>
+<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+<script src="${theme_dir}/static/js/upload.js"></script>
+<script type="text/javascript">
+//点击添加按钮时，判断图片上传数量
+/*$('#uploadArticle').find('.addFileBtn').click(function(){
+	var num = $('#uploadArticle').find('li.addFileBtn').siblings().length;
+	if(num == 1){
+		alert("上传文件数量不能超过1张");
+		return false;
+	}
+
+});*/
+$("#form").validate({
+	submitHandler: function(form) {	
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						zIndex:100000,
+						icon: 6,
+						cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+					}, function() {						
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入  
+					});
+				} else {
+					layer.alert(data.msg, {
+						zIndex:100000,
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+});
+</script>

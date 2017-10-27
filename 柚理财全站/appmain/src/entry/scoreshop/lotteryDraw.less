@@ -1,0 +1,317 @@
+@import '../../style/common.less';
+
+.banner_lottery{
+  width: 100%;
+  min-width: 1180px;
+  height: 583px;
+  background: url(../../style/images/banner_lottery.png) center no-repeat;
+}
+.lottery_main{
+  width: 1100px;
+  margin: 0 auto;
+}
+.bg_color01{
+  background: #fff;
+  width: 100%;
+  min-width: 1180px;
+}
+.bg_color02{
+  background: #ff8264;
+  width: 100%;
+  min-width: 1180px;
+}
+
+.lottery_draw{
+  .left_box{
+    float: left;
+    width: 532px;
+    .top{
+      overflow: hidden;
+      margin:0 0 50px 8px;
+      position: relative;
+      em{
+        position: absolute;
+        left: 270px;
+        top: 35px;
+        font-size: 24px;
+        color: #f04339;
+        i{
+          font-style: normal;
+          font-size: 20px;
+          padding-left: 8px;
+        }
+      }
+      .tit{
+        font-size: 40px;
+        color: #ffffff;
+        background: #f34b4a;
+        padding: 3px 15px;
+        box-shadow: 3px 3px 0px #d62e2d;
+        border-radius: 23px;
+        display: block;
+        margin-bottom: 3px;
+        float: left;
+      }
+      .sign{
+        font-size: 24px;
+        color: #f04339;
+        float: left;
+        margin: 20px 10px 0 45px;
+      }
+      .subTitle{
+        font-size: 20px;
+        color: #f04339;
+        float: left;
+        margin-top: 24px;
+      }
+    }
+
+    .winningList{
+      height: 539px;
+      background: url(../../style/images/turnTableImg2.png) no-repeat;
+      overflow: hidden;
+      .tit{
+        font-size: 31px;
+        color: #ffffff;
+        font-weight: normal;
+        text-align: center;
+        margin-top: 45px;
+        width: 470px;
+      }
+      .winningListM{
+        height: 264px;
+        margin: 55px 0px 0 50px;
+        overflow: hidden;
+        li{
+          clear: both;
+          /*margin-bottom: 24px;*/
+          line-height: 46px;
+          overflow: hidden;
+          em{
+            display: block;
+            float: left;
+            width: 120px;
+            font-size: 18px;
+            color: #666666;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-right: 5px;
+          }
+          em.one{
+            color: #e32016;
+            width: 135px;
+          }
+        }
+      }
+    }
+  }
+
+  .right_box{
+    margin-top: 90px;
+    float: right;
+    width: 550px;
+    .turntable{
+      width: 550px;
+      height: 536px;
+      position: relative;
+      background: url(../../style/images/turntableBg.png) 6px 0 no-repeat;
+      #pointer {
+        width: 174px;
+        height: 208px;
+        position: absolute;
+        left: 47%;
+        top: 45%;
+        margin-left: -90px;
+        margin-top: -104px;
+        z-index: 8;
+        cursor: pointer;
+      }
+      .rotate {
+        width: 462px;
+        height: 452px;
+        position: absolute;
+        left: 43px;
+        top: 40px;
+      }
+    }
+
+    .txt{
+      font-size: 20px;
+      color: #4f2315;
+      text-align: center;
+      margin-top: 40px;
+      a{
+        color: #4f2315;
+        padding: 0 5px;
+        &:hover{
+          text-decoration: underline;
+        }
+      }
+      em{
+        border-bottom: 1px solid #4f2315;
+        padding: 0 12px;
+      }
+    }
+  }
+}
+
+.lotteryBox02{
+  background: #FFD702 url(../../style/images/turnTableImg8.png) no-repeat;
+  padding: 215px 0 40px;
+  .lottery_draw02{
+    background: url(../../style/images/turnTableImg9.png) 770px -80px no-repeat;
+    min-height: 300px;
+    .tit{
+      font-size: 40px;
+      color: #ffffff;
+      background: #f34b4a;
+      padding: 3px 15px;
+      box-shadow: 3px 3px 0px #d62e2d;
+      border-radius: 23px;
+      margin-bottom: 40px;
+      width: 190px;
+    }
+    ul{
+      margin-bottom: 40px;
+      li{
+        color: #fff;
+        font-size: 18px;
+        line-height: 40px;
+      }
+    }
+    h2{
+      color: #fff;
+      font-size: 24px;
+      line-height: 30px;
+      font-weight: normal;
+    }
+    dl.link{
+      dd{
+        width: 45px;
+        height: 45px;
+        margin: 20px 0 0 25px;
+        float: left;
+        position: relative;
+        .topTips{
+          display: none;
+        }
+        em{
+          display: block;
+          width: 60px;
+          height: 60px;
+          background: url(../../style/images/icon_lottery.png) no-repeat;
+        }
+        em.weixin{
+          background-position: 0 0;
+        }
+        em.weibo{
+          background-position: -145px 0;
+        }
+        em.qq{
+          background-position: -75px 0;
+        }
+        em.qzone{
+          background-position: -215px 0;
+        }
+         em.link{
+          background-position: -285px 0;
+        }
+      }
+      dd:hover{
+        .topTips{
+          display: block;
+          position: absolute;
+          left: -25px; top:-98px;
+          width: 100px;
+          height: 100px;
+          background: #fff;
+          border-radius: 5px;
+          padding: 10px;
+          img{
+            width: 80px;
+            height: 80px;
+          }
+        }
+        /*em.weixin{
+          background-position: 0 0;
+        }
+        em.weibo{
+          background-position: 0 0;
+        }
+        em.qq{
+          background-position: 0 0;
+        }
+        em.qzone{
+          background-position: 0 0;
+        }*/
+      }
+    }
+
+  }
+}
+.xubox_layer{
+  -moz-box-shadow: none !important;
+  -webkit-box-shadow:none !important;
+  box-shadow: none !important;
+  .xubox_main{
+    background:url(../../style/images/bg_dilog.png) no-repeat;
+    height: 100%;
+    border-radius: 40px;
+  }
+}
+
+.lotteryTipsWrap{
+  width: 500px;
+  .lotteryTipsTitle{
+    height: 120px;
+    position: relative;
+    a.tipCloseBtn{
+      display: block;
+      width: 50px;
+      height: 50px;
+      color: #fff;
+      font-weight: bold;
+      position: absolute;
+      right: 30px;
+      top:25px;
+      font-size: 40px;
+
+    }
+    .icondraw01{
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      left: 50%;
+      margin-left: -100px;
+      top: -90px;
+      background: url(../../style/images/icon_draw01.png) no-repeat;
+    }
+    .icondraw02{
+      position: absolute;
+      width: 200px;
+      height:200px;
+      left: 50%;
+      margin-left: -100px;
+      top: -90px;
+      background: url(../../style/images/icon_draw02.png) no-repeat;
+    }
+  }
+  .img_txt01{
+    width: 400px;
+    height: 60px;
+    margin: 0px 0px 0px 150px;
+    background: url(../../style/images/img_txt.png) 0 -100px no-repeat;
+  }
+  .img_txt02{
+    width: 400px;
+    height: 60px;
+    margin: 0px 0px 0px 150px;
+    background: url(../../style/images/img_txt.png) 0 -10px no-repeat;
+  }
+  .tipsTxt{
+    font-size: 30px;
+    color: #fff;
+    text-align: center;
+  }
+}

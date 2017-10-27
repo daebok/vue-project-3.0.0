@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.sys.mapper.OperatorCustomerMapper">
+	<resultMap type="com.rd.ifaes.core.sys.domain.OperatorCustomer" id="operatorCustomerResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="operatorId" column="OPERATOR_ID"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="addType" column="ADD_TYPE"/>
+		<result property="remark" column="REMARK"/>
+		<result property="mobile" column="MOBILE"/>
+		<result property="userName" column="USER_NAME"/>
+		<result property="realName" column="REAL_NAME"/>
+		<result property="userNature" column="USER_NATURE"/>
+	    <result property="registerTime" column="REGISTER_TIME"/>
+		<result property="tenderMoney" column="TENDER_MONEY"/>
+		<result property="operatorRealName" column="OPERATOR_REAL_NAME"/>	
+	</resultMap>	
+	<resultMap type="com.rd.ifaes.core.sys.model.SaleStatisticsModel" id="saleStatisticsModel">
+		<result property="saleMonth" column="sale_month"/>
+		<result property="saleAmount" column="sale_amount"/>
+	</resultMap>
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		OPERATOR_ID,
+		CREATE_TIME,
+		ADD_TYPE,
+		REMARK
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{operatorId},
+		#{createTime},
+		#{addType},
+		#{remark}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="operatorId != null and operatorId != ''">and OPERATOR_ID = #{operatorId}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="addType != null and addType != ''">and ADD_TYPE = #{addType}</if>
+            <if test="remark != null and remark != ''">and REMARK = #{remark}</if>
+            <if test="remark != null and remark != ''">and REMARK = #{remark}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.sys.domain.OperatorCustomer">
+		insert into sys_operator_customer( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		BEGIN
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into sys_operator_customer( <include refid="table_columns" /> ) 
+		values 
+		( 
+		#{item.uuid},
+				#{item.userId},
+				#{item.operatorId},
+				#{item.createTime},
+				#{item.addType},
+				#{item.remark}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from sys_operator_customer
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update sys_operator_customer set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="uuid" open="(" separator="," close=")">  
+            #{uuid} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update sys_operator_customer set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.sys.domain.OperatorCustomer">
+		update sys_operator_customer 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="userId != null and userId != ''">USER_ID = #{userId},</if>
+            <if test="operatorId != null and operatorId != ''">OPERATOR_ID = #{operatorId},</if>
+            <if test="remark != null and remark != ''">REMARK = #{remark},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="operatorCustomerResultMap">
+        select <include refid="table_columns" />
+        from sys_operator_customer
+    </select>
+
+    <select id="findList" resultMap="operatorCustomerResultMap">
+		SELECT u.user_name,u.real_name
+		,uc.user_nature,u.mobile,u.create_time register_time,cus.*,
+		(select sum(amount) tenderMoney from project_invest  where status=1 and user_id=cus.user_id) tender_Money,op.real_name operator_real_name
+		 FROM   sys_operator_customer cus
+		LEFT JOIN  users u on u.uuid = cus.user_id
+		LEFT JOIN  user_cache uc on uc.user_id =cus.user_id
+		LEFT JOIN  sys_operator op on op.uuid= cus.operator_id
+		<where> 
+			<if test="userNature != null and userNature !=''">and uc.user_nature != #{userNature}</if>
+            <if test="userId != null and userId != ''">and cus.USER_ID = #{userId}</if>
+            <if test="operatorId != null and operatorId != ''">and cus.OPERATOR_ID = #{operatorId}</if>
+            <if test="addType != null and addType != ''">and cus.ADD_TYPE = #{addType}</if>
+            <if test="remark != null and remark != ''">and cus.REMARK = #{remark}</if>
+            <if test="mobile != null and mobile != ''">and u.mobile like '%'||#{mobile}||'%'</if>
+            <if test="userName != null and userName != ''">and u.user_name like '%'||#{userName}||'%'</if>
+            <if test="realName != null and realName != ''">and u.real_name like '%'||#{realName}||'%' or ci.company_name  like '%'||#{realName}||'%'  </if>
+            <if test="keywords != null and keywords != ''">and (u.user_name like '%'||#{keywords}||'%' 
+            or u.real_name like '%'||#{keywords}||'%' or u.mobile like '%'||#{keywords}||'%')</if>
+       </where>      							 
+            order by  register_time desc 						 
+            
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from sys_operator_customer
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="operatorCustomerResultMap" parameterType="String" >
+		select 
+		  t.UUID,
+		  t.USER_ID,
+		  t.OPERATOR_ID,
+		  t.CREATE_TIME,
+		  t.ADD_TYPE,
+		  t.REMARK,
+		  u.MOBILE,
+		  u.USER_NAME,
+		  u.REAL_NAME,
+		  uc.USER_NATURE
+		from sys_operator_customer t
+		left outer join users u on t.USER_ID = u.UUID
+		left outer join user_cache uc on t.USER_ID = uc.USER_ID
+		where t.uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<!-- 业绩统计sql -->
+    <select id="findSaleStatistics" resultMap="saleStatisticsModel">
+		SELECT TO_NUMBER (TO_CHAR(invest.create_time, 'mm')) sale_month, sum(invest.amount) sale_amount
+		from  sys_operator_customer cus
+		LEFT JOIN project_invest invest on invest.user_id= cus.user_id 
+		left join project project on project.uuid = invest.project_id 
+         <where> 
+         	project.status  in(6,8,9,90,87,91,88)
+			<if test="startTime != null and startTime != ''">and invest.CREATE_TIME &gt;= to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')</if>
+			<if test="endTime != null and endTime != ''">and invest.CREATE_TIME &lt;= to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')</if> 
+			<if test="status != null and status != ''"> and invest.status = #{status}</if>       
+			<if test="operatorId != null and operatorId != ''">and cus.operator_id = #{operatorId}</if>
+		</where> 
+		group by TO_NUMBER (TO_CHAR(invest.create_time, 'mm'))
+    </select>
+</mapper>

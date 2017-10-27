@@ -1,0 +1,146 @@
+<div class="form-tips-content">
+	<input type="hidden" id="image_server_url" value="${image_server_url}">
+	<form class="form-horizontal" action="/operate/scoreshop/updateOrder.html" id="form" role="form">
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label for="userName" class="control-label form-label">用户名：</label>
+					<div class="input-box-read">
+						<p>${order.userName!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="goodsName" class="control-label form-label">商品名称：</label>
+					<div class="input-box-read">
+						<p>${order.goodsName!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="num" class="control-label form-label">兑换数量：</label>
+					<div class="input-box-read">
+						<p>${order.num!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="" class="control-label form-label">状态：</label>
+					<div class="input-box-read">						
+						<p>待审核</p>						
+					</div>
+				</div>
+			</li>			
+			<li>
+				<div class="form-group">
+					<label for="createTime" class="control-label form-label">兑换时间：</label>
+					<div class="input-box-read">
+						<p><#if order.createTime??> ${order.createTime?string("yyyy-MM-dd HH:mm:ss")}</#if></p>
+					</div>
+				</div>
+			</li>
+			 <li>
+				<div class="form-group">
+					<label for="score" class="control-label form-label">使用积分值：</label>
+					<div class="input-box-read">
+						<p>${order.score!}</p>						
+					</div>					
+				</div>
+			</li>	 		
+			<li>
+				<div class="form-group">
+					<label for="receiveAddress" class="control-label form-label">收货地址：</label>
+					<div class="input-box-read">
+						<p>${order.receiveAddress!}</p>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="receivePhone" class="control-label form-label">收货人电话：</label>
+					<div class="input-box-read">
+						<p>${order.receivePhone!}</p>
+					</div>					
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="receiveUserName" class="control-label form-label">收货人姓名：</label>
+					<div class="input-box-read">
+						<p>${order.receiveUserName!}</p>
+					</div>					
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="receiveRemark" class="control-label form-label">兑换留言：</label>
+					<div class="input-box-read">
+						<p>${order.receiveRemark!}</p>
+					</div>
+				</div>
+			</li>
+	  		<li class="full-width">
+				<div class="form-group">
+					<label for="status" class="control-label form-label">是否通过：</label>
+					<div class="input-checkbox-box">
+						<input type="radio" name="status" value="1"><label for="">通过</label>
+						<input type="radio" name="status" value="2" checked><label for="">不通过</label>
+					</div>
+				</div>
+			</li>
+	  		<li class="full-width">
+				<div class="form-group">
+					<label  class="control-label form-label">审核备注：</label>
+					<div class="input-box" style="width:82%;">
+						<textarea rows="" cols="" required class="form-control" name="verifyRemark" maxLength="128"></textarea>
+					</div>
+				</div>
+			</li>
+	 	<input type="hidden" name="uuid" id="uuid" value=${order.uuid}>		
+	 	<input type="hidden" name="goodsId" id="goodsId" value=${order.goodsId}>
+	 	<input type="hidden" name="userId" id="userId" value=${order.userId}>
+	 	<input type="hidden" name="userName" id="userName" value=${order.userName}>
+	 	<input type="hidden" name="goodsName" id="goodsName" value=${order.goodsName}>
+	 	<input type="hidden" name="num" id="num" value=${order.num}>
+	 	<input type="hidden" name="score" id="score" value=${order.score}>
+	 	<input type="hidden" name="receiveAddress" id="receiveAddress" value=${order.receiveAddress}>
+	 	<input type="hidden" name="receivePhone" id="receivePhone" value=${order.receivePhone}>
+	 	<input type="hidden" name="receiveUserName" id="receiveUserName" value=${order.receiveUserName}>
+	 	<input type="hidden" name="receiveRemark" id="receiveRemark" value=${order.receiveRemark}>
+	 						
+	</form>
+</div>
+<script type="text/javascript">
+$("#form").validate({
+	submitHandler: function(form) {	
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						zIndex:100000,
+						icon: 6,
+						cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+					}, function() {						
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入  
+					});
+				} else {
+					layer.alert(data.msg, {
+						zIndex:100000,
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+});
+
+</script>

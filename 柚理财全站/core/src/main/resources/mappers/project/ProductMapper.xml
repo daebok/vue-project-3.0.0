@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.project.mapper.ProductMapper">
+	<resultMap type="com.rd.ifaes.core.project.domain.Product" id="productResultMap">
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="content" column="CONTENT"/>
+		<result property="lockTimeLimit" column="LOCK_TIME_LIMIT"/>
+		<result property="saleTimeLimit" column="SALE_TIME_LIMIT"/>
+		<result property="realizeUseful" column="REALIZE_USEFUL"/>
+		<result property="buybackVerify" column="BUYBACK_VERIFY"/>
+		<result property="realizeLowestMoney" column="REALIZE_LOWEST_MONEY"/>
+		<result property="overdueRate" column="OVERDUE_RATE"/>
+		<result property="autoRepay" column="AUTO_REPAY"/>
+	    <result property="remark" column="REMARK"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		PROJECT_ID,
+		CONTENT,
+		LOCK_TIME_LIMIT,
+		SALE_TIME_LIMIT,
+		REALIZE_USEFUL,
+		BUYBACK_VERIFY,
+		REALIZE_LOWEST_MONEY,
+		OVERDUE_RATE,
+		AUTO_REPAY
+    </sql>
+	<sql id="entity_properties">
+		#{projectId},
+		#{content},
+		#{lockTimeLimit},
+		#{saleTimeLimit},
+		#{realizeUseful},
+		#{buybackVerify},
+		#{realizeLowestMoney},
+		#{overdueRate},
+		#{autoRepay}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+        	borrow_flag = 0  and realize_flag = 0
+            <if test="projectId != null and projectId != ''">and PROJECT_ID = #{projectId}</if>
+            <if test="content != null and content != ''">and CONTENT = #{content}</if>
+			<if test="lockTimeLimit != null">and LOCK_TIME_LIMIT = #{lockTimeLimit}</if>
+			<if test="saleTimeLimit != null">and SALE_TIME_LIMIT = #{saleTimeLimit}</if>
+            <if test="realizeUseful != null and realizeUseful != ''">and REALIZE_USEFUL = #{realizeUseful}</if>
+            <if test="buybackVerify != null and buybackVerify != ''">and BUYBACK_VERIFY = #{buybackVerify}</if>
+			<if test="realizeLowestMoney != null">and REALIZE_LOWEST_MONEY = #{realizeLowestMoney}</if>
+			<if test="overdueRate != null">and OVERDUE_RATE = #{overdueRate}</if>
+            <if test="autoRepay != null and autoRepay != ''">and AUTO_REPAY = #{autoRepay}</if>
+            <if test="repayStyle != null and repayStyle != 0 ">and repay_style = #{repayStyle}</if>
+	        <if test="status != null and status != ''">and status = #{status}</if>        
+	        <if test="status == null and statusSet == null"> and  status &lt;&gt; 30</if>
+	        <if  test="showing != null and showing== 1"> and (show_time is null or show_time > now() ) </if>
+	        <if test="projectName != null and projectName != ''">and PROJECT_NAME  like concat('%',#{projectName},'%')   </if>
+	        <if test="keywords != null and keywords != ''">
+	        	and  PROJECT_NAME like concat('%',#{keywords},'%')  
+	       </if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.project.domain.Product">
+		insert into product( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into product( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+		#{item.projectId},
+				#{item.content},
+				#{item.lockTimeLimit},
+				#{item.saleTimeLimit},
+				#{item.realizeUseful},
+				#{item.buybackVerify},
+				#{item.realizeLowestMoney},
+				#{item.overdueRate},
+				#{item.autoRepay}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from project
+		where  status =3 and uuid = #{projectId}
+	</delete>
+	<update id="deleteBatch">
+		update project set status = 30
+		where status =3
+		and  uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update project set status = 30
+		where uuid = #{projectId}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.project.domain.Product">
+		update product 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="content != null and content != ''">CONTENT = #{content},</if>
+			<if test="lockTimeLimit != null">LOCK_TIME_LIMIT = #{lockTimeLimit},</if>
+			<if test="saleTimeLimit != null">SALE_TIME_LIMIT = #{saleTimeLimit},</if>
+            <if test="realizeUseful != null and realizeUseful != ''">REALIZE_USEFUL = #{realizeUseful},</if>
+            <if test="buybackVerify != null and buybackVerify != ''">BUYBACK_VERIFY = #{buybackVerify},</if>
+			<if test="realizeLowestMoney != null">REALIZE_LOWEST_MONEY = #{realizeLowestMoney},</if>
+			<if test="overdueRate != null">OVERDUE_RATE = #{overdueRate},</if>
+            <if test="autoRepay != null and autoRepay != ''">AUTO_REPAY = #{autoRepay},</if>
+		</trim>
+		<where>PROJECT_ID = #{projectId}</where>
+	</update>
+
+    <select id="findAll" resultMap="productResultMap">
+        select <include refid="table_columns" />
+        from product
+    </select>
+
+    <select id="findList" resultMap="productFullResultMap">
+        SELECT
+			uuid,
+			user_id,
+			project_no,
+			project_name,
+			account,
+			apr,
+			time_limit,
+			time_type,
+			status,
+			repay_style,
+			interest_style,
+			create_time,
+			update_time,
+			publish_verify_time,
+			raise_time_limit,
+			show_time,
+			sale_time,
+			account_yes,
+			raise_end_time,
+			stop_time,
+			uuid project_id,
+			sale_style,
+			lowest_account,
+			most_account,
+			step_account,
+			total_copies,
+			copy_account,
+			most_copies,
+			lowest_copies,
+			interest_manage_rate,
+			overdue_fee_rate
+        from project
+       	where    
+       		borrow_flag = 0  and realize_flag = 0
+        <if test="status == null and statusSet == null"> and  status &lt;&gt; 30</if>
+        <if test="statusSet != null and statusSet != ''">
+        	and status in 
+        	<foreach collection="statusSet" item="statusTemp" open="(" separator="," close=")">#{statusTemp}</foreach>
+        </if>
+        <if test="repayStyle != null and repayStyle != 0 ">and repay_style = #{repayStyle}</if>
+        <if test="status != null and status != ''">and status = #{status}</if>        
+        <if  test="showing != null and showing== 1"> and (show_time is null or show_time > now() ) </if>
+        <include refid="com.rd.ifaes.core.project.mapper.ProjectMapper.queryConditionSql" />
+        <if test="projectName != null and projectName != ''">and PROJECT_NAME  like concat('%',#{projectName},'%')   </if>
+        <if test="keywords != null and keywords != ''">
+        	and  PROJECT_NAME like concat('%',#{keywords},'%')  
+       </if>
+        <if test="page == null or page.sort == null or page.sort == ''">
+        	order by create_time desc
+        </if>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from project
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="productFullResultMap" parameterType="String" >
+		select *
+		from  project bb,product p
+		where bb.uuid = p.PROJECT_ID and bb.uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	
+	<!-- project和 product两张表的集合列 -->
+      <resultMap type="com.rd.ifaes.core.project.domain.Product" id="productFullResultMap"
+      	      extends="com.rd.ifaes.core.project.mapper.ProjectMapper.projectResultMap">
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="content" column="CONTENT"/>
+		<result property="lockTimeLimit" column="LOCK_TIME_LIMIT"/>
+		<result property="saleTimeLimit" column="SALE_TIME_LIMIT"/>
+		<result property="realizeUseful" column="REALIZE_USEFUL"/>
+		<result property="buybackVerify" column="BUYBACK_VERIFY"/>
+		<result property="realizeLowestMoney" column="REALIZE_LOWEST_MONEY"/>
+		<result property="overdueRate" column="OVERDUE_RATE"/>
+		<result property="autoRepay" column="AUTO_REPAY"/>
+	</resultMap>
+	
+	<!-- 根据产品id获取可变现状态 -->
+	<select id="getRealizeUsefulByProjectId" resultType="String" parameterType="String">
+        select realize_useful from product where project_id = #{projectId}
+    </select>
+    <!-- 产品列表查询专用 -->
+     <select id="productQuery" resultMap="productFullResultMap">
+        SELECT
+			p.uuid,
+			p.user_id,
+			p.project_no,
+			p.project_name,
+			p.account,
+			p.apr,
+			p.time_limit,
+			p.time_type,
+			(case when ( p.status ='2'  or (p.status ='4' and p.show_time > now() ) ) then 40
+			         when  ( p.status ='4'  and p.show_time &lt;= now() and  p.sale_time > now() ) then 41
+			         else p.status end)  status,
+			p.repay_style,
+			p.interest_style,
+			p.create_time,
+			p.update_time,
+			p.publish_verify_time,
+			p.raise_time_limit,
+			p.show_time,
+			p.sale_time,
+			p.account_yes,
+			p.raise_end_time,
+			p.stop_time,
+			p.uuid project_id,
+			p.sale_style,
+			p.lowest_account,
+			p.most_account,
+			p.step_account,
+			p.total_copies,
+			p.copy_account,
+			p.most_copies,
+			p.lowest_copies,
+			p.interest_manage_rate,
+			p.overdue_fee_rate,
+			(select l.remark from project_verify_log l where l.project_id =p.uuid   order by l.create_time desc limit 1) remark
+        from project p 
+       	where    
+       		p.borrow_flag = '0'  and p.realize_flag = '0'
+          <if test="repayStyle != null and repayStyle != 0 ">and p.repay_style = #{repayStyle}</if>
+	       <choose>
+	       		<!--  <when test="status == null  or status ==''"> and  p.status &lt;&gt; '30'</when>	 -->	       	
+	             <when test="status != null and status==40">and (p.status ='2'  or (p.status ='4' and p.show_time > now() )) </when>
+	             <when test="status != null and status==41">and (p.status ='4' and p.show_time &lt;= now() and p.sale_time > now() ) </when>
+	             <when test="status != null and status != ''">and p.status = #{status}</when>    
+	       </choose>
+        <include refid="com.rd.ifaes.core.project.mapper.ProjectMapper.queryConditionSql" />
+        <if test="projectName != null and projectName != ''">and p.PROJECT_NAME  like concat('%',#{projectName},'%')   </if>
+        <if test="keywords != null and keywords != ''">
+        	and  p.PROJECT_NAME like concat('%',#{keywords},'%')  
+       </if>
+        <if test="page == null or page.sort == null or page.sort == ''">
+        	order by p.create_time desc
+        </if>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by p.${page.sort} ${page.order}
+        </if>
+	</select>
+</mapper>

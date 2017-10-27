@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>渤海银行修改绑定银行卡页面</title>
+</head>
+<body>
+
+    <div align="center">修改绑定银行卡页面跳转中，请不要关闭页面...</div>
+	<form action="${reg.cbhbSubmitUrl!}" method="post" id="frm1" style="display: none;">
+		
+		<input type="hidden" name="char_set" value="${reg.charSet!}" />       	         
+		<input type="hidden" name="partner_id" value="${reg.partnerId!}" />
+		<input type="hidden" name="version_no" value="${reg.versionNo!}" />
+		<input type="hidden" name="biz_type" value="${reg.bizType!}" />
+		<input type="hidden" name="sign_type" value="${reg.signType!}" />
+		<input type="hidden" name="MerBillNo" value="${reg.merBillNo!}" />
+		<input type="hidden" name="PlaCustId" value="${reg.plaCustId!}" />
+		<input type="hidden" name="PageReturnUrl" value="${reg.pageReturnUrl!}" />
+		<input type="hidden" name="BgRetUrl" value="${reg.bgRetUrl!}" />						
+		<input type="hidden" name="MerPriv" value="${reg.merPriv!}" />
+		<input type="hidden" name="mac" value="${reg.mac!}" />
+		<!-- <input type="hidden" name="merchantCert" value="${reg.merchantCert!}" /> -->
+		<input type="submit" value="提交">
+	</form>
+	<script language="javascript">
+		document.getElementById("frm1").submit();
+	</script>
+</body>
+</html>

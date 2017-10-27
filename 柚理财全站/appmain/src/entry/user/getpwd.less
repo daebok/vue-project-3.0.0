@@ -1,0 +1,103 @@
+@import (reference)'../../style/common.less';
+.getpwd-main{
+  background-color: #fff;
+  height: 560px;
+  margin: 30px auto 40px;
+  .header{
+    ul{
+      border-bottom:solid 1px @color-tipsbg;
+      padding-left: 250px;
+      .clearfix();
+      li{
+        .fl();
+        margin: 0 72px 0 0;
+        line-height: 80px;
+        position: relative;
+        width: 180px;
+        bottom: -1px;
+        border-bottom:solid 1px @color-tipsbg;
+        padding-left: 58px;
+        color: @color-text;       
+        span{
+          position: absolute;
+          .f14();
+          left: 36px;
+          color:#ccc;
+          z-index: 2;
+        }
+        .f16();
+        em{
+          position: absolute;
+          left: 28px;
+          .f24();
+          color:#ccc;
+        }
+        .hollow{
+          display: block;
+        }        
+        .solid{
+          display: none;
+          top: 0;
+        }
+        &.on{
+          border-bottom:solid 1px @color-main;
+          color:#666;
+          font-weight: bold;
+          span{
+            color: #fff;
+          }
+          em{
+            color: @color-main;
+          }
+          .hollow{
+            display: none;
+          }        
+          .solid{
+            display: block;
+          }                           
+        }
+      }
+    }
+  }
+}
+
+.modifyEmail{
+  .ant-form-item{margin-bottom: 0;}
+  p.txt{
+    height: 42px;
+    line-height: 42px;
+  }
+  .row{margin-bottom: 20px;}
+  .countdown-btn{
+    width: 130px;
+    height: 42px;
+    border:1px solid #eaeaea;
+    background-color: #fafafa;
+    text-align: center;
+    line-height: 42px;
+    .border-radius(); 
+  }
+  .submit-btn{
+    margin: 0px auto 15px;
+    display: block;
+    width: 280px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 16px;
+    color: #fff;
+    text-align: center;
+    background-image: -webkit-linear-gradient(to right, #ff794e, #ffb131);
+    background-image: -webkit-linear-gradient(left, #ff794e, #ffb131);
+    background-image: linear-gradient(to right, #ff794e, #ffb131);
+    box-shadow: 0 0 10px rgba(163, 37, 36, 0.2);
+    border: none;
+    border-radius: 5px;
+  }
+}
+.form-themes .form-laber{
+  .f14();
+  color: @color-p;
+}
+.form-themes .ant-select-lg .ant-select-selection--single .ant-select-selection__rendered{
+  .f14();
+}

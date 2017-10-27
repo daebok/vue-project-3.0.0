@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>详情页面</title>
+</head>
+<body>
+	<form action="/member/myBond/inBondInvest.html" method="post">
+		<table>
+			<tr><td>原始标名称：</td><td>${project.projectName}</td></tr>
+			<tr><td>债权名称：</td><td>${bond.bondName}</td></tr>
+			<tr><td>折溢价率：</td><td>${bond.bondApr}%</td></tr>
+			<tr><td>债权金额：</td><td>${bond.bondMoney}</td></tr>
+			<tr><td>债权投资：</td><td><input type="text" name="amount" id="amount" value="" onblur="autoRecord()"/></td></tr>
+			<tr><td>预期收益：</td><td><span id="preInterest">0</span>元</td></tr>
+			<tr><td>实际支付：</td><td><span id="realPay">0</span>元</td></tr>
+			<tr><input type="submit" value="立即投资"/></tr>
+			<input type="hidden" name="projectId" value="${project.uuid!''}" />
+			<input type="hidden" name="bondId" value="${bond.uuid!''}" />
+			<input type="hidden" name="investId" value="${bond.investId}" />
+			<input type="hidden" name="receivedAccount" id="hiddenPay" value="" />
+		</table>
+	</form>
+	<script type="text/javascript">
+		function autoRecord(){
+			var amount = document.getElementById("amount").value;
+			document.getElementById("realPay").innerHTML = amount*(1-${bond.bondApr/100});
+			document.getElementById("hiddenPay").value = amount*(1-${bond.bondApr/100});
+		}
+	</script>
+</body>
+</html>

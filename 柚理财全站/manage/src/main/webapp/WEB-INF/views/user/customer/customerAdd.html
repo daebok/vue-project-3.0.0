@@ -1,0 +1,63 @@
+<div class="form-tips-content">
+	<form class="form-horizontal" action="/user/customer/doAdd.html"
+		id="form" >
+		<ul class="form-item form-items">
+			<li>
+				<div class="form-group">
+					<label for="loginName" class="control-label form-label">客户手机号<span style="color:red;">*</span>：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="mobile" id="mobile"
+							maxlength="11" placeholder="请填写" required>
+					</div>
+				</div>
+			</li>
+		   <li>
+				<div class="form-group">
+					<label for="loginName" class="control-label form-label">备注：</label>
+					<div class="input-box">
+						<!-- <input type="text" class="form-control" name="remark" id="remark" maxlength="256" placeholder="请输入备注" > -->
+						<textarea name="remark" id="remark" rows="4"  class="text" maxlength="256" style="width:100%;border:1px solid #e5e6e7"></textarea>
+					</div>
+				</div>
+			</li>
+		</ul>
+ 		<@token name="addOperatorCustomerToken"/>
+</form>
+</div>
+<script src="${theme_dir}/static/js/plugins/jquery.suggest.js"></script>
+<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+<script src="${theme_dir}/static/js/upload.js"></script>
+<script>
+	$("#form").validate({
+		rules: {
+			mobile:{
+				isMobile:true
+			}
+
+		},
+		submitHandler : function(form) {
+			$(form).ajaxSubmit({
+				type : "post",
+				dataType : "json",
+				success : function(data) {
+					if (data.result) {
+						layer.alert(data.msg, {
+							icon : 6,
+							cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+						}, function() {
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入  
+						});
+					} else {
+						layer.alert(data.msg, {
+							icon : 5
+						});
+					}
+				}
+			});
+		}
+	});
+</script>

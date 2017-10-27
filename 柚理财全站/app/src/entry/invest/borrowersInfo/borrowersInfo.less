@@ -1,0 +1,70 @@
+@import (reference)'../../../style/common.less';
+/*个人信息*/
+.personageUser-info{
+	padding: 20px 0 0;
+	h3{
+		.f16();	
+		font-weight: 100;	
+		span.iconfont{
+			.f16();
+			color:@color-main;
+			margin-right: 15px;
+		}
+	}
+	.list-info{
+		margin-top: 20px;
+		overflow: hidden;
+		li{
+			.fl();			
+			width: 25%;
+			text-indent: 32px;
+			margin-bottom: 25px;
+			.f14();
+			span{				
+				color:#999;
+				margin-right: 10px;
+			}
+			strong{
+				font-weight: 100;
+				span{
+					color:#666;
+				}
+			}
+			s{
+				font-style: normal;
+				text-decoration: none;
+				color:@color-p;
+				.f14();
+				margin: 0 10px 0 0;
+			}
+			em{
+				color: #a9a9a9;
+			}
+		}
+	}
+	&.companyUser-info{
+		.companyUser-info{
+			li{
+				width: 33%;
+				&.newline{
+					width: 100%;
+				}
+				.shareholder{
+					overflow: hidden;
+					.shareholder-name{
+						float: left;
+						height: 60px;					
+					}
+					.shareholder-cont{
+						float:left;
+				    width: 900px;
+				    text-indent: 0;
+				    &.natural-person{
+				    	margin: 0 0 15px;
+				    }						
+					}
+				}
+			}
+		}
+	}
+}

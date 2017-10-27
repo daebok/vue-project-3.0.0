@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.statistic.mapper.StatisticBorrowMapper">
+	<resultMap type="com.rd.ifaes.core.statistic.domain.StatisticBorrow" id="statisticBorrowResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="borrowDate" column="BORROW_DATE"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="isMortgage" column="IS_MORTGAGE"/>
+		<result property="isVouch" column="IS_VOUCH"/>
+		<result property="account" column="ACCOUNT"/>
+		<result property="timeLimit" column="TIME_LIMIT"/>
+		<result property="borrowNature" column="BORROW_NATURE"/>
+		<result property="area" column="AREA"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		PROJECT_ID,
+		BORROW_DATE,
+		USER_ID,
+		IS_MORTGAGE,
+		IS_VOUCH,
+		ACCOUNT,
+		TIME_LIMIT,
+		BORROW_NATURE,
+		AREA
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{projectId},
+		#{borrowDate},
+		#{userId},
+		#{isMortgage},
+		#{isVouch},
+		#{account},
+		#{timeLimit},
+		#{borrowNature},
+		#{area}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="projectId != null and projectId != ''">and PROJECT_ID = #{projectId}</if>
+			<if test="borrowDate != null">and BORROW_DATE = #{borrowDate}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="isMortgage != null and isMortgage != ''">and IS_MORTGAGE = #{isMortgage}</if>
+            <if test="isVouch != null and isVouch != ''">and IS_VOUCH = #{isVouch}</if>
+			<if test="account != null">and ACCOUNT = #{account}</if>
+			<if test="timeLimit != null">and TIME_LIMIT = #{timeLimit}</if>
+            <if test="borrowNature != null and borrowNature != ''">and BORROW_NATURE = #{borrowNature}</if>
+            <if test="area != null and area != ''">and AREA = #{area}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.statistic.domain.StatisticBorrow">
+		insert into statistic_borrow( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into statistic_borrow( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+			#{item.uuid},
+			#{item.projectId},
+			#{item.borrowDate},
+			#{item.userId},
+			#{item.isMortgage},
+			#{item.isVouch},
+			#{item.account},
+			#{item.timeLimit},
+			#{item.borrowNature},
+			#{item.area}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from statistic_borrow
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update statistic_borrow set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update statistic_borrow set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.statistic.domain.StatisticBorrow">
+		update statistic_borrow
+		<trim prefix="set" suffixOverrides=",">
+			<if test="projectId != null and projectId != ''">PROJECT_ID = #{projectId},</if>
+			<if test="borrowDate != null">BORROW_DATE = #{borrowDate},</if>
+			<if test="userId != null and userId != ''">USER_ID = #{userId},</if>
+			<if test="isMortgage != null and isMortgage != ''">IS_MORTGAGE = #{isMortgage},</if>
+			<if test="isVouch != null and isVouch != ''">IS_VOUCH = #{isVouch},</if>
+			<if test="account != null">ACCOUNT = #{account},</if>
+			<if test="timeLimit != null">TIME_LIMIT = #{timeLimit},</if>
+			<if test="borrowNature != null and borrowNature != ''">BORROW_NATURE = #{borrowNature},</if>
+			<if test="area != null and area != ''">AREA = #{area},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="statisticBorrowResultMap">
+        select <include refid="table_columns" />
+        from statistic_borrow
+    </select>
+
+    <select id="findList" resultMap="statisticBorrowResultMap">
+        select <include refid="table_columns" />
+        from statistic_borrow
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from statistic_borrow
+        <include refid="page_where" />
+    </select>
+
+    <select id="get" resultMap="statisticBorrowResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from statistic_borrow
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<resultMap type="com.rd.ifaes.core.statistic.model.StatisticResultModel" id="statisticResultModelResultMap">
+		<result property="statDate" column="STAT_DATE"/>
+		<result property="totalCount" column="TOTAL_COUNT"/>
+		<result property="mortgageCount" column="MORTGAGE_COUNT"/>
+		<result property="vouchCount" column="VOUCH_COUNT"/>
+		<result property="otherCount" column="OTHER_COUNT"/>
+	</resultMap>
+	
+	<!-- 搜索条件 -->
+	<sql id="select_dateType">
+	   <choose> 
+            <when test="3==dateType ">  
+                date_format(borrow_date,'%X%m')  
+            </when >  
+            <when test="2==dateType ">  
+                date_format(borrow_date,'%X%V')  
+            </when >  
+            <otherwise>
+                date_format(borrow_date,'%Y%m%d')  
+            </otherwise> 
+	   </choose>
+	</sql>
+	
+	<sql id="select_statType">
+	   <choose> 
+            <when test="3==statType "> <!-- 统计借款笔数 -->
+            	count(project_id) as totalCount,
+				count(case when is_mortgage = '1' then 1 ELSE null end) as mortgageCount,    <!-- 抵押 -->
+				count(case when is_vouch = '1' then 1 ELSE null end) as vouchCount,     <!-- 担保 -->
+				count(case when is_vouch = '0' and is_mortgage = '0' then 1 ELSE null end) as otherCount    <!-- 其他 -->
+            </when >  
+            <when test="2==statType "><!-- 统计借款金额 -->
+                sum(account) as totalCount,
+				sum(case when is_mortgage = '1' then account ELSE 0 end) as mortgageCount,    <!-- 抵押 -->
+				sum(case when is_vouch = '1' then account ELSE 0 end) as vouchCount,     <!-- 担保 -->
+				sum(case when is_vouch = '0' and is_mortgage = '0' then account ELSE 0 end) as otherCount    <!-- 其他 -->  
+            </when >  
+            <otherwise><!-- 统计借款人数 -->
+                count(distinct user_id) as totalCount,
+				count(distinct user_id, case when is_mortgage = '1' then 1 ELSE null end) as mortgageCount,    <!-- 抵押 -->
+				count(distinct user_id, case when is_vouch = '1' then 1 ELSE null end) as vouchCount,     <!-- 担保 -->
+				count(distinct user_id, case when is_vouch = '0' and is_mortgage = '0' then 1 ELSE null end) as otherCount    <!-- 其他 -->
+            </otherwise> 
+	   </choose>
+	</sql>
+	
+	<!-- 统计借款信息-->
+ 	<select id="getBorrowStatistic" resultMap="statisticResultModelResultMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select <include refid="select_dateType" /> as statDate,
+		<include refid="select_statType" />
+		from statistic_borrow 
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="startDate != null and startDate != ''">and <include refid="select_dateType" /> &gt;= #{startDate}</if>
+        	<if test="endDate != null and endDate != ''">and <include refid="select_dateType" /> &lt;= #{endDate}</if>
+            <include refid="queryConditionSql" />
+        </trim>
+        group by <include refid="select_dateType" />
+	</select>
+	
+	 <!-- 查询类型 -->
+	<sql id="statistic_type">
+	   <choose> 
+            <when test="3==statType ">  
+                count(user_id) 
+            </when >  
+            <when test="2==statType ">  
+                sum(account) 
+            </when >  
+            <otherwise>
+                count(distinct user_id)
+            </otherwise> 
+	   </choose>
+	</sql>	
+	<!-- 获取起始日期前一天数值 -->
+	<select id="getLastTotal" resultType="BigDecimal" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select  <include refid="statistic_type" /> as totalCount
+		from statistic_borrow 
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="beforeStartDate != null and beforeStartDate != ''">and <include refid="select_dateType" /> = #{beforeStartDate}</if>
+            <include refid="queryConditionSql" />
+        </trim>
+	</select>
+	
+   
+	<!-- 查询条件 -->
+	<sql id="queryConditionSql">
+		<if test="borrowTypeArr != null and borrowTypeArr.length &gt; 0">
+			and
+			<trim prefixOverrides="or " prefix="(" suffix=")">
+				<foreach collection="borrowTypeArr" item="type">
+					<if test="type==1">or is_mortgage = 1 </if>
+					<if test="type==2">or is_vouch = 1</if>
+					<if test="type==3">or (is_mortgage = 0 and is_vouch = 0)</if>
+				</foreach>
+			</trim>
+		</if>
+	    <if test="account != null and account.length &gt; 0">
+			and
+			<trim prefixOverrides="or " prefix="(" suffix=")">
+				<foreach collection="account" item="acc">
+					<foreach collection="dictList" item="data" separator=",">
+						<if test="acc==data.itemValue">or 
+							<trim prefixOverrides="and " prefix="(" suffix=")">
+								<if test="data.minValue != null and data.minValue != ''">and account &gt;= ${data.minValue}</if>
+								<if test="data.maxValue != null and data.maxValue != ''">and account &lt; ${data.maxValue}</if>
+							</trim>
+						</if>
+					</foreach>
+				</foreach>
+			</trim>
+		</if>
+       <if test="borrowNatureArr != null and borrowNatureArr.length &gt; 0">
+	        and borrow_nature in
+	        <foreach collection="borrowNatureArr" item="item" open="(" separator="," close=")">  
+	          #{item} 
+	        </foreach>	
+		</if>
+	</sql>
+	<!-- 统计借款地区  -->
+	<select id="getBorrowArea" resultMap="statisticResultModelResultMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select area,count(distinct user_id) as borrowerNum,IFNULL(sum(account),0) as account,count(project_id) as borrowNum
+		from statistic_borrow
+		<trim prefix="where" prefixOverrides="and | or ">
+			and area is not null
+			<if test="startDate != null and startDate != ''">and borrow_date &gt;= #{startDate}</if>
+        	<if test="endDate != null and endDate != ''">and borrow_date &lt;= #{endDate}</if>
+        	<if test="borrowNature != null and borrowNature != ''">and borrow_nature = #{borrowNature}</if>
+        </trim>
+        group by area order by count(distinct user_id) desc<!-- 借款人数排序 -->
+	</select>
+	
+	<!-- 统计借款总数  -->
+	<select id="getBorrowTotal" resultMap="statisticResultModelResultMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select count(distinct user_id) as borrowerNum,IFNULL(sum(account),0) as account,count(project_id) as borrowNum
+		from statistic_borrow
+		<trim prefix="where" prefixOverrides="and | or ">
+		and area is not null
+			<if test="startDate != null and startDate != ''">and borrow_date &gt;= #{startDate}</if>
+        	<if test="endDate != null and endDate != ''">and borrow_date &lt;= #{endDate}</if>
+        	<if test="borrowNature != null and borrowNature != ''">and borrow_nature = #{borrowNature}</if>
+        </trim>
+	</select>
+	
+	<!-- 借款信息 饼图 -->
+	<!-- 借款信息计数  -->
+	<sql id="queryStatisticBorrowSql">
+		from statistic_borrow
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="startDate != null and startDate != ''">and borrow_date &gt;= #{startDate}</if>
+        	<if test="endDate != null and endDate != ''">and borrow_date &lt;= #{endDate}</if>
+        </trim>
+	</sql>
+		
+	<!-- 统计不同借款金额笔数  -->
+	<select id="countByBorrowAccount" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select
+		<if test="dictList != null and dictList.size() &gt; 0">
+	        <foreach collection="dictList" item="data" separator="," >  
+	        	count(case when
+	        	<trim prefixOverrides="and | or ">
+		        	<if test="data.minValue != null and data.minValue != ''">and account &gt;= ${data.minValue}</if>
+		        	<if test="data.maxValue != null and data.maxValue != ''">and account &lt; ${data.maxValue}</if>
+	        	</trim>
+	        	then 1 ELSE null end) as #{data.itemName}
+	        </foreach>
+	    </if>
+		<include refid="queryStatisticBorrowSql" />
+	</select>
+	
+	<!-- 统计不同借款期限笔数  -->
+	<select id="countByBorrowTimeLimit" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select
+		<if test="dictList != null and dictList.size() &gt; 0">
+	        <foreach collection="dictList" item="data" separator="," >  
+	        	count(case when
+	        	<trim prefixOverrides="and | or ">
+		        	<if test="data.minValue != null and data.minValue != ''">and time_limit &gt;= ${data.minValue}</if>
+		        	<if test="data.maxValue != null and data.maxValue != ''">and time_limit &lt; ${data.maxValue}</if>
+	        	</trim>
+	        	then 1 ELSE null end) as #{data.itemName}
+	        </foreach>
+	    </if>
+		<include refid="queryStatisticBorrowSql" />
+	</select>
+	
+	<!-- 统计不同借款类型笔数  -->
+	<select id="countByBorrowType" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select
+		<if test="dictList != null and dictList.size() &gt; 0">
+	        <foreach collection="dictList" item="data" separator="," >  
+	        	count(case when
+	        	<trim prefixOverrides="and | or ">
+		        	<if test="data.minValue != null and data.minValue != ''">and is_vouch = ${data.minValue}</if>
+		        	<if test="data.maxValue != null and data.maxValue != ''">and is_mortgage = ${data.maxValue}</if>
+	        	</trim>
+	        	then 1 ELSE null end) as #{data.itemName}
+	        </foreach>
+	    </if>
+		<include refid="queryStatisticBorrowSql" />
+	</select>
+	
+	<!-- 统计不同借款期限金额  -->
+	<select id="sumByBorrowTimeLimit" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select
+		<if test="dictList != null and dictList.size() &gt; 0">
+	        <foreach collection="dictList" item="data" separator="," >  
+	        	IFNULL(sum(case when
+	        	<trim prefixOverrides="and | or ">
+		        	<if test="data.minValue != null and data.minValue != ''">and time_limit &gt;= ${data.minValue}</if>
+		        	<if test="data.maxValue != null and data.maxValue != ''">and time_limit &lt; ${data.maxValue}</if>
+	        	</trim>
+	        	then account ELSE 0 end),0) as #{data.itemName}
+	        </foreach>
+	    </if>
+		<include refid="queryStatisticBorrowSql" />
+	</select>
+	
+	<!-- 统计不同借款类型金额  -->
+	<select id="sumByBorrowType" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select
+		<if test="dictList != null and dictList.size() &gt; 0">
+	        <foreach collection="dictList" item="data" separator="," >  
+	        	IFNULL(sum(case when
+	        	<trim prefixOverrides="and | or ">
+		        	<if test="data.minValue != null and data.minValue != ''">and is_vouch = ${data.minValue}</if>
+		        	<if test="data.maxValue != null and data.maxValue != ''">and is_mortgage = ${data.maxValue}</if>
+	        	</trim>
+	        	then account ELSE 0 end),0) as #{data.itemName}
+	        </foreach>
+	    </if>
+		<include refid="queryStatisticBorrowSql" />
+	</select>
+	
+</mapper>

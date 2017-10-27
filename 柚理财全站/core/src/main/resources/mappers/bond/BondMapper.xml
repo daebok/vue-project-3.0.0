@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.bond.mapper.BondMapper">
+	<resultMap type="com.rd.ifaes.core.bond.domain.Bond" id="bondResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="bondName" column="BOND_NAME"/>
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="investId" column="INVEST_ID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="bondApr" column="BOND_APR"/>
+		<result property="soldInterest" column="SOLD_INTEREST"/>
+		<result property="status" column="STATUS"/>
+		<result property="bondFee" column="BOND_FEE"/>
+		<result property="bondMoney" column="BOND_MONEY"/>
+		<result property="soldCapital" column="SOLD_CAPITAL"/>
+		<result property="limitHours" column="LIMIT_HOURS"/>
+		<result property="bondEndTime" column="BOND_END_TIME"/>
+		<result property="bondNo" column="BOND_NO"/>
+		<result property="startPeriod" column="START_PERIOD"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="ruleId" column="RULE_ID"/>
+		<result property="bondLowestMoney" column="BOND_LOWEST_MONEY"/>
+		<result property="bondMostMoney" column="BOND_MOST_MONEY"/>
+		<result property="remainDays" column="REMAIN_DAYS"/>
+		<result property="successTime" column="SUCCESS_TIME"/>
+		<result property="sellStyle" column="SELL_STYLE"/>
+		<result property="stage" column="STAGE"/>
+		<result property="protocolId" column="PROTOCOL_ID"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		BOND_NAME,
+		PROJECT_ID,
+		INVEST_ID,
+		USER_ID,
+		BOND_APR,
+		SOLD_INTEREST,
+		STATUS,
+		BOND_FEE,
+		BOND_MONEY,
+		SOLD_CAPITAL,
+		LIMIT_HOURS,
+		BOND_END_TIME,
+		BOND_NO,
+		START_PERIOD,
+		CREATE_TIME,
+		RULE_ID,
+		BOND_LOWEST_MONEY,
+		BOND_MOST_MONEY,
+		REMAIN_DAYS,
+		SUCCESS_TIME,
+		SELL_STYLE,
+		STAGE,
+		PROTOCOL_ID
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{bondName},
+		#{projectId},
+		#{investId},
+		#{userId},
+		#{bondApr},
+		#{soldInterest},
+		#{status},
+		#{bondFee},
+		#{bondMoney},
+		#{soldCapital},
+		#{limitHours},
+		#{bondEndTime},
+		#{bondNo},
+		#{startPeriod},
+		#{createTime},
+		#{ruleId},
+		#{bondLowestMoney},
+		#{bondMostMoney},
+		#{remainDays},
+		#{successTime},
+		#{sellStyle},
+		#{stage},
+		#{protocolId}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+             <if test="bondName != null and bondName != ''">and BOND_NAME = #{bondName}</if>
+            <if test="projectId != null and projectId != ''">and PROJECT_ID = #{projectId}</if>
+            <if test="investId != null and investId != ''">and INVEST_ID = #{investId}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+			<if test="bondApr != null">and BOND_APR = #{bondApr}</if>
+			<if test="soldInterest != null">and SOLD_INTEREST = #{soldInterest}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+            <if test="bondFee != null">and BOND_FEE = #{bondFee}</if>
+			<if test="bondMoney != null">and BOND_MONEY = #{bondMoney}</if>
+			<if test="soldCapital != null">and SOLD_CAPITAL = #{soldCapital}</if>
+			<if test="limitHours != null">and limit_hours = #{limitHours}</if>
+			<if test="bondEndTime != null">and BOND_END_TIME = #{bondEndTime}</if>
+            <if test="bondNo != null and bondNo != ''">and BOND_NO = #{bondNo}</if>
+			<if test="startPeriod != null and startPeriod != ''">and START_PERIOD = #{startPeriod}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+			<if test="ruleId != null">and RULE_ID = #{ruleId}</if>
+			<if test="bondLowestMoney != null">and BOND_LOWEST_MONEY = #{bondLowestMoney}</if>
+			<if test="bondMostMoney != null">and BOND_MOST_MONEY = #{bondMostMoney}</if>
+			<if test="remainDays != null and remainDays != ''">and REMAIN_DAYS = #{remainDays}</if>
+			<if test="successTime != null and successTime != ''">and SUCCESS_TIME = #{successTime}</if>
+			<if test="sellStyle != null and sellStyle != ''">and SELL_STYLE = #{sellStyle}</if>
+			<if test="stage != null and stage != ''">and STAGE = #{stage}</if>
+			<if test="protocolId != null and protocolId != ''">and protocolId = #{protocolId}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.bond.domain.Bond">
+		insert into bond( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into bond( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+		#{item.uuid},
+				#{item.bondName},
+				#{item.projectId},
+				#{item.investId},
+				#{item.userId},
+				#{item.bondApr},
+				#{item.soldInterest},
+				#{item.status},
+				#{item.bondFee},
+				#{item.bondMoney},
+				#{item.soldCapital},
+				#{item.limitHours},
+				#{item.bondEndTime},
+				#{item.bondNo},
+				#{item.startPeriod},
+				#{item.createTime},
+				#{item.ruleId},
+				#{bondLowestMoney},
+				#{bondMostMoney},
+				#{remainDays},
+				#{successTime},
+				#{sellStyle},
+				#{stage},
+				#{protocolId}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from bond
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update bond set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="uuid" open="(" separator="," close=")">  
+            #{uuid} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update bond set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.bond.domain.Bond">
+		update bond 
+		<trim prefix="set" suffixOverrides=",">
+		 	<if test="bondName != null and bondName != ''">BOND_NAME = #{bondName},</if>
+			<if test="bondApr != null">BOND_APR = #{bondApr},</if>
+			<if test="soldInterest != null">SOLD_INTEREST = #{soldInterest},</if>
+            <if test="status != null and status != ''">STATUS = #{status},</if>
+			<if test="bondFee != null">BOND_FEE = #{bondFee},</if>
+			<if test="bondMoney != null">BOND_MONEY = #{bondMoney},</if>
+			<if test="soldCapital != null">SOLD_CAPITAL = #{soldCapital},</if>
+			<if test="limitHours != null">limit_hours = #{limitHours},</if>
+			<if test="bondEndTime != null">BOND_END_TIME = #{bondEndTime},</if>
+			<if test="startPeriod != null">START_PERIOD = #{startPeriod},</if>
+			<if test="bondLowestMoney != null">BOND_LOWEST_MONEY = #{bondLowestMoney},</if>
+			<if test="bondMostMoney != null">BOND_MOST_MONEY = #{bondMostMoney},</if>
+			<if test="remainDays != null">REMAIN_DAYS = #{remainDays},</if>
+			<if test="successTime != null">SUCCESS_TIME = #{successTime},</if>
+			<if test="stage != null and stage != ''">STAGE = #{stage},</if>
+			<if test="protocolId != null and protocolId != ''">protocol_id = #{protocolId},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+	<update id="updateBatch" parameterType="java.util.List">
+		<foreach collection="list" item="item" open="" separator=";" close="">  
+			update bond 
+			<trim prefix="set" suffixOverrides=",">
+			 	<if test="item.bondName != null and item.bondName != ''">BOND_NAME = #{item.bondName},</if>
+				<if test="item.bondApr != null">BOND_APR = #{item.bondApr},</if>
+				<if test="item.soldInterest != null">SOLD_INTEREST = #{item.soldInterest},</if>
+	            <if test="item.status != null and item.status != ''">STATUS = #{item.status},</if>
+				<if test="item.bondFee != null">BOND_FEE = #{item.bondFee},</if>
+				<if test="item.bondMoney != null">BOND_MONEY = #{item.bondMoney},</if>
+				<if test="item.soldCapital != null">SOLD_CAPITAL = #{item.soldCapital},</if>
+				<if test="item.limitHours != null">limit_hours = #{item.limitHours},</if>
+				<if test="item.bondEndTime != null">BOND_END_TIME = #{item.bondEndTime},</if>
+	            <if test="item.bondNo != null and item.bondNo != ''">BOND_NO = #{item.bondNo},</if>
+				<if test="item.startPeriod != null">START_PERIOD = #{item.startPeriod},</if>
+				<if test="item.bondLowestMoney != null">BOND_LOWEST_MONEY = #{item.bondLowestMoney},</if>
+				<if test="item.bondMostMoney != null">BOND_MOST_MONEY = #{item.bondMostMoney},</if>
+				<if test="item.remainDays != null and item.remainDays != ''">REMAIN_DAYS = #{item.remainDays},</if>
+				<if test="item.successTime != null">SUCCESS_TIME = #{item.successTime},</if>
+				<if test="item.sellStyle != null and item.sellStyle != ''">SELL_STYLE = #{item.sellStyle},</if>
+				<if test="item.stage != null and item.stage != ''">STAGE = #{item.stage},</if>
+				<if test="item.protocolId != null and item.protocolId != ''">protocol_id= #{item.protocolId},</if>
+			</trim>
+			where uuid = #{item.uuid} 
+        </foreach>	
+	</update>
+	
+	<update id="updateStatusBatch" parameterType="java.util.List">
+		<foreach collection="list" item="item" open="" separator=";" close="">  
+			update bond 
+			<trim prefix="set" suffixOverrides=",">
+	            <if test="item.status != null and item.status != ''">STATUS = #{item.status},</if>
+			</trim>
+			where uuid = #{item.uuid} 
+        </foreach>	
+	</update>
+	
+	<update id="updateRemainDaysBatch" parameterType="java.util.List">
+		<foreach collection="list" item="item" open="" separator=";" close="">  
+			update bond 
+			<trim prefix="set" suffixOverrides=",">
+	            <if test="item.remainDays != null and item.remainDays != ''">remain_days = #{item.remainDays},</if>
+			</trim>
+			where uuid = #{item.uuid} 
+        </foreach>	
+	</update>
+
+
+    <select id="findAll" resultMap="bondResultMap">
+        select <include refid="table_columns" />
+        from bond
+    </select>
+
+    <select id="findList" resultMap="bondResultMap">
+     	select <include refid="table_columns" />
+        from bond
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from bond
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="bondResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from bond
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<select id="getMaxBondNo" resultType="String" >
+		select max(BOND_NO) from bond 
+		where create_time &gt;= #{startDate} and create_time &lt;= #{endDate}
+	</select>	
+	
+	<select id="bondNoExists" resultType="int" parameterType="String">
+		select count(uuid) from bond where BOND_NO = #{bondNo}
+	</select>
+	
+	<!-- 后台的转让记录 -->
+	<select id="findManagePage" resultMap="bondModelResultMap">
+		select p1.UUID,p1.BOND_NAME,p1.BOND_APR,p1.STATUS,p1.PROJECT_ID,p1.SOLD_CAPITAL,
+	        p1.BOND_MONEY,p1.BOND_END_TIME,p1.BOND_NO,p1.CREATE_TIME,p1.REMAIN_DAYS,p2.apr as apr,
+	       p2.repay_style as repay_style,u.user_name,u.real_name
+	        from bond p1 left join project p2 on p1.project_id = p2.uuid left join user u on u.uuid = p1.user_id
+		    <trim prefix="where" prefixOverrides="and | or ">
+	        	<if test="keywords != null and keywords != ''">and (p1.BOND_NAME like concat('%',#{keywords},'%') or u.real_name like concat('%',#{keywords},'%'))</if>
+	        	<if test="bondName != null and bondName != ''">and p1.BOND_NAME like concat('%',#{bondName},'%')</if>
+	        	<if test="status != null and status != ''">and p1.STATUS = #{status}</if>
+	        </trim>
+	        order by p1.create_time desc 
+	</select>
+	
+	<!-- 转让中  已转让 列表 -->
+	<select  id="findModelList" resultMap="bondModelResultMap">
+		select p1.protocol_id,p1.stage,p1.sell_style,p1.UUID,p1.BOND_NAME,p1.PROJECT_ID,p1.INVEST_ID,p1.USER_ID,p1.BOND_APR,p1.SOLD_INTEREST as HAPPEND_INTEREST,p1.STATUS,p1.rule_id,
+        p1.BOND_FEE as MANAGE_FEE,p1.BOND_MONEY,p1.SOLD_CAPITAL,p1.limit_hours,p1.BOND_END_TIME,p1.BOND_NO,p1.START_PERIOD,p1.CREATE_TIME,p1.SUCCESS_TIME,
+        p1.BOND_LOWEST_MONEY,p1.BOND_MOST_MONEY,p1.REMAIN_DAYS,p2.project_name as project_name,p2.apr as apr,
+        p2.time_limit as time_limit,p2.time_type as time_type,p2.status as borrow_status,p2.repay_style as repay_style,p2.total_period as total_period,
+        p2.repayed_period as repayed_period,p2.real_last_repay_time as last_repay_time
+        from bond p1 left join project p2 on p1.project_id = p2.uuid 
+        <trim prefix="where" prefixOverrides="and | or ">
+          <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+          <if test="projectId != null and projectId != ''">and p1.PROJECT_ID = #{projectId}</if>
+          <if test="investId != null and investId != ''">and p1.INVEST_ID = #{investId}</if>
+          <if test="userId != null and userId != ''">and p1.USER_ID = #{userId}</if>
+		  <if test="bondApr != null">and p1.BOND_APR = #{bondApr}</if>
+		  <if test="soldInterest != null">and p1.SOLD_INTEREST = #{soldInterest}</if>
+          <if test="status != null and status != ''">and p1.STATUS = #{status}</if>
+          <if test="statusSet != null and statusSet != ''">
+		        	and p1.STATUS in 
+		        	<foreach collection="statusSet" item="statusSetTemp" open="(" separator="," close=")">#{statusSetTemp}</foreach>
+		  </if>
+	      <if test="bondFee != null">and p1.BOND_FEE = #{bondFee}</if>
+	      <if test="bondMoney != null">and p1.BOND_MONEY = #{bondMoney}</if>
+		  <if test="soldCapital != null">and p1.SOLD_CAPITAL = #{soldCapital}</if>
+		  <if test="limitHours != null">and p1.limit_hours = #{limitHours}</if>
+		  <if test="bondEndTime != null">and p1.BOND_END_TIME = #{bondEndTime}</if>
+          <if test="bondNo != null and bondNo != ''">and p1.BOND_NO = #{bondNo}</if>
+          <if test="ruleId != null">and p1.RULE_ID = #{ruleId}</if>
+		  <if test="startPeriod != null">and p1.START_PERIOD = #{startPeriod}</if>
+		  <if test="sellStyle != null and sellStyle != ''">and p1.SELL_STYLE = #{sellStyle}</if>
+	      <if test="repayStyle != null and repayStyle != ''">and p2.repay_style = #{repayStyle}</if>
+	      <include refid="queryConditionSql" />
+	       <if test="keywords != null and keywords != ''">
+	        	and (p1.BOND_NAME like concat('%',#{keywords},'%') )
+	       </if>
+          <if test="bondName != null and bondName != ''">and p1.BOND_NAME like concat('%',#{bondName},'%')</if>
+          <if test="dateTypeTime != null and dateTypeTime != ''">and p1.SUCCESS_TIME &gt; #{dateTypeTime}</if>
+          <if test="dateType == null or dateType == ''">
+		     <if test="startTime != null and startTime != ''">and p1.SUCCESS_TIME &gt;= #{startTime}</if>
+		     <if test="endTime != null and endTime != ''">and p1.SUCCESS_TIME &lt;= #{endTime}</if>        
+          </if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort}  ${page.order},p2.status asc,p1.stage asc,p1.status asc,p1.bond_no desc
+        </if>
+        <!-- 默认排序：按可投排第一位，其次按最新转让的排前面 -->
+        <if test="page == null or page.sort == null or page.sort == ''">order by p2.status asc,p1.stage asc,p1.status asc,p1.bond_no desc </if>
+	</select>
+	<!-- 债权专区查询条件 -->
+	<sql id="queryConditionSql">
+		<choose>
+		 	<when test="bondMoneyType != null and bondMoneyType == 1"> 
+	           <![CDATA[  and p1.bond_money < 10000  ]]> 
+	        </when>
+	         <when test="bondMoneyType != null and bondMoneyType == 2"> 
+	          <![CDATA[  and (p1.bond_money = '10000' or (p1.bond_money > 10000 and p1.bond_money < 50000))  ]]> 
+	        </when>
+	        <when test="bondMoneyType != null and bondMoneyType ==3"> 
+	          <![CDATA[ and (p1.bond_money = '50000' or (p1.bond_money > 50000 and p1.bond_money < 100000)) ]]> 
+	        </when>
+	       <when test="bondMoneyType != null and bondMoneyType ==4"> 
+	           <![CDATA[  and (p1.bond_money = '100000' or  p1.bond_money > 100000)  ]]> 
+	        </when>
+	        <otherwise>
+	        </otherwise>
+		</choose>
+		<choose>
+		 	<when test="remainDaysType != null and remainDaysType == 1"> 
+	           <![CDATA[  and p1.REMAIN_DAYS < 30  ]]> 
+	        </when>
+	         <when test="remainDaysType != null and remainDaysType == 2"> 
+	          <![CDATA[  and (p1.REMAIN_DAYS = '30' or (p1.REMAIN_DAYS > 30 and p1.REMAIN_DAYS < 90))  ]]> 
+	        </when>
+	        <when test="remainDaysType != null and remainDaysType ==3"> 
+	          <![CDATA[ and (p1.REMAIN_DAYS = '90' or (p1.REMAIN_DAYS > 91 and p1.REMAIN_DAYS < 180) )]]> 
+	        </when>
+	       <when test="remainDaysType != null and remainDaysType ==4"> 
+	           <![CDATA[  and (p1.REMAIN_DAYS = '180' or p1.REMAIN_DAYS > 180 ) ]]> 
+	        </when>
+	        <otherwise>
+	        </otherwise>
+		</choose>
+		<choose>
+		 	<when test="aprType != null and aprType == 1"> 
+	           <![CDATA[  and p2.apr < 6  ]]> 
+	        </when>
+	         <when test="aprType != null and aprType == 2"> 
+	          <![CDATA[  and (p2.apr = '6' or (p2.apr > 6 and p2.apr < 10))  ]]> 
+	        </when>
+	        <when test="aprType != null and aprType ==3"> 
+	          <![CDATA[ and (p2.apr = '10' or (p2.apr > 10 and p2.apr < 14)) ]]> 
+	        </when>
+	       <when test="aprType != null and aprType ==4"> 
+	           <![CDATA[  and (p2.apr = '14' or p2.apr > 14)  ]]> 
+	        </when>
+	        <otherwise>
+	        </otherwise>
+		</choose>
+	</sql>
+	
+	 <select id="getBondByBondNo" resultMap="bondResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from bond
+		where bond_no = #{bondNo}
+	</select>
+	
+	<!-- 递增修改已售金额 -->
+	<update id="updateSoldCapitalById">
+		update bond set sold_capital = sold_capital + #{money} where uuid  = #{uuid}
+	</update>
+	
+	<!-- 根据旧状态修改新状泰 -->
+	<update id="updateBondStatusById">
+		update bond set status = #{newStatus} where uuid = #{uuid} and status = #{oldStatus}
+	</update>
+	
+	<!--  递增修改持有利息和手续费-->
+	<update id="updateBondOtherInfo">
+		update bond set sold_interest = sold_interest + #{soldInterest} ,
+						 bond_fee = bond_fee + #{bondFee},
+						 success_time = #{successTime}
+		 where uuid = #{uuid}
+	</update>
+	
+	<resultMap type="com.rd.ifaes.core.bond.model.BondModel" id="bondModelResultMap" 
+		extends="com.rd.ifaes.core.bond.mapper.BondMapper.bondResultMap">
+		<result property="bondLowestMoney" column="BOND_LOWEST_MONEY"/>
+		<result property="bondMostAccount" column="BOND_MOST_ACCOUNT"/>
+		<result property="projectName" column="PROJECT_NAME"/>
+		<result property="apr" column="APR"/>
+		<result property="remainMoney" column="REMAIN_MONEY"/>
+		<result property="borrowStatus" column="borrow_status"/>
+		<result property="repayStyle" column="repay_style"/>
+		<result property="timeType" column="TIME_TYPE"/>
+		<result property="timeLimit" column="TIME_LIMIT"/>
+		<result property="remainDays" column="REMAIN_DAYS"/>
+		<result property="bondPrice" column="BOND_PRICE"/>
+		<result property="nextRepaymentDate" column="NEXT_REPAYMENT_DATE"/>
+		<result property="manageFee" column="MANAGE_FEE"/>
+		<result property="happendInterest" column="HAPPEND_INTEREST"/>
+		<result property="receivedMoney" column="RECEIVED_MONEY"/>
+		<result property="totalPeriod" column="TOTAL_PERIOD"/>
+		<result property="repayedPeriod" column="REPAYED_PERIOD"/>
+		<result property="lastRepayTime" column="LAST_REPAY_TIME"/>
+		<result property="userName" column="user_name"/>
+		<result property="realName" column="real_name"/>
+	</resultMap>
+	
+	<!-- 根据项目id获取不同状态债权个数 -->
+	<select id="getCountByStatus" resultType="int">
+		select count(uuid) from bond
+		where project_id = #{projectId} and status = #{status}
+	</select>
+	<!--  修改债权转让投资阶段  -->
+	<update id="updateStage">
+		update bond set stage = #{stage} where uuid = #{uuid}
+	</update>
+	<!-- 查询当前的原始标投资记录 对应的正在转让中或者转让成功的债权标的个数 -->
+	<select id="getBondCountByProjectInvestId" resultType="int">
+		select count(uuid) from bond where invest_id = #{uuid} and status in(0,3)
+	</select>
+</mapper>

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>活跃用户统计</title>
+<#include "include/resources.html">
+</head>
+<body class="overflowY">
+<div class="wrapper">
+  <div class="row pt20">
+    <div class="col-md-12">
+     <form class="form-horizontal">
+        <input type="hidden" name="realNameStatus" value="0" id="j-realNameStatus" />
+        <input type="hidden" name="dateType" value="1" id="dateType">
+        <div id="legend">
+          <legend>活跃用户统计</legend>
+        </div>
+        <div class="control-group">
+          <label class="control-label">日期：</label>
+          <div class="controls">
+            <label class="checkbox inline selectTime"><input type="text" name="startDate" id="startTime" value="${startDate}" class="form-control" placeholder="开始日期" readonly="readonly" style="background:#fff;"/></label><label class="checkbox inline selectTime"><input type="text" value="${endDate}" name="endDate" id="endTime" class="form-control" placeholder="结束日期" readonly="readonly" style="background:#fff;"/></label>
+          </div>
+        </div>        
+        <div class="control-group">
+          <label class="control-label">活跃条件：</label>
+          <div class="controls">
+            <label class="checkboxcon inline">
+              <input type="radio" name="activeType" checked value="1">登录
+            </label>
+            <label class="checkboxcon inline">
+              <input type="radio" name="activeType" value="2">投资
+            </label>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">渠道来源：</label>
+          <div class="controls">
+            <label class="checkbox inline"><input type="checkbox" value="" checked="">不限</label>
+            <label class="checkbox inline">
+              <input type="checkbox" name="channelArr" checked value="1">PC
+            </label>            
+            <label class="checkbox inline">
+              <input type="checkbox" name="channelArr" checked value="2">APP
+            </label>
+            <label class="checkbox inline">
+              <input type="checkbox" name="channelArr" checked value="3">微信
+            </label>
+          </div>
+        </div>
+        
+        <div class="" style="margin-left:116px;">
+          <button type="submit" name="button" class="btn btn-primary">搜索</button>
+        </div>
+    </form>
+    </div>
+
+    <div class="lineStyle col-md-12"></div>
+
+    <div class="row">
+    <div class="col-md-6 col-sm-12">
+        <div class="content pt20 ml30">
+          <h3 class="text-right">
+            <div id="timeType" class="selectTime">
+              <a href="javascript:;" id="day" class="on">日</a>
+              <a href="javascript:;" id="week">周</a>
+              <a href="javascript:;" id="month">月</a>
+            </div>
+        </div>
+        <div id="j-main" class="chart-col-6 mt20 ml30" style="width:100%;margin:50px auto 0;"></div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+      <div id="j-map" class="chart-col-6 mt20 ml30" style="width:100%;margin:100px auto 0;">
+
+      </div>
+    </div>
+    </div>
+    <div class="row" style="margin-top:30px;">
+      <div class="col-md-12">
+        <table class="table-td-NoOverflow ui-jqgrid-btable ui-common-table table table-bordered" tabindex="0" >
+          <tbody>
+            <tr class="jqgfirstrow" role="row">
+              <th class="active"  colspan="4">活跃用户概况</th>
+            </tr>
+            <tr class="jqgfirstrow" role="row">
+              <th class="active">过去7天活跃用户</th>
+              <th class="active">过去30天活跃用户</th>
+              <th class="active">过去90天活跃用户</th>
+              <th class="active">过去180天活跃用户</th>
+            </tr>
+            <tr role="row"   class="jqgrow ui-row-ltr">
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+    //设置开始时间控件
+  var startTime= {
+    elem:'#startTime',
+    format: 'YYYY-MM-DD', //日期格式
+    max:$('#endTime').val(),
+    event:'focus',
+    choose: function(dates){
+        endTime.min=dates;
+        endTime.start=dates;
+    }
+  };
+  //设置发放结束时间
+  var endTime=  {
+      elem:'#endTime',
+      format: 'YYYY-MM-DD', //日期格式
+      min: $('#startTime').val(), //最小日期
+      event:'focus',
+      choose: function(dates){
+        startTime.max=dates;
+       }
+  };
+  laydate(startTime);
+  laydate(endTime);
+  var myChart = echarts.init(document.getElementById('j-main'));
+  var option = {
+      title: {
+          text: '活跃用户统计',
+          left: 'center'
+      },
+      tooltip: {
+          trigger: 'axis'
+      },
+      legend: {
+          data:['活跃用户','活跃率'],
+          top:'50px'
+      },
+      grid:{
+          top:'25%'
+      },
+      xAxis: [
+          {
+              type: 'category',
+              data: []
+          }
+      ],
+      yAxis: [
+          {
+              type: 'value',
+              name: '活跃用户',
+              axisLabel: {
+                  formatter: '{value} '
+              }
+          },
+          {
+              type: 'value',
+              name: '环比',
+              axisLabel: {
+                  formatter: '{value} %'
+              }
+          }
+      ],
+      dataZoom: [
+       {   // 这个dataZoom组件，默认控制x轴。
+           type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+           startValue :0
+       },
+
+   ],
+      series: [
+          {
+              name:'活跃用户',
+              type:'bar',
+              data:[],
+              itemStyle:{
+                normal:{
+                  color:'#66bef5'
+                }
+              }
+          },{
+              name:'活跃率',
+              type:'line',
+              yAxisIndex: 1,
+              data:[]
+          }
+      ]
+  };
+
+  chartAjax($(".form-horizontal").serialize());
+
+  function chartAjax(req){
+      $.ajax({
+          url:'/statistic/user/getUserActiveList.html?'+req,
+          dataType:'json',
+          success:function(data){
+            //var timeLength=data.date.length;
+
+            //option.dataZoom[0].startValue=timeLength;
+            option.xAxis[0].data=data.date;
+            option.series[0].data=data.total;
+            option.series[1].data=data.active;
+            myChart.setOption(option);
+          }
+      })
+  }
+
+ $("#timeType a").on('click',function(e){
+
+    $("#timeType a").removeClass('on');
+    $(this).addClass('on')
+    
+    switch (e.target.id) {
+     case 'day':
+        $("#dateType").val(1);
+        chartAjax($(".form-horizontal").serialize())
+        break;
+     case 'week':
+        $("#dateType").val(2);
+        chartAjax($(".form-horizontal").serialize())
+        break;
+     case 'month':
+        $("#dateType").val(3);
+        chartAjax($(".form-horizontal").serialize())
+       break;
+     default:
+   }
+ });
+
+ /* 地图 */
+ //对比折线图
+  var myChartMap = echarts.init(document.getElementById('j-map'));
+  var optionMap= {
+      title: {
+          text: '用户地区分布',
+          left: 'center'
+      },
+      tooltip: {
+          trigger: 'item',
+          formatter: function(params) {
+                var res = params.name+'<br/>';
+                var myseries = optionMap.series;
+                for (var i = 0; i < myseries.length; i++) {
+                    for(var j=0;j<myseries[i].data.length;j++){
+                      if(myseries[i].data[j].name==params.name ){
+                          res+= myseries[i].name;
+                          res+=' : '+myseries[i].data[j].value+'</br>';
+                      }
+                    }
+                }
+                return res;
+          }
+      },
+      legend: {
+          orient: 'vertical',
+          left: 'left',
+          data:['']
+      },
+      /*visualMap: {
+          min: 0,
+          max: 2500,
+          left: 'left',
+          top: 'bottom',
+          text: ['高','低'],           // 文本，默认为数值文本
+          calculable: true
+      },
+      toolbox: {
+          show: true,
+          orient: 'vertical',
+          left: '700px',
+          top: 'center',
+          feature: {
+              dataView: {readOnly: false},
+              restore: {},
+              saveAsImage: {}
+          }
+      },*/
+      series: [
+          {
+              name: '活跃用户',
+              type: 'map',
+              mapType: 'china',
+              roam: false,
+              label: {
+                  normal: {
+                      show: true
+                  },
+                  emphasis: {
+                      show: true
+                  }
+              },
+              data:[]
+          }
+      ]
+  };
+
+chartAjaxMap($('.form-horizontal').serialize());
+
+function chartAjaxMap(req){
+    $.ajax({
+        url:'/statistic/user/getUserActiveArea.html?'+req,
+        dataType:'json',
+        success:function(data){
+            optionMap.series[0].data = data.total;
+            myChartMap.setOption(optionMap);
+          }
+
+    })
+}
+
+
+var urlval = '/statistic/user/getUserActiveCountList.html?activeType=1';
+
+/* submit事件 */
+ $('.form-horizontal').submit(function (e) {
+   e.preventDefault()
+   chartAjax($(this).serialize());
+   chartAjaxMap($('.form-horizontal').serialize());
+   if( $("#myTab li").index($("#myTab li.active")) && $("input[name='userNatureArr']:checked").val() == "1" ){
+    $("[data-hideItem]").removeClass('hide');
+   }
+   else
+   {
+    $("[data-hideItem]").addClass('hide');
+   } 
+   if($("input[name='activeType']:checked").val() == "1"){
+      urlval = '/statistic/user/getUserActiveCountList.html?activeType=1';
+   }else{
+      urlval = '/statistic/user/getUserActiveCountList.html?activeType=2';
+   }
+   getinfo(urlval)
+ });
+
+getinfo(urlval)
+ /* 获取表格数据 */
+function getinfo(url){
+    $.ajax({
+        url:url,
+        dataType:'json',
+        success:function(data){
+             var td = $("table tr").eq(2).find("td");
+             td.eq(0).html(data.lastSevenDay);
+             td.eq(1).html(data.lastThirtyDay);
+             td.eq(2).html(data.lastNinetyDay);
+             td.eq(3).html(data.lastHalfYear);
+          }
+      })
+ }
+
+</script>
+
+<script>
+  $(".control-group").each(function(){
+    $(this).find(".controls .checkbox:eq(0) input").click(function(){
+      if($(this).attr("checked")=="checked"){
+        $(this).attr("checked",false);
+        $(this).parent().siblings().find("input").removeAttr("checked");
+      }else{
+        $(this).attr("checked",true);
+        $(this).parent().siblings().find("input").attr("checked",true);
+        $(this).parent().siblings().find("input").prop("checked",true);
+      }
+    })
+     $(this).find(".controls .checkbox:eq(0)").siblings().find("input").click(function(){
+      if($(this).attr("checked")=="checked"){
+        $(this).attr("checked",false);
+      }else{
+        $(this).attr("checked",true);
+      }
+      var len =  $(this).parent().parent().parent().find(".checkbox").length-1;
+      var j=0;
+      for (var i = 1; i <= len; i++){
+        if( $(this).parent().parent().find(".checkbox").eq(i).find("input").attr("checked")=="checked"){
+          j+=1;
+        }
+      }
+      if((j==0)||(j==len)){
+         $(this).parent().parent().find(".checkbox:eq(0) input").prop("checked",true);
+      }
+      else{
+        $(this).parent().parent().find(".checkbox:eq(0) input").prop("checked",false);
+      }
+    })
+  })
+</script>
+</body>
+</html>

@@ -1,0 +1,616 @@
+<div class="form-tips-content">
+	<input type="hidden" id="image_server_url" value="${image_server_url}">
+	<form class="form-horizontal" action="/loan/borrow/borrowSale.html" id="form" role="form">
+		<input type="hidden" value="${borrow.timeType}" id="timetypeVal">
+		<input type="hidden" value="${borrow.timeLimit!}" id="timetVal">
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">借款名称：</label>
+					<div class="input-box-read">
+						<p>${borrow.projectName!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="riskLevelName" class="control-label form-label">风险等级：</label>
+					<div class="input-box-read">
+						<p>${borrow.riskLevelName!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="userName" class="control-label form-label">借款方：</label>
+					<div class="input-box-read">						
+						<p>${borrow.userName!}</p>						
+					</div>
+				</div>
+			</li>			
+			<li>
+				<div class="form-group">
+					<label for="account" class="control-label form-label">借款总金额：</label>
+					<div class="input-box-read">
+						<p>${borrow.account!}元</p>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="apr" class="control-label form-label">年化利率(%)：</label>
+					<div class="input-box-read">
+						<p>${borrow.apr!}</p>						
+					</div>					
+				</div>
+			</li>			
+			<li>
+				<div class="form-group">
+					<label for="borrowUse" class="control-label form-label">借款用途：</label>
+					<div class="input-box-read">
+						<p>${borrow.borrowUse!}</p>
+					</div>					
+				</div>
+			</li>			
+			<li>
+				<div class="form-group">
+					<label for="timeLimit" class="control-label form-label">借款期限：</label>
+					<div class="input-box-read">
+						<p>${borrow.timeLimit!} <#if borrow.timeType == 0 >个月<#else>天</#if></p>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="lowestAccount" class="control-label form-label">最低起投金额：</label>
+					<div class="input-box-read">
+						<p>${borrow.lowestAccount!}元</p>
+					</div>					
+				</div>
+			</li>
+			<#if (borrow.stepAccount?? && borrow.stepAccount > 0) >
+			<li>
+				<div class="form-group">
+					<label for="lowestAccount" class="control-label form-label">递增金额：</label>
+					<div class="input-box-read">
+						<p>${borrow.stepAccount}元</p>
+					</div>					
+				</div>
+			</li>
+			</#if>
+			<li>
+				<div class="form-group">
+					<label for="mostAccount" class="control-label form-label">最高投资总额：</label>
+					<div class="input-box-read">
+						<p>${borrow.mostAccount!}元</p>
+					</div>
+				</div>
+			</li>
+	  		<li>
+				<div class="form-group">
+			      <label for="sort" class="control-label form-label">计息方式：</label>
+			      <div class="input-box-read">
+			      	<p><#if borrow.interestStyle == '1'>
+							 成立计息
+						<#else>
+							<b>T</b>+${borrow.interestStartDays!}计息  （T为交易登记日，交易登记日时间段 ${borrow.interestTime!'00'} +24h）
+						</#if>
+						</p>        
+			      </div>
+			    </div>	
+	  		</li>	  					
+			<li>
+				<div class="form-group">
+			      	<label for="sort" class="control-label form-label">还款方式：</label>
+			      	<div class="input-box-read">
+			      		<p><@linkage name="repayStyle" id="repayStyle" plantext="plantext" nid="repayStyle" class="form-control" default="${borrow.repayStyle}" /></p>					
+					</div>
+			    </div>	
+	  		</li>
+	  		<li <#if borrow.repayStyle=='3' || borrow.repayStyle=='5'>style="display:black;"<#else>style="display:none;"</#if>>
+				<div class="form-group">
+					<label for="fixedRepayDay" class="control-label form-label">固定还款日：</label>
+					<div class="input-box-read">
+						<p>${borrow.fixedRepayDay!'无'}</p>
+					</div>					
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="isPawn" class="control-label form-label">是否有抵押物：</label>
+					<div class="input-box-read">
+						<p><#if (mtgList?size > 0) >是<#else>否</#if></p>
+					</div>					
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="borrowUse" class="control-label form-label">抵押物资料：</label>
+					<div class="">
+						<div id="uploadGuaranteeBox1" class="uploadWrap" data-arr="uploadFile1">
+					    	<ul id="businessPagePic1" class="photoUpload">					        	
+					            <#if (mtgList?size > 0)><#list mtgList as item>
+					            <li data-mum="${item.uuid!}">
+					               <img src="${image_server_url}${item.filePath!}"/>
+					           	</li>
+								</#list>
+								<#else><span style="margin-top:7px;display:block;">无</span></#if>	
+					        </ul>
+					    </div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="isVouch" class="control-label form-label">是否担保：</label>
+					<div class="input-box-read">
+						<p><#if (borrow.isVouch?? && borrow.isVouch==1) >是<#else>否</#if></p>
+					</div>					
+				</div>
+			</li>			
+			<#if (borrow.isVouch?? && borrow.isVouch==1) && vouchUser??>			
+			<li>
+				<div class="form-group">
+					<label for="vouchId" class="control-label form-label">担保机构：</label>
+					<div class="input-box-read">
+						<p>${vouchUser}</p>
+					</div>				
+				</div>
+			</li>
+			</#if>
+			<li>
+				<div class="form-group">
+					<label for="borrowManageRate" class="control-label form-label">借款管理费：</label>
+					<div class="input-box-read">
+						<p>${borrow.borrowManageRate}%</p>
+					</div>					
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="interestManageRate" class="control-label form-label">利息管理费：</label>
+					<div class="input-box-read">
+						<p>${borrow.interestManageRate}%</p>
+					</div>					
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="interestManageRate" class="control-label form-label">逾期罚息利率：</label>
+					<div class="input-box-read">
+						<p>${borrow.overdueFeeRate*100}%</p>
+					</div>					
+				</div>
+			</li>
+			<li class="full-width">
+				<div class="form-group">
+					<label for="pwd" class="control-label form-label">借款资料：</label>
+					<div class="">
+						<div id="uploadGuaranteeBox2" class="uploadWrap" data-arr="uploadFile2">
+					    	<ul id="borrowPagePic2" class="photoUpload">					        						            
+					            <#if picList??><#list picList as item>
+					            <li data-mum="${item.uuid!}">
+					               <img src="${image_server_url}${item.filePath!}"/>
+					           	</li>
+								</#list></#if>	
+					            
+					        </ul>
+					    </div>
+					</div>
+				</div>
+			</li>
+			
+			<li class="full-width">
+				<div class="form-group">
+					<label for="remark" class="control-label form-label">借款详情：</label>
+					<div class="textarea-box-read">
+						${borrow.content}
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="account" class="control-label form-label">所属类别<span style="color:red;">*</span>：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" readonly="readonly" name="projectTypeName" id="projectTypeName" 
+					         	    onclick="$.fn.treeGridOptions.treeselect(this)" data-url="/project/type/typeTreePage.html?pageFlag=projectType" 
+					            	placeholder="请选择所属类别"   value="${projectTypeName!''}"  required/>
+		      			<input type="hidden" name="projectTypeId" id="projectTypeId" value="${borrow.projectTypeId!}"/>					
+					</div>
+				</div>
+			</li>				
+			<li>
+				<div class="form-group">
+					<label for="account" class="control-label form-label">募集期<span style="color:red;">*</span>：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="raiseTimeLimit" id="raiseTimeLimit" placeholder="请输入募集期" value="${borrow.raiseTimeLimit!}" data-rule-digits="true" data-msg-digits="请输入整数" data-rule-rangeNumber="1, 10" data-msg-rangeNumber="募集期不能小于1天,且不能超过10天" autocomplete="off" required>
+					</div>
+				</div>
+			</li>	
+			<!-- 红包发放、加息券发放 start -->
+			<li>
+				<div class="form-group">
+					<label for="redenvelopeRuleId" class="control-label form-label">红包发放：</label>
+					<div class="input-box">
+						<select  autocomplete="off" name="redenvelopeRuleId" id="redenvelopeRuleId" class="form-control">
+										<option value="0" <#if borrow.redenvelopeRuleId==0>selected="selected"</#if>>不发放</option>
+		          			<#--  <option value="0" <#if borrow.redenvelopeRuleId==0>selected="selected"</#if>>不发放</option>
+		          			<#list redenvelopeRule as rule>
+					      		<option value="${rule.uuid}"   <#if borrow.redenvelopeRuleId==rule.uuid>selected="selected"</#if> >${rule.ruleName!}</option>
+					        </#list> -->
+						</select>						
+					</div>
+				</div>
+			</li>	
+			<li>
+				<div class="form-group">
+					<label for="rateCouponRuleId" class="control-label form-label">加息券发放：</label>
+					<div class="input-box">
+						<select  autocomplete="off" name="rateCouponRuleId" id="rateCouponRuleId" class="form-control">
+										<option value="0" <#if borrow.rateCouponRuleId==0>selected="selected"</#if>>不发放</option>
+		          		    <#-- <option value="0" <#if borrow.rateCouponRuleId==0>selected="selected"</#if>>不发放</option>
+		          			 <#list rateCouponRule as rule>
+					      		<option value="${rule.uuid}"   <#if borrow.rateCouponRuleId==rule.uuid>selected="selected"</#if> >${rule.ruleName!}</option>
+					          </#list> -->
+						</select>	
+					</div>
+				</div>
+			</li>	
+			<!-- 红包发放、加息券发放 end -->
+			<!-- 加息设置 start -->
+			<li>
+				<div class="form-group">
+					<label for="addApr" class="control-label form-label">加息率(%)：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" maxLength="5" name="addApr" id="addApr" value="${borrow.addApr!0}" placeholder="请输入加息率" required>
+					</div>
+				</div>
+			</li>
+			<!-- 加息设置 end -->
+			<li>
+				<div class="form-group">
+					<label for="account" class="control-label form-label">优惠券使用：</label>
+					<div class="input-checkbox-box">
+						<input type="checkbox" name="redEnvelopeUseful" id="redEnvelopeUseful"  value="1" <#if borrow.redEnvelopeUseful==1>checked="checked" </#if>/><label for="redEnvelopeUseful">红包</label>
+						<input type="checkbox" name="additionalRateUseful" id="additionalRateUseful" value="1" <#if borrow.additionalRateUseful==1>checked="checked" </#if>/><label for="additionalRateUseful">加息券</label>						
+					</div>
+				</div>
+			</li>	
+				<li id="redEnvelopeRateli" <#if borrow.redEnvelopeUseful==1><#else>style="display:none;" </#if> > 
+				<div class="form-group">
+					<label for="realizeUseful" class="control-label form-label">红包可用比例（%）：</label>
+					<div class="input-box">
+					<input  type="text" style="display: inline-block" class="form-control"  name="redEnvelopeRate" id="redEnvelopeRate" value="${borrow.redEnvelopeRate!0}"
+			      		         maxlength="5" placeholder="请输入红包可用比例"   data-rule-range="[0.01, ${borrow.redEnvelopeRate!0}]" data-msg-range="输入的红包可用比例必须大于0且小于等于${borrow.redEnvelopeRate!0}" >
+				  </div>
+				</div>
+			</li>	
+			<li>
+				<div class="form-group">
+					<label for="saleChannel" class="control-label form-label">上架渠道：</label>
+					<div class="input-checkbox-box" style="height:34px;">
+				        <input type="checkbox"  id="saleChannel1" name="ckSaleChannel" value="1" checked>
+				        <label for="saleChannel1">PC</label>
+				        <input type="checkbox"  id="saleChannel2" name="ckSaleChannel" value="2" checked>
+				        <label for="saleChannel2">APP</label>
+				        <input type="checkbox"  id="saleChannel3" name="ckSaleChannel" value="3" checked>
+				        <label for="saleChannel3">微信</label>
+				        <input type="hidden" name="saleChannel" id="saleChannel" value=""/>
+					</div>
+				</div>
+			</li>
+			
+			<li>
+				<div class="form-group">
+					<label for="isVouch" class="control-label form-label">设置精选：</label>
+					<div class="input-checkbox-box" style="height:34px;">
+				        <input type="radio"  id="choice1" name="choice" value="0" <#if borrow.choice==1><#else>checked="checked" </#if> />
+				        <label for="choice1">否</label>
+				        <input type="radio"  id="choice2" name="choice" value="1" <#if borrow.choice==1>checked="checked" </#if> />
+				        <label for="choice2">是</label>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="choice" class="control-label form-label">新手专享：</label>
+					<div class="input-checkbox-box" style="height:34px;">
+				        <input type="radio"  id="novice1" name="novice" value="0" <#if borrow.novice==1><#else>checked="checked" </#if> />
+				        <label for="novice1">否</label>
+				        <input type="radio"  id="novice2" name="novice" value="1" <#if borrow.novice==1>checked="checked" </#if> />
+				        <label for="novice2">是</label>
+					</div>
+				</div>
+			</li>
+			
+			<li>
+				<div class="form-group">
+					<label for="isVouch" class="control-label form-label">允许转让：</label>
+					<div class="input-box row" style="margin:0; padding:0;">
+						<input type="radio"  id="bondTurnTimes1" name="bondTurnTimes" value="1" <#if borrow.bondUseful == '1' && borrow.bondMaxTurn != 0> checked="checked" </#if> />
+				        <label for="bondTurnTimes1">有限转让</label>&nbsp;<input type="text" style="width:40px;" name="bondMaxTurn" id="bondMaxTurn" onkeyup="value=value.replace(/[^\d]/g,'')" maxLength="4" value="${borrow.bondMaxTurn!1}"/>次&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				        <input type="radio"  id="bondTurnTimes2" name="bondTurnTimes" value="2" <#if borrow.bondUseful == '1' && borrow.bondMaxTurn == 0> checked="checked" </#if> />
+				        <label for="bondTurnTimes2">无限次</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				        <input type="radio"  id="bondTurnTimes3" name="bondTurnTimes" value="3" <#if borrow.bondUseful != '1'> checked="checked" </#if> />
+				        <label for="bondTurnTimes3">不允许</label>
+				        <input type="hidden"  id="bondUseful" name="bondUseful" value="${borrow.bondUseful!0}">
+					</div>
+				</div>
+			</li>
+			
+			<li >
+				<div class="form-group">
+					<label for="choice" class="control-label form-label">定向销售：</label>
+					<div class="input-box">
+						<@linkage name="specificSale" id="specificSale" nid="specificSale" default="${borrow.specificSale!'0'}"  class="form-control" />
+					</div>
+				</div>
+			</li>
+			<li  id="specificSaleRuleLi" <#if borrow.specificSale ==null || borrow.specificSale =="0" > style="display:none;" </#if>>
+			<div class="form-group">
+		      <label for="specificSaleRule" class="control-label form-label" id="specificSaleRuleLabel">
+		      	<#if borrow.specificSale=="1">定向密码：</#if> 
+		     	<#if borrow.specificSale=="2">定向等级：</#if> 
+		     	<#if borrow.specificSale=="3">定向邮箱域名：</#if> 
+		     	<#if borrow.specificSale=="4">定向用户：</#if> 
+		      </label>
+		      	<div class="input-box">
+		       	<input type="text" class="form-control" name="specificSaleRule" id="specificSaleRule" value="${borrow.specificSaleRule!}"   placeholder="请输入定向销售规则"   required>
+		       	<select   autocomplete="off" id="vipLevelSelect" class="form-control valid"  <#if borrow.specificSale !="2"> style="display:none;"</#if>  required>
+		             <#list vipLevelList as level>
+			      			<option value="${level}"   
+			      			<#if borrow.specificSale==2 && level==borrow.specificSaleRule>selected="selected"</#if>>VIP${level!}及以上</option>
+			         </#list>
+		       	</select>
+		       	<select name="userAccountTypeSelect" autocomplete="off" id="userAccountTypeSelect" class="form-control valid" aria-invalid="false" <#if borrow.specificSale !="4"> style="display:none;"</#if> style="display: block;" required>
+			       	<option value="">请选择定向用户类型</option>
+    			    <#list userAccountTypeList as accountType>
+			      			<option value="${accountType.itemValue}"   
+			      			<#if borrow.specificSale==4 && accountType.itemValue==borrow.specificSaleRule>selected="selected"</#if>>${accountType.itemName}</option>
+			         </#list>
+
+		       	</select>
+		      </div>
+		    </div>	
+  		 </li>
+			<li>
+				<div class="form-group">
+					<label for="account" class="control-label form-label">上架时间<span style="color:red;">*</span>：</label>
+					<div class="input-box">
+						 <input type="text" class="selectTime form-control" name="showTime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',readOnly:true,minDate:'${nowTime?string('yyyy-MM-dd HH:mm:ss')}',maxDate:'#F{$dp.$D(\'saleTime\')}'})" class="form-control layer-date " id="showTime" value="${borrow.showTime?string('yyyy-MM-dd HH:mm:ss')}" required/>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="account" class="control-label form-label">开售时间<span style="color:red;">*</span>：</label>
+					<div class="input-box">
+						 <input type="text" class="selectTime form-control" name="saleTime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',readOnly:true,minDate:'#F{$dp.$D(\'showTime\')}'})" class="form-control layer-date" id="saleTime" value="${borrow.saleTime?string('yyyy-MM-dd HH:mm:ss')}" required/>
+					</div>
+				</div>
+			</li>
+			
+		</ul>
+		<input type="hidden" name="uuid" value="${borrow.uuid}"/>
+		<input type="hidden" name="projectId" value="${borrow.projectId}"/>
+		<input type="hidden" name="borrowFlag" value="${borrow.borrowFlag}"/>
+		<@token name="saleBorrowToken"/>
+	</form>
+</div>
+<script src="${theme_dir}/static/js/plugins/jquery.suggest.js"></script>
+<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+<script src="${theme_dir}/static/js/upload.js"></script>
+<script>
+/**
+ * 选择项目类别回调函数
+ * @param ptid 项目类别ID
+ * @param ptname 项目类别名称
+ */
+function typeTreePageSelectEnd(ptid,ptname){
+   /*$.post("/operate/redEnvelope/redRuleForProjectType.html",{"projectTypeId":ptid},function(data){
+       if(data.result){
+           $("#redenvelopeRuleId").val(data.ruleId);
+       }
+   });
+      $.post("/operate/rateCoupon/rateCouponForProjectType.html",{"projectTypeId":ptid},function(data){
+       if(data.result){
+           $("#rateCouponRuleId").val(data.ruleId);
+       }
+   });*/
+   $.ajax({
+		url: '/loan/borrow/selectRed.html?projectTypeId='+ptid,
+		type: 'POST',
+		dataType: 'json'
+	}).done(function(data) {
+		var optionHtml="";
+		if(data.length>0){
+			$("#redenvelopeRuleId").html("<option value='0' selected='selected'>不发放</option>");
+			for(var i=0; data.length>i;i++){
+				optionHtml+="<option value="+ data[i].id +">"+data[i].ruleName+"</option>";
+			}
+			$("#redenvelopeRuleId").append(optionHtml);
+		}else{
+			$("#redenvelopeRuleId").html("<option value='0' selected='selected'>不发放</option>");
+		}
+	});
+
+	 $.ajax({
+		url: '/loan/borrow/selectRate.html?projectTypeId='+ptid,
+		type: 'POST',
+		dataType: 'json'
+	}).done(function(data) {
+		var optionHtml="";
+		if(data.length>0){
+			$("#rateCouponRuleId").html("<option value='0' selected='selected'>不发放</option>");
+			for(var i=0; data.length>i;i++){
+				optionHtml+="<option value="+ data[i].id +">"+data[i].ruleName+"</option>";
+			}
+			$("#rateCouponRuleId").append(optionHtml);
+		}else{
+			$("#rateCouponRuleId").html("<option value='0' selected='selected'>不发放</option>");
+		}
+	});
+}
+/*$(".selectTime").focus(function(){
+	$(".layui-layer-content").css("overflow","hidden");
+})
+$(".selectTime").blur(function(){
+	$(".layui-layer-content").css("overflow","auto");
+})*/
+$(".selectTime").click(function(){
+	$(".layui-layer-content").css("overflow","hidden");
+})
+$(".layui-layer-content").click(function(){
+	$(".layui-layer-content").css("overflow","auto");
+})
+
+
+$(document).ready(function() {	
+	$("#redEnvelopeUseful").click(function(){
+     if($(this).is(":checked")){
+	      $("#redEnvelopeRateli").show();
+	  }else{
+	      $("#redEnvelopeRateli").hide();
+	     $("#redEnvelopeRate").val("${borrow.redEnvelopeRate!0}");
+	  }
+});
+	$("#addApr").on("keyup", function(){
+		if(!$(this).val()) return false;
+		var _this = $(this)[0];
+		_this.value = $.fn.page.decimalsNumber(_this.value);
+	}).on("blur", function(){
+		var _val = $(this).val(),
+				val = (_val > 24) ? 24 : (_val < 0) ? 0 : _val;
+		val = $.fn.page.charTwoDecimals(val);
+		$(this).val(val);
+	});
+	function specificSaleHandle(val,first){
+        var specificSaleRuleLi = $("#specificSaleRuleLi"),
+	    labelObj=$("#specificSaleRuleLabel"),
+	    inputObj=$("#specificSaleRule"),
+	    vipSelect=$("#vipLevelSelect"),
+	    accountSelect=$("#userAccountTypeSelect");
+	    if(val == 0){
+		  specificSaleRuleLi.hide();
+		} else {
+		   	specificSaleRuleLi.show();
+		   	if(!first)   inputObj.val("");
+		  	if(val == 1){
+		     	labelObj.html("定向密码<span style='color:red;'>*</span>：");
+		       	vipSelect.hide();
+		       	accountSelect.hide();
+		      	inputObj.show().attr("placeholder","请输入定向密码");
+		  	}else if(val ==2){
+		     	labelObj.html("定向等级<span style='color:red;'>*</span>：");
+		     	inputObj.hide();
+		     	accountSelect.hide();
+		     	vipSelect.show();
+		  	}else if(val ==3){
+		      	labelObj.html("定向邮箱域名<span style='color:red;'>*</span>：");
+		      	vipSelect.hide();
+		      	accountSelect.hide();
+		      	inputObj.show().attr("placeholder","请输入定向邮箱域名");
+		  	}else if(val ==4){
+			     labelObj.html("定向用户<span style='color:red;'>*</span>：");
+			     inputObj.hide();
+			     vipSelect.hide();
+			     accountSelect.show(); 
+		  	}
+	}
+}
+$("#vipLevelSelect").on("change", function(){
+	var val = $(this).children('option:selected').val();
+	 $("#specificSaleRule").val(val);
+});
+$("#userAccountTypeSelect").on("change", function(){
+	var val = $(this).children('option:selected').val();
+	 $("#specificSaleRule").val(val);
+});
+$("#specificSale").on("change", function(){
+	var val = $(this).children('option:selected').val();
+	specificSaleHandle(val);
+});
+
+   specificSaleHandle($("#specificSale").val(),1);
+	$("input[name='ckSaleChannel']").on('click',function(){
+		var  v="";
+		$("input[name='ckSaleChannel']:checked").each(function(){
+			v += ($(this).val() + ",");			
+		});
+	   	$("#saleChannel").val(v);
+	});
+	
+	$('input[name="isAddApr"]').click(function(){
+		if(this.checked && this.value == 1){
+			$('#addApr').attr('disabled', false);
+		}else{
+			$('#addApr').attr('disabled','disabled');	
+			$('#addApr').val('');
+		}
+	});
+	
+	//允许转让次数
+	$('input[name="bondTurnTimes"]').click(function(){
+		if(this.checked){
+			if(this.value==1){
+				$('#bondUseful').val(1);
+				$('#bondMaxTurn').val(1);
+			}else if(this.value==2){
+				$('#bondUseful').val(1);
+				$('#bondMaxTurn').val('');
+			}else if(this.value == 3){
+				$('#bondUseful').val(0);
+				$('#bondMaxTurn').val(0);
+			}
+		}		
+	});
+	
+});
+
+$("#form").validate({	
+	submitHandler: function(form) {		
+		 
+		/*var timetypeVal = $("#timetypeVal").val();
+		var timetVal = $("#timetVal").val();
+		var raiseTimeLimitVal = $("#raiseTimeLimit").val();
+		if(timetypeVal==1){
+			if(raiseTimeLimitVal>timetVal){
+				layer.alert('募集期天数不能大于借款期限', {
+				icon: 2
+					}, function() {
+						layer.closeAll();
+					});
+			 	return false
+			}
+		}*/
+		var  saleChannelVal="";
+		$("input[name='ckSaleChannel']:checked").each(function(){
+			saleChannelVal += ($(this).val() + ",");			
+		});
+	   	$("#saleChannel").val(saleChannelVal);
+	   	
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						icon: 6,
+						cancel: function(index){
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入  
+  						}
+					}, function() {
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入  
+					});
+				} else {
+					layer.alert(data.msg, {
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+})
+</script>

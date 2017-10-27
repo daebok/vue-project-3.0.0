@@ -1,0 +1,92 @@
+ 互联网金融资产交易系统 ifaes (Internet Finance  Assets  Exchange  System)
+ 
+ 主要框架 :
+  spring 4.2.5.RELEASE
+  mybatis 3.2.8
+  freemarker 2.3.20 视图层模板引擎
+  shiro 1.2.4 访问资源控制
+  dubbo 2.8.4 分布式服务框架，用于服务之间远程调用
+  activiti 5.16.5 工作流
+ 
+ 工具：
+ jdk 1.7_80 (linux 使用oracle 官方版本1.7_80，不用openJDK,否则  statics使用注解编译报错)
+ zookeeper 3.4.6 分布式应用程序协调服务，dubbo的消息注册中心
+ tomcat  7.0.64
+ redis 3.0.4 缓存应用
+ rabbitmq 3.3.4 消息队列应用服务
+ dubbo-admin 2.8.4 (war) dubbo服务管理控制应用，提供dubbo服务
+ eclipse4.5
+ 
+ 数据库：
+  mysql  单机版本 5.6.25
+  MySQL Group Replication : 5.7.17 
+ 
+ 
+前端工具：
+node: 4.5.0 编译环境
+gulp: 3.9.1 打包工具
+sublime:3.0 编辑器
+antd: 0.12.x 组件库
+react: 0.14.x 前端框架
+ 
+ 前台前端 ：
+  1.node.js 构建打包环境
+  2.react 前端框架用于view层渲染
+  3.基于react的组件库 ant-design
+  4.jquery dom操作 异步请求
+
+后台前端：
+ 1.bootstrap3.0 页面布局、css公用基础库
+ 3.jquery dom操作 异步请求
+ 
+ 
+ 前端：
+ 
+ 1）环境目录
+     1.1通用组件
+        common-parent
+			  |-- common-generator   (代码生成工具)
+			  |-- common-util    （工具类、各层基类、通用注解、通用异常等）
+			  |-- common-supports（提供XSSFilter，扩展shiro、redis、rabbitmq、freemarker、validator等组件，将配置、资源、字典等纳入公共组件）
+            
+    1.2 账户中心 
+        account-parent         
+			   |--  account-api （账户中心接口）
+			   |--  account-consumer （dubbo消费者调用参考）
+			   |--  account-provider  (war，通过dubbo发布服务)
+ 
+    1.3 主工程
+		pom
+               |-- core    （jar,核心业务）
+               |-- manage  （war,后台）
+               |-- mq-consumer （war,消息队列）
+			   |-- web		(war， 前台)
+			   |-- job		（定时器）
+			   |-- tpp		（第三方支付接口或银行存管接口实现）
+			   
+	1.4 statics	图片服务器
+	
+	1.5 dubbo-admin	dubbo监控（war， 可选）
+	
+	1.6	mobile 移动端API        
+ 
+     2）编译顺序
+         account ==>pom 
+         先在account工程下 mvn clean install 
+         
+     3） 清理eclipse项目
+       window开发环境， 个别情况，导入eclipse项目，maven插件解析pom等出问题，需要重新导入工程，
+        因为.classpath等文件已生成，所以需要清除，可以使用【 deleteConfigFile.bat 】，
+        里面有3个选项：
+         1）删除.classpath,.project  
+         2 ) 删除目录 .settings,bin,target 
+         3）不处理
+         注意，这个批处理文件只处理当前目录和子目录。注意别误删除其他项目的 配置文件。
+         如果需要清除ifaes，请复制文件到pom等项目的上一级目录，然后点击，按提示清理。
+         
+     4) MAVEN工具的常见命令的脚本  
+   【window】   install.bat   package.bat 
+   【linux】   install.sh     
+         
+         
+        

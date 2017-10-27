@@ -1,0 +1,4 @@
+使用说明
+1）MAVEN工具的常见命令的脚本  
+   【window】   install.bat   package.bat 
+   【linux】   install.sh 

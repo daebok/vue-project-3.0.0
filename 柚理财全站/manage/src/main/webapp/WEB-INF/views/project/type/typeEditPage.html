@@ -1,0 +1,94 @@
+<div class="form-tips-content">
+	<form class="form-horizontal" action="/project/type/typeEdit.html" id="form" role="form">
+  	<ul class="form-item">
+  		<li>
+			<div class="form-group">
+		      <label class="control-label form-label">类别名称<span style="color:red;">*</span>：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="typeName" id="typeName" value="${node.typeName!}" maxlength="5" placeholder="请输入类别名称" required>
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label   class="control-label form-label">所属类别：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" readonly="readonly" name="parentName" id="parentName" onclick="$.fn.treeGridOptions.treeselect(this)" data-url="/project/type/typeTreePage.html?pageFlag=parent" placeholder="请选择父级类别" value="${parentName}"/>
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label  class="control-label form-label">排序值<span style="color:red;">*</span>：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="sort" id="sort"   value="${node.sort!}" maxlength="4" placeholder="请输入排序值" data-rule-digits="true" data-msg-digits="请输入整数"   required>
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label  class="control-label form-label">协议：</label>
+		      <div class="input-box">
+						<input type="text" class="form-control" style="width: auto; display: inline-block; vertical-align: middle;"  id="protocolName"  value="${node.protocolName!}" placeholder="请选择协议" required autocomplete="off" readonly>						
+						<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.protocolSelect(this,protocolSelectFn)" data-tid="jqGrid" data-url="/protocol/protocol/protocolPage.html">选择</button>
+						<div id="keyword"></div>
+						<input type="hidden" class="form-control" name="protocolId" id="protocolId"  value="${node.protocolId!}">
+			   </div>
+		    </div>	
+  		</li>  		
+  		<li>
+			<div class="form-group">
+		      <label  class="control-label form-label">特点：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="features" id="features" value="${node.features!}" maxlength="15" placeholder="请输入特点"  >
+		      </div>
+		    </div>	
+  		</li>
+  	</ul>
+  	    <input type="hidden" id="parentId" name="parentId" value="${node.parentId!}">
+		<input type="hidden" id="uuid" name="uuid" value="${node.uuid!}">
+        <@token name="editProjectTypeToken"/>
+  </form>
+</div>
+<script type="text/javascript">
+	$("#form").validate({
+		submitHandler: function(form) {
+		  if($("#parentId").val() == $("#uuid").val()){
+		        top.layer.alert("所属类别不能为自身!", {
+					icon: 5,
+					shadeClose: true
+				});
+			return;
+		  }
+			$(form).ajaxSubmit({
+				type: "post",
+				dataType: "json",
+				success: function(data) {
+					if (data.result) {
+						layer.alert(data.msg, {
+							icon: 6
+						});
+						gridobj.jqGrid('setGridParam', {
+							datatype: 'json',
+							postData: {
+								'parentId': $("input[name='parentId']").val()
+							}, //发送数据  
+							page: 1
+						}).trigger("reloadGrid");
+						top.editfn();
+						layer.closeAll();
+					} else {
+						layer.alert(data.msg, {
+							icon: 5
+						});
+					}
+				}
+			});
+		}
+	});
+	
+function protocolSelectFn(id, value){	
+	$("#protocolId").val(id);
+	$("#protocolName").val(value);
+}
+</script>

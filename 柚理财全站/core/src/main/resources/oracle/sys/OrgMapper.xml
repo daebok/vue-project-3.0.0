@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.sys.mapper.OrgMapper">
+	<resultMap type="com.rd.ifaes.core.sys.domain.Org" id="orgResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="orgNo" column="ORG_NO"/>
+		<result property="orgName" column="ORG_NAME"/>
+		<result property="orgType" column="ORG_TYPE"/>
+		<result property="orgLevel" column="ORG_LEVEL"/>
+		<result property="parentId" column="PARENT_ID"/>
+		<result property="parentIds" column="PARENT_IDS"/>
+		<result property="sort" column="SORT"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="deleteFlag" column="DELETE_FLAG"/>
+		<result property="remark" column="REMARK"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		ORG_NO,
+		ORG_NAME,
+		ORG_TYPE,
+		ORG_LEVEL,
+		PARENT_ID,
+		PARENT_IDS,
+		SORT,
+		CREATE_TIME,
+		DELETE_FLAG,
+		REMARK
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{orgNo},
+		#{orgName},
+		#{orgType},
+		#{orgLevel},
+		#{parentId},
+		#{parentIds},
+		#{sort},
+		#{createTime},
+		#{deleteFlag},
+		#{remark}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+        	and (DELETE_FLAG = 0 OR DELETE_FLAG IS NULL) 
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="orgNo != null and orgNo != ''">and ORG_NO like '%'||#{orgNo}||'%'</if>
+            <if test="orgName != null and orgName != ''">and ORG_NAME like '%'||#{orgName}||'%'</if>
+            <if test="orgType != null and orgType != ''">and ORG_TYPE = #{orgType}</if>
+			<if test="orgLevel != null">and ORG_LEVEL = #{orgLevel}</if>
+            <if test="parentId != null and parentId != ''">and PARENT_ID = #{parentId}</if>
+            <if test="parentIds != null and parentIds != ''">and PARENT_IDS = #{parentIds}</if>
+			<if test="sort != null">and SORT = #{sort}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="remark != null and remark != ''">and REMARK = #{remark}</if>
+            <if test="keywords != null and keywords != ''">and (ORG_NO like '%'||#{keywords}||'%'  or ORG_NAME like '%'||#{keywords}||'%' )</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">
+        	order by SORT ASC,CREATE_TIME DESC
+        </if>  
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.sys.domain.Org">
+		insert into sys_org( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">
+		BEGIN		
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into sys_org( <include refid="table_columns" /> ) 
+		values 
+		( 
+				#{item.uuid},
+				#{item.orgNo},
+				#{item.orgName},
+				#{item.orgType},
+				#{item.orgLevel},
+				#{item.parentId},
+				#{item.parentIds},
+				#{item.sort},
+				#{item.createTime},
+				#{item.deleteFlag},
+				#{item.remark}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from sys_org
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update sys_org set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+	
+	<update id="deleteLogic" parameterType="String">
+		update sys_org set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.sys.domain.Org">
+		update sys_org 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="orgNo != null and orgNo != ''">ORG_NO = #{orgNo},</if>
+            <if test="orgName != null and orgName != ''">ORG_NAME = #{orgName},</if>
+            <if test="orgType != null and orgType != ''">ORG_TYPE = #{orgType},</if>
+			<if test="orgLevel != null">ORG_LEVEL = #{orgLevel},</if>
+            <if test="parentId != null and parentId != ''">PARENT_ID = #{parentId},</if>
+            <if test="parentIds != null and parentIds != ''">PARENT_IDS = #{parentIds},</if>
+			<if test="sort != null">SORT = #{sort},</if>
+			<if test="createTime != null">CREATE_TIME = #{createTime},</if>
+            <if test="deleteFlag != null and deleteFlag != ''">DELETE_FLAG = #{deleteFlag},</if>
+            <if test="remark != null and remark != ''">REMARK = #{remark},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="orgResultMap">
+        select <include refid="table_columns" />
+        from sys_org
+    </select>
+
+    <select id="findList" resultMap="orgResultMap">
+        select <include refid="table_columns" />
+        from sys_org
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from sys_org
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="orgResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from sys_org
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<!-- 取得当前节点 -->
+	<select id="getCurrOrg" resultMap="orgResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from sys_org where 
+		<if test="value == null or value == ''">
+			PARENT_ID IS NULL OR PARENT_ID =''
+		</if>
+		<if test="value != null and value != ''">
+			uuid = #{value}
+		</if>		
+		
+	</select>
+	<!-- 取得该节点及以下所有子节点 -->
+	<select id="getOrgTree" resultMap="orgResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from sys_org
+		<if test="id != null and id != ''">
+		where uuid = #{id} or parent_ids like '%'||#id#||'%'
+		</if>
+	</select>
+	
+	<select id="validHasChildren" resultType="int">
+		select count(uuid) from sys_org 
+		where parent_id in 
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>
+        and delete_flag=0
+	</select>
+
+</mapper>

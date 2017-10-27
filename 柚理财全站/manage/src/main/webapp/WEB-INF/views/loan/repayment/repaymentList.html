@@ -1,0 +1,134 @@
+<style type="text/css">
+	.ui-jqgrid .ui-jqgrid-hdiv{
+			position: relative;
+		}
+		.ui-jqgrid .ui-jqgrid-bdiv{
+			margin-top: 0!important;
+		}
+      @media (max-height: 768px){
+        .ui-jqgrid .ui-jqgrid-bdiv {
+            margin-top: 39px;
+            padding-bottom: 0px;
+            max-height: 100px!important;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+      }
+      .ui-jqgrid .ui-jqgrid-pager {
+          position: relative;
+          bottom: 0px!important;
+          background: #fff;
+          border: 1px solid #EBEBEB;
+          border-radius: 3px;
+          z-index: 1000;
+      } 
+      @media (max-height: 1080px){
+        .ui-jqgrid .ui-jqgrid-bdiv {
+            margin-top: 39px;
+            padding-bottom: 0px;
+            max-height: 460px!important;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+      }
+</style>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="tool-btns">
+					</div>					
+				</div>
+			</div>
+			<!-- 列表信息 -->
+		<div class="row mt20">
+			<div class="col-md-12">
+				<table id="jqGrid" ></table>
+				<div id="jqGridPager" ></div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			<@dictFormatter type = "repayType" />
+			
+			$(document).ready(function() {	
+				//表格初始化		
+				$("#jqGrid").jqTreeGrid({
+						url : "/loan/repayment/repaymentRecordList.html?projectId=${projectId}",
+						multiselect : false,
+						 pager: "#jqGridPager",
+						height: $(window).height()*0.7*0.6,	
+						colModel : [
+							{
+								label : "用户名",
+								name : "userName",
+								width : 200
+							},
+							{
+								label : "借款方",
+								name : "realName",
+								width : 100
+							},
+							{
+								label : "借款名称",
+								name : "projectName",
+								width : 150
+							},
+							{
+								label : "期数",
+								name : "periodsStr",
+								width : 80
+							},
+							{
+								label : "预计还款日期",
+								name : "repayTime",
+								width : 100,
+								formatter: 'date',
+								formatoptions: {
+									srcformat: 'u',
+									newformat: 'Y-m-d'
+								}
+							},
+							{
+								label : "实际还款时间",
+								name : "realRepayTime",
+								width : 140,
+								formatter: 'date',
+								formatoptions: {
+									srcformat: 'u',
+									newformat: 'Y-m-d H:i:s'
+								}
+							},
+							{
+								label : "预还金额(元)",
+								name : "payment",
+								width : 80
+							},
+							{
+								label : "实还金额(元)",
+								name : "payedAmount",
+								width : 80
+							},
+							{
+								label : "本金(元)",
+								name : "capital",
+								width : 80
+							},
+							{
+								label : "利息(元)",
+								name : "interest",
+								width : 80
+							},
+							{
+								label : "状态",
+								name : "statusStr",
+								width : 80
+							}
+							],
+					}) ;
+				});
+				
+				jQuery(function(){
+				//调整弹框上的分页组件位置
+				    $(".ui-jqgrid .ui-jqgrid-pager").css("bottom",$(window).height()*0.23);
+				});
+		</script>			
+		</div>

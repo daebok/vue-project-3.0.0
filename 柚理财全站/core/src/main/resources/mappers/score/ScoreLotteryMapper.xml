@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.score.mapper.ScoreLotteryMapper">
+	<resultMap type="com.rd.ifaes.core.score.domain.ScoreLottery" id="ScoreLotteryResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="lotteryName" column="LOTTERY_NAME"/>
+		<result property="lotteryType" column="LOTTERY_TYPE"/>
+		<result property="goodsId" column="GOODS_ID"/>
+		<result property="lotteryArea" column="LOTTERY_AREA"/>
+		<result property="lotteryValue" column="LOTTERY_VALUE"/>
+		<result property="rate" column="RATE"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="status" column="STATUS"/>
+		<result property="remark" column="REMARK"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		LOTTERY_NAME,
+		LOTTERY_TYPE,
+		GOODS_ID,
+		LOTTERY_AREA,
+		LOTTERY_VALUE,
+		RATE,
+		CREATE_TIME,
+		STATUS,
+		remark
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{lotteryName},
+		#{lotteryType},
+		#{goodsId},
+		#{lotteryArea},
+		#{lotteryValue},
+		#{rate},
+		#{createTime},
+		#{status},
+		#{remark}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="keywords != null and keywords != ''">and u.USER_NAME like concat('%',#{keywords},'%')</if>
+			<if test="lotteryName != null">and LOTTERY_NAME = #{lotteryName}</if>
+			<if test="lotteryType != null">and LOTTERY_TYPE = #{lotteryType}</if>
+			<if test="goodsId != null">and GOODS_ID = #{goodsId}</if>
+			<if test="lotteryArea != null">and LOTTERY_AREA = #{lotteryArea}</if>
+			<if test="lotteryValue != null">and LOTTERY_VALUE = #{lotteryValue}</if>
+			<if test="rate != null">and RATE = #{rate}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by rate asc </if>  
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.score.domain.ScoreLottery">
+		insert into score_lottery( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into score_lottery( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+		#{item.uuid},
+				#{item.lotteryName},
+				#{item.lotteryType},
+				#{item.goodsId},
+				#{item.lotteryArea},
+				#{item.lotteryValue},
+				#{item.rate},
+				#{item.createTime},
+				#{item.status},
+				#{item.remark}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from score_lottery
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		delete from score_lottery
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.score.domain.ScoreLottery">
+		update score_lottery
+		<trim prefix="set" suffixOverrides=",">
+			<if test="status != null">STATUS = #{status},</if>
+			<if test="uuid != null and uuid != ''">UUID = #{uuid},</if>
+            <if test="lotteryName != null">LOTTERY_NAME = #{lotteryName},</if>
+			<if test="lotteryType != null">LOTTERY_TYPE = #{lotteryType},</if>
+			<if test="goodsId != null">GOODS_ID = #{goodsId},</if>
+			<if test="lotteryArea != null">LOTTERY_AREA = #{lotteryArea},</if>
+			<if test="lotteryValue != null">LOTTERY_VALUE = #{lotteryValue},</if>
+			<if test="rate != null">RATE = #{rate},</if>
+            <if test="status != null and status != ''">STATUS = #{status},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="ScoreLotteryResultMap">
+        select <include refid="table_columns" />
+        from score_lottery
+    </select>
+    <select id="findList" resultMap="ScoreLotteryResultMap">
+        select 
+        	us.UUID,
+			us.lottery_name,
+			us.lottery_type,
+			us.GOODS_ID,
+			us.lottery_area,
+			us.lottery_value,
+			us.rate,
+			us.CREATE_TIME,
+			us.status,
+			us.remark
+        from 
+        	score_lottery us
+        <include refid="page_where" />
+    </select>
+
+    <select id="findByUserIds" resultMap="ScoreLotteryResultMap">
+         select <include refid="table_columns" />
+         from score_lottery us
+         <where>
+		    user_id in 
+		    <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+		       #{item.uuid}
+		    </foreach>
+		 </where>
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from score_lottery
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="ScoreLotteryResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from score_lottery
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+
+</mapper>

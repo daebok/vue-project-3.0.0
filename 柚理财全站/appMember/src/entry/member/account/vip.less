@@ -1,0 +1,119 @@
+@import (reference)'../../../style/common.less';
+@import '../../../style/account.less';
+.account-content .main-title{
+  margin-bottom: 40px;
+}
+.account-content .member{
+  padding-bottom: 100px;
+}
+.table_content {
+    border-collapse: collapse;
+    width: 100%;
+}
+.table_content td,.table_content th{
+    border: 1px solid @color-tipsbg;
+    padding: 10px 5px;
+    text-align: center;
+    color: @color-text;
+    .f14();
+}
+.table_content th{
+  background-color: #fafafa;
+}
+.about{
+  margin-bottom: 10px;
+  .about-title{
+    .f16();
+    font-weight: bold;
+    color: @color-p;
+    line-height: 76px;
+  }
+  ol{
+    list-style-type: disc;
+    padding: 0 0 0 18px;
+    color: @color-text;    
+    li{
+      .f14();
+      color: @color-text;
+      line-height: 38px;
+      padding: 0 0 0 8px;
+    }
+  }
+}
+.userinfo{
+  width: 900px;
+  height: 140px;
+  background-color:#fafafa;
+  padding: 20px 0 0 34px;
+  dl{
+    dt{
+      .fl();
+      width: 110px;
+      height: 110px;
+      margin-right: 20px;
+      .userheaderimg, .userheaderimg img {
+          vertical-align: middle;
+          text-align: center;
+      }
+      .userheaderimg img {
+          border-radius: 90px;
+          max-width: 100px;
+          max-height: 100px;
+          border: 5px solid #f1f1f1;
+      }            
+      .userheaderimg {
+          width: 100px;
+          height: 100px;
+          position: relative;
+          display: table-cell;
+      }
+      .userheaderimg a {
+          position: absolute;
+          display: none;
+          background: rgba(0,0,0,.5);
+          font-size: 18px;
+          color: #fff;
+          border-radius: 90px;
+          padding: 25px 32px;
+          filter: progid:DXImageTransform.Microsoft.Gradient(enabled=bEnabled,startColorStr='#50000000',endColorStr='#50000000');
+      }
+      .userheaderimg:hover a {
+          display: block;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%
+      }                        
+    }
+    dd{
+      .fl();
+      width: 700px;
+    }
+    .welcome{
+      .f18();
+      color: @color-p;
+      margin: 23px 0 0 0;
+    }
+    .info{
+      line-height: 40px;
+      color: @color-p;
+      .f14();
+      ul{
+        overflow: hidden;
+        li{
+          width: 200px;
+          .fl();
+        }
+      }
+      em{
+        color: #f95a28;
+        font-size: 20px;
+        vertical-align: top;        
+      }     
+      .info-name{
+        .f14();
+        color: @color-text;
+      }
+    }
+  }
+}

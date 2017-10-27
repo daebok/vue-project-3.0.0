@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>平台数据</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
+    <meta content="telephone=no" name="format-detection" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <!-- <link rel="stylesheet" type="text/css" href="../css/light.css" /> -->
+    <link rel="stylesheet" href="https://unpkg.com/mint-ui/lib/style.css">
+    <link rel="stylesheet" type="text/css" href="${mobileUrl}/themes/app/css/common.css" />
+    <link rel="stylesheet" type="text/css" href="${mobileUrl}/themes/app/css/theme.css" />
+    <link rel="stylesheet" type="text/css" href="${mobileUrl}/themes/app/css/base.css" />
+    <script type="text/javascript" src="${mobileUrl}/themes/app/js/get_client_width.min.js"></script>
+	<script type="text/javascript" src="${mobileUrl}/themes/app/js/jquery-3.1.1.min.js"></script>
+</head>
+<style>
+  .bg {
+    background:#0E243A url(${mobileUrl}/themes/app/images/me/me_data_bg.png) 0 0 no-repeat;
+    background-size:100% 6.03rem;
+    min-height: 6.8rem;
+    position: relative;
+  }
+  .title {color:#fff;text-align: center;padding-top: .95rem;}
+  .title h1 { font-size: .37rem; line-height: 1;}
+  .title p { font-size: .15rem; padding-top: .1rem;}
+  .data-area {position: absolute;top: 2.71rem;left:5%; width: 90%; padding:0 3%; text-align: center;}
+  .total {height: 1.3rem;border-bottom:1px dashed #666;padding-top: .3rem;}
+  .total h3 { font-size: .15rem; line-height: 1;}
+  .total h1 {font-size: .35rem;line-height: 1;margin-top: .24rem;}
+  .data-det { margin-top: .4rem;}
+  .data-det h4 { font-size: .15rem; }
+  .data-det p { font-size: .23rem; line-height: 1; font-family: 'arial'; margin-top: .15rem;}
+  .main-color {
+      color: #F95A28!important;
+  }
+  .color-666 {
+      color: #666!important;
+  }
+  .color-333 {
+      color: #333!important;
+  }
+</style>
+<body>
+  <div class="page" id="siteData">
+    <div class="bg">
+      <div class="title">
+        <h1>平台数据统计</h1>
+        <p>数据截止至${systemTime}</p>
+      </div>
+      <div class="data-area">
+        <div class="total">
+          <h3 class="color-666">累计投资金额(万元)</h3>
+          <h1 class="main-color">${investTotal}</h1>
+        </div>
+        <div class="data-det aui-flex-col aui-flex-middle text-center">
+          <div class="aui-flex-item-6">
+            <h4 class="color-666">累计注册人数(位)</h4>
+            <p class="color-333">${registerTotal}</p>
+          </div>
+          <div class="aui-flex-item-6">
+            <h4 class="color-666">累计赚取收益(万元)</h4>
+            <p class="color-333">${totalEarnAmount}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script>
+  	
+</script>
+</html>

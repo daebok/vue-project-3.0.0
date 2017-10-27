@@ -1,0 +1,136 @@
+<div class="form-tips-content">
+  <form class="form-horizontal" action="/user/userQualification/audit.html" id="form" role="form">
+  	<ul class="form-item">
+  		<li>
+		    <div class="form-group">
+		        <label class="control-label form-label">用户名：</label>
+		        <div class="input-box-read">
+					<p>${user.userName!}</p>
+				</div>
+		    </div>	
+  		</li>
+  		 <li>
+			<div class="form-group">
+		       <label class="control-label form-label">联系方式：</label>
+		       <div class="input-box-read"><p>${user.mobile!}</p></div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		       <label class="control-label form-label">企业名称：</label>
+		       <div class="input-box-read"><p>${userCompanyInfo.companyName!"--"}</p></div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		       <label class="control-label form-label">企业简称：</label>
+		       <div class="input-box-read"><p>${userCompanyInfo.simpleName!"--"}</p></div>
+		    </div>	
+  		</li>
+  		 <li>
+			<div class="form-group">
+		       <label class="control-label form-label">联系人：</label>
+		       <div class="input-box-read"><p>${userCompanyInfo.contacts!"--"}</p></div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		       <label class="control-label form-label">绑定邮箱：</label>
+		       <div class="input-box-read"><p>${user.email!"--"}</p></div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+			   <label class="control-label form-label">营业执照号：</label>
+		       <div class="input-box-read"><p>${userCompanyInfo.bussinessCode!"--"}</p></div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+			   <label class="control-label form-label">组织机构代码：</label>
+		       <div class="input-box-read"><p>${userCompanyInfo.orgCode!"--"}</p></div>
+		    </div>	
+  		</li>  	
+  		<li>
+			<div class="form-group">
+			   <label class="control-label form-label">税务登记证号：</label>
+		       <div class="input-box-read"><p>${userCompanyInfo.taxRegNo!"--"}</p></div>
+		    </div>	
+  		</li>  			
+  		<li>
+			<div class="form-group">
+			   <label class="control-label form-label">企业固定电话：</label>
+		       <div class="input-box-read"><p>${userCompanyInfo.telephone!"--"}</p></div>
+		    </div>	
+  		</li>   		
+  		<li>
+			<div class="form-group">
+		       <label class="control-label form-label">企业地址：</label>
+		       <div class="input-box-read"><p>${userCache.provinceStr!}${userCache.cityStr!}${userCache.areaStr!}${userCache.address!}</p></div>			
+		    </div>	
+  		</li>
+		<li class="full-width">
+			<div class="form-group">
+				<label for="pwd" class="control-label form-label">认证资料：</label>
+				<div class="">
+					<div id="uploadGuaranteeBox2" class="uploadWrap" data-arr="uploadFile2">
+				    	<ul id="borrowPagePic2" class="photoUpload">					        						            
+				            <#if picList??>
+					            <#list picList as item>
+					            <li data-mum="${item.uuid!}">
+					               <img src="${image_server_url}${item.filePath!}"/>
+					           	</li>
+								</#list>
+							</#if>	
+				        </ul>
+				    </div>
+				</div>
+			</div>
+		</li>
+  		</li>
+		<li class="full-width">
+				<div class="form-group">
+					<label for="status" class="control-label form-label">审核状态：</label>
+			        <div class="input-box-read">			
+			      	  <p><@linkage id="status" nid="qualificationApplyStatus" default="${apply.status}" plantext="plantext" /></p>
+			        </div>	
+				</div>
+		</li>
+		<li class="full-width">
+			<div class="form-group">
+				<label for="remark" class="control-label form-label">审核备注：</label>
+				<div class="input-box-read"><p>${apply.verifyRemark!"--"}</p></div>
+			</div>
+		</li>
+  	</ul>
+  	<@token/>
+  </form>
+</div>
+<script>
+	$("#form").validate({
+	  submitHandler:function(form){ 
+			$(form).ajaxSubmit({
+				type:"post",
+				dataType:"json",
+				success:function(data){
+        	if(data.result){
+        		layer.alert(data.msg, {
+        			icon: 6,
+        			cancel: function(index){
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入 
+						}
+        		}, function(){	        			
+        			layer.closeAll();
+        			gridobj.trigger("reloadGrid"); //重新载入  
+        		});
+        	}
+        	else
+        	{
+        		layer.alert(data.msg, {icon: 5});
+        	}	        	
+	    	}
+			});
+	  }    
+	});
+</script>

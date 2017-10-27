@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <#assign pageFlag="scorelist">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="format-detection" content="telephone=no">
+    <title>积分商城-${web_name!""}</title>
+    <link rel="stylesheet" type="text/css" href="/common.css"/>
+    <link rel="stylesheet" type="text/css" href="/goodsLists.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+    <!--[if lte IE 7]>
+    	<script>
+    		window.location = "/browserUpgrade.html"
+    	</script>
+    <![endif]-->
+<body>
+    <#include "include/header-score.html">
+        <input type="hidden" id="projectTypeId" value="${projectTypeId!}">
+        <input class="useScore" value="${userScore.useScore}" type="hidden">
+        <input class="serverUrl" value="${image_server_url}" type="hidden">
+        <input class="userCacheAvatarPhoto" value="${userCache.avatarPhoto}" type="hidden">
+        <input class="avatarPhoto" value="${image_server_url}${userCache.avatarPhoto}" type="hidden">
+        <input class="categoryId" value="${categoryId}" type="hidden">
+        <div class="wrap" id="j-goodsList">
+            <div class="loading"></div>
+        </div>
+    <#include "include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/common.js"></script>
+<script src="/goodsLists.js"></script>
+</html>

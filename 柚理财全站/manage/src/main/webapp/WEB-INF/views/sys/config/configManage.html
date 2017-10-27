@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>参数设置</title>
+		<#include "include/resources.html">
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入...">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/sys/config/list.html">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form>
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							    <li class="input-group input-group-sm"><span>标识</span><input type="text" class="form-control" name="code" /></li>
+							    <li class="input-group input-group-sm"><span>名称</span><input type="text" class="form-control" name="configName" /></li>
+							    <li class="input-group input-group-sm"><span>值</span><input type="text" class="form-control" name="configValue" /></li>							    
+							    <li class="input-group input-group-sm"><span>类型</span><@linkage name="configType" nid="configType" class="form-control"/></li>
+							    <li class="input-group input-group-sm"><span>状态</span> <@linkage name="status" nid="enable" class="form-control"/></li>
+							    <li><button class="btn btn-sm btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/sys/config/list.html">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					<@shiro.hasPermission name="set:config:add">
+						<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.addFun(this)" data-url="/sys/config/configAddPage.html">新增</button>
+					</@shiro.hasPermission>
+					<@shiro.hasPermission name="set:config:edit">	
+						<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.editFun(this)" data-tid="jqGrid" data-url="/sys/config/configEditPage.html">编辑</button>						
+					</@shiro.hasPermission>
+					</div>					
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+				<@dictFormatter type = "enable" />
+					<@dictFormatter type = "configType" />
+					$(document).ready(function() {												
+						//表格初始化
+						$("#jqGrid").jqTreeGrid({
+							url: '/sys/config/list.html',						
+							colModel: [
+							    {
+									label: "参数类型",
+									name: "configType",
+									width: 60,
+									formatter : configTypeFormatter
+								},  {
+								label: "名称",
+								name: "configName",
+								width: 120
+							}, {
+								label: "标识",
+								name: "code",
+								width: 180 /*, frozen: true*/
+							},{
+								label: "值",
+								name: "configValue",
+								width: 120
+							}, 
+							{
+								label: "状态",
+								name: "status",
+								width: 40,
+								formatter: enableFormatter
+							},{
+								label: "备注",
+								name: "remark",
+								width: 200,
+							}
+							],
+						}).jqGrid("setFrozenColumns").navGrid('#jqGridPager',
+							// the buttons to appear on the toolbar of the grid
+							{
+								edit: false,
+								add: false,
+								del: false,
+								search: false,
+								refresh: true,
+								view: false,
+								position: "left",
+								cloneToTop: false
+							}
+						);						
+					});
+					
+
+			</script>
+		</div>
+	</body>
+</html>

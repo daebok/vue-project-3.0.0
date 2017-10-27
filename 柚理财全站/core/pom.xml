@@ -1,0 +1,277 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.rd.ifaes</groupId>
+		<artifactId>pom</artifactId>
+		<version>3.0.0.0</version>
+		<relativePath>../pom/pom.xml</relativePath>
+	</parent>
+	<artifactId>core</artifactId>
+	<packaging>jar</packaging>
+	
+	<properties>
+		<spring.version>4.2.5.RELEASE</spring.version>
+		<cglib.version>3.2.2</cglib.version>
+		<mybatis-spring.version>1.2.2</mybatis-spring.version>
+		<mysql-connector.version>5.1.30</mysql-connector.version>
+		<oracle.driver.version>10.2.0.4.0</oracle.driver.version>
+		<activiti.version>5.16.5</activiti.version>
+		<third.party.jar.dir>D:/workspaces/p2pv3/v3.0.2_oracle/common-supports/lib</third.party.jar.dir>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>com.rd.ifaes</groupId>
+			<artifactId>tpp</artifactId>
+			<version>3.0.0.0</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.rd.ifaes</groupId>
+			<artifactId>common-supports</artifactId>
+			<version>3.0.0.0</version>
+		</dependency>
+		
+	     <dependency>
+			<groupId>com.rongdu</groupId>
+			<artifactId>jimi</artifactId>
+			<version>1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>com.rd.account</groupId>
+			<artifactId>account-api</artifactId>
+			<version>3.0.0.0</version>
+		</dependency>
+		
+		<!-- spring  start -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		 <dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${spring.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+	     <!-- spring orm -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+			<scope>test</scope>
+		</dependency>		
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+			<version>${cglib.version}</version>
+			<!--   <exclusions>
+				   <exclusion>
+				          <groupId>org.ow2.asm</groupId>
+				          <artifactId>asm-parent</artifactId>
+				    </exclusion>
+			  </exclusions> -->
+		</dependency>		
+		<!-- spring end -->		
+		
+		<!-- orm libs -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql-connector.version}</version>
+		</dependency>
+		<!-- 		
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc14</artifactId>
+			<version>10.2.0.4.0</version>
+			<scope>system</scope>
+			<systemPath>${third.party.jar.dir}/ojdbc14-10.2.0.4.0.jar</systemPath>
+		</dependency>	
+		-->
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-spring</artifactId>
+			<version>${mybatis-spring.version}</version>
+		</dependency>
+			
+			
+		<!-- E签宝所需Jar Start -->
+		<dependency>
+			<groupId>com.rongdu</groupId>
+			<artifactId>esign</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.rongdu</groupId>
+			<artifactId>esign-utils</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.rongdu</groupId>
+			<artifactId>esign-tgtext</artifactId>
+			<version>1.0.16</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<version>2.4</version>
+			<classifier>jdk15</classifier>  
+		</dependency>
+		<!-- E签宝所需Jar End -->
+		
+		<!-- activiti engine start -->
+		<dependency>
+		  <groupId>org.activiti</groupId>
+		  <artifactId>activiti-engine</artifactId>
+		  <version>${activiti.version}</version>
+		</dependency>
+		
+		<dependency>  
+        	<groupId>org.activiti</groupId>  
+        	<artifactId>activiti-spring</artifactId>  
+        	<version>${activiti.version}</version>  
+    	</dependency>  
+		<!-- activiti engine end -->
+		
+		<!-- 协议ftl生成的，不能用的话后续删掉 start -->
+		<dependency>
+			<groupId>com.itextpdf.tool</groupId>
+			<artifactId>xmlworker</artifactId>
+			<version>5.5.5</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+            <groupId>org.xhtmlrenderer</groupId>
+            <artifactId>flying-saucer-pdf</artifactId>
+            <version>9.0.3</version>
+            <exclusions>
+            	<exclusion>
+            		<artifactId>bcprov-jdk14</artifactId>
+            		<groupId>bouncycastle</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>bcmail-jdk14</artifactId>
+            		<groupId>bouncycastle</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>bctsp-jdk14</artifactId>
+            		<groupId>org.bouncycastle</groupId>
+            	</exclusion>
+            </exclusions>
+		</dependency>
+		<!-- 协议ftl生成的，不能用的话后续删掉 end -->
+
+		<!-- e签宝还需的包start -->
+        <dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+			<version>4.3</version>
+		</dependency>
+		<!-- e签宝还需的包end -->
+		
+		<!-- CFCA安心签所需的jar -->
+		<dependency>
+		  <groupId>com.rongdu</groupId>
+		  <artifactId>tsvo</artifactId>
+		  <version>3.2.4.2</version>
+		</dependency>
+		<dependency>
+		  <groupId>com.rongdu</groupId>
+		  <artifactId>sadk</artifactId>
+		  <version>3.2.3.0</version>
+		</dependency>
+		<!-- CFCA安心签所需的jar -->
+		
+		<!-- protostuff start -->
+		<dependency>
+			<groupId>com.dyuproject.protostuff</groupId>
+			<artifactId>protostuff-core</artifactId>
+			<version>1.0.8</version>
+		</dependency>
+		<dependency>
+			<groupId>com.dyuproject.protostuff</groupId>
+			<artifactId>protostuff-runtime</artifactId>
+			<version>1.0.8</version>
+		</dependency>
+		<!-- protostuff end -->
+		
+		<!-- pdf文件生成协议需要  start  -->
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itext-asian</artifactId>
+			<version>5.2.0</version>
+		</dependency>
+		<!-- 生成协议需要  start  -->
+		
+		<!-- email  -->
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.5.0-b01</version>
+		</dependency>
+  </dependencies>
+</project>

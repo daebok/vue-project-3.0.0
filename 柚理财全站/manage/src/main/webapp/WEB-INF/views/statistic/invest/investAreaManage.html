@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>投资区域分析</title>
+<#include "include/resources.html">
+<link href="${theme_dir}/static/css/plugins/trirand/ui.jqgrid-bootstrap.css" rel="stylesheet">
+</head>
+<body class="overflowY">
+<div class="wrapper">
+  <div class="row pt20">
+    <div class="col-md-12">
+     <form class="form-horizontal">
+        <div id="legend" class="">
+          <legend class="">投资区域分析</legend>
+        </div>
+        <div class="control-group">
+          <label class="control-label">日期：</label>
+          <div class="controls">
+             <label class="checkbox inline selectTime"><input type="text" name="startDate" id="startTime" class="form-control"placeholder="开始日期" value="${startDate}" readonly="readonly" style="background:#fff;"/></label><label class="checkbox inline selectTime"><input type="text" name="endDate" id="endTime" class="form-control" placeholder="结束日期" value="${endDate}" readonly="readonly" style="background:#fff;"/></label>
+             <label class="checkbox inline selectTime"><input type="submit" name="button" class="btn btn-primary btn-block" value="搜索" /></label>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">用户类型：</label>
+          <div class="controls">
+            <label class="checkbox inline selectTime">
+              <input type="radio" name="userNatureArr" id="optionsRadios4" value="" checked="checked">不限
+            </label>
+            <label class="checkbox inline selectTime">
+              <input type="radio" name="userNatureArr" id="optionsRadios4" value="0" >个人用户
+            </label>
+            <label class="checkbox inline selectTime">
+              <input type="radio" name="userNatureArr" id="optionsRadios4" value="1" >企业用户
+            </label>
+          </div>
+        </div>
+    </form>
+    </div>
+    </div>
+    <div class="row pt20">
+      <div class="col-md-12">
+          <div class="chart-map mt20" id="j-pie-1" style="width:80%;margin:50px auto 0;"></div>
+      </div>
+    </div>
+    <div class="col-md-12 mt20">
+        <div class="page-header">
+            <h3>地区明细
+              <small id="j-total"></small>
+              <@shiro.hasPermission name="statistic:invest:area:export">
+                <a onclick="exportExcel(this)" target="_blank" class="tool-btns">导出</a>
+              </@shiro.hasPermission>
+            </h3>
+        </div>
+        <div class="col-md-12" id="j-tableContent">
+          <table id="jqGrid" class="table-td-NoOverflow"></table>
+          <div id="jqGridPager"></div>
+        </div>
+    </div> 
+</div>
+<script type="text/javascript">
+  //设置开始时间控件
+  var startTime= {
+    elem:'#startTime',
+    format: 'YYYY-MM-DD', //日期格式
+    max:$('#endTime').val(),
+    event:'focus',
+    choose: function(dates){
+        endTime.min=dates;
+        endTime.start=dates;
+    }
+  };
+  //设置发放结束时间
+  var endTime=  {
+      elem:'#endTime',
+      format: 'YYYY-MM-DD', //日期格式
+      min: $('#startTime').val(), //最小日期
+      event:'focus',
+      choose: function(dates){
+        startTime.max=dates;
+       }
+  };
+  laydate(startTime);
+  laydate(endTime);
+
+  //对比折线图
+  var myChart = echarts.init(document.getElementById('j-pie-1'));
+  var option= {
+      title: {
+          text: '投资区域分析',
+          left: 'center'
+      },
+      tooltip: {
+          trigger: 'item',
+          formatter: function(params) {
+                var res = params.name+'<br/>';
+                var myseries = option.series;
+                for (var i = 0; i < myseries.length; i++) {
+                    for(var j=0;j<myseries[i].data.length;j++){
+                      if(myseries[i].data[j].name==params.name ){
+                          res+= myseries[i].name;
+                          res+=' : '+myseries[i].data[j].value+'</br>';
+                      }
+                    }
+                }
+                return res;
+          }
+      },
+      legend: {
+          orient: 'vertical',
+          left: 'left',
+          data:['投资人数','投资金额','投资笔数']
+      },
+      visualMap: {
+          min: 0,
+          max: 2500,
+          left: 'left',
+          top: 'bottom',
+          text: ['高','低'],           // 文本，默认为数值文本
+          calculable: true
+      },
+      toolbox: {
+          show: true,
+          orient: 'vertical',
+          left: '700px',
+          top: 'center',
+          feature: {
+              dataView: {readOnly: false},
+              restore: {},
+              saveAsImage: {}
+          }
+      },
+      series: [
+          {
+              name: '投资人数',
+              type: 'map',
+              mapType: 'china',
+              roam: false,
+              label: {
+                  normal: {
+                      show: true
+                  },
+                  emphasis: {
+                      show: true
+                  }
+              },
+              data:[]
+          },
+          {
+              name: '投资金额',
+              type: 'map',
+              mapType: 'china',
+              label: {
+                  normal: {
+                      show: true
+                  },
+                  emphasis: {
+                      show: true
+                  }
+              },
+              data:[]
+          },
+          {
+              name: '投资笔数',
+              type: 'map',
+              mapType: 'china',
+              label: {
+                  normal: {
+                      show: true
+                  },
+                  emphasis: {
+                      show: true
+                  }
+              },
+              data:[]
+          }
+      ]
+  };
+
+chartAjax($('.form-horizontal').serialize());
+
+function chartAjax(req){
+    $.ajax({
+        url:'/statistic/invest/getInvestArea.html?'+req,
+        dataType:'json',
+        success:function(data){
+          option.series[0].data = data.investUser;
+          option.series[1].data = data.investAmnt;
+          option.series[2].data = data.investNum;
+          myChart.setOption(option);
+        }
+    })
+}
+
+
+var exportTitle = '地区明细';
+      function getFieldsAndHearders(){
+        var hearders = '', fields = '';
+        var colModel = $("#jqGrid").jqGrid("getGridParam","colModel");        
+        $.each(colModel,function(index,obj){
+          if(obj.colmenu && !obj.hidden){//自定义非隐藏列
+            hearders += obj.label+",";
+            fields  += obj.name+",";
+          }
+        });   
+        return '&hearders='+hearders+"&fields="+fields;
+      } 
+
+
+var exportData;
+ function progress(){
+        var url = "/statistic/borrow/exportBorrowExcel.html?";
+        $.ajax({
+                  type: "POST",
+                  url:"/sys/export/progress.html",
+                  data:{'exportUrl':url},
+                  async: false,
+                  error: function(request) {
+                       clearTimeout(exportData)  
+                  },
+                  success: function(data) {
+                    exportData=setTimeout("progress()",2000);
+                     if(data.msg==100){
+                       layer.closeAll('loading')
+                       clearTimeout(exportData)
+                     }
+                  }
+              });
+      }
+
+   function exportExcel(){
+        var params = 'exportTitle=' + exportTitle + getFieldsAndHearders();
+        params += '&'+$('.form-horizontal').serialize();           
+        var url = "/statistic/borrow/exportBorrowExcel.html?";
+        var hrefval = url + params;
+        window.location.href=hrefval;
+        layer.load(3,{
+          shade: 0.5,
+          content:'<span>请等待，正在导出中...</span>'
+        });
+        progress();
+      }
+
+
+function changeType() {
+  $('.form-horizontal').submit();
+}
+
+ $('.form-horizontal').submit(function (e) {
+   e.preventDefault();
+   jqGridSet();
+   chartAjax($(this).serialize());
+ });
+
+//表格初始化
+function jqGridSet(){
+  $.ajax({
+      url : '/statistic/invest/getInvestArea.html',
+      type : 'POST',
+      dataType : 'json',
+      data : $(".form-horizontal").serialize(),
+    }).done(function(data) {
+      $("#jqGrid").jqTreeGrid({
+        data : data.dataList,
+        datatype : 'local',
+        multiselect : false,
+        height : 500,
+        colModel : [ {
+          label : "地域(省份)",
+          name : "area",
+          width : 100
+        }, {
+          label : "投资人数(人)",
+          name : "userNum",
+          width : 100
+        }, {
+          label : "投资金额(元)",
+          name : "totalAmnt",
+          width : 100
+        }, {
+          label : "投资笔数(笔)",
+          name : "totalCount",
+          width : 100
+        }],
+      }).jqGrid("setFrozenColumns").navGrid('#jqGridPager', {
+        edit : false,
+        add : false,
+        del : false,
+        search : false,
+        refresh : true,
+        view : false,
+        position : "left",
+        cloneToTop : false
+      });
+    });
+  }
+  jqGridSet();
+</script>
+</body>
+</html>

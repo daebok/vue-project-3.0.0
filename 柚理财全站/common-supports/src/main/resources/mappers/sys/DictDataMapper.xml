@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.sys.mapper.DictDataMapper">
+	<resultMap type="com.rd.ifaes.core.sys.domain.DictData" id="dictDataResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="dictType" column="DICT_TYPE"/>
+		<result property="itemName" column="ITEM_NAME"/>
+		<result property="itemValue" column="ITEM_VALUE"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="sort" column="SORT"/>
+		<result property="status" column="STATUS"/>
+		<result property="expression" column="EXPRESSION"/>
+		<result property="remark" column="REMARK"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		DICT_TYPE,
+		ITEM_NAME,
+		ITEM_VALUE,
+		CREATE_TIME,
+		SORT,
+		STATUS,
+		EXPRESSION,
+		REMARK
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{dictType},
+		#{itemName},
+		#{itemValue},
+		#{createTime},
+		#{sort},
+		#{status},
+		#{expression},
+		#{remark}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="dictType != null and dictType != ''">and DICT_TYPE = #{dictType}</if>
+            <if test="itemName != null and itemName != ''">and ITEM_NAME = #{itemName}</if>
+            <if test="itemValue != null and itemValue != ''">and ITEM_VALUE = #{itemValue}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+			<if test="sort != null">and SORT = #{sort}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+            <if test="expression != null">and EXPRESSION = #{expression}</if>
+            <if test="remark != null and remark != ''">and REMARK = #{remark}</if>
+            <if test="keywords != null and keywords != ''">and (ITEM_NAME like concat('%',#{keywords},'%')  OR ITEM_VALUE like concat('%',#{keywords},'%') )</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by dict_type, sort </if>
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.sys.domain.DictData">
+		insert into sys_dict_data( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into sys_dict_data( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+			#{item.uuid},
+			#{item.dictType},
+			#{item.itemName},
+			#{item.itemValue},
+			#{item.createTime},
+			#{item.sort},
+			#{item.status},
+			#{item.expression},
+			#{item.remark}
+		)
+		</foreach>
+	</insert>
+
+	<update id="update" parameterType="com.rd.ifaes.core.sys.domain.DictData">
+		update sys_dict_data 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="itemName != null and itemName != ''">ITEM_NAME = #{itemName},</if>
+            <if test="itemValue != null and itemValue != ''">ITEM_VALUE = #{itemValue},</if>
+			<if test="sort != null">SORT = #{sort},</if>
+            <if test="status != null and status != ''">STATUS = #{status},</if>
+            <if test="expression != null and expression != ''">EXPRESSION = #{expression},</if>
+            <if test="remark != null and remark != ''">REMARK = #{remark}</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="dictDataResultMap">
+        select <include refid="table_columns" />
+        from sys_dict_data
+    </select>
+
+    <select id="findList" resultMap="dictDataResultMap">
+        select <include refid="table_columns" />
+        from sys_dict_data
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from sys_dict_data
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="dictDataResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from sys_dict_data
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+
+
+</mapper>

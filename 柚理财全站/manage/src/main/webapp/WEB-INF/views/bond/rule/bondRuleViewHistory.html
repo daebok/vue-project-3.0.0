@@ -1,0 +1,189 @@
+<style type="text/css">
+.ui-jqgrid .ui-jqgrid-hdiv {
+	position: relative;
+}
+
+.ui-jqgrid .ui-jqgrid-bdiv {
+	margin-top: 0 !important;
+}
+
+@media ( max-height : 768px) {
+	.ui-jqgrid .ui-jqgrid-bdiv {
+		margin-top: 39px;
+		padding-bottom: 0px;
+		max-height: 100px !important;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+}
+
+.ui-jqgrid .ui-jqgrid-pager {
+	position: relative;
+	bottom: 0px;
+	background: #fff;
+	border: 1px solid #EBEBEB;
+	border-radius: 3px;
+	z-index: 1000;
+}
+
+@media ( max-height : 1080px) {
+	.ui-jqgrid .ui-jqgrid-bdiv {
+		margin-top: 39px;
+		padding-bottom: 0px;
+		max-height: 460px !important;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+}
+</style>
+<div class="wrapper">
+	<div class="row mt20">
+		<div class="col-md-12">
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+	</div>	
+</div>
+
+<script type="text/javascript">
+	var url_list = "/bond/rule/bondRuleList.html";
+	$(document).ready(function() {		
+		var url_key = url_list.substring(url_list.lastIndexOf('/') + 1, url_list.indexOf('.'));
+		//表格初始化		
+		$("#jqGrid").jqTreeGrid({
+				url : url_list,
+				colModel : [
+						{
+							label : "创建时间 ",
+							name : "createTime",
+							width : 150,
+							align: "center",
+							formatter: datetimeFormatter
+						},
+						{
+							label : "状态",
+							name : "ruleStatus",
+							align: "center",
+							formatter : function(val, options,rowObject) {
+								if(val == "1"){
+									return "开启";
+								}
+								return "关闭";
+							},
+							width : 50
+						},
+						{
+							label : "起息天数",
+							name : "holdDays",
+							align: "center",
+							width : 100
+						},
+						{
+							label : "到期前天数",
+							name : "remainDays",
+							align: "center",
+							width : 100
+						},
+						{
+							label : "本期到期天数",
+							name : "periodRemainDays",
+							align: "center",
+							width : 100
+						},
+						{
+							label : "转让时效",
+							name : "deadline",
+							align: "center",
+							width : 100,
+						},{
+							label : "转让方式",
+							name : "sellStyle",
+							align: "center",
+							formatter : function(val, options,rowObject) {
+								if(val == "1"){
+									return "全额转让";
+								}
+								return "部分转让";
+							},
+							width : 100,
+						},{
+							label : "受让方式",
+							name : "buyStyle",
+							align: "center",
+							formatter : function(val, options,rowObject) {
+								if(val == "1"){
+									return "全额受让";
+								}
+								return "部分受让";
+							},
+							width : 100,
+						},{
+							label : "受让最低金额",
+							name : "buyAmountMin",
+							align: "center",
+							width : 100,
+						},{
+							label : "受让最高金额",
+							name : "buyAmountMax",
+							align: "center",
+							width : 100,
+						},{
+							label : "折溢价率下限",
+							name : "discountRateMin",
+							align: "center",
+							width : 100,
+						},{
+							label : "折溢价率上限",
+							name : "discountRateMax",
+							align: "center",
+							width : 100,
+						},{
+							label : "手续费方式",
+							name : "feeStyle",
+							align: "center",
+							formatter : function(val, options,rowObject) {
+								if(val == "1"){
+									return "固定金额";
+								}
+								return "按照比例";
+							},
+							width : 100,
+						},{
+							label : "收费起步金额",
+							name : "feeInitiateAmount",
+							align: "center",
+							width : 100,
+						},{
+							label : "固定金额",
+							name : "feeFixed",
+							align: "center",
+							width : 100,
+						},{
+							label : "比例值",
+							name : "feeRate",
+							align: "center",
+							width : 100,
+						},{
+							label : "单笔max手续费",
+							name : "feeSingleMax",
+							align: "center",
+							width : 150,
+						}
+						],
+			}).jqGrid("setFrozenColumns").navGrid(
+			'#jqGridPager',
+			{
+				edit : false,
+				add : false,
+				del : false,
+				search : false,
+				refresh : true,
+				view : false,
+				position : "left",
+				cloneToTop : false
+			});
+		});
+		$(window).bind('resize', function() {				
+			$("#jqGrid").setGridHeight($(window).height()*0.8*0.52);
+		});	
+</script>

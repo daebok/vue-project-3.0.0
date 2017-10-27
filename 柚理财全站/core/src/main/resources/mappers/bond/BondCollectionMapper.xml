@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.bond.mapper.BondCollectionMapper">
+	<resultMap type="com.rd.ifaes.core.bond.domain.BondCollection" id="bondCollectionResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="investId" column="INVEST_ID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="bondId" column="BOND_ID"/>
+		<result property="bondInvestId" column="BOND_INVEST_ID"/>
+		<result property="repaymentId" column="REPAYMENT_ID"/>
+		<result property="bondCapital" column="BOND_CAPITAL"/>
+		<result property="bondInterest" column="BOND_INTEREST"/>
+		<result property="capital" column="CAPITAL"/>
+		<result property="collectionAmount" column="COLLECTION_AMOUNT"/>
+		<result property="collectionTime" column="COLLECTION_TIME"/>
+		<result property="receivedAmount" column="RECEIVED_AMOUNT"/>
+		<result property="receivedTime" column="RECEIVED_TIME"/>
+		<result property="interest" column="INTEREST"/>
+		<result property="lateDays" column="LATE_DAYS"/>
+		<result property="lateInterest" column="LATE_INTEREST"/>
+		<result property="period" column="PERIOD"/>
+		<result property="status" column="STATUS"/>
+		<result property="createTime" column="CREATE_TIME"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		PROJECT_ID,
+		INVEST_ID,
+		USER_ID,
+		BOND_ID,
+		BOND_INVEST_ID,
+		REPAYMENT_ID,
+		BOND_CAPITAL,
+		BOND_INTEREST,
+		CAPITAL,
+		COLLECTION_AMOUNT,
+		COLLECTION_TIME,
+		RECEIVED_AMOUNT,
+		RECEIVED_TIME,
+		INTEREST,
+		LATE_DAYS,
+		LATE_INTEREST,
+		PERIOD,
+		STATUS,
+		CREATE_TIME
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{projectId},
+		#{investId},
+		#{userId},
+		#{bondId},
+		#{bondInvestId},
+		#{repaymentId},
+		#{bondCapital},
+		#{bondInterest},
+		#{capital},
+		#{collectionAmount},
+		#{collectionTime},
+		#{receivedAmount},
+		#{receivedTime},
+		#{interest},
+		#{lateDays},
+		#{lateInterest},
+		#{period},
+		#{status},
+		#{createTime}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="projectId != null and projectId != ''">and PROJECT_ID = #{projectId}</if>
+            <if test="investId != null and investId != ''">and INVEST_ID = #{investId}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="bondId != null and bondId != ''">and BOND_ID = #{bondId}</if>
+            <if test="bondInvestId != null and bondInvestId != ''">and BOND_INVEST_ID = #{bondInvestId}</if>
+            <if test="repaymentId != null and repaymentId != ''">and REPAYMENT_ID = #{repaymentId}</if>
+			<if test="bondCapital != null">and BOND_CAPITAL = #{bondCapital}</if>
+			<if test="bondInterest != null">and BOND_INTEREST = #{bondInterest}</if>
+			<if test="capital != null">and CAPITAL = #{capital}</if>
+			<if test="collectionAmount != null">and COLLECTION_AMOUNT = #{collectionAmount}</if>
+			<if test="collectionTime != null">and COLLECTION_TIME = #{collectionTime}</if>
+			<if test="receivedAmount != null">and RECEIVED_AMOUNT = #{receivedAmount}</if>
+			<if test="receivedTime != null">and RECEIVED_TIME = #{receivedTime}</if>
+			<if test="interest != null">and INTEREST = #{interest}</if>
+			<if test="lateDays != null">and LATE_DAYS = #{lateDays}</if>
+			<if test="lateInterest != null">and LATE_INTEREST = #{lateInterest}</if>
+			<if test="period != null and period != 0">and PERIOD = #{period}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.bond.domain.BondCollection">
+		insert into bond_collection( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into bond_collection( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+		#{item.uuid},
+				#{item.projectId},
+				#{item.investId},
+				#{item.userId},
+				#{item.bondId},
+				#{item.bondInvestId},
+				#{item.repaymentId},
+				#{item.bondCapital},
+				#{item.bondInterest},
+				#{item.capital},
+				#{item.collectionAmount},
+				#{item.collectionTime},
+				#{item.receivedAmount},
+				#{item.receivedTime},
+				#{item.interest},
+				#{item.lateDays},
+				#{item.lateInterest},
+				#{item.period},
+				#{item.status},
+				#{item.createTime}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from bond_collection
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update bond_collection set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update bond_collection set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.bond.domain.BondCollection">
+		update bond_collection 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="bondCapital != null">BOND_CAPITAL = #{bondCapital},</if>
+			<if test="bondInterest != null">BOND_INTEREST = #{bondInterest},</if>
+			<if test="capital != null">CAPITAL = #{capital},</if>
+			<if test="collectionAmount != null">COLLECTION_AMOUNT = #{collectionAmount},</if>
+			<if test="receivedAmount != null">RECEIVED_AMOUNT = #{receivedAmount},</if>
+			<if test="interest != null">INTEREST = #{interest},</if>
+			<if test="lateDays != null">LATE_DAYS = #{lateDays},</if>
+			<if test="lateInterest != null">LATE_INTEREST = #{lateInterest},</if>
+			<if test="period != null ">PERIOD = #{period},</if>
+            <if test="status != null and status != ''">STATUS = #{status},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+	
+	<update id="updateBatch" parameterType="java.util.List">
+		<foreach collection="list" item="item" open="" separator=";" close="">  
+			update bond_collection 
+			<trim prefix="set" suffixOverrides=",">
+				<if test="item.bondCapital != null">BOND_CAPITAL = #{item.bondCapital},</if>
+				<if test="item.bondInterest != null">BOND_INTEREST = #{item.bondInterest},</if>
+				<if test="item.capital != null">CAPITAL = #{item.capital},</if>
+				<if test="item.collectionAmount != null">COLLECTION_AMOUNT = #{item.collectionAmount},</if>
+				<if test="item.receivedAmount != null">RECEIVED_AMOUNT = #{item.receivedAmount},</if>
+				<if test="item.interest != null">INTEREST = #{item.interest},</if>
+				<if test="item.lateDays != null">LATE_DAYS = #{item.lateDays},</if>
+				<if test="item.lateInterest != null">LATE_INTEREST = #{item.lateInterest},</if>
+				<if test="item.period != null ">PERIOD = #{item.period},</if>
+	            <if test="item.status != null and item.status != ''">STATUS = #{item.status},</if>
+			</trim>
+			<where>uuid = #{item.uuid}</where>
+		</foreach>
+	</update>
+    <update id="updateInvestIdByBondInvestId">
+		update bond_collection set invest_id = #{investId}
+		where bond_invest_id = #{bondInvestId}
+	</update>
+
+
+    <select id="findAll" resultMap="bondCollectionResultMap">
+        select <include refid="table_columns" />
+        from bond_collection
+    </select>
+
+    <select id="findList" resultMap="bondCollectionResultMap">
+        select <include refid="table_columns" />
+        from bond_collection
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from bond_collection
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="bondCollectionResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from bond_collection
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<!-- 债权待收本息和 -->
+	<select id="getSumByInvestId"  resultType="decimal"  parameterType="String" >
+		select sum(interest+capital) as num
+		from bond_collection
+		where bond_invest_id = #{investId} and status = '0'
+	</select>
+	<!-- 债权本金和、利息和 -->
+	<select id="getSumCapAndInByInvestId"  resultMap="bondCollectionResultMap"  parameterType="String" >
+		select sum(capital) as capital,sum(interest) as interest
+		from bond_collection
+		where bond_invest_id = #{investId} 
+	</select>
+
+	<!--  根据期数和对应的投资ID 查询单条待收记录-->
+	<select id="getBondCollectionByInvestIdAndPeriod" resultMap="bondCollectionResultMap">
+		select <include refid="table_columns" />
+		from bond_collection
+		where invest_id = #{investId} and period = #{period} 
+	</select>
+	
+</mapper>

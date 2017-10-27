@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>好友邀请管理</title>
+</head>
+<style type="text/css">
+		.ui-jqgrid .ui-jqgrid-hdiv{
+			position: relative;
+		}
+		.ui-jqgrid .ui-jqgrid-bdiv{
+			margin-top: 0!important;
+		}
+      @media (max-height: 768px){
+        .ui-jqgrid .ui-jqgrid-bdiv {
+            margin-top: 39px;
+            padding-bottom: 0px;
+            max-height: 100px!important;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+      }
+      .ui-jqgrid .ui-jqgrid-pager {
+          position: relative;
+          bottom: 0px;
+          background: #fff;
+          border: 1px solid #EBEBEB;
+          border-radius: 3px;
+          z-index: 1000;
+      } 
+      @media (max-height: 1080px){
+        .ui-jqgrid .ui-jqgrid-bdiv {
+            margin-top: 39px;
+            padding-bottom: 0px;
+            max-height: 460px!important;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+      }
+</style>
+<body>
+<div class="wrapper">
+	<div class="row pt20">		
+		<div class="col-md-6">
+			<div class="search-form">
+				<form>
+					<div class="input-group">
+						<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入用户名或者认证名称进行搜索">
+						<input type="hidden" class="form-control search-input" name="inviteUserId" id="inviteUserId"  value='${inviteUserId}'>
+						<span class="input-group-btn search-span">
+					    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/user/invite/inviteSecondList.html">搜索</button>
+					    </span>						    
+				    </div>
+			    </form>	
+			</div>
+			<div class="search-form-adv ml10">
+				<form id="advSearchForm">
+					<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+					  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+					  <ul class="dropdown-menu search-menu">
+					  
+					    <li class="input-group input-group-sm"><span>手机号</span><input type="text" class="form-control" name="inviteUserMobile" />
+					    	<input type="hidden" class="form-control search-input" name="inviteUserId" id="inviteUserId"  value='${inviteUserId}'>
+					    </li>
+					    <li class="input-group input-group-sm"><span>注册日期</span><input type="text" name="startTime" id="startTime" class="form-control"placeholder="开始日期"/><input type="text" name="endTime" id="endTime" class="form-control" placeholder="结束日期"/></li>					    
+					    <li><button class="btn btn-sm btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/user/invite/inviteSecondList.html">查询</button></li>
+					  </ul>							  
+					</div>
+					<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+				</form>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="tool-btns">
+			</div>			
+		</div>
+	</div>
+	<div class="row mt20">
+		<div class="col-md-12">
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+	</div>
+	</div>
+    <script type="text/javascript">
+  //设置开始时间控件
+	var startTime= {
+		elem:'#startTime',
+		format: 'YYYY-MM-DD', //日期格式
+		istime: false, //是否开启时间选择
+		max:$('#endTime').val(),
+		event:'focus',
+		choose: function(dates){
+		    endTime.min=dates;
+		    endTime.start=dates;
+		}
+	};
+	
+	//设置发放结束时间
+	var endTime=  {
+			elem:'#endTime',
+			format: 'YYYY-MM-DD', //日期格式
+			istime: false, //是否开启时间选择
+			min: $('#startTime').val(), //最小日期
+			event:'focus',
+			choose: function(dates){
+				startTime.max=dates;
+		   }
+	};
+	laydate(startTime);
+	laydate(endTime);
+    
+	<@dictFormatter type = "userNature" />	
+        $(document).ready(function () {
+        	//表格初始化
+        	$("#jqGrid").jqTreeGrid({
+        		url: '/user/invite/inviteSecondList.html?inviteUserId=${inviteUserId!}',
+        		idField:"id",
+                colModel: [
+                    { label: 'id', name: 'uuid', width: 10,hidden:true },
+					{ label: '用户名', name: 'inviteeUserName', width: 50 },
+					{ label: '手机号', name: 'inviteeUserMobileShow', width: 30 },
+					{ label: '认证名称', name: 'inviteeUserRealName', width: 50 },
+					{ label: "用户类型",name: "userNature",formatter: userNatureFormatter,width: 50},
+					{ label: '投资金额', name: 'level1Invest', width: 20 },
+					{ label: '注册时间', name: 'inviteeUserTime', width: 125, align:'center', formatter: datetimeFormatter}
+					],
+        	}).jqGrid("setFrozenColumns").navGrid('#jqGridPager',		            
+		            { edit: false, add: false, del: false, search: false, refresh: true, view: false, position: "left", cloneToTop: false }
+		   	);
+       });
+  </script>	
+</body>
+</html>

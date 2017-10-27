@@ -1,0 +1,169 @@
+<div class="form-tips-content">
+	<form class="form-horizontal" action="/risk/riskQuestionEdit.html" id="form" role="form">
+		<ul class="form-item" style="padding-bottom:0;margin-bottom:30px;">
+			<li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">问卷名称：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="papersName" id="papersName" placeholder="问卷名称" value="${question.papersName!''}" required readonly>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">题号：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="sort" id="sort" value="${question.sort}" placeholder="题号"  data-rule-digits="true" maxlength="3" data-msg-digits="请输入整数"
+						 required onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" 
+				onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'0')}else{this.value=this.value.replace(/\D/g,'')}">
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">题型：</label>
+					<div class="input-box">
+					<#if question.isSingle??>
+						<@linkage name="isSingle" id="isSingle" nid="isSingle" default="${question.isSingle}" class="form-control"/>
+					<#else>
+						<@linkage name="isSingle" id="isSingle" nid="isSingle" class="form-control"/>
+					</#if>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">题目：</label>
+					<div class="input-box" style="height:55px;">
+						<textarea rows="" cols=""  class="form-control"  name="questionName"  placeholder="题目" maxlength="1024" required>${question.questionName!''}</textarea>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<br/>
+		<div class="editquestion-con">
+			<div class="question-list" style="padding:0;">
+				<ul>
+					<#if aList ??>
+						<#list aList as item>
+				  			<li>
+				  			<div class="form-group">
+				  				<input name="auuid" type="hidden"  value="${item.uuid!''}" id="auuid${item_index}"/>
+				  				<input name="answerContent" type="hidden"  value="" id="answerContent${item_index}"/>
+			  					<label class="selectlabel">选项：</label>
+				  				<div class="input-box sort-box">
+				  					<select name="aSort" class="form-control" id="aSort${item_index}">
+				  						<option value="A" <#if item.sort == "A">selected = "selected"</#if>>A</option>
+				  						<option value="B" <#if item.sort == "B">selected = "selected"</#if>>B</option>
+				  						<option value="C" <#if item.sort == "C">selected = "selected"</#if>>C</option>
+				  						<option value="D" <#if item.sort == "D">selected = "selected"</#if>>D</option>
+				  						<option value="E" <#if item.sort == "E">selected = "selected"</#if>>E</option>
+				  						<option value="F" <#if item.sort == "F">selected = "selected"</#if>>F</option>
+				  						<option value="G" <#if item.sort == "G">selected = "selected"</#if>>G</option>
+				  					</select>
+				  				</div>
+					  				<label class="answerlabel">内容：</label>
+					  				<div class="input-box answer-box">
+					  					<input type="text" class="answer form-control" name="answer" id="answer${item_index}" value="${item.content!''}" placeholder="输入选项内容" required />
+					  					<label class="error"></label>
+					  				</div>
+					  				<label class="scoreTitle">分值：</label>
+					  				<div class="input-box score-box">
+					  					<input type="text" class="score form-control" name="score" id="score${item_index}" value="${item.score!''}" maxlength="2" data-rule-isnumber="true" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" 
+				onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'0')}else{this.value=this.value.replace(/\D/g,'')}"  data-msg-isnumber="请输入正确的分值" placeholder="请输入分值" required />
+					  					<label class="error"></label>
+					  				</div>
+					  				<label class="scoreTitle">删除：</label>
+					  				<div class="input-box score-box">
+					  					<select name="aDeleteFlag" class="form-control" id="deleteFlag${item_index}">
+				  						<option value="1" <#if item.deleteFlag == "1">selected = "selected"</#if>>是</option>
+				  						<option value="0" <#if item.deleteFlag == "0">selected = "selected"</#if>>否</option>
+				  					</select>
+					  					<label class="error"></label>
+					  				</div>
+					  				<#if item_index == aList?size-1>
+					  					<button type="button" class="btn btn-primary add-answer" onclick="">+ 增加答案</button>
+					  				</#if>
+				  				</div>
+				  			</li>
+				  		</#list>
+			  		</#if>
+		  		</ul>
+			</div>
+		</div>
+		<input type="hidden" name="uuid" value="${question.uuid!''}"/>
+		<@token name="editPapersQAToken"/>
+	</form>
+	
+</div>
+<script>
+
+var i = 2;
+$(".layui-layer-content").on("click",'.add-answer',function(e){
+	i+=1;
+	var str ='<li><div class="form-group"><input name="answerContentAdd" type="hidden"  value="" id="answerContentAdd'+i
+	+'"/><label class="selectlabel">选项：</label><div class="input-box sort-box"><select name="aSort" class="form-control" id="aSortAdd'+i
+	+'"><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option></select></div>'
+	+'<label class="answerlabel">内容：</label><div class="input-box answer-box"><input type="text" class="answer form-control" name="answer" id="answerAdd'+i+'" placeholder="输入选项内容" maxlength="100"><label class="error"></label></div>'
+	+'<label class="scoreTitle">分值：</label><div class="input-box score-box"><input type="text" class="score form-control" name="score"  id="scoreAdd'+i
+	+'"  value=""  placeholder="请输入分值" maxlength="2"  onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'+'\'\''+')}else{this.value=this.value.replace(/\D/g,'+'\'\''+')}" '
+	+' onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'+'\'0\''+')}else{this.value=this.value.replace(/\D/g,'+'\'\''+')}"  data-rule-isnumber="true" data-msg-isnumber="请输入正确的分值"><label class="error"></label></div>'
+	+'<button type="button" class="btn btn-primary add-answer" onclick="">+ 增加答案</button><button type="button" class="btn btn-primary remove-answer" onclick="">- 删除答案</button></div></li>';
+	$(this).parent().parent().after(str);
+})
+
+$(".layui-layer-content").on("click",'.remove-answer',function(e){
+	i-=1;
+	$(this).parent().parent().remove();
+})
+$("#form").validate({
+	submitHandler: function(form) {	
+		for(var k = 1;  k < i+1;  k++){
+			var aSortAdd =  $("#aSortAdd"+ k).val();
+			var answerAdd =  $("#answerAdd"+ k).val();
+			var scoreAdd  = $("#scoreAdd"+ k).val();
+			var arrayAdd = new Array(); 
+			arrayAdd[0] = aSortAdd;
+			arrayAdd[1] = answerAdd;
+			arrayAdd[2] = scoreAdd;
+			$("#answerContentAdd"+k).val(arrayAdd);
+		}
+		for (var j = 0; j < ${aList?size}; j++) {
+			var uuid = $("#auuid"+j).val();
+			var aSort =  $("#aSort"+j).val();
+			var answer =  $("#answer"+j).val();
+			var score  = $("#score"+j).val();
+			var deleteFlag = $("#deleteFlag"+j).val();
+			var array = new Array();
+			array[0] = uuid;
+			array[1] = aSort;
+			array[2] = answer;
+			array[3] = score;
+			array[4] = deleteFlag;
+			$("#answerContent"+j).val(array);
+		}
+		 $(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						icon: 6,
+						cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+					}, function() {
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入  
+					});
+				} else {
+					layer.alert(data.msg, {
+						icon: 5
+					});
+				}
+			}
+		}); 
+	}
+})
+</script>

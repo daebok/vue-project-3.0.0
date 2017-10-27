@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>转让规则</title>
+	<style type="text/css">
+		.notice{color:#109FFF;}
+		.no-rule{
+			
+		}
+	</style>
+	<#include "include/resources.html">
+</head>
+<body class="overflowY">
+	<div class="wrapper" style="position: relative; z-index:5;">
+		<div class="row pt20">
+			<div class="col-md-12">
+				<div class="tool-btns">
+					<button type="button" class="btn btn-info" >编辑</button>
+					<@shiro.hasPermission name="project:bond:bondRule:query">
+					<button type="button" class="btn btn-primary"
+						onclick="$.fn.treeGridOptions.viewHistory(this)"
+						data-url="/bond/rule/bondRuleViewHistory.html" data-title="历史规则记录">历史记录</button>
+					</@shiro.hasPermission>
+				</div>			
+			</div>
+		</div>
+	</div>
+	<div class="form-tips-content" id="realization" data-page="1" style="position: relative;top: -54px;">
+	<h3 class="borrowFormTitle">债权规则</h3>
+			<#if model.uuid ??>
+			<ul class="form-item">
+			<div>
+				<div class="title">一、申请转让期限制</div>
+				<div class="con">
+					<div>
+						1、<#if model??&& model.holdDays gt 0 >起息日后必须持有<font style="color:#109FFF;font-size:16px;">${model.holdDays!'5'}</font>天后才可进行转让;<#else>起息日没有限制</#if>
+					</div>
+					<div>
+						2、<#if model??&& model.remainDays  gt 0>距到期日<font style="color:#109FFF;font-size:16px;">${model.remainDays!'30'}</font>天之前才可进行转让;<#else>距到期日没有限制</#if>
+					</div>
+					<div>
+						3、<#if model??&& model.periodRemainDays gt 0>距本期还款日<font style="color:#109FFF;font-size:16px;">${model.periodRemainDays!'3'}</font>天之前才可进行转让;<#else>距本期还款日没有限制</#if> 
+					</div>
+				</div>
+				
+				<div class="title">二、转让时效</div>
+				<div class="con">
+					<div>
+						<#if model??><font style="font-size:16px;">${model.deadline!'24'}</font>小时内未完成转让即自动撤销转让申请<#else>没有时效限制</#if>
+					</div> 
+					<div class="notice">
+						<input type="checkbox" checked disabled>在转让期间发生借款人提前还款，则需要将此借款下正在募集的债权撤销，方可进行提前还款
+					</div>
+				</div>
+						
+				<div class="title">三、转让金额限制</div>
+				<div class="con">
+					<div>
+						<font style="font-size:16px;"><#if model??&&model.sellStyle??><#if model.sellStyle == "1">一次性全额转让<#else>部分转让</#if><#else>一次性全额转让</#if></font>
+					</div>
+					<div class="notice">
+					<#if flag>
+						<p>1、最低转让金额需大于等于最低受让金额的<font style="color:#109FFF;font-size:16px;">2</font>倍</p>
+						<p>2、剩余未还本金小于最低受让金额的<font style="color:#109FFF;font-size:16px;">2</font>倍必须全部转让</p><p>3
+					<#else>
+						<p>1、由于使用UFX-汇付接口,故只能选择一次性全额转让</p><p>2
+					</#if>
+						、还款方式为月等额本息、月等额本金则必须一次性全额转让,不受该配置项的限制</p>
+					</div>
+				</div>
+		
+				<div class="title">四、单笔受让金额限制</div>
+				<div class="con">
+					<div>
+						<font style="font-size:16px;"><#if model??&&model.buyStyle??><#if model.buyStyle == "1">一次性全额受让<#else>部分受让</#if><#else>一次性全额受让</#if></font>
+					</div>
+				<#if model??&&model.buyStyle == "1"	><#elseif model??&&model.buyStyle == "0"><div>单笔最低受让金额：<font style="font-size:16px;"><#if model??>${model.buyAmountMin!"1000"}元</#if></font></div></#if>
+					<div class="notice">
+						<#if flag>
+							<p>1、剩余金额小于等于最低受让金额的2倍需一次性受让完毕</p>
+						<#else>
+							<p>1、由于使用UFX-汇付接口,故只能选择一次性全额受让</p>
+						</#if>
+							<p>2、还款方式为月等额本息、月等额本金则必须一次性全额受让,不受该配置项的限制</p>
+					</div>
+				</div>
+		
+				<div class="title">五、折溢价率</div>
+				<div class="con">
+				<div>折溢价率:<font style="font-size:16px;"><#if model??>${model.discountRateMin!0}%</#if>~<#if model??>${model.discountRateMax!0}%</#if></font>
+				</div>
+					<div class="notice">
+						<p>1、折溢价=受让金额*折溢价率</p>
+						<p>2、剩余期限利息=总待收利息-已持有期限的利息</p>
+						<p>3、受让支付金额=受让本金+受让本金已持有天数的利息+折溢价-已持有期限的利息管理费</p>
+						<p>4、已持有期限利息管理费 = 已持有期限的利息* 利息管理费</p>
+					</div>
+				</div>
+		
+				<div class="title">六、转让手续费</div>
+				<div class="con">
+					<div>
+						每笔债权受让金额大于等于<#if model??><font style="color:#109FFF;font-size:16px;">${model.feeInitiateAmount}</font></#if>元,
+						<#if model??&&model.feeStyle == '1'>收取固定金额手续费<font style="color:#109FFF;font-size:16px;">${model.feeFixed}</font>元,
+						<#elseif model??&&model.feeStyle == '2'>收取固定比例手续费<font style="color:#109FFF;font-size:16px;">${model.feeRate}%</font>,</#if>
+						单次债权转让收取手续费总额不得大于<#if model??><font style="color:#109FFF;font-size:16px;">${model.feeSingleMax}</font>元</#if>。
+					</div>
+					<div class="notice">注意：
+							<p>1、当债权已有逾期则不允许转让</p>
+						<#if flag>
+							<p>2、受让完成前允许手动撤销转让</p>
+							<p>3、转让后的年化利率为原始债权利率,到期预收本息=债权本金+债权总利息</p>
+						<#else>
+							<p>2、未全部受让成功前允许手动撤销转让</p>
+							<p>3、撤销时已受让成功部分保持受让状态</p>
+							<p>4、转让后的年化利率为原始债权利率,到期预收本息=债权本金+债权总利息</p>
+						</#if>
+					</div>
+				</div>
+			</div>
+		</ul>
+		<#else>
+			<div class="no-rule">暂无债权规则</div>
+		</#if>
+	</div>
+	<div class="form-tips-content hide" id="realization" data-page="2" style="position: relative;top: -54px;">
+	<h3 class="borrowFormTitle">债权规则</h3>
+		<form class="form-horizontal" action="/bond/rule/bondRuleAdd.html" id="form" role="form" >
+			<ul class="form-item">
+			<!-- start -->
+			<div>
+				<!-- 转让期  start  -->
+				<div class="title">一、申请转让期限制</div>
+				<div class="con">
+					<div>
+						<input type="checkbox" name="isHoldDays" value="1" <#if !model??>checked</#if><#if model??&&model.isHoldDays == 1>checked</#if>>起息日后必须持有
+						<input type="text" name="holdDays" id="holdDays" value="<#if model??><#if model.holdDays == '0'>5<#else>${model.holdDays!'5'}</#if><#else>5</#if>"  
+						onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" style="width:40px;" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="3">天
+					</div>
+					<div>
+						<input type="checkbox" name="isRemainDays" value="1" checked disabled>距到期日
+						<input type="text" name="remainDays"  id="isRemainDays" maxlength="4"  value="<#if model??><#if model.remainDays == '0'>30<#else>${model.remainDays!'30'}</#if><#else>30</#if>"
+						onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^0-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"  style="width:40px;">天之前
+					</div>
+					<div>
+						<input type="checkbox" name="isPeriodRemainDays" value="1" <#if !model??>checked</#if><#if model??&&model.isPeriodRemainDays == 1>checked</#if>>距本期还款日
+						<input type="text" name="periodRemainDays" id="periodRemainDays" maxlength="4"  value="<#if model??><#if model.periodRemainDays == '0'>3<#else>${model.periodRemainDays!'3'}</#if><#else>3</#if>"
+						onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"  style="width:40px;">天之前
+					</div>
+				</div>
+				<!-- 转让期  end  -->
+				<!-- 转让时效  start -->
+				<div class="title">二、转让时效</div>
+				<div class="con">
+					<div>
+						<input type="text" name="deadline" maxlength="4"   value="<#if model??>${model.deadline!'24'}<#else>24</#if>" onkeyup="if(this.value==this.value2);if(this.value.search(/^\d*(?:\.\d{0,2})?$/)==-1)this.value=(this.value2)?this.value2:'';else this.value2=this.value;"style="width:40px;">小时内未完成转让即自动撤销转让申请
+					</div> 
+					<div>
+						<input type="checkbox" checked disabled>在转让期间发生借款人提前还款，则需要将此借款下正在募集的债权撤销，方可进行提前还款
+					</div>
+				</div>
+				<!-- 转让时效  end -->
+				<!-- 转让金额限制  start -->
+				<div class="title">三、转让金额限制</div>
+				<div class="con">
+					<div>
+						<input type="radio" name="sellStyle" value="1" <#if !model.uuid??>checked</#if><#if model??&&model.sellStyle == "1">checked</#if>>一次性全额转让<br/>
+						<#if flag><input type="radio" name="sellStyle" value="0" <#if model??&&model.sellStyle == "0">checked</#if>>部分转让</#if>
+					</div>
+					<div id="sellAmountMinDiv" style="display:none;">
+						<input type="text" name="sellMultiple"  value="<#if model??><#if model.sellMultiple=='0'>2<#else>${model.sellMultiple!''}</#if></#if>" 
+						onkeyup="if(this.value==this.value2);if(this.value.search(/^\d*(?:\.\d{0,2})?$/)==-1)this.value=(this.value2)?this.value2:'';else this.value2=this.value;" 
+						placeholder="2"  style="width:40px;">
+					</div>
+					<div>
+					<#if flag>
+						<p>1、最低转让金额需大于等于最低受让金额的2倍</p>
+						<p>2、剩余未还本金小于最低受让金额的2倍必须全部转让</p>
+					<#else>
+						<p>1、由于使用UFX-汇付接口,故只能选择一次性全额转让</p>
+					</#if>
+						<p>3、还款方式为月等额本息、月等额本金则必须一次性全额转让,不受该配置项的限制</p>
+					</div>
+				</div>
+				<!-- 转让金额限制  end -->
+				<!-- 单笔受让金额限制  start -->
+				<div class="title">四、单笔受让金额限制</div>
+				<div class="con">
+					<div>
+						<input type="radio" class="buyStyle" name="buyStyle" value="1" <#if !model??>checked</#if><#if model??&&model.buyStyle == "1">checked</#if>>一次性全额受让<br/>
+						<#if flag><input type="radio" class="buyStyle"  name="buyStyle" value="0" <#if model??&&model.buyStyle == "0">checked</#if>>部分受让</#if>
+					</div>
+					<div id="buyAmountMinDiv" style="display: none">单笔最低受让金额：
+						<input type="text" name="buyAmountMin"  id="buyAmountMin" value="<#if model??><#if model.buyAmountMin=='0'>1000<#else>${model.buyAmountMin!''}</#if><#else>1000</#if>" onkeyup="if(this.value==this.value2);if(this.value.search(/^\d*(?:\.\d{0,2})?$/)==-1)this.value=(this.value2)?this.value2:'';else this.value2=this.value;"  style="width:100px;">元
+					</div>
+					<div>
+					<#if flag>
+						<p>1、剩余金额小于等于最低受让金额的2倍需一次性受让完毕</p>
+					<#else>
+						<p>1、由于使用UFX-汇付接口,故只能选择一次性全额受让</p>
+					</#if>
+						<p>2、还款方式为月等额本息、月等额本金则必须一次性全额受让,不受该配置项的限制</p>
+					</div>
+				</div>
+				<!-- 单笔受让金额限制  end -->
+				<!-- 折溢价率  start -->
+				<div class="title">五、折溢价率</div>
+				<div class="con">
+				<div>折溢价率:
+						<input type="text" name="discountRateMin" maxlength="6"  value="<#if model??>${model.discountRateMin!''}<#else>-2</#if>" onkeyup="if(!/^(\-?)(\d*|0)+\.?\d{0,1}$/g.test(this.value))this.value=(this.value2)?this.value2:'';else this.value2=this.value;"  style="width:100px;">%
+						——
+						<input type="text" name="discountRateMax" maxlength="6"  value="<#if model??>${model.discountRateMax!''}<#else>5</#if>" onkeyup="if(!/^(\-?)(\d*|0)+\.?\d{0,1}$/g.test(this.value))this.value=(this.value2)?this.value2:'';else this.value2=this.value;"  style="width:100px;">%
+				</div>
+					<div>
+						<p>1、折溢价=受让金额*折溢价率;</p>
+						<p>2、剩余期限利息=总待收利息-已持有期限的利息;</p>
+						<p>3、受让支付金额=受让本金+受让本金已持有天数的利息+折溢价-已持有期限的利息管理费;</p>
+						<p>4、已持有期限利息管理费 = 已持有期的利息* 利息管理费</p>
+					</div>
+				</div>
+				<!-- 折溢价率  end -->
+				<!-- 转让手续费  start -->
+				<div class="title">六、转让手续费</div>
+				<div class="con">
+					<div>
+						每笔债权受让金额大于等于
+						<input type="text" name="feeInitiateAmount" maxlength="7" value="<#if model??>${model.feeInitiateAmount!''}<#else>50</#if>" onkeyup="if(this.value==this.value2);if(this.value.search(/^\d*(?:\.\d{0,2})?$/)==-1)this.value=(this.value2)?this.value2:'';else this.value2=this.value;"   style="width:40px;">元，
+						<input type="radio" name="feeStyle" value="1" <#if !model??>checked</#if><#if model??&&model.feeStyle == '1'>checked</#if>>收取固定金额手续费
+						<input type="text" name="feeFixed" id="feeFixed" maxlength="7" <#if model??&&model.feeStyle == '2'>disabled='true'</#if> value="${model.feeFixed!'2'}" onkeyup="if(this.value==this.value2);if(this.value.search(/^\d*(?:\.\d{0,2})?$/)==-1)this.value=(this.value2)?this.value2:'';else this.value2=this.value;"   style="width:40px;">元/笔;
+						<input type="radio" name="feeStyle" value="2" <#if model??&&model.feeStyle == '2'>checked</#if>>收取固定比例手续费
+						<input type="text" name="feeRate" id="feeRate" maxlength="4"  value="${model.feeRate!'0.4'}" <#if model??&&model.feeStyle == '1'>disabled='true'</#if> onkeyup="if(this.value==this.value2);if(this.value.search(/^\d*(?:\.\d{0,2})?$/)==-1)this.value=(this.value2)?this.value2:'';else this.value2=this.value;"  style="width:40px;">% 手续费;
+						单次债权转让收取手续费总额不得大于
+						<input type="text" name="feeSingleMax" id="feeSingleMax" maxlength="7" value="<#if model??>${model.feeSingleMax!'100'}<#else>100</#if>" onkeyup="if(this.value==this.value2);if(this.value.search(/^\d*(?:\.\d{0,2})?$/)==-1)this.value=(this.value2)?this.value2:'';else this.value2=this.value;"  style="width:50px;">元;
+					</div>
+					<div class="notice">注意：
+						<p>1、当债权已有逾期则不允许转让</p>
+					<#if tppName == "chinapnr">
+						<p>2、受让完成前允许手动撤销转让</p>
+						<p>3、转让后的年化利率为原始债权利率,到期预收本息=债权本金+债权总利息</p>
+					<#else>
+						<p>2、未全部受让成功前允许手动撤销转让</p>
+						<p>3、撤销时已受让成功部分保持受让状态</p>
+						<p>4、转让后的年化利率为原始债权利率,到期预收本息=债权本金+债权总利息</p>
+					</#if>
+					</div>
+				</div>
+				<!-- 转让手续费  end -->
+				<!-- end -->
+			</div>
+			<div  style="text-align:left;">
+	      		<input type="submit" class="btn btn-primary"  id="submitBtn" value="提 交">
+	      		<input type="reset" class="btn btn-warning"  id="resetBtn" value="重 置" style="margin-left: 20px;">
+	       	</div>
+			</ul>
+			<@token name="addBondRuleToken"/>	
+		</form>
+	</div>
+<script type="text/javascript">
+	$("#discountRateMin").on("keyup", function(){
+		if(!$(this).val()) return false;
+		var _this = $(this)[0];
+		_this.value = $.fn.page.decimalsNumber1(_this.value);
+	});
+	
+	$("#discountRateMax").on("keyup", function(){
+		if(!$(this).val()) return false;
+		var _this = $(this)[0];
+		_this.value = $.fn.page.decimalsNumber1(_this.value);
+	});
+	
+	$("#feeInitiateAmount").on("keyup", function(){
+		if(!$(this).val()) return false;
+		var _this = $(this)[0];
+		_this.value = $.fn.page.decimalsNumber1(_this.value);
+	});
+	
+	$("#feeRate").on("keyup", function(){
+		if(!$(this).val()) return false;
+		var _this = $(this)[0];
+		_this.value = $.fn.page.decimalsNumber1(_this.value);
+	});
+	
+	$("#feeSingleMax").on("keyup", function(){
+		if(!$(this).val()) return false;
+		var _this = $(this)[0];
+		_this.value = $.fn.page.decimalsNumber1(_this.value);
+	});
+	
+	$("#buyAmountMin").on("keyup", function(){
+		if(!$(this).val()) return false;
+		var _this = $(this)[0];
+		_this.value = $.fn.page.decimalsNumber1(_this.value);
+	});
+	
+	$("#feeFixed").on("keyup", function(){
+		if(!$(this).val()) return false;
+		var _this = $(this)[0];
+		_this.value = $.fn.page.decimalsNumber1(_this.value);
+	});
+	$("#isRemainDays").change(function(){
+		if($("#isRemainDays").val() == 0){
+			$("#isRemainDays").val(1);
+		}else{
+			
+		}
+	})
+
+	//单笔最低受让金额  只有在部分受让的时候才显示
+	$(".buyStyle").change(function(){
+		var value = $("input:radio[name='buyStyle']:checked").val();
+		if(value == 0){
+			$("#buyAmountMinDiv").show();
+		}else{
+			$("#buyAmountMinDiv").hide();
+		}
+	});
+
+	//重置按钮
+	$("#resetBtn").click(function(){
+		$("#form").reset();
+	});
+	
+	//切换编辑和查询
+	$(".btn-info").click(function(event) {
+		var  btVal = $(".btn-info").html();
+		if(btVal == "编辑"){
+			$("[data-page='1']").addClass('hide');
+			$("[data-page='2']").removeClass('hide');
+			$(".btn-info").html("返回");
+		}else if(btVal == "返回"){
+			$("[data-page='1']").removeClass('hide');
+			$("[data-page='2']").addClass('hide');
+			$(".btn-info").html("编辑");
+		}
+	});
+	
+	//手续费方式  切换 
+	$("input[name='feeStyle']").on('click',function () {
+		if($(this).val()==1){
+		    $("input[name='feeFixed']").removeAttr("disabled")
+            $("input[name='feeRate']").attr("disabled","true")
+		}else{
+            $("input[name='feeFixed']").attr("disabled","true")
+            $("input[name='feeRate']").removeAttr("disabled")
+		}
+    })
+    
+    //提交表单
+    $("#form").validate({
+		submitHandler: function(form) {	
+			$(form).ajaxSubmit({
+				type: "post",
+				dataType: "json",
+				success: function(data) {
+					if (data.result) {
+						layer.alert(data.msg, {
+							icon: 6,
+							cancel: function(index){
+								layer.closeAll();
+								window.location.reload();
+  							}
+						}, function() {
+							layer.closeAll();
+							window.location.reload();
+						});
+					} else {
+						//错误 则不刷新
+						layer.alert(data.msg, {
+							icon: 6
+						});
+					}
+				}
+			});
+		}
+	})
+</script>
+</body>
+</html>

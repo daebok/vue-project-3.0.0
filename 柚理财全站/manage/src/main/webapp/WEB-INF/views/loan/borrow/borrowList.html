@@ -1,0 +1,186 @@
+<div class="row mt20">
+	<div class="col-md-12">
+		<table id="jqGrid" class="table-td-NoOverflow"></table>
+		<div id="jqGridPager"></div>
+	</div>
+</div>
+<script type="text/javascript">
+	<@dictFormatter type = "borrowNature" />
+	<@dictFormatter type = "borrowStatus" />
+	<@dictFormatter type = "project_type_manage" />
+	var nowTime="${nowTime!}";
+    if(!nowTime){
+        nowTime=  (new Date()).getTime();
+    }
+	$(document).ready(function() {		
+		var url_key = url_list.substring(url_list.lastIndexOf('/')+1,url_list.indexOf('.'));
+		//colModel = colModel.concat(downColumns);
+		//表格初始化		
+		$("#jqGrid").jqTreeGrid({
+				url : url_list,
+				multiselect : false,
+				colModel : [
+						{
+							label : "用户名",
+							name : "userName",
+							width : 110
+						},
+						{
+							label : "借款方",
+							name : "borrower",
+							width : 150
+						},
+						{
+							label : "借款名称",
+							name : "projectName",
+							formatter : function(val, options,rowObject) {
+								if(val.length>15){
+									contents = ""+val.substring(0,15)+"...";
+								}
+								else{
+									contents = val;
+								}
+    							return "<span title='"+val+"'>"+contents+"</span>";
+							},
+							width : 150
+						},
+						{
+							label : "借款金额",
+							name : "account",
+							width : 100
+						},
+						{
+							label : "年化利率",
+							name : "apr",
+							formatter : function(val, options,rowObject) {
+								return val + "%";
+							},
+							width : 100
+						},
+						{
+							label : "期限",
+							name : "timeLimit",
+							formatter : function(val, options,rowObject) {
+								return val + ""+ (rowObject.timeType == 0 ? '个月': '天');
+							},
+							width : 100
+						},
+						{
+							label : "借款性质",
+							name : "borrowNature",
+							width : 100,
+							formatter : borrowNatureFormatter
+						},
+						{
+							label : "标的类别",
+							name : "projectType",
+							width : 80,
+							formatter : project_type_manageFormatter
+						},
+						{
+							label : "其他信息",
+							name : "others",
+							width : 100,
+							title : false,
+							sortable:false,
+							align : "center",
+							formatter : function(value, row,index) {
+								var setpAccount = index.stepAccount ? index.stepAccount: 0;
+								var content = '<a href="javascript:void(0);" class="j-showInfo">其他信息</a>'
+										+ '<div class="showInfoSingleDiv">'
+										+ '<div class="showInfo">'
+										+ '<ul>'
+										+ '<li>'
+										+ '<span>借款用途：</span>'
+										+ index.borrowUse
+										+ '</li>'
+										+ '<li>'
+										+ '<span>最低起投金额：</span>'
+										+ index.lowestAccount
+										+ '</li>'
+										+ '<li>'
+										+ '<span>递增金额：</span>'
+										+ setpAccount
+										+ '</li>'
+										+ '<li>'
+										+ '<span>最高投资金额：</span>'
+										+ index.mostAccount
+										+ '</li>'
+										+ '<li>'
+										+ '<span>利息管理费：</span>'
+										+ index.interestManageRate
+										+ '%</li>'
+										+ '<li>'
+										+ '<span>借款管理费率：</span>'
+										+ index.borrowManageRate
+										+ '%</li>'
+										+ '<li>'
+										+ '<span>实际借款管理费：</span>'
+										+ index.costManage
+										+ '</li>'
+										+ '<li>'
+										+ '<span>逾期罚息利率：</span>'
+										+ index.overdueFeeRateMul
+										+ '%</li>'
+										+ '<li style="width:500px;">'
+										+ '<span>更新时间：</span>'
+										+ $.fn.page.transFormatDate(index.updateTime)
+										+ '</li>'
+										+ '</ul></div></div>';
+								return content;
+							}
+						},
+						{
+							label : "状态",
+							name : "status",
+							hidden:(url_key!='list'),
+							width : 100,
+							formatter : borrowStatusFormatter
+						},{
+							label: "操作",
+							name: "cz",
+							width: 100,
+							align: "center",
+							formatter: function(val, options, rowObject){	
+								var btns = '';
+								var	id = rowObject.id;
+								if(url_key == 'list'){	//借款维护
+									if(rowObject.status == "1" || rowObject.status == "11" ){
+										btns += '<span>编辑</span>|<span>作废</span>'
+									} else {
+										btns = '<a href="javascript:;" onclick=$.fn.treeGridOptions.EditFun(this,"'+id+'") data-tid="jqGrid" data-url="/loan/borrow/borrowEditPage.html">编辑</a>|<a href="javascript:;" onclick=$.fn.treeGridOptions.lineDeleteFun(this,"'
+												+id+'")  data-title="你确定要作废该产品吗？" data-tid="jqGrid" data-url="/loan/borrow/borrowDel.html">作废</a>';
+									}									
+								}else if(url_key == 'borrowVerifyList'){	//借款审核
+									btns += '<a href="javascript:;" onclick=$.fn.treeGridOptions.setFun(this,"'+id+'") data-tid="jqGrid" data-url="/loan/borrow/borrowVerifyPage.html" data-title="审核">审核</a>';
+									btns += '|<a href="javascript:;" onclick=$.fn.treeGridOptions.checkFun(this,"'+id+'") data-tid="jqGrid" data-url="/loan/borrow/borrowView.html" data-title="查看">查看</a>';										
+								}else if(url_key == 'borrowSaleList'){
+									if(rowObject.status == "2"){
+										<@shiro.hasPermission name="project:borrow:sale:sale">
+											btns += '<a href="javascript:;" onclick=$.fn.treeGridOptions.setFun(this,"'+id+'") data-tid="jqGrid" data-url="/loan/borrow/borrowSalePage.html" data-title="上架">上架</a>';
+										</@shiro.hasPermission>
+									}else if(rowObject.status == "4" && rowObject.showTime!=null && rowObject.showTime > nowTime){
+										<@shiro.hasPermission name="project:borrow:sale:edit">
+											btns += '<a href="javascript:;" onclick=$.fn.treeGridOptions.setFun(this,"'+id+'") data-tid="jqGrid" data-url="/loan/borrow/borrowSalePage.html" data-title="编辑">编辑</a>';
+										</@shiro.hasPermission>
+									}
+								}	
+								
+								return btns;
+							}
+							
+						} ],
+			}).jqGrid("setFrozenColumns").navGrid(
+			'#jqGridPager',
+			{
+				edit : false,
+				add : false,
+				del : false,
+				search : false,
+				refresh : true,
+				view : false,
+				position : "left",
+				cloneToTop : false
+			});
+		});
+</script>

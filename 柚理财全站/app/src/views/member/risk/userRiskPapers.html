@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>我的问卷</title>
+    <link rel="stylesheet" type="text/css" href="/common.css"/>
+    <link rel="stylesheet" type="text/css" href="/userriskpapers.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <#include "/include/header.html">
+    <div class="site-row clearfix">
+        <div id="evaluating" class="evaluating">
+            <div class="risk-con">
+                <div class="risk-title">风险承受能力评测</div>
+                <div class="risk-prompt">
+                    <span>尊敬的客户：</span>
+                    <p>为了便于您了解自身的风险承受能力，我们将根据以下问题，对您进行风险承受能力评测。根据评测结果，您的风险承受能力将属于以下五种类型中的一种：保守型、稳健型、平衡型、成长型、进取型。为了给您提供更好的资产选择，请您认真作答，感谢您的配合。</p>
+                </div>
+            </div>
+            <div id="riskList">
+                <div class="warp" id="warp">
+                    <div class="issue clearfix">
+                        <input type="hidden" value="${papers.uuid}" class="papersId">
+                        <form id="f1" name="f1">
+                            <input type="hidden" value="${questionNum}" class="questionNum">
+                            <ul class="qs">
+                              <#list list as item>
+                                    <li class="cnt">
+                                        <div class="title">${item.sort}、<font><#if item.isSingle == 1>[单选题]<#else>[多选题]</#if></font>${item.questionName}
+                                            <em>*</em>
+                                        </div>
+                                        <input type="hidden" name="questionContent" id="question${item.uuid}" value="${item.uuid}" class="question">
+                                        <input type="hidden" class="quuid" value="${item.uuid}" >
+                                        <div class="error">这道题必须回答哦</div>
+                                        <dl class="answer <#if item.isSingle == 1>answerRadio<#else>answerCheck</#if>">
+                                            <#list item.list as aItem>
+                                               <dd><span>&nbsp;</span><label>${aItem.content!""}</label>
+                                               <input type="<#if item.isSingle == 1>radio<#else>checkbox</#if>" id="answer${aItem.uuid}" value="${aItem.uuid}" class="hide"></dd>
+                                           </#list>
+                                        </dl>
+                                    </li>
+                                </#list>
+                            </ul>
+                            <input  type="button" value="提交问卷" class="sub submit-btn"/>
+                        </form>
+                        <div class="evaluation clearfix" style="display:none;">
+                            <div class="title">评测结果</div>
+                            <div class="site-col-14 evaluation-ok clearfix">
+                            <div class="ok-i"><em class="iconfont">&#xe611;</em></div>
+                                <div class="ok-con">
+                                  <span class="ok-text">您的风险承受能力：<font>平衡型</font></span>
+                                  <p>评测结果并不具有全面性及承诺性。理财有风险，投资需谨慎。</p>
+                                  <div class="btn"><a href="/invest/index.html" class="invest ant-btn-lg">立即投资</a><a href="/member/risk/userRiskPapers.html" class="again">重新测评</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <#include "/include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/common.js"></script>
+<script src="/userriskpapers.js"></script>
+</html>

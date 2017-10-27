@@ -1,0 +1,171 @@
+  <!DOCTYPE html>
+  <html lang="zh-CN">
+  <head>
+  <title>${webBackName!"后台管理-互联网金融资产交易系统"}</title>
+	  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+	  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	  <meta name="viewport" content="width=device-width, initial-scale=1">
+	  <link href="/static/css/style.min.css" rel="stylesheet">
+	  <link href="/static/css/login.css" rel="stylesheet">
+	  <script  type="text/javascript" src="/static/js/jquery/jquery-1.9.1.min.js"></script>
+  </head>
+  <body>
+  <div class="bg-login">
+		<div class="logo">
+			<img src="/static/img/logo.png">
+		</div>
+	  	<div class="login-box">
+			<h2>登录后台管理系统</h2>
+			<ul>
+				<form role="form" action="/admin/login.html" method="post" class="login-form">
+					<li class="input first mb20">
+						<input type="text" name="username" placeholder="请输入用户名" class="form-username form-control" value=""/>
+						<span></span>
+					</li>
+					<li class="input second mb20">
+						<input type="password" name="password" placeholder="请输入密码" class="form-password form-control" value="" />
+						<span></span>
+					</li>
+					<li class="input third mb20" style="overflow: hidden;">
+						<input type="text" name="validCode" placeholder="请输入验证码" class="form-username form-control" style="width:50%;float: left;" maxlength ='4' value="" />
+						<img  class="" src="/admin/validImg.html" id="code" style="padding-left: 10px; float: left;height: 47px;" />
+						<span></span>
+					</li>
+					<li class="error-msg">${message}</li>
+					<li class="mt20"> <button type="submit" class="btn">立即登录</button></li>
+				</form>
+			</ul>
+		</div>
+  </div>
+  <div class="login-bottom">
+		<p>Copyright2011-2017 杭州融都科技股份有限公司 All Rights Reserved 浙ICP备12032537号-2</p>
+  </div>
+  <script>
+	$('.btn').click(function () {
+		if($("input[name='username']").val()==""){
+			$('.error-msg').text('请输入用户名');
+			$("input[name='username']").focus();
+			$('.first').find('span').show();
+			return false;
+		}else if($("input[name='password']").val()==""){
+			$('.error-msg').text('请输入密码');
+			$("input[name='password']").focus();
+			$('.second').find('span').show();
+			return false;
+		}else if($("input[name='validCode']").val()==""){
+			$('.error-msg').text('请输入验证码');
+			$("input[name='validCode']").focus();
+			$('.third').find('span').show();
+			return false;
+		}else{
+			return true
+		}
+	})
+	  $('.input input').keydown(function () {
+		    $(this).parent().find('span').hide();
+			$('.error-msg').text('');
+	  });
+
+    $("input[name='validCode']").blur(function () {
+		    $.post('/admin/validLogonCode.html', { validCode :  $("input[name='validCode']").val() },
+		    function(data){
+		       if(data && !data.result){
+		            $('.error-msg').text( data.msg? data.msg : '验证码错误');
+		       }
+		    } ,"json");
+	  });
+    $("#code").on('click',function(){
+        $(this).attr('src','/admin/validImg.html?t=' + Math.random());
+    });
+  	(function($){
+	$.fn.placeholder=function (options) {
+        var defaults = {
+            pColor: "#ccc",
+            pActive: "#999",
+            pFont: "14px",
+            activeBorder: "#080",
+            posL: 18,
+            zIndex: "99"
+        },
+        opts = $.extend(defaults, options);
+        return this.each(function () {
+            if ("placeholder" in document.createElement("input")) return;
+            $(this).parent().css("position", "relative");
+  
+            //不支持placeholder的浏览器
+            var $this = $(this),
+                msg = $this.attr("placeholder"),
+                iH = $this.outerHeight(),
+                iW = $this.outerWidth(),
+                iX = $this.position().left,
+                iY = $this.position().top,
+                oInput = $("<label>", {
+                "class": "placeholderCss",
+                "text": msg,
+                "css": {
+                    "position": "absolute",
+                    "left": iX + "px",
+                    "top": iY + "px",
+                    "width": iW - opts.posL + "px",
+                    "padding-left": opts.posL + "px",
+                    "height": iH + "px",
+                    "line-height": iH + "px",
+                    "color": opts.pColor,
+                    "font-size": opts.pFont,
+                    "z-index": opts.zIndex,
+                    "cursor": "text"
+                }
+                }).insertBefore($this);
+            //初始状态就有内容
+            var value = $this.val();
+            if (value.length > 0) {
+            oInput.hide();
+            };
+  
+            //
+            $this.on("focus", function () {
+                var value = $(this).val();
+                if (value.length > 0) {
+                    oInput.hide();
+                }
+                oInput.css("color", opts.pActive);
+                //
+  
+                if(navigator.userAgent.indexOf("Trident/4.0") > 0){
+                    var myEvent = "propertychange";
+                }else{
+                    var myEvent = "input";
+                }
+  
+                $(this).on(myEvent, function () {
+                    var value = $(this).val();
+                    if (value.length == 0) {
+                        oInput.show();
+                    } else {
+                        oInput.hide();
+                    }
+                });
+  
+            }).on("blur", function () {
+                var value = $(this).val();
+                if (value.length == 0) {
+                    oInput.css("color", opts.pColor).show();
+                }
+            });
+            //
+            oInput.on("click", function () {
+                $this.trigger("focus");
+                $(this).css("color", opts.pActive)
+            });
+            //
+            $this.filter(":focus").trigger("focus");
+        });
+    }
+})(jQuery);
+	
+$(":input[placeholder]").each(function(){
+	$(this).placeholder();
+});	
+  </script>
+  </body>
+  </html>

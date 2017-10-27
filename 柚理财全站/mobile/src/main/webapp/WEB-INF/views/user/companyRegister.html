@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>注册</title>
+    <link rel="stylesheet" type="text/css" href="/themes/css/common-22faacfd60.css"/>
+    <link rel="stylesheet" type="text/css" href="/themes/css/register-cdecb3f820.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="header-title header-title-reg" id="userNature" data-value="${userNature}" data-ui="${ui!''}">
+        <#include "/include/header-sm.html">
+    </div>
+    <div class="wrap-full user-body">
+        <div class="wrapper user-content">
+            <div class="register-content">
+                <div class="title clearfix">
+                    <h2 class="fl">欢迎成为融都互金企业用户</h2>
+                    <a href="/user/userRegister.html" class="a-changeRegister fr">切换成个人账户注册</a>
+                </div>
+                <div class="site-row">
+                    <div class="site-col-10 fl register-form" id="registerForm">
+                        <div class="loading"></div>
+                    </div>
+                    <div class="site-col-12 fr register-img"></div>
+                </div>
+                <div class="site-row hide" id="j-register-ok">
+                    <div class="site-col-24 register-ok">
+                        <span class="register-right"><i class="anticon anticon-check-circle-o"></i></span>                        
+                        <span class="ok-text">恭喜你，注册成功</span>
+                        <span class="btn"><a href="/member/security/realNameIdentify.html">立即开通</a></span>
+                        <p class="remind-text"><s>*</s>为了顺利投资，请开通资金托管账户！</p>
+                        <p class="other">暂不开通<a href="/invest/index.html">看看新客专享项目></a></p>
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </div>   
+    <#include "/include/footer-sm.html">   
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/themes/js/common-81aa8d07d8.js"></script>
+<script src="/themes/js/register-50c12999ee.js"></script>

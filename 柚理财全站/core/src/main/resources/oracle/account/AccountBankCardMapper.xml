@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.account.mapper.AccountBankCardMapper">
+	<resultMap type="com.rd.ifaes.core.account.domain.AccountBankCard" id="AccountBankCardResultMap">
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		STATUS,
+		BANK_CODE,
+		BANK_NAME,
+		BANK_ACCOUNT,
+		CREATE_TIME,
+		UPDATE_TIME,
+		CREATE_IP,
+		UPDATE_IP
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{status},
+		#{bankCode},
+		#{bankName},
+		#{bankAccount},
+		#{createTime},
+		#{updateTime},
+		#{createIp},
+		#{updateIp}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">BANK_ACCOUNT
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+            <if test="bankCode != null and bankCode != ''">and BANK_CODE = #{bankCode}</if>
+            <if test="bankAccount != null and bankAccount != ''">and BANK_ACCOUNT = #{bankAccount}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.account.domain.AccountBankCard">
+		insert into account_bank_card( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		BEGIN
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into account_bank_card( <include refid="table_columns" /> ) 
+		values 
+		( 
+				#{item.uuid},
+				#{item.userId},
+				#{item.status},
+				#{item.bankCode},
+				#{item.bankName},
+				#{item.bankAccount},
+				#{item.createTime},
+				#{item.updateTime},
+				#{item.createIp},
+				#{item.updateIp}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from account_bank_card
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		delete from account_bank_card
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		delete from account_bank_card
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.account.domain.AccountBankCard">
+		update account_bank_card 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="userId != null and userId != ''">USER_ID = #{userId},</if>
+            <if test="status != null and status != ''">STATUS = #{status}</if>
+            <if test="bankCode != null and bankCode != ''">BANK_CODE = #{bankCode},</if>
+            <if test="bankName != null">BANK_NAME = #{bankName},</if>
+			<if test="bankAccount != null">BANK_ACCOUNT = #{bankAccount},</if>
+			<if test="updateTime != null">UPDATE_TIME = #{updateTime},</if>
+			<if test="updateId != null">UPDATE_IP = #{updateId},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="AccountBankCardResultMap">
+        select <include refid="table_columns" />
+        from account_bank_card
+    </select>
+
+    <select id="findList" resultMap="AccountBankCardResultMap">
+        select <include refid="table_columns" />
+        from account_bank_card
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from account_bank_card
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="AccountBankCardResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from account_bank_card
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	
+	<select id="getCardByUserId" resultType="java.util.List">
+		select <include refid="table_columns" />
+		from account_bank_card
+		where user_id = #{userId}
+	</select>
+	
+	
+	<select id="getCardByUserIdAndCardId" resultMap="AccountBankCardResultMap">
+		select <include refid="table_columns" />
+		from account_bank_card
+		where user_id = #{userId} and status = #{status} and bank_account=#{cardId}
+	</select>
+</mapper>

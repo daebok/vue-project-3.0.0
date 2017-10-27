@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>登录页面</title>
+</head>
+
+<body>
+    <div align="center">登录请求，页面跳转中，请不要关闭页面...</div>
+    <form action="${login.ufxSubmitUrl!}" method="post" id="frm1" style="display: none;">
+        <input type="hidden" value="${login.service!}" name="service" />
+        <input type="hidden" value="${login.orderNo!}" name="orderNo" />
+        <input type="hidden" value="${login.ufxCustomerId!}" name="ufxCustomerId" />
+        <input type="hidden" value="${login.userCustId!}" name="userCustId" />
+        <input type="hidden" value="${login.businessWay!}" name="businessWay" />
+        <input type="hidden" value="${login.pageType!}" name="pageType" />
+        <input type="hidden" value="${login.signInfo!}" name="signInfo" />
+    </form>
+    <script type="text/javascript">
+        document.getElementById("frm1").submit();
+    </script>
+</body>
+
+</html>

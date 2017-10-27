@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>企业用户基本信息</title>
+<#include "include/resources.html">
+</head>
+<body>
+<style>
+	.layui-layer-loading .layui-layer-loading3{width:200px!important;padding-left: 66px;color: #fff;line-height: 24px;}
+</style>
+<div class="wrapper">
+	<div class="row pt20">		
+		<div class="col-md-6">
+			<div class="search-form">
+				<form>
+					<div class="input-group">
+						<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入用户名/企业名称/联系方式">
+						<span class="input-group-btn search-span">
+					    	<button class="btn btn-primary" type="button" id="keywordsSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/user/userCompany/getLogList.html">搜索</button>
+					    </span>						    
+				    </div>
+			    </form>	
+			</div>
+			<div class="search-form-adv ml10">
+				<form id="advSearchForm">
+					<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+					  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+					  <ul class="dropdown-menu search-menu">
+					    <li class="input-group input-group-sm"><span>账户冻结</span><@linkage name="status" nid="userStatus" noselect="不限" class="form-control"/></li>	
+					    <li class="input-group input-group-sm"><span>功能冻结</span><@linkage name="freezeOperation" nid="userFreeze" noselect="不限" class="form-control"/></li>	
+					    <li class="input-group input-group-sm"><span>注册日期</span><input type="text" name="startTime" id="startTime" class="form-control"placeholder="开始日期"/><input type="text" name="endTime" id="endTime" class="form-control" placeholder="结束日期"/> 
+					    <li><button class="btn btn-sm btn-primary" type="button" id="conditionSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/user/userCompany/getLogList.html">查询</button></li>
+					  </ul>							  
+					</div>
+					<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+				</form>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="tool-btns">
+			   <@shiro.hasPermission name="vip:company:add">
+				<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.addFuncompany(this)" data-tid="jqGrid" data-url="/user/userCompany/add.html">新增</button>
+			   </@shiro.hasPermission>
+			   <@shiro.hasPermission name="vip:company:edit">
+			    <button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.editFun(this)" data-tid="jqGrid" data-url="/user/userCompany/edit.html">编辑</button>
+			   </@shiro.hasPermission>
+			   <@shiro.hasPermission name="vip:company:edit">
+			    <button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.editFun(this)" data-tid="jqGrid" data-url="/user/userCompany//editAcountType.html">账号类型</button>
+			   </@shiro.hasPermission>
+			   <@shiro.hasPermission name="vip:company:freeze">
+			    <button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.freezeFun(this)" data-tid="jqGrid" data-title='冻结' data-url="/user/userCompany/freeze.html">冻结</button>
+			   </@shiro.hasPermission>
+			   <@shiro.hasPermission name="vip:company:export">
+			    <a href="javascript:" class="btn btn-info" onclick="exportExcel(this)" data-title='企业用户信息' data-url="/user/userCompany/export.html" data-tid="jqGrid">导出</a>
+			   </@shiro.hasPermission>
+			</div>			
+		</div>
+	</div>
+	<div class="row mt20">
+		<div class="col-md-12">
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+	</div>
+	
+    <script type="text/javascript"> 
+
+    //设置开始时间控件
+	var startTime= {
+		elem:'#startTime',
+		format: 'YYYY-MM-DD', //日期格式
+		istime: false, //是否开启时间选择
+		max:$('#endTime').val(),
+		event:'focus',
+		choose: function(dates){
+		    endTime.min=dates;
+		    endTime.start=dates;
+		}
+	};
+	
+	//设置发放结束时间
+	var endTime=  {
+			elem:'#endTime',
+			format: 'YYYY-MM-DD', //日期格式
+			istime: false, //是否开启时间选择
+			min: $('#startTime').val(), //最小日期
+			event:'focus',
+			choose: function(dates){
+				startTime.max=dates;
+		   }
+	};
+	laydate(startTime);
+	laydate(endTime);
+		
+	<@dictFormatter type = "sex" />
+	<@dictFormatter type = "userStatus" />		
+    <@dictFormatter type = "realNameStatus" />	
+   	<@dictFormatter type = "userAccountType" />	
+    $(document).ready(function () {
+    	//表格初始化
+    	$("#jqGrid").jqTreeGrid({
+    		url: '/user/userCompany/getLogList.html',
+    		idField:"id",
+            colModel: [
+                { label: 'id', name: 'uuid', width: 50, hidden:true },
+				{ label: '用户名', name: 'userName', width: 110, align:'center'},
+				{ label: '账号类型', name: 'accountType', width: 80, align:'center',formatter: userAccountTypeFormatter},
+				{ label: '企业名称', name: 'companyName', width: 120, align:'center'},
+				{ label: '联系人', name: 'contacts', width: 80, align:'center'},
+				{ label: '联系方式', name: 'mobile', width: 80, align:'center' },
+				{ label: '绑定邮箱', name: 'email', width: 100, align:'center'},
+				{ label: '组织机构代码', name: 'orgCode', width: 100, align:'center'},
+				{ label: '营业执照注册号', name: 'bussinessCode', width: 95, align:'center',formatter: sexFormatter},
+				{ label: '税务登记证号', name: 'taxRegNo', width: 120, align:'center' },
+				{ label: '统一社会信用代码', name: 'creditCode', width: 120, align:'center' },
+				{ label: '第三方商户号', name: 'tppUserCustId', width: 120, align:'center' },
+				{ label: '注册时间', name: 'createTime',index:"create_time", width: 110, align:'center', formatter: datetimeFormatter}
+            ],
+    	}).jqGrid("setFrozenColumns").navGrid('#jqGridPager',		            
+	            { edit: false, add: false, del: false, search: false, refresh: true, view: false, position: "left", cloneToTop: false }
+	    );
+   });
+  </script>	
+</body>
+</html>

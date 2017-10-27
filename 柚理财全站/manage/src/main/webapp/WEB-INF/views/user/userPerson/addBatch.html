@@ -1,0 +1,45 @@
+<div class="form-tips-content">
+  	<ul class="form-item">
+  		 <li class="full-width">
+			<div class="form-group">
+		      <div class="input-box">
+		      	<p class="mb10">请下载 <a href="${image_server_url!}/data/excel/cbhb_realName.xls" target="_blank">Excel用户信息模板</a>，并按规范填写完成后，上传excel文件。</p>
+		      	<span class="upload-excel">点击上传<input type="file" name="file"  class="upload-excel-btn"  id="upload_excel" onchange="return UploadUserExcel('upload_excel','/user/userPerson/doAddBatch.html');" title="点击上传excel" /></span>
+		      	<span style="color:#F00">注：上传手机号必须在本平台已注册。</span>
+		      </div>
+		    </div>		
+  		</li>  
+  	</ul>
+</div>
+<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+<script type="text/javascript">
+
+function UploadUserExcel(sId, _url) {
+  $.ajaxFileUpload({
+    url: _url,
+    secureuri: false,
+    fileElementId: sId,
+    dataType: 'json',
+    success: function(data) {
+       
+      if(data.result){        
+			top.layer.alert('上传成功！', {
+				icon: 6,
+				zIndex:100000,
+			}, function() {
+				layer.closeAll();  
+			});		
+      }else{       
+			top.layer.alert("错误信息："+data.errorParam, {
+				icon: 5,
+				zIndex:100000
+			});
+      }
+      
+    },
+    error:function(){
+
+    }
+  });
+}
+</script>

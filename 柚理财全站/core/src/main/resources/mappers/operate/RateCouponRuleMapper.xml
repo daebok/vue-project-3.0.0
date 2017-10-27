@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.operate.mapper.RateCouponRuleMapper">
+	<resultMap type="com.rd.ifaes.core.operate.domain.RateCouponRule" id="RateCouponRuleResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="activityCode" column="ACTIVITY_CODE"/>
+		<result property="ruleName" column="RULE_NAME"/>
+		<result property="status" column="STATUS"/>
+		<result property="totalNum" column="TOTAL_NUM"/>
+		<result property="lssueNum" column="LSSUE_NUM"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="updateTime" column="UPDATE_TIME"/>
+		<result property="deleteFlag" column="DELETE_FLAG"/>
+		<result property="grantType" column="GRANT_TYPE"/>
+		<result property="grantUrl" column="GRANT_URL"/>
+		<result property="grantStartTime" column="GRANT_START_TIME"/>
+		<result property="grantEndTime" column="GRANT_END_TIME"/>
+		<result property="useProjectType" column="USE_PROJECT_TYPE"/>
+		<result property="useValidDay" column="USE_VALID_DAY"/>
+		<result property="useExpireTime" column="USE_EXPIRE_TIME"/>
+		<result property="grantProjectType" column="grant_project_type"/>
+		<result property="activityName" column="ACTIVITY_NAME"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		ACTIVITY_CODE,
+		RULE_NAME,
+		STATUS,
+		TOTAL_NUM,
+		LSSUE_NUM,
+		CREATE_TIME,
+		UPDATE_TIME,
+		DELETE_FLAG,
+		GRANT_TYPE,
+		GRANT_URL,
+		GRANT_START_TIME,
+		GRANT_END_TIME,
+		USE_PROJECT_TYPE,
+		USE_VALID_DAY,
+		USE_EXPIRE_TIME,
+		GRANT_PROJECT_TYPE
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{activityCode},
+		#{ruleName},
+		#{status},
+		#{totalNum},
+		#{lssueNum},
+		#{createTime},
+		#{updateTime},
+		#{deleteFlag},
+		#{grantType},
+		#{grantUrl},
+		#{grantStartTime},
+		#{grantEndTime},
+		#{useProjectType},
+		#{useValidDay},
+		#{useExpireTime},
+		#{grantProjectType}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="activityCode != null and activityCode != ''">and ACTIVITY_CODE = #{activityCode}</if>
+            <if test="deleteFlag != null and deleteFlag != ''">and DELETE_FLAG = #{deleteFlag}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+            <if test="useProjectType != null and useProjectType != ''">and USE_PROJECT_TYPE = #{useProjectType}</if>
+            <if test="grantProjectType != null">and grant_project_type = #{grantProjectType}</if>
+			<if test="totalNum != null">and TOTAL_NUM = #{totalNum}</if>
+			<if test="lssueNum != null">and LSSUE_NUM = #{lssueNum}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+			<if test="updateTime != null">and UPDATE_TIME = #{updateTime}</if>
+            <if test="grantType != null and grantType != ''">and GRANT_TYPE = #{grantType}</if>
+            <if test="grantUrl != null and grantUrl != ''">and GRANT_URL = #{grantUrl}</if>
+			<if test="grantStartTime != null">and GRANT_START_TIME = #{grantStartTime}</if>
+			<if test="grantEndTime != null">and GRANT_END_TIME = #{grantEndTime}</if>
+            <if test="useValidDay != null and useValidDay != ''">and USE_VALID_DAY = #{useValidDay}</if>
+			<if test="useExpireTime != null">and USE_EXPIRE_TIME = #{useExpireTime}</if>
+			<if test="ruleName != null and ruleName != ''">and RULE_NAME = #{ruleName}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.operate.domain.RateCouponRule">
+		insert into rate_coupon_rule( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into rate_coupon_rule( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+		#{item.uuid},
+				#{item.activityCode},
+				#{item.ruleName},
+				#{item.status},
+				#{item.totalNum},
+				#{item.lssueNum},
+				#{item.createTime},
+				#{item.updateTime},
+				#{item.deleteFlag},
+				#{item.grantType},
+				#{item.grantUrl},
+				#{item.grantStartTime},
+				#{item.grantEndTime},
+				#{item.useProjectType},
+				#{item.useValidDay},
+				#{item.useExpireTime},
+				#{item.grantProjectType}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from rate_coupon_rule
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update rate_coupon_rule set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update rate_coupon_rule set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.operate.domain.RateCouponRule">
+		update rate_coupon_rule 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="activityCode != null and activityCode != ''">ACTIVITY_CODE = #{activityCode},</if>
+            <if test="ruleName != null and ruleName != ''">RULE_NAME = #{ruleName},</if>
+			<if test="totalNum != null">TOTAL_NUM = #{totalNum},</if>
+			<if test="updateTime != null">UPDATE_TIME = #{updateTime},</if>
+            <if test="deleteFlag != null and deleteFlag != ''">DELETE_FLAG = #{deleteFlag},</if>
+            <if test="grantType != null and grantType != ''">GRANT_TYPE = #{grantType},</if>
+			<if test="grantProjectType != null">grant_project_type = #{grantProjectType},</if>
+            GRANT_URL = #{grantUrl},
+			GRANT_START_TIME = #{grantStartTime},
+			GRANT_END_TIME = #{grantEndTime},
+            USE_PROJECT_TYPE = #{useProjectType},
+            USE_VALID_DAY = #{useValidDay},
+			USE_EXPIRE_TIME = #{useExpireTime},
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="RateCouponRuleResultMap">
+        select <include refid="table_columns" />
+        from rate_coupon_rule
+    </select>
+
+    <select id="findList" resultMap="RateCouponRuleResultMap">
+        select 
+        	rule.UUID,
+			rule.ACTIVITY_CODE,
+			rule.RULE_NAME,
+			rule.STATUS,
+			rule.TOTAL_NUM,
+			rule.LSSUE_NUM,
+			rule.CREATE_TIME,
+			rule.UPDATE_TIME,
+			rule.DELETE_FLAG,
+			rule.GRANT_TYPE,
+			rule.GRANT_URL,
+			rule.GRANT_START_TIME,
+			rule.GRANT_END_TIME,
+			rule.USE_PROJECT_TYPE,
+			rule.USE_VALID_DAY,
+			rule.USE_EXPIRE_TIME,
+			rule.GRANT_PROJECT_TYPE,
+        	plan.activity_name
+        from rate_coupon_rule rule  LEFT JOIN  activity_plan plan on    rule.activity_code=plan.activity_code
+        <include refid="find_list_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from rate_coupon_rule
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="RateCouponRuleResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from rate_coupon_rule
+		where uuid = #{uuid}
+	</select>
+		<sql id="find_list_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and rule.UUID = #{uuid}</if>
+            <if test="activityCode != null and activityCode != ''">and rule.ACTIVITY_CODE = #{activityCode}</if>
+            <if test="ruleName != null and ruleName != ''">and rule.RULE_NAME = #{ruleName}</if>
+            <if test="status != null and status != ''">and rule.STATUS = #{status}</if>
+            <if test="deleteFlag != null and deleteFlag != ''">and rule.DELETE_FLAG = #{deleteFlag}</if>
+            <if test="grantType != null and grantType != ''">and rule.GRANT_TYPE = #{grantType}</if>
+            <if test="grantProjectType != null and grantProjectType != ''">
+                and rule.grant_project_type like  concat('%',#{grantProjectType},'%')
+                and rule.lssue_num &lt; IFNULL(rule.TOTAL_NUM,rule.lssue_num+1)
+		        and (rule.use_expire_time is null or rule.use_expire_time &gt; now())
+		        and (rule.grant_end_time is null or rule.grant_end_time &gt; now())
+            </if>
+             <if test="keywords != null and keywords != ''">
+        		and (rule.rule_Name like concat('%',#{keywords},'%'))
+      		 </if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+	<!-- 其他自定义SQL -->
+	
+	 <!--  修改规则的状态，启用/禁用-->
+	<update id="updateStatus" parameterType="com.rd.ifaes.core.operate.domain.RateCouponRule">
+	    update rate_coupon_rule set status = #{status} where uuid = #{uuid}
+	</update>
+	<!--  更新已经发放数量-->
+	<update id="updateLssueNum" parameterType="com.rd.ifaes.core.operate.domain.RedenvelopeRule">
+	      update rate_coupon_rule set lssue_num=lssue_num+1 
+	      where uuid= #{uuid} and( total_num is null or  total_num &gt;= (lssue_num+1))    
+	</update>
+	<!-- 查询可发放的加息卷（选择用户发放加息券时调用） -->
+	<select id="findListForGrant" resultMap="RateCouponRuleResultMap">
+        select 
+	        rule.UUID,
+			rule.ACTIVITY_CODE,
+			rule.RULE_NAME,
+			rule.STATUS,
+			rule.TOTAL_NUM,
+			rule.LSSUE_NUM,
+			rule.CREATE_TIME,
+			rule.UPDATE_TIME,
+			rule.DELETE_FLAG,
+			rule.GRANT_TYPE,
+			rule.GRANT_URL,
+			rule.GRANT_START_TIME,
+			rule.GRANT_END_TIME,
+			rule.USE_PROJECT_TYPE,
+			rule.USE_VALID_DAY,
+			rule.USE_EXPIRE_TIME,
+			rule.GRANT_PROJECT_TYPE,
+	        plan.activity_name
+        from rate_coupon_rule rule  LEFT JOIN  activity_plan plan on    rule.activity_code=plan.activity_code
+        <include refid="find_list_where" />
+        and rule.LSSUE_NUM &lt; IFNULL(rule.TOTAL_NUM,rule.lssue_num+1)
+        and rule.DELETE_FLAG = '0'
+        and rule.status = '1'
+        and (rule.use_expire_time is null or rule.use_expire_time > now())
+        and (rule.grant_end_time is null or rule.grant_end_time > now())
+	</select>
+	
+	<!-- 查询可用发放条件的加息券规则 -->
+	<select id="findByActivityCode" resultMap="RateCouponRuleResultMap">
+        select 
+        	<include refid="table_columns" />
+        from 
+        	rate_coupon_rule
+        where 
+        	activity_code=#{activityCode} 
+        	and delete_flag=0 
+        	and status = 1
+        	<![CDATA[ and lssue_num < IFNULL(TOTAL_NUM,lssue_num+1)  ]]> 
+        	<![CDATA[ and (grant_end_time is null or grant_end_time > now())  ]]>  
+	</select>
+	
+	<select id="findRateCouponRuleIdByUrl" parameterType="String" resultType="String">
+		select 
+      		uuid
+      	from 
+      		rate_coupon_rule
+      	where 
+      		grant_url=#{grantUrl}
+      		and delete_flag=0
+      		and status=1
+	</select>
+	
+	<select id="checkRateCouponRuleBeforeDelete" parameterType="String" resultType="int">
+    	select count(*)
+    	from 
+    		rate_coupon_rule
+    	where
+    		 uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>
+        and status=1
+    </select>
+    
+     <select id="findInvestRateCouponRuleByProjectTypeId" parameterType="String" resultMap="RateCouponRuleResultMap">
+    	select 
+    		<include refid="table_columns" />
+    	from 
+    		rate_coupon_rule
+    	where
+    		delete_flag=0
+    		and status=1
+    		<![CDATA[ and lssue_num < IFNULL(TOTAL_NUM,lssue_num+1)  ]]>  
+       		<![CDATA[ and (grant_end_time is null or grant_end_time > now())  ]]>  
+    		AND (
+				grant_project_type IS NOT NULL AND
+				FIND_IN_SET(#{ProjectTypeId},grant_project_type)
+			)
+			limit 1
+    </select>
+    
+    <select id="findRateCouponRuleCall" parameterType="String" resultType="String">
+    	select 
+    		<if test="tableName == 'user_gift'">gift_name from user_gift</if>
+    		<if test="tableName == 'user_vip_level'">vip_level from user_vip_level</if>
+    	where
+    		rate_coupon_rule_id=#{rateCouponRuleId}
+    		and delete_flag=0
+    </select>
+    
+    <select id="countGrantProjectType" resultType="int">
+    	select count(uuid) from rate_coupon_rule
+        <trim prefix="where" prefixOverrides="and | or ">
+        	and status=1 
+        	and delete_flag=0
+        	and grant_project_type like concat('%',#{projectTypeId},'%')
+        </trim>
+    </select>
+</mapper>

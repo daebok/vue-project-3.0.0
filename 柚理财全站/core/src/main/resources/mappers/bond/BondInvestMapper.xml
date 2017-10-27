@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.bond.mapper.BondInvestMapper">
+	<resultMap type="com.rd.ifaes.core.bond.domain.BondInvest" id="bondInvestResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="bondId" column="BOND_ID"/>
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="investId" column="INVEST_ID"/>
+		<result property="investNo" column="INVEST_NO"/>
+		<result property="investDate" column="INVEST_DATE"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="amount" column="AMOUNT"/>
+		<result property="bondFee" column="BOND_FEE"/>
+		<result property="payedInterest" column="PAYED_INTEREST"/>
+		<result property="receivedAccount" column="RECEIVED_ACCOUNT"/>
+		<result property="status" column="STATUS"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="addIp" column="ADD_IP"/>
+		<result property="investOrderNo" column="INVEST_ORDER_NO"/>
+		<result property="projectInvestId" column="PROJECT_INVEST_ID"/>
+		<result property="investChannel" column="INVEST_CHANNEL"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		BOND_ID,
+		PROJECT_ID,
+		INVEST_ID,
+		INVEST_NO,
+		INVEST_DATE,
+		USER_ID,
+		AMOUNT,
+		BOND_FEE,
+		PAYED_INTEREST,
+		RECEIVED_ACCOUNT,
+		STATUS,
+		CREATE_TIME,
+		ADD_IP,
+		INVEST_ORDER_NO,
+		PROJECT_INVEST_ID,
+		INVEST_CHANNEL
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{bondId},
+		#{projectId},
+		#{investId},
+		#{investNo},
+		#{investDate},
+		#{userId},
+		#{amount},
+		#{bondFee},
+		#{payedInterest},
+		#{receivedAccount},
+		#{status},
+		#{createTime},
+		#{addIp},
+		#{investOrderNo},
+		#{projectInvestId},
+		#{investChannel}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="bondId != null and bondId != ''">and BOND_ID = #{bondId}</if>
+            <if test="projectId != null and projectId != ''">and PROJECT_ID = #{projectId}</if>
+            <if test="investId != null and investId != ''">and INVEST_ID = #{investId}</if>
+            <if test="investNo != null and investNo != ''">and INVEST_NO = #{investNo}</if>
+			<if test="investDate != null">and INVEST_DATE = #{investDate}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+			<if test="amount != null">and AMOUNT = #{amount}</if>
+			<if test="bondFee != null">and BOND_FEE = #{bondFee}</if>
+			<if test="payedInterest != null">and PAYED_INTEREST = #{payedInterest}</if>
+			<if test="receivedAccount != null">and RECEIVED_ACCOUNT = #{receivedAccount}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="addIp != null and addIp != ''">and ADD_IP = #{addIp}</if>
+            <if test="investOrderNo != null and investOrderNo != ''">and INVEST_ORDER_NO = #{investOrderNo}</if>
+            <if test="projectInvestId != null and projectInvestId != ''">and PROJECT_INVEST_ID = #{projectInvestId}</if>
+            <if test="investChannel != null and investChannel != ''">and INVEST_CHANNEL = #{investChannel}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by create_time desc </if>
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.bond.domain.BondInvest">
+		insert into bond_invest( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into bond_invest( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+				#{item.uuid},
+				#{item.bondId},
+				#{item.projectId},
+				#{item.investId},
+				#{item.investNo},
+				#{item.investDate},
+				#{item.userId},
+				#{item.amount},
+				#{item.bondFee},
+				#{item.payedInterest},
+				#{item.receivedAccount},
+				#{item.status},
+				#{item.createTime},
+				#{item.addIp},
+				#{investOrderNo},
+				#{projectInvestId},
+				#{investChannel}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from bond_invest
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update bond_invest set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="uuid" open="(" separator="," close=")">  
+            #{uuid} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update bond_invest set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.bond.domain.BondInvest">
+		update bond_invest 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="bondId != null and bondId != ''">BOND_ID = #{bondId},</if>
+            <if test="projectId != null and projectId != ''">PROJECT_ID = #{projectId},</if>
+            <if test="investId != null and investId != ''">INVEST_ID = #{investId},</if>
+            <if test="investNo != null and investNo != ''">INVEST_NO = #{investNo},</if>
+			<if test="investDate != null">INVEST_DATE = #{investDate},</if>
+            <if test="userId != null and userId != ''">USER_ID = #{userId},</if>
+			<if test="amount != null">AMOUNT = #{amount},</if>
+			<if test="bondFee != null">BOND_FEE = #{bondFee},</if>
+			<if test="payedInterest != null">PAYED_INTEREST = #{payedInterest},</if>
+			<if test="receivedAccount != null">RECEIVED_ACCOUNT = #{receivedAccount},</if>
+            <if test="status != null and status != ''">STATUS = #{status},</if>
+            <if test="investOrderNo != null and investOrderNo != ''">INVEST_ORDER_NO = #{investOrderNo},</if>
+            <if test="projectInvestId != null and projectInvestId != ''">PROJECT_INVEST_ID = #{projectInvestId},</if>
+             <if test="investChannel != null and investChannel != ''">INVEST_CHANNEL = #{investChannel},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+	<update id="updateBatch" parameterType="java.util.List">
+			<foreach collection="list" item="item" open="" separator=";" close="">
+				update bond_invest 
+				<trim prefix="set" suffixOverrides=",">
+		        <if test="item.bondId != null and item.bondId != ''">BOND_ID = #{item.bondId},</if>
+	            <if test="item.projectId != null and item.projectId != ''">PROJECT_ID = #{item.projectId},</if>
+	            <if test="item.investId != null and item.investId != ''">INVEST_ID = #{item.investId},</if>
+	            <if test="item.investNo != null and item.investNo != ''">INVEST_NO = #item.{investNo},</if>
+				<if test="item.investDate != null">INVEST_DATE = #{item.investDate},</if>
+	            <if test="item.userId != null and item.userId != ''">USER_ID = #{item.userId},</if>
+				<if test="item.amount != null">AMOUNT = #{item.amount},</if>
+				<if test="item.bondFee != null">BOND_FEE = #{item.bondFee},</if>
+				<if test="item.payedInterest != null">PAYED_INTEREST = #{item.payedInterest},</if>
+				<if test="item.receivedAccount != null">RECEIVED_ACCOUNT = #{item.receivedAccount},</if>
+	            <if test="item.status != null and item.status != ''">STATUS = #{item.status},</if>
+	            <if test="item.investOrderNo != null and item.investOrderNo != ''">INVEST_ORDER_NO = #{item.investOrderNo},</if>
+	             <if test="item.projectInvestId != null and item.projectInvestId != ''">PROJECT_INVEST_ID = #{item.projectInvestId},</if>
+	              <if test="item.investChannel != null and item.investChannel != ''">INVEST_CHANNEL = #{item.investChannel},</if>
+				</trim>
+				<where>uuid = #{item.uuid}</where>
+			</foreach>
+		</update>
+
+    <select id="findAll" resultMap="bondInvestResultMap">
+        select <include refid="table_columns" />
+        from bond_invest
+    </select>
+
+    <select id="findList" resultMap="bondInvestResultMap">
+        select <include refid="table_columns" />
+        from bond_invest
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from bond_invest
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="bondInvestResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from bond_invest
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	
+	<select id="getBondInvestByOrderNo" resultMap="bondInvestResultMap" parameterType="String">
+		select <include refid="table_columns" />
+		from bond_invest
+		where invest_order_no = #{investOrderNo}
+	</select>
+	
+	<select id="findModelList" resultMap="bondInvestModelResultMap" >
+		select p1.invest_channel,p2.remain_days as remain_days,p1.UUID,p1.BOND_ID,p1.PROJECT_ID,p1.INVEST_ID,p1.INVEST_NO,p1.INVEST_DATE,p1.USER_ID,p1.AMOUNT,p1.BOND_FEE,
+			p1.PAYED_INTEREST,p1.RECEIVED_ACCOUNT as paidMoney,p1.STATUS,p1.CREATE_TIME,p1.ADD_IP,p1.invest_order_no
+			,p2.bond_name as bond_name,p3.user_name as user_name,p3.real_name as real_name,p3.mobile as mobile,
+			concat(p6.type_name,"-",p4.project_no) as project_name,p2.bond_apr as bond_apr,p5.bond_flag as bond_flag,p4.status as project_status,
+			<!-- (select p6.uuid from project_invest p6 where p6.invest_order_no = p1.invest_order_no AND p6. STATUS = 1 AND p6.bond_flag = 0)  -->
+			p1.project_invest_id AS project_invest_id  <!-- 债权投资记录对应的原始标投资记录 -->
+		from bond_invest p1 
+		left join bond p2 on p2.uuid = p1.bond_id
+		left join user p3 on p3.uuid = p1.user_id 
+		left join project p4 on p4.uuid = p2.project_id 
+		left join project_invest p5 on  p5.uuid = p1.invest_id  <!-- 原始标投资记录 --> 
+		left join project_type p6 on p6.uuid = p4.project_type_id
+		<trim prefix="where" prefixOverrides="and | or ">
+		 	and  p2.status in(0,3) 
+			<if test="projectStatus != null and projectStatus != ''">and p4.status = #{projectStatus}</if>
+		 	<if test="uuid != null and uuid != ''">and p1.UUID = #{uuid}</if>
+            <if test="bondId != null and bondId != ''">and p1.BOND_ID = #{bondId}</if>
+            <if test="projectId != null and projectId != ''">and p1.PROJECT_ID = #{projectId}</if>
+            <if test="investId != null and investId != ''">and p1.INVEST_ID = #{investId}</if>
+            <if test="investNo != null and investNo != ''">and p1.INVEST_NO = #{investNo}</if>
+			<if test="investDate != null">and p1.INVEST_DATE = #{investDate}</if>
+            <if test="userId != null and userId != ''">and p1.USER_ID = #{userId}</if>
+			<if test="amount != null">and p1.AMOUNT = #{amount}</if>
+			<if test="bondFlag != null and bondFlag != ''">and p5.bond_flag = #{bondFlag}</if>
+			<if test="bondFee != null">and p1.BOND_FEE = #{bondFee}</if>
+			<if test="payedInterest != null">and p1.PAYED_INTEREST = #{payedInterest}</if>
+			<if test="receivedAccount != null">and p1.RECEIVED_ACCOUNT = #{receivedAccount}</if>
+            <if test="status != null and status != ''">and p1.STATUS = #{status}</if>
+            <if test="projectInvestId != null and projectInvestId != ''">p1.PROJECT_INVEST_ID = #{projectInvestId},</if>
+            <if test="statusSet != null and statusSet != ''">
+		        	and p1.STATUS in 
+		        	<foreach collection="statusSet" item="statusSetTemp" open="(" separator="," close=")">#{statusSetTemp}</foreach>
+		  	</if>
+            <if test="investOrderNo != null and investOrderNo != ''">and p1.INVEST_ORDER_NO = #{investOrderNo}</if>
+            <if test="dateType != null and dateType != '' and dateType != '00'">
+             <if test="dateTypeTime != null and dateTypeTime != ''">and p1.create_time &gt; #{dateTypeTime}</if>
+	        <if test="dateType == null or dateType == ''">
+			     <if test="startTime != null and startTime != ''">and p1.create_time &gt;= #{startTime}</if>
+			     <if test="endTime != null and endTime != ''">and p1.create_time &lt;= #{endTime}</if>        
+	        </if>
+	 		 </if>
+	  	</trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+         <if test="page == null or page.sort == null or page.sort == ''">order by p1.create_time desc </if> 
+	</select>
+	
+	<!--债权投资成功 更新状态  -->
+	<update id="updateBondInvstStatus">
+		update bond_invest set status = #{newStatus} where uuid = #{investId} and status = #{oldStatus}
+	</update>
+	
+	<!-- 根据债权标识查询此标的最后一笔投资 -->
+	<select id="getLastBondInvestByBondId" resultMap="bondInvestResultMap">
+		select <include refid="table_columns" />
+		from bond_invest
+		where bond_id = #{bondId} and status = #{status}
+	</select>
+	
+	<!-- 更新债权投资记录对应的原始标的投资记录ID -->
+	<update id="updateBondInvestProjectInvestId">
+		update bond_invest set project_invest_id = #{projectInvestId} where uuid = #{uuid} 
+	</update>
+
+	<update id="updateInvestIdByUuid">
+		update bond_invest set invest_id = #{investId} where uuid = #{uuid}
+	</update>
+
+	<resultMap type="com.rd.ifaes.core.bond.model.BondInvestModel" id="bondInvestModelResultMap" 
+		extends="com.rd.ifaes.core.bond.mapper.BondInvestMapper.bondInvestResultMap">
+		<result property="userName" column="user_name"/>
+		<result property="realName" column="real_name"/>
+		<result property="mobile" column="mobile"/>
+		<result property="projectName" column="project_name"/>
+		<result property="bondName" column="bond_name"/>
+		<result property="bondApr" column="bond_apr"/>
+		<result property="bondFlag" column="bond_flag"/>
+		<result property="paidMoney" column="paid_money"/>
+		<result property="waitMoney" column="wait_money"/>
+		<result property="projectStatus" column="project_status"/>
+		<result property="remainDays" column="remain_days"/>
+	</resultMap>
+	
+	<!-- 根据债权标识查询此标的最后一笔投资 -->
+	<select id="findByInvestDate" resultMap="bondInvestResultMap">
+		select <include refid="table_columns" />
+		from bond_invest
+		where invest_date = #{investDate}
+		<if test="statusSet != null and  statusSet.length &gt; 0">
+         	and	status in
+	        <foreach collection="statusSet" item="status" open="(" close=")" separator=",">
+	            #{status}
+	        </foreach>
+         </if>		
+		order by create_time
+	</select>
+</mapper> 

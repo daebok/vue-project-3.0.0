@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.user.mapper.UserCompanyInfoMapper">
+	<resultMap type="com.rd.ifaes.core.user.domain.UserCompanyInfo" id="userCompanyInfoResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="companyName" column="COMPANY_NAME"/>
+		<result property="simpleName" column="SIMPLE_NAME"/>
+		<result property="establishDate" column="ESTABLISH_DATE"/>
+		<result property="registeredCapital" column="REGISTERED_CAPITAL"/>
+		<result property="address" column="ADDRESS"/>
+		<result property="bussinessCode" column="BUSSINESS_CODE"/>
+		<result property="orgCode" column="ORG_CODE"/>
+		<result property="licenseAddress" column="LICENSE_ADDRESS"/>
+		<result property="logo" column="LOGO"/>
+		<result property="licenseExpireDate" column="LICENSE_EXPIRE_DATE"/>
+		<result property="businessScope" column="BUSINESS_SCOPE"/>
+		<result property="telephone" column="TELEPHONE"/>
+		<result property="contacts" column="CONTACTS"/>
+		<result property="email" column="EMAIL"/>
+		<result property="summary" column="SUMMARY"/>
+		<result property="naturalPerson" column="NATURAL_PERSON"/>
+		<result property="legalPerson" column="LEGAL_PERSON"/>
+		<result property="certNo" column="CERT_NO"/>
+		<result property="certType" column="CERT_TYPE"/>
+		<result property="legalPersonPhone" column="LEGAL_PERSON_PHONE"/>
+		<result property="bankCode" column="BANK_CODE"/>
+		<result property="bankAccountNo" column="BANK_ACCOUNT_NO"/>
+		<result property="bankProvince" column="BANK_PROVINCE"/>
+		<result property="bankCity" column="BANK_CITY"/>
+		<result property="bankBranch" column="BANK_BRANCH"/>
+		<result property="extendParam" column="EXTEND_PARAM"/>
+		<result property="auditOrderNo" column="AUDIT_ORDER_NO"/>
+		<result property="auditStatus" column="AUDIT_STATUS"/>
+		<result property="auditTime" column="AUDIT_TIME"/>
+		<result property="auditMessage" column="AUDIT_MESSAGE"/>
+		<result property="legalDelegate" column="LEGAL_DELEGATE"/>
+		<result property="taxRegNo" column="TAX_REG_NO"/>
+		<result property="officeProvince" column="OFFICE_PROVINCE"/>
+		<result property="officeCity" column="OFFICE_CITY"/>
+		<result property="officeArea" column="OFFICE_AREA"/>
+		<result property="officeAddress" column="OFFICE_ADDRESS"/>
+		<result property="creditCode" column="CREDIT_CODE"/>
+		<result property="threeCertificate" column="THREE_CERTIFICATE"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		COMPANY_NAME,
+		SIMPLE_NAME,
+		ESTABLISH_DATE,
+		REGISTERED_CAPITAL,
+		ADDRESS,
+		BUSSINESS_CODE,
+		ORG_CODE,
+		LICENSE_ADDRESS,
+		LOGO,
+		LICENSE_EXPIRE_DATE,
+		BUSINESS_SCOPE,
+		TELEPHONE,
+		CONTACTS,
+		EMAIL,
+		SUMMARY,
+		NATURAL_PERSON,
+		LEGAL_PERSON,
+		CERT_NO,
+		CERT_TYPE,
+		LEGAL_PERSON_PHONE,
+		BANK_CODE,
+		BANK_ACCOUNT_NO,
+		BANK_PROVINCE,
+		BANK_CITY,
+		BANK_BRANCH,
+		EXTEND_PARAM,
+		AUDIT_ORDER_NO,
+		AUDIT_STATUS,
+		AUDIT_TIME,
+		AUDIT_MESSAGE,
+		LEGAL_DELEGATE,
+		TAX_REG_NO,
+		OFFICE_PROVINCE,
+		OFFICE_CITY,
+		OFFICE_AREA,
+		OFFICE_ADDRESS,
+		CREDIT_CODE,
+		THREE_CERTIFICATE
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{companyName},
+		#{simpleName},
+		#{establishDate},
+		#{registeredCapital},
+		#{address},
+		#{bussinessCode},
+		#{orgCode},
+		#{licenseAddress},
+		#{logo},
+		#{licenseExpireDate},
+		#{businessScope},
+		#{telephone},
+		#{contacts},
+		#{email},
+		#{summary},
+		#{naturalPerson},
+		#{legalPerson},
+		#{certNo},
+		#{certType},
+		#{legalPersonPhone},
+		#{bankCode},
+		#{bankAccountNo},
+		#{bankProvince},
+		#{bankCity},
+		#{bankBranch},
+		#{extendParam},
+		#{auditOrderNo},
+		#{auditStatus},
+		#{auditTime},
+		#{auditMessage},
+		#{legalDelegate},
+		#{taxRegNo},
+		#{officeProvince},
+		#{officeCity},
+		#{officeArea},
+		#{officeAddress},
+		#{creditCode},
+		#{threeCertificate}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="companyName != null and companyName != ''">and COMPANY_NAME = #{companyName}</if>
+            <if test="simpleName != null and simpleName != ''">and SIMPLE_NAME = #{simpleName}</if>
+            <if test="establishDate != null and establishDate != ''">and ESTABLISH_DATE = #{establishDate}</if>
+			<if test="registeredCapital != null and registeredCapital != ''">and REGISTERED_CAPITAL = #{registeredCapital}</if>
+            <if test="address != null and address != ''">and ADDRESS = #{address}</if>
+            <if test="bussinessCode != null and bussinessCode != ''">and BUSSINESS_CODE = #{bussinessCode}</if>
+            <if test="orgCode != null and orgCode != ''">and ORG_CODE = #{orgCode}</if>
+            <if test="licenseAddress != null and licenseAddress != ''">and LICENSE_ADDRESS = #{licenseAddress}</if>
+            <if test="logo != null and logo != ''">and LOGO = #{logo}</if>
+            <if test="licenseExpireDate != null and licenseExpireDate != ''">and LICENSE_EXPIRE_DATE = #{licenseExpireDate}</if>
+            <if test="businessScope != null and businessScope != ''">and BUSINESS_SCOPE = #{businessScope}</if>
+            <if test="telephone != null and telephone != ''">and TELEPHONE = #{telephone}</if>
+            <if test="contacts != null and contacts != ''">and CONTACTS = #{contacts}</if>
+            <if test="email != null and email != ''">and EMAIL = #{email}</if>
+            <if test="summary != null and summary != ''">and SUMMARY = #{summary}</if>
+            <if test="naturalPerson != null and naturalPerson != ''">and NATURAL_PERSON = #{naturalPerson}</if>
+            <if test="legalPerson != null and legalPerson != ''">and LEGAL_PERSON = #{legalPerson}</if>
+            <if test="certNo != null and certNo != ''">and CERT_NO = #{certNo}</if>
+            <if test="certType != null and certType != ''">and CERT_TYPE = #{certType}</if>
+            <if test="legalPersonPhone != null and legalPersonPhone != ''">and LEGAL_PERSON_PHONE = #{legalPersonPhone}</if>
+            <if test="bankCode != null and bankCode != ''">and BANK_CODE = #{bankCode}</if>
+            <if test="bankAccountNo != null and bankAccountNo != ''">and BANK_ACCOUNT_NO = #{bankAccountNo}</if>
+            <if test="bankProvince != null and bankProvince != ''">and BANK_PROVINCE = #{bankProvince}</if>
+            <if test="bankCity != null and bankCity != ''">and BANK_CITY = #{bankCity}</if>
+            <if test="bankBranch != null and bankBranch != ''">and BANK_BRANCH = #{bankBranch}</if>
+            <if test="extendParam != null and extendParam != ''">and EXTEND_PARAM = #{extendParam}</if>
+            <if test="auditOrderNo != null and auditOrderNo != ''">and AUDIT_ORDER_NO = #{auditOrderNo}</if>
+            <if test="auditStatus != null and auditStatus != ''">and AUDIT_STATUS = #{auditStatus}</if>
+			<if test="auditTime != null">and AUDIT_TIME = #{auditTime}</if>
+            <if test="auditStatus != null and auditStatus != ''">and AUDIT_MESSAGE = #{auditMessage}</if>
+            <if test="legalDelegate != null and legalDelegate != ''">and LEGAL_DELEGATE = #{legalDelegate}</if>
+            <if test="taxRegNo != null and taxRegNo != ''">and TAX_REG_NO = #{taxRegNo}</if>
+            <if test="officeProvince != null and officeProvince != ''">and OFFICE_PROVINCE = #{officeProvince}</if>
+            <if test="officeCity != null and officeCity != ''">and OFFICE_CITY = #{officeCity}</if>
+            <if test="officeArea != null and officeArea != ''">and OFFICE_AREA = #{officeArea}</if>
+            <if test="officeAddress != null and officeAddress != ''">and OFFICE_ADDRESS = #{officeAddress}</if>
+            <if test="creditCode != null and creditCode != ''">and CREDIT_CODE = #{creditCode}</if>
+            <if test="threeCertificate != null and threeCertificate != ''">and THREE_CERTIFICATE = #{threeCertificate}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.user.domain.UserCompanyInfo">
+		insert into user_company_info( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">
+		BEGIN		
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into user_company_info( <include refid="table_columns" /> ) 
+		values 
+		( 
+			#{item.uuid},
+			#{item.userId},
+			#{item.companyName},
+			#{item.simpleName},
+			#{item.establishDate},
+			#{item.registeredCapital},
+			#{item.address},
+			#{item.bussinessCode},
+			#{item.orgCode},
+			#{item.licenseAddress},
+			#{item.logo},
+			#{item.licenseExpireDate},
+			#{item.businessScope},
+			#{item.telephone},
+			#{item.contacts},
+			#{item.email},
+			#{item.summary},
+			#{item.naturalPerson},
+			#{item.legalPerson},
+			#{item.certNo},
+			#{item.certType},
+			#{item.legalPersonPhone},
+			#{item.bankCode},
+			#{item.bankAccountNo},
+			#{item.bankProvince},
+			#{item.bankCity},
+			#{item.bankBranch},
+			#{item.extendParam},
+			#{item.auditOrderNo},
+			#{item.auditStatus},
+			#{item.auditTime},
+			#{item.auditMessage},
+			#{item.legalDelegate},
+			#{item.taxRegNo},
+			#{item.officeProvince},
+			#{item.officeCity},
+			#{item.officeArea},
+			#{item.officeAddress},
+			#{item.creditCode},
+			#{item.threeCertificate}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<update id="update" parameterType="com.rd.ifaes.core.user.domain.UserCompanyInfo">
+		update user_company_info 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="companyName != null and companyName != ''">COMPANY_NAME = #{companyName},</if>
+            <if test="simpleName != null and simpleName != ''">SIMPLE_NAME = #{simpleName},</if>
+            <if test="establishDate != null and establishDate != ''">ESTABLISH_DATE = #{establishDate},</if>
+			<if test="registeredCapital != null and registeredCapital != ''">REGISTERED_CAPITAL = #{registeredCapital},</if>
+            <if test="address != null and address != ''">ADDRESS = #{address},</if>
+            <if test="bussinessCode != null">BUSSINESS_CODE = #{bussinessCode},</if>
+            <if test="orgCode != null">ORG_CODE = #{orgCode},</if>
+            <if test="licenseAddress != null and licenseAddress != ''">LICENSE_ADDRESS = #{licenseAddress},</if>
+            <if test="logo != null">LOGO = #{logo},</if>
+            <if test="licenseExpireDate != null and licenseExpireDate != ''">LICENSE_EXPIRE_DATE = #{licenseExpireDate},</if>
+            <if test="businessScope != null and businessScope != ''">BUSINESS_SCOPE = #{businessScope},</if>
+            <if test="email != null and email != ''">EMAIL = #{email},</if>
+            <if test="summary != null and summary != ''">SUMMARY = #{summary},</if>
+            <if test="naturalPerson != null and naturalPerson != ''">NATURAL_PERSON = #{naturalPerson},</if>
+            <if test="legalPerson != null and legalPerson != ''">LEGAL_PERSON = #{legalPerson},</if>
+            <if test="certNo != null">CERT_NO = #{certNo},</if>
+            <if test="certType != null and certType != ''">CERT_TYPE = #{certType},</if>
+            <if test="legalPersonPhone != null and legalPersonPhone != ''">LEGAL_PERSON_PHONE = #{legalPersonPhone},</if>
+            <if test="bankCode != null and bankCode != ''">BANK_CODE = #{bankCode},</if>
+            <if test="bankAccountNo != null and bankAccountNo != ''">BANK_ACCOUNT_NO = #{bankAccountNo},</if>
+            <if test="bankProvince != null and bankProvince != ''">BANK_PROVINCE = #{bankProvince},</if>
+            <if test="bankCity != null and bankCity != ''">BANK_CITY = #{bankCity},</if>
+            <if test="bankBranch != null and bankBranch != ''">BANK_BRANCH = #{bankBranch},</if>
+            <if test="extendParam != null and extendParam != ''">EXTEND_PARAM = #{extendParam},</if>
+            <if test="auditOrderNo != null and auditOrderNo != ''">AUDIT_ORDER_NO = #{auditOrderNo},</if>
+            <if test="auditStatus != null and auditStatus != ''">AUDIT_STATUS = #{auditStatus},</if>
+			<if test="auditTime != null">AUDIT_TIME = #{auditTime},</if>
+            <if test="auditMessage != null and auditMessage != ''">AUDIT_MESSAGE = #{auditMessage},</if>
+            <if test="legalDelegate != null">LEGAL_DELEGATE = #{legalDelegate},</if>
+            <if test="telephone != null and telephone != ''">TELEPHONE = #{telephone},</if>
+            <if test="contacts != null and contacts != ''">CONTACTS = #{contacts},</if>
+            <if test="taxRegNo != null and taxRegNo != ''">TAX_REG_NO = #{taxRegNo},</if>
+            <if test="officeProvince != null and officeProvince != ''">OFFICE_PROVINCE = #{officeProvince},</if>
+            <if test="officeCity != null and officeCity != ''">OFFICE_CITY = #{officeCity},</if>
+            <if test="officeArea != null and officeArea != ''">OFFICE_AREA = #{officeArea},</if>
+            <if test="officeAddress != null and officeAddress != ''">OFFICE_ADDRESS = #{officeAddress},</if>
+            <if test="creditCode != null">CREDIT_CODE = #{creditCode},</if>
+            <if test="threeCertificate != null and threeCertificate != ''">THREE_CERTIFICATE = #{threeCertificate},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="userCompanyInfoResultMap">
+        select <include refid="table_columns" />
+        from user_company_info
+    </select>
+
+    <select id="findList" resultMap="userCompanyInfoResultMap">
+        select <include refid="table_columns" />
+        from user_company_info
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from user_company_info
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="userCompanyInfoResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_company_info
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	
+	<!-- 根据用户状态和用户类型获取公司信息 -->
+	<select id="findConmpanyListByNature" resultMap="userCompanyInfoResultMap" parameterType="com.rd.ifaes.core.user.model.UserModel" >
+		select uci.user_id,uci.company_name
+		from user_company_info uci, users u, user_cache uc
+		where uci.user_id = u.uuid and u.uuid = uc.user_id and u.status = #{status} and uc.user_nature = #{userNature} and tpp_status = #{tppStatus}
+	</select>
+	
+	<!-- 更新企业开户信息 -->
+	<update id="updateLegalDelegate" parameterType="com.rd.ifaes.core.user.domain.UserCompanyInfo">
+		update user_company_info 
+		<trim prefix="set" suffixOverrides=",">
+		    THREE_CERTIFICATE = #{threeCertificate},
+		    CREDIT_CODE = #{creditCode},
+            BUSSINESS_CODE = #{bussinessCode},
+            ORG_CODE = #{orgCode},
+            AUDIT_TIME = #{auditTime},
+            AUDIT_MESSAGE = #{auditMessage},
+            <if test="auditStatus != null and auditStatus != ''">AUDIT_STATUS = #{auditStatus},</if>
+            <if test="certNo != null and certNo != ''">CERT_NO = #{certNo},</if>
+            <if test="certType != null and certType != ''">CERT_TYPE = #{certType},</if>
+            <if test="legalDelegate != null and legalDelegate != ''">LEGAL_DELEGATE = #{legalDelegate},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+	
+	<!-- 统计组织机构代码或者统一社会信用代码，排除开户失败情况 -->
+	<select id="countRegisterCode" resultType="int" >
+		select count(uuid) from user_company_info 
+		<where>
+			<if test="orgCode != null and orgCode != ''">and ORG_CODE = #{orgCode}</if>
+			<if test="bussinessCode != null and bussinessCode != ''">and BUSSINESS_CODE = #{bussinessCode}</if>
+			<if test="creditCode != null and creditCode != ''">and CREDIT_CODE = #{creditCode}</if>
+			<if test="userId != null and userId != ''">and USER_ID != #{userId}</if>
+			<if test="auditStatus != null and auditStatus != ''">and AUDIT_STATUS != #{auditStatus}</if>
+		</where>
+	</select>
+
+</mapper>

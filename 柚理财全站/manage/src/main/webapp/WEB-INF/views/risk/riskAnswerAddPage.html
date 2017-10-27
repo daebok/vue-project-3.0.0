@@ -1,0 +1,110 @@
+<div class="form-tips-content">
+	<form class="form-horizontal" action="/risk/riskAnswerAdd.html" id="form" role="form">
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">所属问卷：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="p_papersName" id="papersName" placeholder="问卷名称" value="${question.papersName!''}" required readonly>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">所属试题序号：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="q_sort" id="q_sort" value="${question.sort}" placeholder="试题序号" required readonly>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">是否单选：</label>
+					<div class="input-box">
+						<input type="text"  class="form-control" name="q_isSingle"  placeholder="是否单选" value="<#if question.sort ==1 >单选<#else>多选</#if>" required readonly>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">所属试题内容：</label>
+					<div class="input-box">
+						<input type="text"  class="form-control" name="q_questionName" id="q_questionName" placeholder="试题内容" value="${question.questionName!''}" required readonly>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">试题分值：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="q_score" id="q_score" value="${question.score}"  placeholder="试题分值" required readonly>
+					</div>
+				</div>
+			</li>
+			
+			<li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">答案序号：</label>
+					<div class="input-box">
+						<!-- <input type="text" class="form-control" name="sort" id="sort"  placeholder="答案序号(A,B,C...)" required> -->
+						<select name = "sort" id="sort" class="form-control">
+							<option value="A">A</option>
+							<option value="B">B</option>
+							<option value="C">C</option>
+							<option value="D">D</option>
+							<option value="E">E</option>
+							<option value="F">F</option>
+							<option value="G">G</option>
+						</select>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">答案内容：</label>
+					<div class="input-box">
+						<textarea rows="" cols=""  class="form-control"  name="content"  placeholder="答案内容" required></textarea>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">答案分值：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="score" id="score"  placeholder="答案分值" required>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<input type="hidden" name="questionId" value="${question.uuid!''}"/>
+		<@token name="addAnswerToken"/>
+	</form>
+</div>
+<script>
+$("#form").validate({
+	submitHandler: function(form) {	
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						icon: 6,
+						cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+					}, function() {
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入  
+					});
+				} else {
+					layer.alert(data.msg, {
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+})
+</script>

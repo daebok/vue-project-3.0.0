@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>消息记录</title>
+		<#include "include/resources.html">
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入标题/接收者">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/sys/message/list.html">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form>
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							    <li class="input-group input-group-sm"><span>通知方式</span> <@linkage name="sendType" nid="sendType" class="form-control"/></li>
+							    <li class="input-group input-group-sm"><span>发送状态</span> <@linkage name="status" nid="sendStatus" class="form-control"/></li>
+							    <li><button class="btn btn-sm btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/sys/message/list.html">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid" class="table-td-NoOverflow"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+				<@dictFormatter type = "sendStatus" />
+				<@dictFormatter type = "sendType" />
+					$(document).ready(function() {												
+						//表格初始化
+						$("#jqGrid").jqTreeGrid({
+							url: '/sys/message/list.html',
+							multiselect:false,							
+							colModel: [{
+								label: "通知方式",
+								name: "sendType",
+								width: 50,
+								formatter: sendTypeFormatter/*, frozen: true*/
+							}, {
+								label: "标题",
+								name: "title",
+								width: 80
+							}, {
+								label: "发送者",
+								name: "sendUser",
+								width: 100,
+								formatter : function(val, options,rowObject) {
+									if(val=="1"){
+										contents = "平台";
+									} else{
+										contents = val;
+									}
+	    							return "<span title='"+val+"'>"+contents+"</span>";
+								}
+							}, {
+								label: "接收者",
+								name: "receiveUserName",
+								width: 100
+							}, {
+								label: "接收地址",
+								name: "receiveAddr",
+								width: 100
+							}, {
+								label: "发送状态",
+								name: "status",
+								width: 60,
+								formatter: sendStatusFormatter
+							}, {
+								label: "发送时间",
+								name: "createTime",
+								formatter: datetimeFormatter,
+								width: 100
+							}, 
+							{ label: '其他信息', name: 'others',sortable:false,width : 100, title : false, align : "center",formatter : function(value, options,rowObject) {
+								var content = '<a href="javascript:void(0);" class="j-showInfo">其他信息</a>'
+										+ '<div class="showInfoSingleDiv">'
+										+ '<ul>';
+										content+=  '<li>'
+										+ '<span>内容：</span>'
+										+ (rowObject.content?rowObject.content : "--" )
+										+ '</li>'
+										+'<li>'
+										+'<span>备注：</span>'
+										+(rowObject.remark?rowObject.remark : "--" )
+										+'</li>'
+										+ '</ul></div>';
+								return content;
+							 }
+							},
+						],
+						}).jqGrid("setFrozenColumns").navGrid('#jqGridPager',
+							{
+								edit: false,
+								add: false,
+								del: false,
+								search: false,
+								refresh: true,
+								view: false,
+								position: "left",
+								cloneToTop: false
+							}
+						);						
+					});
+			</script>
+		</div>
+	</body>
+</html>

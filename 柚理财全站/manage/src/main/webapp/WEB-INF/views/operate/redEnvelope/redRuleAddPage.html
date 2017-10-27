@@ -1,0 +1,1094 @@
+<div class="form-tips-content" id="redpackage">
+	<input type="hidden" id="image_server_url" value="${image_server_url}">
+	<form class="form-horizontal" action="/operate/redEnvelope/redRuleAdd.html"   method="post" id="form" >
+		<ul>
+			<li>
+				<div class="form-group">
+					<label for="name" class="label-width"><em style="color:red">*</em> 名称</label>
+					<div class="input-box-width-1 inputbox">
+						<input type="text" class="form-control" name="ruleName" id="ruleName" maxlength="15" placeholder="红包规则名称">
+						<div class="msg_tip"></div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="name" class="label-width">发放条件</label>
+					<div class="input-box-width">
+						<select name="activityCode" id="activityCode" class="form-control" style="display: inline-block;" onchange="activityCodeChange()">
+							<#if activityList??>
+							<#list activityList as item>
+							<option value="${item.activityCode!''}">${item.activityName!''}</option>
+							</#list>
+							</#if>
+						</select>
+					</div>
+					<div id="keyword"></div>
+					<div class="input-box-width inputbox" style="width:275px;margin-left:20px;display:none;" id="grantUrl">
+						<input type="text" class="form-control" maxlength="150" name="grantUrl" placeholder="活动页面名称(例如:investActivity.html)">
+						<div class="msg_tip"></div>
+					</div>
+				</div>
+			</li>
+			<li class="heightLimit" id="grantProjectTypeContainer" >
+				<div class="form-group">
+					<label for="name" class="label-width">发放产品类别</label>
+					<div class="input-box-width-1 item-Choose-Box" >
+						<div class="left-box">
+							<div class="ztree" id="tree1"></div>
+						</div>
+						<div class="right-box" id="top">
+							<h3>已选产品类型</h3>
+							<ul></ul>
+						</div>
+					</div>
+					<input type="hidden" name="grantProjectType" id="grantProjectType" value=""/>
+				</div>
+			</li>
+			<li class="form-group" >
+				<div class="pull-left">
+					<label for="name" class="label-width">发放类型</label>
+					<div class="input-box-width">
+						<select name="grantType" id="grantType" class="form-control" onchange="showGrantType()">
+							<option value="1">固定金额</option>
+							<option value="2">固定比例</option>
+							<option value="3">金额满返</option>
+							<option value="4">比例满返</option>
+						</select>
+					</div>
+				</div>
+				<div class="pull-left"  id="grantNum">
+					<label for="name" class="label-width"><em style="color:red">*</em> 发放次数</label>
+					<div class="input-box-width inputbox">
+						<input type="text" class="form-control" onlyNumber="true" name="totalNum" id="totalNum" maxlength="7" placeholder="发放次数"/>
+						<div class="msg_tip"></div>
+					</div>
+				</div>
+			</li>
+			<li class="hongbao-rate heightLimit form-group">
+				<label for="name" class="label-width"><em style="color:red">*</em> 发放规则</label>
+				<div class="input-box-width-1 rules-box" style="display: block;">
+					<div class="input-box-title">
+						<span style="margin-left:132px;">比例(%)</span>
+						<span style="margin-left:240px;">红包金额区间</span>
+					</div>
+					<ul class="mt10 mb20 clearfix">
+						<li class="inputbox pull-left ml20" style="width:220px;">
+							<input type="text" class="form-control" name="grantRate" id="grantRate" onkeyup="if(this.value==this.value2);if(this.value.search(/^\d*(?:\.\d{0,2})?$/)==-1)this.value=(this.value2)?this.value2:'';else this.value2=this.value;" placeholder="发放比例" />
+							<div class="msg_tip"></div>
+						</li>
+						<li class="inputbox pull-left ml20" style="width:190px;">
+							<input type="text" class="form-control" onlyNumber="true" name="grantMin" id="grantMin" maxlength="4" placeholder="最小值"/>
+							<div class="msg_tip"></div>
+						</li>
+						<li class="inputbox pull-left ml10 mr10" style="margin-top:6px;">
+							~
+						</li>
+						<li class="inputbox pull-left" style="width:190px;">
+							<input type="text" class="form-control" onlyNumber="true" name="grantMax" id="grantMax" maxlength="4" placeholder="最大值"/>
+							<div class="msg_tip"></div>
+						</li>
+					</ul>
+				</div>
+
+			</li>
+
+
+			<li id="sectionAmount" class='form-group'><!-- 固定金额发放方式 -->
+
+			</li>
+			<li id="sectionMoney" class='form-group'> <!-- 金额满返发放方式 -->
+
+			</li>
+
+			<li id="sectionRate" class='form-group'> <!-- 比例满返发放方式 -->
+
+			</li>
+
+			<li class="heightLimit" id="grantTimeLi">
+				<div class="form-group">
+					<label for="name"  class="label-width">发放时间</label>
+					<div class="ipt input-checkbox-box pull-left" style="width:220px;">
+						<input type="radio"   value="0" name="grantTimeStatus" checked="checked" id="grantTimeStatus1"/><label for="grantTimeStatus1" style="margin-right:60px;">不限制</label>
+						<input type="radio"   value="1" name="grantTimeStatus" id="grantTimeStatus2"/><label for="grantTimeStatus2">限制时间</label>
+					</div>
+					<div class="pull-left" id="grantTime">
+						<input type="text" style="width:180px;" name="grantStartTime" id="grantStartTime" class="form-control"placeholder="发放开始时间"/>
+						<span>~</span>
+						<input type="text" style="width:180px;" name="grantEndTime" id="grantEndTime"   class="form-control" placeholder="发放结束时间"/>
+					</div>
+				</div>
+			</li>
+			<li class="heightLimit">
+				<div class="form-group">
+					<label for="name" class="label-width">有效期</label>
+					<div class="ipt input-checkbox-box clearfix">
+						<div class="pull-left">
+							<input type="radio" id="expiryStatus"  value="0" name="expiryStatus" checked="checked" /><label style="margin-right:51px;">长期有效</label>
+						</div>
+						<div class="pull-left" style="width:270px;">
+							<input type="radio" id="expiryStatus"  value="1" name="expiryStatus" /><label>固定天数</label>
+							<div  style="display:inline-block;vertical-align: middle;" class="ml10 inputbox">
+								<input type="text" style="width:130px;" onlyNumber="true" class="form-control" name="useValidDay" id="useValidDay" maxlength="6" placeholder="有效天数"/>
+								<div class="msg_tip"></div>
+							</div>
+						</div>
+						<div class="pull-left">
+							<input type="radio" id="expiryStatus"  value="2" name="expiryStatus" /><label>失效日期</label>
+							<div style="display:inline-block;vertical-align: middle;" class="ml10 inputbox">
+								<input type="text" class="form-control" name="useExpireTime" id="useExpireTime" placeholder="失效日期"/>
+							<div class="msg_tip"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</li>
+			
+			<li class="heightLimit">
+				<div class="form-group">
+					<label for="name"  class="label-width">使用条件</label>
+					<div class="ipt input-checkbox-box">
+						<input type="radio" id="useStatus"  value="0" name="useStatus"/ checked="checked"><label>不限制（全站所有产品可用，含未来新增产品类别）</label>
+						<input type="radio" id="useStatus"  value="1" name="useStatus" /><label>限制产品</label>
+					</div>
+				</div>
+			</li>
+			<li class="heightLimit" >
+				<div class="form-group" id="useProjectType">
+					<label for="name" class="label-width">&nbsp;</label>
+					<div class="pull-left item-Choose-Box input-checkbox-box">
+						<div class="left-box">
+							<div class="ztree" id="tree"></div>
+						</div>
+						<div class="right-box">
+							<h3>已选产品类型</h3>
+							<ul id="bottom">
+							</ul>
+						</div>
+						<input type="hidden" name="useProjectType" id="useProjectType1" value="" />
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="redInvestExpireTime" class="label-width"> 红包适用投资期限(月)</label>
+					<div class="input-box-width-1 inputbox">
+						<input type="text" class="form-control" onkeyup="value=value.replace(/[^\d]/g,'')" style="width:50%" name="redInvestExpireTime" id="redInvestExpireTime" maxlength="3" placeholder="不填或填0则默认不限期限">
+						<div class="msg_tip"></div>
+					</div>
+				</div>
+			</li>
+			
+			
+		</ul>
+		<@token name="redRuleAddToken"/>
+	</form>
+</div>
+
+<div class="hide Initialization1 ">
+	<label for="name" class="label-width"><em style="color:red">*</em> 发放规则</label>
+	<div class="input-box-width-1 rules-box" style="display: block;">
+		<div class="input-box-title">
+			<span style="margin-left:132px;">红包金额</span>
+			<span style="margin-left:190px;">使用限制（最低投资金额）</span>
+		</div>
+		<ul class="sectionAmountList clearfix mt10">
+			<li class="inputbox pull-left ml20" style="width:280px;">
+				<input type="text"  name="amount" id="amount" onlyNumber="true" maxlength="4" class="form-control" placeholder="发放红包金额" required/>
+				<span class="msg_tip"></span>
+			</li>
+			<li class="inputbox pull-left ml20" style="width:280px;">
+				<input type="text" name="useTenderMoney" id="useTenderMoney" onlyNumber="true" maxlength="11" class="form-control" placeholder="最低投资金额" required/>
+				<span class="msg_tip"></span>
+			</li>
+
+		</ul>
+		<ul class="sectionAmountList clearfix" style="display:none;">
+			<li class="inputbox pull-left ml20 " style="width:280px;">
+				<input type="text"  name="amount" id="amount" maxlength="4" onlyNumber="true" class="form-control inputval" placeholder="发放红包金额" required/>
+				<span class="msg_tip"></span>
+			</li>
+			<li class="inputbox pull-left ml20" style="width:280px;">
+				<input type="text" name="useTenderMoney" id="useTenderMoney" onlyNumber="true" class="form-control inputval" maxlength="11" placeholder="最低投资金额" required/>
+				<span class="msg_tip"></span>
+			</li>
+			<button type="button" class="removeList icon-delete-btn" ></button>
+		</ul>
+		<button type="button" class="btn btn-primary addList" id="addList" >+增加</button>
+	</div>
+</div>
+
+<div class="hide Initialization2">
+	<div class="formitm"style="display: block;">
+		<label for="name" class="label-width"><em style="color:red">*</em> 发放规则</label>
+		<div class="pull-left clearfix">
+			<div class="input-box-width-1 rules-box">
+				<div class="rules-box-one">
+					<div class="money-input clearfix">
+						<a href="javascript:;" class="rules-open pull-left ml10 open-div"></a>
+						<span>投资金额区间</span>
+						<div class="pull-left inputbox" style="width:170px;margin-top:7px;">
+							<input type="text"  name="tenderMin" onlyNumber="true" maxlength="11" class="form-control" placeholder="最小金额"/>
+							<div class="msg_tip"></div>
+						</div>
+						<span class="value-text">以上</span>
+						<input type="hidden" name="tenderMax" onlyNumber="true" value='-1' class="form-control" placeholder="最大金额"/>
+					</div>
+					<div class="rules-detail">
+						<div class="title clearfix">
+							<span style="margin-left:133px;">红包金额</span>
+							<span style="margin-left:191px;">使用限制（最低投资金额）</span>
+						</div>
+						<div class="rules-detail-input">
+							<ul class="sectionMoneyList Initialization clearfix">
+								<li class="inputbox pull-left ml20" style="width:280px;">
+									<input type="text"  name="amount" id="amount" onlyNumber="true" maxlength="4" placeholder="红包金额 " class="form-control"/>
+									<div class="msg_tip"></div>
+								</li>
+								<li class="inputbox pull-left ml20" style="width:280px;">
+									<input type="text" name="useTenderMoney" id="useTenderMoney" onlyNumber="true" maxlength="11" placeholder="最低投资金额" class="form-control"/>
+									<div class="msg_tip"></div>
+								</li>
+							</ul>
+							<ul class="sectionMoneyList clearfix" style="display:none;">
+								<li class="inputbox pull-left ml20" style="width:280px;">
+									<input type="text"  name="amount" id="amount" maxlength="4" onlyNumber="true" placeholder="红包金额" class="form-control inputval"/>
+									<div class="msg_tip"></div>
+								</li>
+								<li class="inputbox pull-left ml20" style="width:280px;">
+									<input type="text" name="useTenderMoney" id="useTenderMoney" onlyNumber="true" maxlength="11" placeholder="最低投资金额" class="form-control inputval"/>
+									<div class="msg_tip"></div>
+								</li>
+								<button type="button" class="removeList icon-delete-btn"></button>
+							</ul>
+							<button type="button" class="btn btn-primary addList">+增加</button>
+						</div>
+					</div>
+				</div>
+				<div class="rules-box-one" style="display:none" id="hiddenBox">
+					<div class="money-input clearfix">
+						<a href="javascript:;" class="rules-open pull-left ml10 open-div"></a>
+						<span>投资金额区间</span>
+						<div class="pull-left inputbox" style="width:170px;margin-top:7px;">
+							<input type="text"  name="tenderMin" onlyNumber="true" maxlength="11" class="form-control" placeholder="最小金额"/>
+							<div class="msg_tip"></div>
+						</div>
+						<span class="value-text">以上</span>
+						<input type="hidden" name="tenderMax" value='-1' class="form-control" placeholder="最大金额"/>
+						<button type="button" class="removeList icon-delete-btnBox icon-delete-btn pull-right mr30 mt10"  name="button"></button>
+					</div>
+					<div class="rules-detail">
+						<div class="title clearfix">
+							<span style="margin-left:133px;">红包金额</span>
+							<span style="margin-left:191px;">使用限制（最低投资金额）</span>
+						</div>
+						<div class="rules-detail-input">
+							<ul class="sectionMoneyList Initialization clearfix">
+								<li class="inputbox pull-left ml20" style="width:280px;">
+									<input type="text"  name="amount" id="amount" onlyNumber="true" maxlength="4" placeholder="红包金额 " class="form-control"/>
+									<div class="msg_tip"></div>
+								</li>
+								<li class="inputbox pull-left ml20" style="width:280px;">
+									<input type="text" name="useTenderMoney" id="useTenderMoney" onlyNumber="true" maxlength="11" placeholder="最低投资金额" class="form-control"/>
+									<div class="msg_tip"></div>
+								</li>
+							</ul>
+							<ul class="sectionMoneyList clearfix" style="display:none;">
+								<li class="inputbox pull-left ml20" style="width:280px;">
+									<input type="text"  name="amount" id="amount" maxlength="4" onlyNumber="true" placeholder="红包金额" class="form-control inputval"/>
+									<div class="msg_tip"></div>
+								</li>
+								<li class="inputbox pull-left ml20" style="width:280px;">
+									<input type="text" name="useTenderMoney" id="useTenderMoney" onlyNumber="true" maxlength="11" placeholder="最低投资金额" class="form-control inputval"/>
+									<div class="msg_tip"></div>
+								</li>
+								<button type="button" class="removeList icon-delete-btn"></button>
+							</ul>
+							<button type="button" class="btn btn-primary addList">+增加</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<a href="javascript:;" class="rules-box-one-btn"><i>+</i>新增投资金额区间规则</a>
+			<input type="hidden" id="ruleDetail" name="ruleDetail" value="">
+		</div>
+	</div>
+</div>
+
+<div class="hide Initialization3">
+	<div class="formitm" style="display: block;">
+		<label for="name" class="label-width"><em style="color:red">*</em> 发放规则</label>
+		<div class="input-box-width-1 rules-box rules-box-one">
+			<div class="money-input clearfix">
+				<span>红包金额区间</span>
+				<div class="pull-left inputbox" style="width:170px;margin-top:7px;">
+					<input type="text" class="form-control" onlyNumber="true" name="grantMinTemp" id="grantMin" maxlength="4" placeholder="最小值">
+					<div class="msg_tip"></div>
+				</div>
+				<span>~</span>
+				<div class="pull-left inputbox" style="width:170px;margin-top:7px;">
+					<input type="text" class="form-control" onlyNumber="true" name="grantMaxTemp" id="grantMax" maxlength="4" placeholder="最大值">
+					<div class="msg_tip"></div>
+				</div>
+			</div>
+			<div class="rules-detail">
+				<div class="title clearfix">
+					<span style="margin-left:133px;">投资金额区间</span>
+					<span style="margin-left:191px;">比例(%)</span>
+				</div>
+				<ul class="sectionRateList Initialization mt10 clearfix ml10">
+					<span class="inputbox" style="width:170px;">
+						<input type="text"  name="tenderMin" id="tenderMin" onlyNumber="true" maxlength="11" class="form-control" placeholder="最小金额"/>
+						<div class="msg_tip"></div>
+					</span>
+					<span class="j-textNumber">以上</span>
+					<span class="inputbox">
+						<input type="hidden"  name="tenderMax" id="tenderMax" value='-1' maxlength="11" class="form-control" placeholder="最大金额"/>
+					</span>
+					<span class="inputbox" style="width:260px;">
+						<input type="text"  name="grantRateDetail" id="grantRateDetail" maxlength="11"  onkeyup="if(this.value==this.value2);if(this.value.search(/^\d*(?:\.\d{0,2})?$/)==-1)this.value=(this.value2)?this.value2:'';else this.value2=this.value;" placeholder="红包比例" class="form-control"/>
+						<div class="msg_tip"></div>
+					</span>
+				</ul>
+				<ul class="sectionRateList ml10" style="display:none;">
+					<span class="inputbox" style="width:170px;">
+						<input type="text"  name="tenderMin" id="tenderMin" onlyNumber="true" maxlength="11" class="form-control inputval" placeholder="最小金额"/>
+						<div class="msg_tip"></div>
+					</span>
+					<span class="j-textNumber">以上</span>
+					<span class="inputbox" >
+						<input type="hidden"  name="tenderMax" id="tenderMax" value='-1' maxlength="11" class="form-control inputval" placeholder="最大金额"/>
+					</span>
+					<span class="inputbox" style="width:260px;">
+						<input type="text"  name="grantRateDetail" id="grantRateDetail" maxlength="11"  onkeyup="if(this.value==this.value2);if(this.value.search(/^\d*(?:\.\d{0,2})?$/)==-1)this.value=(this.value2)?this.value2:'';else this.value2=this.value;" placeholder="红包比例" class="form-control"/>
+						<div class="msg_tip"></div>
+					</span>
+					<button type="button" class="removeList icon-delete-btn"></button>
+				</ul>
+				<button type="button" class="btn btn-primary addList">+增加</button>
+			</div>
+
+		</div>
+
+	</div>
+</div>
+
+
+<script src="${theme_dir}/static/js/plugins/jquery.suggest.js"></script>
+<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+<script src="${theme_dir}/static/js/upload.js"></script>
+<script type="text/javascript">
+	var itemListJosn=${projectTypeList};
+	var zTreeOnClick= function(event, treeId, treeNode) {
+		var chooseData=$.fn.zTree.getZTreeObj("tree").getCheckedNodes(true);
+		var Array=[]
+		var Array1=[]
+		for(var i=0;i<chooseData.length;i++){
+			if(chooseData[i].isLeaf==1){
+				Array.push(chooseData[i].uuid)
+				Array1.push(chooseData[i].typeName)
+			}
+		}
+		var html='';
+		for (var d=0;d<Array1.length;d++){
+			html=html+'<li>'+Array1[d] +'</li>'
+		}
+		var c=Array.join(",")
+		$("#useProjectType1").val(c)
+		$("#bottom").html(html)
+
+	};
+	var zTreeOnClick1= function(event, treeId, treeNode) {
+		var chooseData=$.fn.zTree.getZTreeObj("tree1").getCheckedNodes(true);
+		var Array=[]
+		var Array1=[]
+		for(var i=0;i<chooseData.length;i++){
+			if(chooseData[i].isLeaf==1){
+				Array.push(chooseData[i].uuid)
+				Array1.push(chooseData[i].typeName)
+			}
+		}
+		var html='';
+		for (var d=0;d<Array1.length;d++){
+			html=html+'<li>'+Array1[d] +'</li>'
+		}
+		var c=Array.join(",")
+		$("#grantProjectType").val(c)
+		$("#top ul").html(html)
+
+	};
+	var setting = {
+		check: {
+			enable: true
+		},
+		view: {
+			showIcon: false
+		},
+		data: {
+			key: {
+				name: "typeName"
+			},
+			simpleData: {
+				enable: true,
+				idKey: "uuid",
+				pIdKey: "parentId",
+			},
+		},
+		callback:{
+			onCheck: zTreeOnClick
+		}
+	};
+	var setting1 = {
+		check: {
+			enable: true
+		},
+		view: {
+			showIcon: false
+		},
+		data: {
+			key: {
+				name: "typeName"
+			},
+			simpleData: {
+				enable: true,
+				idKey: "uuid",
+				pIdKey: "parentId",
+			},
+		},
+		callback:{
+			onCheck: zTreeOnClick1
+		}
+	};
+	$.fn.zTree.init($("#tree"), setting, itemListJosn);
+	$.fn.zTree.init($("#tree1"), setting1, itemListJosn);
+	var treeObj = $.fn.zTree.getZTreeObj("tree");
+	treeObj.expandAll(true);
+	var treeObj = $.fn.zTree.getZTreeObj("tree1");
+	treeObj.expandAll(true);
+	$("#grantTime").hide();
+	$("#useValidDay").hide();
+	$("#useExpireTime").hide();
+	$("#useProjectType").hide();
+	$("#validity").hide();
+	$(function(){
+		$('input[name="grantTimeStatus"]').click(function(){
+	   if($(this).val()==1){//限制
+	   	$("#grantTime").show();
+	   }else{
+	   	$("#grantTime").hide();
+	   	$("#grantTime").find('input').val('')
+	   }
+	});
+		$('input[name="expiryStatus"]').click(function(){
+			$(this).parent().parent().find(".msg_tip").html("")
+		   if($(this).val()==0){//不限制
+		   	$("#useValidDay").hide();
+		   	$("#useExpireTime").hide();
+		   	$("#validity").hide();
+		   	$("#useValidDay").val('');
+		   	$("#useExpireTime").val('');
+		   }else if($(this).val()==1){
+		   	$("#useValidDay").show();
+		   	$("#useExpireTime").hide();
+		   	$("#validity").show();
+		   	$("#useExpireTime").val('');
+		   }else{
+		   	$("#useValidDay").hide();
+		   	$("#useExpireTime").show();
+		   	$("#validity").show();
+		   	$("#useValidDay").val('');
+		   }
+		});
+		$('input[name="useStatus"]').click(function(){
+		   if($(this).val()==1){//限制
+		   	$("#useProjectType").show();
+		   }else{
+		   	$("#useProjectType").hide();
+		   	$('input[name="useProjectType"]').prop("checked",false);
+		   }
+		});
+	});
+
+	showGrantType();
+	activityCodeChange();
+
+	$("#sectionAmount").on('blur','.inputval',function(){
+		if($(this).val()!=""){
+			if($(this).val()<1){
+				$(this).val(1);
+			}
+		}
+	})
+
+
+	$("#sectionMoney").on('blur','.inputval',function(){
+		if($(this).val()!=""){
+			if($(this).val()<1){
+				$(this).val(1);
+			}
+		}
+	})
+
+	$("#sectionRate").on('blur','.inputval',function(){
+		if($(this).val()!=""){
+			if($(this).val()<1){
+				$(this).val(1);
+			}
+		}
+	})
+
+	$("#form").validate({
+		rules: {
+			ruleName:{
+				required:true
+			},
+			totalNum:{
+				required:true,
+				greater:true
+			},
+			grantRate:{
+				required:true,
+				upAprval:true
+			},
+			amount:{
+				required:true,
+				greater:true
+			},
+			useTenderMoney:{
+				required:true,
+				greater:true
+			},
+			grantMin:{
+				required:true,
+				greater:true
+			},
+			grantMax:{
+				required:true,
+				greater:true
+			},
+			tenderMin:{
+				required:true,
+				greater:true
+			},
+			tenderMax:{
+				required:true,
+				greater:true
+			},
+			grantRateDetail:{
+				required:true,
+				upAprval:true
+			},
+			grantStartTime:{
+				required:true
+			},
+			grantEndTime:{
+				required:true
+			},
+			useValidDay:{
+				required:true,
+				greater:true
+			},
+			useExpireTime:{
+				required:true
+			},
+			grantUrl:{
+				required:true
+			}
+		},
+		messages:{
+			ruleName:{
+				required:"请输入规则名称"
+			},
+			totalNum:{
+				required:"请输入发放数量",
+				greater:"请输入大于0的整数"
+			},
+			grantRate:{
+				required:"请输入发放比例",
+				upAprval:"请输入0.01%~24%的数字"
+			},
+			amount:{
+				required:"请输入发放红包金额",
+				greater:"请输入大于0的整数"
+			},
+			useTenderMoney:{
+				required:"请输入最低投资金额",
+				greater:"请输入大于0的整数"
+			},
+			grantMin:{
+				required:"请输入红包金额最小值",
+				greater:"请输入大于0的整数"
+			},
+			grantMax:{
+				required:"请输入红包金额最大值",
+				greater:"请输入大于0的整数"
+			},
+			tenderMin:{
+				required:"请输入投资金额",
+				greater:"请输入大于0的整数"
+			},
+			tenderMax:{
+				required:"请输入投资金额",
+				greater:"请输入大于0的整数"
+			},
+			grantRateDetail:{
+				required:"请输入红包比例",
+				upAprval:"请输入0.01%~24%的数字"
+			},
+			grantStartTime:{
+				required:"请输入开始时间"
+			},
+			grantEndTime:{
+				required:"请输入结束时间"
+			},
+			useValidDay:{
+				required:"请输入有效期",
+				greater:"请输入大于0的整数"
+			},
+			useExpireTime:{
+				required:"请输入有效期"
+			},
+			grantUrl:{
+				required:"请输入活动页面名称"
+			}
+		},
+		errorPlacement:function(error, element){
+			element.parents("ul .inputbox").find(".msg_tip").html(error);
+		},
+		success:function(element){
+			element.parents("ul .inputbox").find(".msg_tip").html('');
+		},
+		submitHandler:function(form){
+			var flag=true;
+			if($('#grantType').val()=='4'){
+				$("#sectionRate input[name='grantRateDetail']:not(:last)").each(function () {
+					if($(this).val()==''||$(this).val()<0.01||$(this).val()>24){
+						$(this).next('.msg_tip').html('<label class="error">'+'请输入0.01%~24%的数字'+'</label>')
+						flag=false
+					}
+				})
+				$("#sectionRate input[name='tenderMin']:not(:last)").each(function () {
+					if($(this).val()==''){
+						$(this).next('.msg_tip').html('<label class="error">'+'请输入投资金额'+'</label>')
+						flag=false
+					}
+				})
+			}else if($('#grantType').val()=='1'){
+				$("#sectionAmount input[name='amount']:not(:last)").each(function () {
+					if($(this).val()==''){
+						$(this).next('.msg_tip').html('<label class="error">'+'请输入发放红包金额'+'</label>')
+						flag=false
+					}
+				})
+				$("#sectionAmount input[name='useTenderMoney']:not(:last)").each(function () {
+					if($(this).val()==''){
+						$(this).next('.msg_tip').html('<label class="error">'+'请输入最低投资金额'+'</label>')
+						flag=false
+					}
+				})
+			}else if($('#grantType').val()=='3'){
+				$("#sectionMoney input[name='tenderMin']:not(:last)").each(function () {
+					if($(this).val()==''){
+						$(this).next('.msg_tip').html('<label class="error">'+'请输入投资金额'+'</label>')
+						flag=false
+					}
+				})
+			}
+
+			var grantStartTimeval = $("#grantStartTime").val();
+			var grantEndTimeval = $("#grantEndTime").val();
+			var grantTimeStatusval = $('input[name="grantTimeStatus"]:checked').val();
+			if(grantTimeStatusval==1){
+				if(grantStartTimeval > grantEndTimeval){
+					layer.alert("结束时间不能小于开始时间", {icon : 2});
+					return false;
+				}
+			}
+			var useStatusval = $('input[name="useStatus"]:checked').val();
+			if(useStatusval==1){
+				  if ($("#useProjectType1").val()=='')
+			     {
+			        layer.alert("使用条件未选择", {icon : 2});
+	  				 return false;
+			     }
+			}
+			if($("#activityCode").val()=="tender_suc"){
+				 if ($("#grantProjectType").val()=='')
+			     {
+			        layer.alert("发放产品类别未选择", {icon : 2});
+	  				return false;
+			     }
+			}else{
+				$("#grantProjectType").val("");
+			}
+			var objLength=$("#sectionMoney input[name='tenderMin']").length-1
+			var sectionMoney=[];
+			 outerloop:
+			for(var i=0;i<objLength;i++){
+				sectionMoney[i] = new Object();
+				sectionMoney[i].tenderMin=$("#sectionMoney input[name='tenderMin']").eq(i).val();
+				sectionMoney[i].tenderMax=$("#sectionMoney input[name='tenderMax']").eq(i).val();
+				for(var s=0;s<$("#sectionMoney .rules-detail-input").eq(i).find("input[name='amount']").length-1;s++){
+					if($("#sectionMoney .rules-detail-input").eq(i).find("input[name='amount']").eq(s).val()==""||$("#sectionMoney .rules-detail-input").eq(i).find("input[name='useTenderMoney']").eq(s).val()==""){
+						 if($("#grantType").val()==3){
+                            alert("请填写完整发放规则内的数值！")
+                            flag = false;
+                            break outerloop;
+                         }
+					}
+					if(s==0){
+						sectionMoney[i].amount=$("#sectionMoney .rules-detail-input").eq(i).find("input[name='amount']").eq(s).val();
+						sectionMoney[i].useTenderMoney=$("#sectionMoney .rules-detail-input").eq(i).find("input[name='useTenderMoney']").eq(s).val();
+					}else{
+						sectionMoney[i].amount=sectionMoney[i].amount+','+$("#sectionMoney .rules-detail-input").eq(i).find("input[name='amount']").eq(s).val();
+						sectionMoney[i].useTenderMoney=sectionMoney[i].useTenderMoney+','+$("#sectionMoney .rules-detail-input").eq(i).find("input[name='useTenderMoney']").eq(s).val();
+					}
+				}
+			}
+			
+			var ruleDetail = JSON.stringify(sectionMoney);
+			var ArraySectionMoney=[]
+			for(var Alist=0;Alist<sectionMoney.length;Alist++){
+				ArraySectionMoney.push(sectionMoney[Alist].tenderMin)
+				ArraySectionMoney.push(sectionMoney[Alist].tenderMax)
+			}
+			ArraySectionMoney.pop()
+				function sortNumber(a,b){return a - b}
+			if(ArraySectionMoney.toString()!=ArraySectionMoney.sort(sortNumber).toString()&&$("#grantType").val()==3){
+				alert("投资金额区间值有误，请重新填写")
+				flag=false
+			}
+			if(flag==false){
+				return false
+			}
+			$("#ruleDetail").val(ruleDetail)
+			$(form).ajaxSubmit({
+				type:"post",
+				dataType:"json",
+				success:function(data){
+					if(data.result){
+						layer.alert(data.msg, {
+							icon : 6,
+							cancel: function(index){
+								layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入
+						}
+					}, function() {
+						layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入
+						});
+					}else{
+						layer.alert(data.msg, {icon: 5});
+					}
+				}
+			});
+		}
+	});
+
+
+// 发放类型改变
+function showGrantType(){
+	var str1 = $(".Initialization1").html();
+	$("#sectionAmount").html(str1);
+	var str2 = $(".Initialization2").html();
+	$("#sectionMoney").html(str2);
+	var str3 = $(".Initialization3").html();
+	$("#sectionRate").html(str3);
+	var value = $("#grantType").val();
+	if(value==1){//固定金额
+		//隐藏不能设置的栏目
+		$(".hongbao-rate").hide();
+		$(".max_amount").hide();
+		$(".min_amount").hide();
+		$("#sectionMoney").hide();
+		$("#sectionRate").hide();
+		$("#sectionMoney input").attr("disabled",true);
+		$("#sectionAmount input").attr("disabled",true);
+		//显示该显示的
+		//$("#sectionAmount").html(str);
+		$("#sectionAmount").show();
+		$("#sectionAmount input").attr("disabled",false);
+	}
+	 if(value==2){//固定比率
+		//隐藏不能设置的栏目
+		$("#sectionMoney").hide();
+		$("#sectionRate").hide();
+		$("#sectionAmount").hide();
+		$("#sectionMoney input").attr("disabled",true);
+		$("#sectionRate input").attr("disabled",true);
+		$("#sectionAmount input").attr("disabled",true);
+		//显示该显示的
+		$(".hongbao-rate").show();
+		$(".max_amount").show();
+		$(".min_amount").show();
+	}
+	if(value==3){//金额满返
+		//隐藏不能设置的栏目
+		$(".hongbao-rate").hide();
+		$("#sectionRate").hide();
+		$("#sectionAmount").hide();
+		$("#sectionRate input").attr("disabled",true);
+		$("#sectionAmount input").attr("disabled",true);
+		//显示该显示的
+		$(".max_amount").hide();
+		$(".min_amount").hide();
+		$("#sectionMoney").show();
+		$("#sectionMoney input").attr("disabled",false);
+	}
+	if(value==4){//比例满返
+		//隐藏不能设置的栏目
+		$(".hongbao-rate").hide();
+		$("#sectionAmount").hide();
+		$("#sectionMoney").hide();
+		$("#sectionAmount input").attr("disabled",true);
+		$("#sectionMoney input").attr("disabled",true);
+		//显示该显示的
+		$(".max_amount").show();
+		$(".min_amount").show();
+		$("#sectionRate").show();
+		$("#sectionRate input").attr("disabled",false);
+	}
+}
+//活动类型改变
+function activityCodeChange(){
+	var value = $("#activityCode").val();
+	
+	if(value=="vip_level"){
+		$("#grantTimeStatus1").prop("checked",true);
+		$("#grantTimeStatus2").prop("checked",false);
+		$("#grantTimeStatus1").attr("disabled",true);
+		$("#grantTimeStatus2").attr("disabled",true);
+		$("#grantTime").hide();
+		$("#grantNum").hide();
+	}
+	else{
+		$("#grantTimeStatus1").attr("disabled",false);
+		$("#grantTimeStatus2").attr("disabled",false);
+	}
+	
+	if(value=="select_users" || value=="vip_level"){
+		$("#grantNum").hide();
+		$("#grantTimeLi").hide()
+	}else{
+		$("#grantNum").show();
+		$("#grantTimeLi").show()
+		if(value=="score_shop"){
+            $("#totalNum").attr("disabled",true);
+            $("#grantNum").hide();
+            $("#grantTimeLi").hide();
+            $(".addList").hide();
+        }
+        else{
+            $("#totalNum").attr("disabled",false);
+            $("#grantNum").show();
+            $("#grantTimeLi").show();
+            $(".addList").show();
+        }
+	}
+
+	if(value=="custom"){
+		$("#grantUrl").show();
+	}else{
+		$("#grantUrl").val('');
+		$("#grantUrl").hide();
+		$("#grantUrl").parent(".inputbox").find(".msg_tip").html("");
+	}
+	
+
+	//如果活动类型为 注册 自定义 vip等级的时候 发放类型只能为固定金额
+	if(value=="register"||value=="custom"||value=="vip_level"||value=="invite_register"||value=="select_users"||value=="score_shop"){
+		//去处下拉框
+		$("#grantType option[value='2']").remove();
+		$("#grantType option[value='3']").remove();
+		$("#grantType option[value='4']").remove();
+	}else{
+		$("#grantType option").remove();
+		$("#grantType").append("<option value='1'>固定金额</option>");
+		$("#grantType").append("<option value='2'>固定比例</option>");
+		$("#grantType").append("<option value='3'>金额满返</option>");
+		$("#grantType").append("<option value='4'>比例满返</option>");
+
+	}
+	if(value=='tender_suc'){
+		$("#grantProjectTypeContainer").show();
+		$("#grantProjectTypeContainer").attr('display','block');
+	}else{
+		$("#grantProjectTypeContainer").hide();
+		//$("#grantProjectType").val("");
+		$("input[name='grantProjectType']").each(function(){
+			$(this).attr("checked", false);
+		});
+
+	}
+	showGrantType();
+}
+//固定金额
+var sectionAmountStr = $("#sectionAmount .sectionAmountList:last").prop("outerHTML");
+
+$(".layui-layer-content").on("click",'#sectionAmount .addList',function(e){
+	var Codevalue = $("#activityCode").val();
+	if($(this).parent().find(".sectionAmountList").length<11 && Codevalue!="score_shop"){
+			$("#sectionAmount .sectionAmountList").css("display","block");
+			$(this).before(sectionAmountStr);
+		}else if(Codevalue == "score_shop"){
+			alert("积分商城允许最多包含1个红包");
+		}else{
+			alert('一条规则允许最多包含10个红包');
+		}
+	$("#sectionAmount input:last").attr("disabled",false);
+});
+//金额满返
+var sectionMoneyStr = $("#sectionMoney .sectionMoneyList:last").prop("outerHTML");
+$(".layui-layer-content").on("click",'#sectionMoney .addList',function(e){
+	if($(this).parent().find(".sectionMoneyList").length<11){
+		$(this).parent().find(".sectionMoneyList").css("display","block");
+		$(this).before(sectionMoneyStr);
+	}else{
+			alert('一条规则允许最多包含10个红包');
+		}
+	$("#sectionMoney input").attr("disabled",false);
+});
+var sectionMoneyStrOne = $("#sectionMoney .rules-box-one:last").prop("outerHTML");
+$(".layui-layer-content").on("click",'.rules-box-one-btn',function(e){
+	if($("#sectionMoney input[name='tenderMin']").eq($("#sectionMoney input[name='tenderMin']").length-2).val()==''){
+		alert('请输入投资区间金额')
+		return false;
+	}
+
+	$("#sectionMoney .rules-box-one").css("display","block");
+	$('#sectionMoney .rules-box-one .rules-detail').eq($("#sectionMoney input[name='tenderMin']").length-2).hide();
+	$('#sectionMoney .rules-box-one').eq($("#sectionMoney input[name='tenderMin']").length-2).find('.rules-open').addClass('close-div');
+	$("#sectionMoney .rules-box-one:last").after(sectionMoneyStrOne);
+	$("#sectionMoney input").attr("disabled",false);
+});
+$(".layui-layer-content").on('blur',"#sectionMoney input[name='tenderMin']",function(){
+	var a=$("#sectionMoney input[name='tenderMin']").index($(this))-1
+	if(a>=0){
+		$("#sectionMoney .value-text").eq(a).html('~'+($(this).val()-1))
+		$("#sectionMoney input[name='tenderMax']").eq(a).val($(this).val()-1)
+	}
+	if(parseInt($(this).val())<=parseInt($("#sectionMoney input[name='tenderMin']").eq(a).val())){
+		$(this).next('.msg_tip').html('<label class="error">'+'此金额区间需大于前一区间！'+'</label>')
+		$(this).val("")                                                                        
+		$("#sectionMoney .value-text").eq(a).html('以上')
+	}
+})
+$(".layui-layer-content").on('click',"#sectionMoney .rules-open",function(){
+	var q=$("#sectionMoney .rules-open").length;
+	if($(this).hasClass('close-div')==false){
+		$(this).addClass('close-div');
+		$(this).parent().parent().find(".rules-detail").hide();
+	}else{
+		$('#sectionMoney .rules-box-one').find(".rules-open").addClass('close-div');
+		$('#sectionMoney .rules-box-one .rules-detail').hide();
+		$(this).removeClass('close-div');
+		$(this).parent().parent().find(".rules-detail").show();
+	}
+	
+})
+
+//比例满返
+var sectionRateStr = $("#sectionRate .sectionRateList:last").prop("outerHTML");
+$(".layui-layer-content").on("click",'#sectionRate .addList',function(e){
+	var d=$("#sectionRate .j-textNumber").length-2
+	if($("#sectionRate input[name='tenderMin']").eq(d).val()==''){
+		alert("请输入投资区间最小金额")
+		return false;
+	}else{
+		$("#sectionRate .sectionRateList").css("display","block");
+		$("#sectionRate .sectionRateList:last").after(sectionRateStr);
+		$("#sectionRate input").attr("disabled",false);
+	}
+});
+
+$(".layui-layer-content").on('blur',"#sectionRate input[name='tenderMin']",function(){
+	var d=$("#sectionRate input[name='tenderMin']").index($(this))-1
+	if(d>=0){
+		if(parseInt($(this).val())<=parseInt($("#sectionRate input[name='tenderMin']").eq(d).val())||$(this).val()==""){
+			$(this).next('.msg_tip').html('<label class="error">'+'此金额区间需大于前一区间！'+'</label>')
+			$(this).val("")
+			$("#sectionRate .j-textNumber").eq(d).html('以上')
+			$("#sectionRate input[name='tenderMax']").eq(d).val('-1')
+		}else{
+			$("#sectionRate .j-textNumber").eq(d).html('~'+($(this).val()-1))
+			$("#sectionRate input[name='tenderMax']").eq(d).val($(this).val()-1)
+		}
+	}
+})
+
+$(".layui-layer-content").on("click",'#sectionRate .icon-delete-btn',function(e){
+	var d=$("#sectionRate .icon-delete-btn").index($(this))
+	console.log(d)
+	$(this).parent().remove();
+	$("#sectionRate .j-textNumber").eq(d).html('~'+($("#sectionRate input[name='tenderMin']").eq(d+1).val()-1))
+	$("#sectionRate input[name='tenderMax']").eq(d).val($("#sectionRate input[name='tenderMin']").eq(d+1).val()-1)
+	if($("#sectionRate input[name='tenderMin']").eq(d+1).val()==''){
+		$("#sectionRate .j-textNumber").eq(d).html('以上')
+		$("#sectionRate input[name='tenderMax']").eq(d).val('-1')
+	}
+})
+
+$(".layui-layer-content").on("click",'.icon-delete-btnBox',function(e){
+	var d=$("#sectionMoney .icon-delete-btnBox").index($(this))
+	$(this).parent().parent().remove();
+		$("#sectionMoney .value-text").eq(d).html('~'+($("#sectionMoney input[name='tenderMin']").eq(d+1).val()-1))
+		$("#sectionMoney input[name='tenderMax']").eq(d).val($("#sectionMoney input[name='tenderMin']").eq(d+1).val()-1)
+		if($("#sectionMoney input[name='tenderMin']").eq(d+1).val()==''){
+			$("#sectionMoney .value-text").eq(d).html('以上')
+			$("#sectionMoney input[name='tenderMax']").eq(d).val('-1')
+		}
+})
+$(".layui-layer-content").on("click",'.removeList',function(e){
+	$(this).parent().remove();
+})
+$("#grantStartTime").val(laydate.now(0, "YYYY-MM-DD"));
+$(".layui-layer-content").on("keyup",'input[onlyNumber="true"]',function(event){
+	$(this).val($(this).val().replace(/[^\d]/g,''))
+})
+	//设发放开始时间控件
+	var grantStartTime= {
+		elem:'#grantStartTime',
+		format: 'YYYY-MM-DD', //日期格式
+		istime: true, //是否开启时间选择
+		min: laydate.now(),  //最小日期大于当前时间
+		max:$('#grantEndTime').val(),//最大值
+		event:'focus',
+		choose: function(dates){
+			grantEndTime.min=dates;
+			grantEndTime.start=dates;
+		}
+	};
+
+	//设置有效日期
+	var useExpireTime=  {
+		elem:'#useExpireTime',
+			format: 'YYYY-MM-DD', //日期格式
+			istime: true, //是否开启时间选择
+			min: laydate.now(), //最小日期
+			event:'focus',
+			choose: function(dates){
+
+			}
+		};
+	//设置发放结束时间
+	var grantEndTime=  {
+		elem:'#grantEndTime',
+			format: 'YYYY-MM-DD', //日期格式
+			istime: true, //是否开启时间选择
+			min: $('#grantStartTime').val(), //最小日期
+			event:'focus',
+			choose: function(dates){
+				grantStartTime.max=dates;
+				//useExpireTime.max=dates;
+				$('#useExpireTime').val(dates)
+			}
+		};
+		laydate(grantStartTime);
+		laydate(grantEndTime);
+		laydate(useExpireTime);
+		function selectUsersFn(userIds){
+			$("#userIds").val(userIds);
+		}
+
+
+	</script>

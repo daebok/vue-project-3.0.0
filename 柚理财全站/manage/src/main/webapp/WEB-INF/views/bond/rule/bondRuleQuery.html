@@ -1,0 +1,86 @@
+<div class="form-tips-content" id="assignment">
+	<div class="regular-state">
+		<label>规则状态：</label>
+		<select name="ruleStatus" id="ruleStatus" disabled>
+			<option value="1" <#if model ??&&model.ruleStatus=="1">selected</#if>>开启</option>
+			<option value="0" <#if model ??&&model.ruleStatus=="0">selected</#if>>关闭</option>
+		</select>
+	</div>
+	<div id="rule_status">
+		<div class="title">一、申请转让期限制</div>
+			<div class="con">
+				<div>
+					1、<#if model??&& model.holdDays gt 0 >起息日后必须持有${model.holdDays!''}天后才可进行转让;<#else>起息日没有限制</#if>
+				</div>
+				<div>
+					2、<#if model??&& model.remainDays  gt 0>距到期日${model.remainDays!''}天之前才可进行转让;<#else>距到期日没有限制</#if>
+				</div>
+				<div>
+					3、<#if model??&& model.periodRemainDays gt 0>距本期还款日${model.periodRemainDays!''}天之前才可进行转让;<#else>距本期还款日没有限制</#if> 
+				</div>
+			</div>
+		<div class="title">二、转让时效</div>
+		<div class="con">
+			<div>
+				<#if model??><font style="color:blue;font-size:16px;">${model.deadline!''}</font>小时内未完成转让即自动撤销转让申请<#else>没有时效限制</#if>
+			</div> 
+			<div>
+				<input type="checkbox" checked disabled>在转让期间发生借款人提前还款，则自动撤销转让申请
+			</div>
+		</div>
+		
+		<div class="title">三、转让金额限制</div>
+		<div class="con">
+			<div>
+				<#if model??&&model.sellStyle == "1">一次性全额转让<#else>部分转让</#if>
+			</div>
+			<div>
+				<p>1、最低转让金额需大于等于最低受让金额的2倍</p>
+				<p>2、剩余未还本金小于最低受让金额的2倍必须全部转让</p>
+				<p>3、还款方式为月等额本息、月等额本金则必须一次性全额转让,不受该配置项的限制</p>
+			</div>
+			
+		</div>
+		
+		<div class="title">四、单笔受让金额限制</div>
+		<div class="con">
+			<div>
+				<#if model??&&model.buyStyle == "1">一次性全额受让<#else>部分受让</#if>
+			</div>
+		<#if model??&&model.buyStyle == "1"	><#else><div>单笔最低受让金额：<#if model??>${model.buyAmountMin!0}元</#if></div></#if>
+			<div>
+				<p>1、剩余金额小于等于最低受让金额的2倍需一次性受让完毕</p>
+				<p>2、还款方式为月等额本息、月等额本金则必须一次性全额受让,不受该配置项的限制</p>
+			</div>
+		</div>
+		
+		<div class="title">五、折溢价率</div>
+		<div class="con">
+		<div>折溢价率:<#if model??>${model.discountRateMin!0}%</#if>~<#if model??>${model.discountRateMax!0}%</#if>
+		</div>
+			<div>
+				<p>1、折溢价=受让金额*折溢价率</p>
+				<p>2、剩余期限利息=总待收利息-已持有期限的利息</p>
+				<p>3、受让支付金额=受让本金+受让本金已持有天数的利息+折溢价-已持有期限的利息管理费</p>
+				<p>4、已持有期限利息管理费 = 已持有期限的利息* 利息管理费</p>
+			</div>
+		</div>
+		
+		<div class="title">六、转让手续费</div>
+		<div class="con">
+			<div>
+				每笔债权受让金额大于等于<#if model??><font style="color:blue;font-size:16px;">${model.feeInitiateAmount}</font></#if>元,
+				<#if model??&&model.feeStyle == '1'>收取固定金额手续费<font style="color:blue;font-size:16px;">${model.feeFixed}</font>元,
+				<#elseif model??&&model.feeStyle == '2'>收取固定比例手续费<font style="color:blue;font-size:16px;">${model.feeRate}%</font>,</#if>
+				单次债权转让收取手续费总额不得大于<#if model??><font style="color:blue;font-size:16px;">${model.feeSingleMax}</font>元</#if>。
+			</div>
+			<div class="notice">注意：
+				<p>1、当债权已有逾期则不允许转让</p>
+				<p>2、未全部受让成功前允许手动撤销转让</p>
+				<p>3、撤销时已受让成功部分保持受让状态</p>
+				<p>4、转让后的年化利率为原始债权利率,到期预收本息=债权本金+债权总利息</p>
+			</div>
+		</div>
+	</div>
+</div>
+	

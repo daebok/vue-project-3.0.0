@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.operate.mapper.UserVipLevelMapper">
+	<resultMap type="com.rd.ifaes.core.operate.domain.UserVipLevel" id="userVipLevelResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="growthValue" column="GROWTH_VALUE"/>
+		<result property="growthLimitValue" column="GROWTH_LIMIT_VALUE"/>
+		<result property="vipLevel" column="VIP_LEVEL"/>
+		<result property="yearDeduction" column="YEAR_DEDUCTION"/>
+		<result property="upApr" column="UP_APR"/>
+		<result property="redenvelopeRuleId" column="REDENVELOPE_RULE_ID"/>
+		<result property="rateCouponRuleId" column="RATE_COUPON_RULE_ID"/>
+		<result property="birthdayGiftId" column="BIRTHDAY_GIFT_ID"/>
+		<result property="exclusiveGiftId" column="EXCLUSIVE_GIFT_ID"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="updateTime" column="UPDATE_TIME"/>
+		<result property="deleteFlag" column="DELETE_FLAG"/>
+		
+		<result property="rateName" column="RATE_NAME"/>
+		<result property="redName" column="RED_NAME"/>
+		<result property="birthdayGiftName" column="BIRTHDAY_GIFT_NAME"/>
+		<result property="exclusiveGiftName" column="EXCLUSIVE_GIFT_NAME"/>
+		
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		GROWTH_VALUE,
+		GROWTH_LIMIT_VALUE,
+		VIP_LEVEL,
+		YEAR_DEDUCTION,
+		UP_APR,
+		REDENVELOPE_RULE_ID,
+		RATE_COUPON_RULE_ID,
+		BIRTHDAY_GIFT_ID,
+		EXCLUSIVE_GIFT_ID,
+		CREATE_TIME,
+		UPDATE_TIME,
+		DELETE_FLAG
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{growthValue},
+		#{growthLimitValue},
+		#{vipLevel},
+		#{yearDeduction},
+		#{upApr},
+		#{redenvelopeRuleId},
+		#{rateCouponRuleId},
+		#{birthdayGiftId},
+		#{exclusiveGiftId},
+		#{createTime},
+		#{updateTime},
+		#{deleteFlag}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+             <if test="redenvelopeRuleId != null and redenvelopeRuleId != ''">and REDENVELOPE_RULE_ID = #{redenvelopeRuleId}</if>
+            <if test="rateCouponRuleId != null and rateCouponRuleId != ''">and RATE_COUPON_RULE_ID = #{rateCouponRuleId}</if>
+            <if test="birthdayGiftId != null and birthdayGiftId != ''">and BIRTHDAY_GIFT_ID = #{birthdayGiftId}</if>
+            <if test="exclusiveGiftId != null and exclusiveGiftId != ''">and EXCLUSIVE_GIFT_ID = #{exclusiveGiftId}</if>
+			<if test="growthValue != null">and GROWTH_VALUE = #{growthValue}</if>
+			<if test="growthLimitValue != null">and GROWTH_LIMIT_VALUE = #{growthLimitValue}</if>
+            <if test="vipLevel != null and vipLevel != ''">and VIP_LEVEL = #{vipLevel}</if>
+			<if test="yearDeduction != null">and YEAR_DEDUCTION = #{yearDeduction}</if>
+			<if test="upApr != null">and UP_APR = #{upApr}</if>
+			<if test="updateTime != null">and UPDATE_TIME = #{updateTime}</if>
+            <if test="deleteFlag != null and deleteFlag != ''">and DELETE_FLAG = #{deleteFlag}</if>
+            <if test="startTime != null and startTime != ''">and CREATE_TIME &gt;= to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')</if>
+            <if test="endTime != null and endTime != ''">and CREATE_TIME &lt;= to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.operate.domain.UserVipLevel">
+		insert into user_vip_level( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		BEGIN
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into user_vip_level( <include refid="table_columns" /> ) 
+		values 
+		( 
+		#{item.uuid},
+				#{item.growthValue},
+				#{item.growthLimitValue},
+				#{item.vipLevel},
+				#{item.yearDeduction},
+				#{item.upApr},
+				#{item.redenvelopeRuleId},
+				#{item.rateCouponRuleId},
+				#{item.birthdayGiftId},
+				#{item.exclusiveGiftId},
+				#{item.createTime},
+				#{item.updateTime},
+				#{item.deleteFlag}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from user_vip_level
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update user_vip_level set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update user_vip_level set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.operate.domain.UserVipLevel">
+		update user_vip_level 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="growthValue != null">GROWTH_VALUE = #{growthValue},</if>
+			<if test="growthLimitValue != null">GROWTH_LIMIT_VALUE = #{growthLimitValue},</if>
+			<if test="yearDeduction != null">YEAR_DEDUCTION = #{yearDeduction},</if>
+			<if test="upApr != null">UP_APR = #{upApr},</if>
+            REDENVELOPE_RULE_ID = #{redenvelopeRuleId},
+            RATE_COUPON_RULE_ID = #{rateCouponRuleId},
+            <if test="birthdayGiftId != null ">BIRTHDAY_GIFT_ID = #{birthdayGiftId},</if>
+            <if test="exclusiveGiftId != null ">EXCLUSIVE_GIFT_ID = #{exclusiveGiftId},</if>
+			   UPDATE_TIME = sysdate,
+            <if test="deleteFlag != null and deleteFlag != ''">DELETE_FLAG = #{deleteFlag},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+	
+	<update id="updateBatch" parameterType="java.util.List">
+		BEGIN
+		<foreach collection="list" item="item" open="" separator=";" close="">
+		update user_vip_level 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="item.vipLevel != null">VIP_LEVEL = #{item.vipLevel},</if>
+		</trim>
+		<where>uuid = #{item.uuid}</where>
+		</foreach>
+		; END ;
+	</update>
+
+    <select id="findAll" resultMap="userVipLevelResultMap">
+        select <include refid="table_columns" />
+        from user_vip_level where  delete_flag=0 order by vip_level asc
+    </select>
+
+    <select id="findList" resultMap="userVipLevelResultMap">
+		select 
+		    vipLevel.UUID,
+			vipLevel.GROWTH_VALUE,
+			vipLevel.GROWTH_LIMIT_VALUE,
+			vipLevel.VIP_LEVEL,
+			vipLevel.YEAR_DEDUCTION,
+			vipLevel.UP_APR,
+			vipLevel.REDENVELOPE_RULE_ID,
+			vipLevel.RATE_COUPON_RULE_ID,
+			vipLevel.BIRTHDAY_GIFT_ID,
+			vipLevel.EXCLUSIVE_GIFT_ID,
+			vipLevel.CREATE_TIME,
+			vipLevel.UPDATE_TIME,
+			vipLevel.DELETE_FLAG,
+		    redrule.rule_name red_name,
+		    raterule.rule_name rate_name,
+		    birthdayGift.gift_name birthday_gift_name,
+		    exclusiveGift.gift_name exclusive_gift_name 
+		from user_vip_level vipLevel 
+		LEFT JOIN   redenvelope_rule redrule on  redrule.uuid=vipLevel.redenvelope_rule_id
+		LEFT JOIN   rate_coupon_rule raterule on  raterule.uuid =  vipLevel.rate_coupon_rule_id
+		LEFT JOIN   user_gift birthdayGift on  birthdayGift.uuid =  vipLevel.birthday_gift_id and birthdayGift.DELETE_FLAG = 0
+		LEFT JOIN   user_gift exclusiveGift on  exclusiveGift.uuid =  vipLevel.exclusive_gift_id and exclusiveGift.DELETE_FLAG = 0
+		<include refid="find_list_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from user_vip_level
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="userVipLevelResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_vip_level
+		where uuid = #{id}
+	</select>
+	<sql id="find_list_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="vipLevel != null and vipLevel != ''">and vipLevel.VIP_LEVEL = #{vipLevel}</if>
+			<if test="upApr != null">and vipLevel.UP_APR = #{upApr}</if>
+            <if test="redenvelopeRuleId != null and redenvelopeRuleId != ''">and vipLevel.REDENVELOPE_RULE_ID = #{redenvelopeRuleId}</if>
+            <if test="rateCouponRuleId != null and rateCouponRuleId != ''">and vipLevel.RATE_COUPON_RULE_ID = #{rateCouponRuleId}</if>
+            <if test="birthdayGiftId != null and birthdayGiftId != ''">and vipLevel.BIRTHDAY_GIFT_ID = #{birthdayGiftId}</if>
+            <if test="exclusiveGiftId != null and exclusiveGiftId != ''">and vipLevel.EXCLUSIVE_GIFT_ID = #{exclusiveGiftId}</if>
+            <if test="deleteFlag != null and deleteFlag != ''">and vipLevel.DELETE_FLAG = #{deleteFlag}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort==null">
+        	order by vipLevel.VIP_LEVEL ASC
+        </if>
+    </sql>
+	
+	<!-- 其他自定义SQL -->
+	<!-- 查询更高级的vip等级设置 -->
+    <select id="findHighLever" resultMap="userVipLevelResultMap" parameterType="com.rd.ifaes.core.operate.domain.UserVipLevel">
+		select <include refid="table_columns" />
+		from user_vip_level  
+		where  delete_flag=#{deleteFlag} 
+		      and  vip_level>#{vipLevel} 
+		order by vip_level desc
+	</select>
+	<!-- 根据vip等级值获取vip等级设置 -->
+    <select id="getByVipLevel" resultMap="userVipLevelResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_vip_level
+		where delete_flag = 0 and vip_level = #{vipLevel}
+	</select>
+	<!-- 查询所有VIP等级 -->
+	<select id="getAllLevel"  resultType="string">
+	    select vip_level
+	    from user_vip_level
+	    order by vip_level
+	</select>
+	
+	<!-- 查询所有VIP等级 -->
+	<select id="getLevelByStatus"  resultType="string" parameterType="String">
+	    select vip_level
+	    from user_vip_level 
+	    where delete_flag = #{deleteFlag}
+	    order by vip_level
+	</select>
+
+	
+	<select id="countVipUser" resultType="int">
+		SELECT count(uuid) FROM user_vip WHERE vip_level &gt; 0
+	</select>
+
+	<!-- 查询所有正常状态vip等级 -->
+    <select id="findTrueList" resultMap="userVipLevelResultMap" >
+		select <include refid="table_columns" />
+		from user_vip_level
+		where delete_flag = 0 
+		order by vip_level
+	</select>
+
+</mapper>

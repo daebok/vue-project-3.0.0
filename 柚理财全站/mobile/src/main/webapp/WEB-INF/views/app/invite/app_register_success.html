@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>邀请好友</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
+    <meta content="telephone=no" name="format-detection" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <link rel="stylesheet" href="https://unpkg.com/mint-ui/lib/style.css">
+    <link rel="stylesheet" type="text/css" href="${mobileUrl}/themes/app/css/common.css" />
+    <link rel="stylesheet" type="text/css" href="${mobileUrl}/themes/app/css/theme.css" />
+    <link rel="stylesheet" type="text/css" href="${mobileUrl}/themes/app/css/base.css" />
+    <script src="${mobileUrl}/themes/app/js/jquery-3.1.1.min.js"></script>
+	<script type="text/javascript" src="${mobileUrl}/themes/app/js/layer-mobile/layer.m.js"></script>
+    <script type="text/javascript" src="${mobileUrl}/themes/app/js/get_client_width.min.js"></script>
+</head>
+<style>
+	body{
+		background: url("${mobileUrl}/themes/app/images/me/suc_bg.jpg") no-repeat;
+		background-size: 100%;
+	}
+	#pageDetail{
+		width: 90%;
+	    margin: 1rem auto;
+	    vertical-align: middle;
+	    border-radius: .1rem;
+	    background: #fff;
+	}
+	.reg-success{
+		text-align: center;
+		color: #F95A28;
+	}
+	.reg-success img{
+		width: .9rem;
+		height: .9rem;
+		vertical-align: middle;
+		margin-top: 1rem;
+		margin-bottom: .2rem;
+	}
+	.reg-success-download{
+		height: 2.1rem;
+	    text-align: center;
+	    color: #F95A28;
+	    padding-top: .6rem;
+	}
+	.down-load{
+		display: block;
+		width: 80%;
+		margin-left: 10%;
+		height: .45rem;
+		line-height: .45rem;
+		font-size: .18rem;
+		border-color: #fff;
+		background: #F95A28;
+		border-radius: .1rem;
+		color: #fff;
+		margin-bottom: .1rem;
+	}
+	.padding-b-20{
+		padding-bottom: .2rem;
+	}
+	.suc-bottom-tips{
+		color: #999;
+		font-size: .12rem;
+	}
+</style>
+<script>
+	function toast(str,fn){
+		mobile_layer.open({
+			content:str,
+			shadeClose: false,
+			time:2.5,
+			style:'top:-100px;color:#fff;background-color: rgba(0, 0, 0, 0.59);',
+			end:fn
+		})
+		$('.laymshade').hide();
+	}
+	//一个按钮的方法
+	function layer_alert(str,fn){
+		mobile_layer.open({
+			title:'提示',
+			content:str,
+			shadeClose: false,
+			style:'width:90%;',
+			btn:['确定'],
+			end:fn
+		})
+		$('.layermend').hide().siblings('h3').css({
+			padding:0,
+			border:0
+		})
+		$('.layermcont').css({color:'#a2a2a2',padding:'0 10px 20px'})
+	};
+	//两个按钮的方法
+	function layer_btns(str,btn1,btn2,fn1,fn2){
+		mobile_layer.open({
+			title:'提示',
+			content:str,
+			shadeClose: false,
+			style:'width:90%;',
+			btn:[btn1,btn2],
+			yes:fn1,
+			no:fn2
+		})
+		$('.layermend').hide().siblings('h3').css({
+			padding:0,
+			border:0
+		})
+		$('.layermcont').css({color:'#a2a2a2',padding:'0 10px 20px'})
+	}
+</script>
+<body>
+	<div class="page" id="pageDetail">
+		<div class="reg-success">
+			<img src="${mobileUrl}/themes/app/images/me/thor.png" />
+			<p class="suc-tips color-666">互联网金融资产交易系统V3.0</p>
+		</div>
+		<div class="reg-success-download">
+			<a href="" class="down-load aui-border" id="down_load">去下载</a>
+			<p class="suc-tips padding-b-20 suc-bottom-tips">恭喜您已获得100元新人红包，快去理财吧！</p>
+		</div>
+	</div>
+</body>
+</html>
+<script>
+	$("#down_load").click(function(){
+		toast("敬请期待...");
+	})
+</script>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>缓存管理</title>
+		<#include "include/resources.html">
+		<#assign   getCacheUrl=" /sys/cache/get.html?cacheKey=" 
+		              clearCacheBatchUrl="/sys/cache/clearCacheBatch.html?prefix=" 
+		               >
+	</head>
+	<body>
+		<div class="wrapper">
+		    	<div class="row pt20">			
+				<div class="col-md-6">
+				          <div class="input-group">
+					               <input type="text" class="form-control search-input"   id="cacheKey"   placeholder="缓存KEY">
+					               <span class="input-group-btn search-span">
+					               <button type="button" class="btn btn-info"   onclick='getCache();' >查询缓存</button>
+					                 <button type="button" class="btn btn-info"style="left: 20px" onclick='clearCacheBatch();' >批量清除缓存</button>
+					                </span>	
+					       </div>      
+				  </div>
+			    </div>	
+		  </div>	
+	      </div>	    
+		 <div class="wrapper">
+			<div class="row mt20">
+				<div class="col-md-12">
+					 
+				</div>
+			</div>
+			
+			<div class="wrapper">
+		      <textarea id="cacheContent"  style="width:1000px;height:400px";>
+		      
+		      </textarea>
+		<div>
+	</body>
+			<script type="text/javascript">
+			  function  getCache(){
+			      var  cacheKey=$("#cacheKey").val();
+			       if(!cacheKey){
+			        layer.msg("请输入查询缓存的KEY" ,
+			             {
+							icon: 2,
+							shadeClose: true
+						});
+						return;
+			       }//if
+			      $.ajax({
+			        url:  "${getCacheUrl!}"+ cacheKey,
+			        type: 'POST',
+			        success:function(data){
+			           var msg="";
+				        if(data.result){
+				           msg ="查询缓存成功";
+				           $("#cacheContent").html(JSON.stringify(data.data));
+				           }else{
+				            msg=data.msg;
+				           }
+				         layer.msg(msg ,
+				             {
+								icon: 1,
+								shadeClose: false
+							});
+				       }//success
+			        });//ajax;
+			    }
+			    
+		    function clearCacheBatch(){
+			    var  prefix=$("#cacheKey").val();
+			    if(!prefix){
+			        layer.msg("请输入批量清除的缓存前缀" ,
+			             {
+							icon: 2,
+							shadeClose: true
+						});
+						return;
+			       }
+			       var thisUrl="${clearCacheBatchUrl!}"+prefix ;
+			    
+			      clearCache(thisUrl,"批量清除缓存成功")
+			    }
+			       /**
+			     * 异步提交共用函数
+			     * @param reqUrl 请求URL
+			     * @param  successMsg 成功提示
+			     */
+			    function  clearCache(reqUrl,successMsg){
+			        $.ajax({
+			        url:reqUrl,
+			        type: 'POST',
+			        success:function(){
+			            layer.msg(successMsg ,
+			             {
+							icon: 1,
+							shadeClose: true
+						});
+			        }
+			    });
+			    }
+			</script>
+</html>

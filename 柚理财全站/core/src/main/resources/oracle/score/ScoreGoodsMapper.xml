@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.score.mapper.ScoreGoodsMapper">
+	<resultMap type="com.rd.ifaes.core.score.domain.ScoreGoods" id="scoreGoodsResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="goodsName" column="GOODS_NAME"/>
+		<result property="goodsCategoryId" column="GOODS_CATEGORY_ID"/>
+		<result property="exchangeLimit" column="EXCHANGE_LIMIT"/>
+		<result property="status" column="STATUS"/>
+		<result property="saleTime" column="SALE_TIME"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="createOperatorId" column="CREATE_OPERATOR_ID"/>
+		<result property="updateTime" column="UPDATE_TIME"/>
+		<result property="updateOperatorId" column="UPDATE_OPERATOR_ID"/>
+		<result property="costPrice" column="COST_PRICE"/>
+		<result property="marketPrice" column="MARKET_PRICE"/>
+		<result property="score" column="SCORE"/>
+		<result property="content" column="CONTENT"/>
+		<result property="goodsAttribute" column="GOODS_ATTRIBUTE"/>
+		<result property="isVirtual" column="IS_VIRTUAL"/>
+		<result property="remark" column="REMARK"/>
+		<result property="verifyOperatorId" column="VERIFY_OPERATOR_ID"/>
+		<result property="verifyRemark" column="VERIFY_REMARK"/>
+		<result property="verifyTime" column="VERIFY_TIME"/>
+		<result property="recommend" column="RECOMMEND"/>
+		<result property="lessNum" column="LESS_NUM"/>
+		<result property="ruleId" column="RULE_ID"/>
+		<result property="virtualType" column="VIRTUAL_TYPE"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		GOODS_NAME,
+		GOODS_CATEGORY_ID,
+		EXCHANGE_LIMIT,
+		STATUS,
+		SALE_TIME,
+		CREATE_TIME,
+		CREATE_OPERATOR_ID,
+		UPDATE_TIME,
+		UPDATE_OPERATOR_ID,
+		COST_PRICE,
+		MARKET_PRICE,
+		SCORE,
+		CONTENT,
+		GOODS_ATTRIBUTE,
+		IS_VIRTUAL,
+		REMARK,
+		VERIFY_OPERATOR_ID,
+		VERIFY_REMARK,
+		VERIFY_TIME,
+		RECOMMEND,
+		RULE_ID,
+		VIRTUAL_TYPE
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{goodsName},
+		#{goodsCategoryId},
+		#{exchangeLimit},
+		#{status},
+		#{saleTime},
+		#{createTime},
+		#{createOperatorId},
+		#{updateTime},
+		#{updateOperatorId},
+		#{costPrice},
+		#{marketPrice},
+		#{score},
+		#{content},
+		#{goodsAttribute},
+		#{isVirtual},
+		#{remark},
+		#{verifyOperatorId},
+		#{verifyRemark},
+		#{verifyTime},
+		#{recommend},
+		#{ruleId},
+		#{virtualType}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and goods.UUID = #{uuid}</if>
+            <if test="goodsCategoryId != null and goodsCategoryId != ''">and goods.goods_category_id = #{goodsCategoryId}</if>
+            <if test="keywords != null and keywords != ''">and goods.goods_name like concat('%',#{keywords},'%') </if>
+        	<if test="status != null and status != ''">and goods.STATUS = #{status}</if>
+        	<if test="startTime != null and startTime != ''">and goods.CREATE_TIME &gt;= #{startTime}</if>
+        	<if test="endTime != null and endTime != ''">and goods.CREATE_TIME &lt;= #{endTime}</if>
+       		<if test="scoreMin != null and scoreMin != ''">and goods.SCORE &gt;= #{scoreMin}</if>
+        	<if test="scoreMax != null and scoreMax != ''">and goods.SCORE &lt; #{scoreMax}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort==null or page.sort==''">
+        	order by goods.UPDATE_TIME  DESC
+        </if>
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.score.domain.ScoreGoods">
+		insert into score_goods( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">	
+		BEGIN	
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into score_goods( <include refid="table_columns" /> ) 
+		values 
+		( 
+			#{item.uuid},
+			#{item.goodsName},
+			#{item.goodsCategoryId},
+			#{item.exchangeLimit},
+			#{item.status},
+			#{item.saleTime},
+			#{item.createTime}
+			#{item.createOperatorId},
+			#{item.updateTime},
+			#{item.updateOperatorId},
+			#{item.costPrice},
+			#{item.marketPrice},
+			#{item.score},
+			#{item.content}
+			#{item.goodsAttribute},
+			#{item.isVirtual},
+			#{item.remark},
+			#{item.verifyOperatorId},
+			#{item.verifyRemark},
+			#{item.verifyTime},
+			#{item.recommend},
+			#{item.ruleId},
+			#{item.virtualType}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from score_goods
+		where uuid = #{uuid}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from score_goods 
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</delete>
+
+	<update id="update" parameterType="com.rd.ifaes.core.score.domain.ScoreGoods">
+		update score_goods 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="goodsName !=null and goodsName !='' ">goods_name = #{goodsName}, </if>
+			<if test="goodsCategoryId !=null and goodsCategoryId !='' ">goods_category_id = #{goodsCategoryId}, </if>
+			<if test="exchangeLimit !=null and exchangeLimit !='' ">exchange_limit = #{exchangeLimit}, </if>
+			<if test="status !=null and status !='' ">status = #{status}, </if>
+			<if test="saleTime !=null and saleTime !='' ">sale_time = #{saleTime}, </if>
+			<if test="createTime !=null and createTime !='' ">create_time = #{createTime}, </if>
+			<if test="createOperatorId !=null and createOperatorId !='' ">create_operator_id = #{createOperatorId}, </if>
+			<if test="updateTime !=null and updateTime !='' ">update_time = #{updateTime}, </if>
+			<if test="updateOperatorId !=null and updateOperatorId !='' ">update_operator_id = #{updateOperatorId}, </if>
+			<if test="costPrice !=null and costPrice !='' ">cost_price = #{costPrice}, </if>
+			<if test="marketPrice !=null and marketPrice !='' ">market_price = #{marketPrice}, </if>
+			<if test="score !=null and score !='' ">score = #{score}, </if>
+			<if test="content !=null and content !='' ">content = #{content}, </if>
+			<if test="goodsAttribute !=null and goodsAttribute !='' ">goods_attribute = #{goodsAttribute}, </if>
+			<if test="isVirtual !=null and isVirtual !='' ">is_virtual = #{isVirtual}, </if>
+			<if test="remark !=null and remark !='' ">remark = #{remark}, </if>
+			<if test="verifyOperatorId !=null and verifyOperatorId !='' ">verify_operator_Id = #{verifyOperatorId}, </if>
+			<if test="verifyRemark !=null and verifyRemark !='' ">verify_remark = #{verifyRemark}, </if>
+			<if test="verifyTime !=null and verifyTime !='' ">verify_time = #{verifyTime}, </if>
+			<if test="recommend !=null and recommend !='' ">recommend = #{recommend}, </if>
+			<if test="ruleId !=null and ruleId !='' ">rule_id = #{ruleId}, </if>
+			<if test="virtualType !=null and virtualType !='' ">virtual_type = #{virtualType} </if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="scoreGoodsResultMap">
+        select <include refid="table_columns" />
+        from score_goods
+    </select>
+	
+	<select id="findList" resultMap="scoreGoodsResultMap">
+        select 
+        	goods.UUID,
+			goods.GOODS_NAME,
+			goods.GOODS_CATEGORY_ID,
+			goods.EXCHANGE_LIMIT,
+			goods.STATUS,
+			goods.SALE_TIME,
+			goods.CREATE_TIME,
+			goods.CREATE_OPERATOR_ID,
+			goods.UPDATE_TIME,
+			goods.UPDATE_OPERATOR_ID,
+			goods.COST_PRICE,
+			goods.MARKET_PRICE,
+			goods.SCORE,
+			goods.CONTENT,
+			goods.GOODS_ATTRIBUTE,
+			goods.IS_VIRTUAL,
+			goods.REMARK,
+			goods.VERIFY_OPERATOR_ID,
+			goods.VERIFY_REMARK,
+			goods.VERIFY_TIME,
+			goods.RECOMMEND,
+			goods.RULE_ID,
+			goods.VIRTUAL_TYPE,
+			sgc.GOODS_CATEGORY_NAME goodsCategoryName,
+			sgp.PIC_PATH picSmall,
+			sgs.store store,
+			(sgs.store-sgs.freeze_store-sgs.sold_amount) less_num
+        from 
+        	score_goods goods 
+        left join 
+        	score_goods_category sgc 
+        on 
+        	goods.goods_category_id = sgc.uuid
+        left join
+        	score_goods_store sgs
+        on
+        	goods.uuid = sgs.goods_id
+        left join
+        	score_goods_pic sgp 
+        on 
+        	sgp.goods_id = goods.uuid and sgp.pic_type=1 
+        <include refid="page_where" />
+    </select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from score_goods
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="scoreGoodsResultMap" parameterType="String" >
+		select 
+        	goods.UUID,
+			goods.GOODS_NAME,
+			goods.GOODS_CATEGORY_ID,
+			goods.EXCHANGE_LIMIT,
+			goods.STATUS,
+			goods.SALE_TIME,
+			goods.CREATE_TIME,
+			goods.CREATE_OPERATOR_ID,
+			goods.UPDATE_TIME,
+			goods.UPDATE_OPERATOR_ID,
+			goods.COST_PRICE,
+			goods.MARKET_PRICE,
+			goods.SCORE,
+			goods.CONTENT,
+			goods.GOODS_ATTRIBUTE,
+			goods.IS_VIRTUAL,
+			goods.REMARK,
+			goods.VERIFY_OPERATOR_ID,
+			goods.VERIFY_REMARK,
+			goods.VERIFY_TIME,
+			goods.RECOMMEND,
+			goods.RULE_ID,
+			goods.VIRTUAL_TYPE,
+			sgc.GOODS_CATEGORY_NAME goodsCategoryName,
+			sgp.PIC_PATH picSmall,
+			(sgs.store-sgs.freeze_store-sgs.sold_amount) lessNum
+        from 
+        	score_goods goods 
+        left join 
+        	score_goods_category sgc 
+        on 
+        	goods.goods_category_id = sgc.uuid 
+        left join
+        	score_goods_store sgs
+        on
+        	goods.uuid = sgs.goods_id
+        left join
+        	score_goods_pic sgp 
+        on 
+        	sgp.goods_id = goods.uuid
+		where 
+			goods.uuid = #{id} and sgp.pic_type=1
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<select id="findVerifyGoods" resultMap="scoreGoodsResultMap">
+		select 
+        	goods.UUID,
+			goods.GOODS_NAME,
+			goods.GOODS_CATEGORY_ID,
+			goods.EXCHANGE_LIMIT,
+			goods.STATUS,
+			goods.SALE_TIME,
+			goods.CREATE_TIME,
+			goods.CREATE_OPERATOR_ID,
+			goods.UPDATE_TIME,
+			goods.UPDATE_OPERATOR_ID,
+			goods.COST_PRICE,
+			goods.MARKET_PRICE,
+			goods.SCORE,
+			goods.CONTENT,
+			goods.GOODS_ATTRIBUTE,
+			goods.IS_VIRTUAL,
+			goods.REMARK,
+			goods.VERIFY_OPERATOR_ID,
+			goods.VERIFY_REMARK,
+			goods.VERIFY_TIME,
+			goods.RECOMMEND,
+			goods.RULE_ID,
+			goods.VIRTUAL_TYPE,
+			sgc.GOODS_CATEGORY_NAME goodsCategoryName
+        from 
+        	score_goods goods 
+        left join 
+        	score_goods_category sgc 
+        on 
+        	goods.goods_category_id = sgc.uuid 
+        <include refid="page_where" />
+	</select>
+	
+	<select id="findSaleGoods" resultMap="scoreGoodsResultMap">
+		select 
+        	goods.UUID,
+			goods.GOODS_NAME,
+			goods.GOODS_CATEGORY_ID,
+			goods.EXCHANGE_LIMIT,
+			goods.STATUS,
+			goods.SALE_TIME,
+			goods.CREATE_TIME,
+			goods.CREATE_OPERATOR_ID,
+			goods.UPDATE_TIME,
+			goods.UPDATE_OPERATOR_ID,
+			goods.COST_PRICE,
+			goods.MARKET_PRICE,
+			goods.SCORE,
+			goods.CONTENT,
+			goods.GOODS_ATTRIBUTE,
+			goods.IS_VIRTUAL,
+			goods.REMARK,
+			goods.VERIFY_OPERATOR_ID,
+			goods.VERIFY_REMARK,
+			goods.VERIFY_TIME,
+			goods.RECOMMEND,
+			goods.RULE_ID,
+			goods.VIRTUAL_TYPE,
+			sgs.store store,
+			sgc.GOODS_CATEGORY_NAME goodsCategoryName
+        from 
+        	score_goods goods 
+        left join 
+        	score_goods_category sgc 
+        on 
+        	goods.goods_category_id = sgc.uuid 
+        left join
+        	score_goods_store sgs
+        on
+        	goods.uuid = sgs.goods_id
+         <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="keywords != null and keywords != ''">and goods.goods_name like concat('%',#{keywords},'%') </if>
+        	<if test="status != null and status != ''">and STATUS = #{status}</if>
+        	<if test="status ==null or status==''"> and goods.status in (1,3,4) </if> 
+        	<if test="startTime != null and startTime != ''">and goods.CREATE_TIME &gt;= #{startTime}</if>
+        	<if test="endTime != null and endTime != ''">and goods.CREATE_TIME &lt;= #{endTime}</if>
+       		<if test="scoreMin != null and scoreMin != ''">and goods.SCORE &gt;= #{scoreMin}</if>
+        	<if test="scoreMax != null and scoreMax != ''">and goods.SCORE &lt; #{scoreMax}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort==null or page.sort==''">
+        	order by (case when goods.status in(1,4) then 1 else 0 end) DESC,goods.status ASC,goods.update_time DESC
+        </if>
+	</select>
+	<select id="findBestseller" resultMap="scoreGoodsResultMap" parameterType="String">
+		select 
+        	goods.UUID,
+			goods.GOODS_NAME,
+			goods.GOODS_CATEGORY_ID,
+			goods.EXCHANGE_LIMIT,
+			goods.STATUS,
+			goods.SALE_TIME,
+			goods.COST_PRICE,
+			goods.MARKET_PRICE,
+			goods.SCORE,
+			goods.CONTENT,
+			goods.GOODS_ATTRIBUTE,
+			goods.IS_VIRTUAL,
+			goods.REMARK,
+			goods.RECOMMEND,
+			goods.RULE_ID,
+			goods.VIRTUAL_TYPE,
+			sgc.GOODS_CATEGORY_NAME goodsCategoryName,
+			(sgs.STORE-sgs.FREEZE_STORE-sgs.SOLD_AMOUNT) lessNum,
+			sgp.PIC_PATH picSmall
+        from 
+        	score_goods goods 
+        inner join 
+        	score_goods_category sgc 
+        on 
+        	goods.goods_category_id = sgc.uuid 
+        inner join
+        	score_goods_store sgs
+        on 
+        	sgs.goods_id = goods.uuid 
+        inner join
+        	score_goods_pic sgp 
+        on 
+        	sgp.goods_id = goods.uuid
+        where
+        	goods.status=3 and sgp.pic_type=1
+        	<if test="goodsCategoryId !=null and goodsCategoryId !='' ">and goods.GOODS_CATEGORY_ID = #{goodsCategoryId} </if>
+        order by
+        	goods.RECOMMEND DESC,sgs.SOLD_AMOUNT DESC
+        limit ${countLimit}  
+	</select>
+	
+	
+</mapper>

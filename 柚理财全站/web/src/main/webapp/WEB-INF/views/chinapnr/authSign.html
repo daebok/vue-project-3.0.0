@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>授权跳转页面</title>
+</head>
+<body>
+<div align="center">授权页面跳转中，请不要关闭页面...</div>
+	<form action="${authSign.ufxSubmitUrl!}" method="post" id="frm1" style="display: none;">
+		<input type="hidden" value="${authSign.service!}" name="service" />
+		<input type="hidden" value="${authSign.orderNo!}" name="orderNo" />
+		<input type="hidden" value="${authSign.ufxCustomerId!}" name="ufxCustomerId" />
+		<input type="hidden" value="${authSign.businessWay!}" name="businessWay" />
+		<input type="hidden" value="${authSign.signInfo!}" name="signInfo" />
+		<input type="hidden" value="${authSign.userCustId!}" name="userCustId" />
+		<input type="hidden" value="${authSign.userAccId!}" name="userAccId" />
+		<input type="hidden" value="${authSign.authOption!}" name="authOption" />
+		<input type="hidden" value="${authSign.serviceTypes!}" name="serviceTypes" />
+		<input type="hidden" value="${authSign.reqExt!}" name="reqExt" />
+		<input type="hidden" value="${authSign.merPriv!}" name="merPriv" />
+		<input type="hidden" value="${authSign.returnUrl!}" name="returnUrl" />
+		<input type="hidden" value="${authSign.notifyUrl!}" name="notifyUrl" />
+	</form>
+	<script language="javascript">
+		document.getElementById("frm1").submit();
+	</script>
+</body>
+</html>

@@ -1,0 +1,270 @@
+@import (reference)'../../../style/common.less';
+.header-from{
+  .fl();
+  padding: 30px 30px 0;
+  height: 360px;
+  background-image:-webkit-linear-gradient(to right, #ff794e, #ffb131);
+  background-image:linear-gradient(to right,#ff794e, #ffb131);
+  .progress{
+    height:6px;
+    line-height: 6px;
+    font-size: 0;
+    background-color: #e64b38;
+    border-radius: 10px;
+    s{
+      display: block;
+      height: 6px;
+      font-size: 0;
+      line-height: 6px;
+      background-color: #fff;
+      border-radius: 10px;
+    }
+  }
+  .has-error .ant-form-explain, .has-error .ant-form-split{color:#fff;}
+  .ant-form-explain, .ant-form-extra{color: #fff;}
+  .max{
+    &:extend(.f14);
+    color: #fff;
+    line-height: 30px;
+    height: 30px;
+    .max-number{
+      .f14();        
+      .fr(); 
+    }
+  }
+  .surplus{
+    color: #fff;
+    line-height: 30px;
+    &:extend(.f14);        
+    s{
+      &:extend(.fr);
+      text-decoration: none;          
+    }
+  }
+  .ant-input-number{
+    width: 100%;
+    height: 42px;
+  }
+  .ant-input-number-lg {
+    .ant-input-number-input-wrap{
+      height: 42px;
+    }
+    input{
+      height: 42px;
+      line-height: 42px;
+    }
+  }
+  .instantManageMoney-hasunit{
+    .unit{
+      right: 30px;
+    }
+    .ant-input-number-lg {
+      .ant-input-number-handler-wrap{
+        height: 42px;
+      }
+      .ant-input-number-handler-up,.ant-input-number-handler-up:hover{
+        height: 21px;
+      }
+      .ant-input-number-handler-down-inner{
+        bottom: -4px;
+      }
+    }
+  }  
+  .form-detail{
+    padding: 20px 0 0;
+    position: relative;
+    height: 290px;
+    .ant-form-item{
+      margin-bottom: 15px;
+      .ant-form-explain{
+        display: inline-block;
+        margin-top: 5px;
+        width: auto;
+        padding: 5px 10px;
+        background-color: #fff7e7;
+        color: #c3861c;
+        border-radius: 3px;
+      }
+    }
+    .show-income{
+      font-size: 16px;
+      color: #fff;
+      p{
+        span.tit{
+          width: 75px;
+          display: inline-block;
+        }
+        i{
+          margin-left: 3px;
+        }
+      }
+    }
+    
+    .btn-instant{
+      position: absolute;
+      left: 0;
+      bottom: 40px;
+      .subBtn{
+        display: block;
+        width: 270px;
+        height: 44px;
+        background: none !important;
+        line-height: 36px;
+        text-align: center;
+        font-size: 20px;
+        color: #fff;
+        border: 1px solid #fff;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        &:hover{
+          color:@color-main;
+          background-color: #fff !important;
+        }
+      }
+    }
+    .submitdom{
+      a{
+        display: block;
+        width: 270px;
+        height: 44px;
+        line-height: 44px;
+        text-align: center;
+        font-size: 16px;
+        color: @color-main;
+        background-color: #fff;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        box-shadow: 0 0 10px rgba(163, 37, 36, 0.1);
+        &:hover{
+          /*color:@color-main;
+          background-color: #fff !important;*/
+        }
+      }
+    }
+  }
+  .picBox{
+    padding-top: 18px;
+    text-align: center;
+    span.iconfont{
+      font-size: 44px;
+      color: #fff;
+    }
+    .text{
+      .f16();
+      color: #fff;
+    }
+  }  
+  .from-picBox{
+    height: 200px;
+  }
+  .investFrame-side{
+    height: 394px;
+    position: relative;
+    .text-list{
+      li{
+        margin-bottom: 46px;
+        span.tit{
+          display: block;
+          font-size: 14px;
+          color: #fff;
+        }
+        strong{
+          margin-top: 10px;
+          display: block;
+          font-size: 30px;
+          font-weight: 100;
+          color: #fff;
+        }
+        p{
+          margin-top: 10px;
+          font-size: 30px;
+          color: #fff;
+          em{
+            .f14();
+            font-style: initial;
+          }
+        }
+      }
+    }
+    .btns-box{
+      width: 100%;
+      position: absolute;
+      bottom: 40px;
+      text-align: center;
+      .txt{
+        .f12();
+        color: #fff;
+      }
+      .btn{
+        margin-top: 20px;
+        display: block;
+        width: 270px;
+        height: 44px;
+        line-height: 44px;
+        font-size: 20px;
+        font-weight: 100;
+        color: #fff;
+        border: 1px solid #fff;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+      }
+    }
+  }
+  .investFrame-list{
+    padding-top: 64px;
+    text-align: center;
+    span.iconfont{
+      font-size: 44px;
+      color: #fff;
+    }
+    .txt1{
+      .f16();
+      color: #fff;
+    }
+    .btn{
+      margin-top: 20px;
+      display: block;
+      width: 270px;
+      height: 44px;
+      line-height: 44px;
+      font-size: 20px;
+      font-weight: 100;
+      color: #fff;
+      border: 1px solid #fff;
+      -webkit-border-radius: 3px;
+      -moz-border-radius: 3px;
+      border-radius: 3px;
+    }
+    .txt2{
+      margin-top: 15px;
+      .f14();
+      color: #fff;
+      .a-link{
+        color: #9c1415;
+      }
+    }
+  }
+}
+.realPayAmount-pop{
+  .ant-popover-arrow{
+    left: 15% !important;
+  }
+  .ant-popover-inner{
+    background:rgba(0,0,0,0.1);
+  }
+  .ant-popover-inner-content{
+    color: #fff;
+  }
+}
+
+.ant-input,.ant-input:focus,.ant-input:hover,.has-success .ant-input:not([disabled]):hover {
+  border-color:none!important;
+  line-height: normal;
+  border-radius: 4px;
+  box-shadow: none;
+  color: #333;
+  font-size: 20px
+}

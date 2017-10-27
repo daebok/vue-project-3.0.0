@@ -1,0 +1,231 @@
+@import (reference)'../../style/common.less';
+@import '../../style/tag.less';
+.invest-detail{
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+.help-text{
+  font-size: 16px;
+  color: #fff;
+  display: block;
+  text-align: center;
+  padding: 0 0 17px;
+  .iconfont{
+    display: block;
+    color: #fff;
+    font-size: 42px;
+    margin: 0 0 0 -10px;
+  }
+}
+.invest-detail-header{
+  height:435px;  
+  .invest-header-info{
+    background-color: #fff;
+    height: 434px;
+    &:extend(.fl);
+    margin: 0;
+    width: 850px;
+    border-top: 4px solid #ff5a68;
+    .info-title{
+      line-height: 100px;
+      padding: 0 50px;
+      overflow: hidden;
+      border-bottom:solid 1px @cololr-bodybg; 
+      .title-name{
+        &:extend(.fl);
+        color:@color-title;
+        font-size: 22px;
+        max-width: 500px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        position: relative;
+        .bottom-name {
+          position: absolute;
+          left: 36px;
+          top: 23px;
+          color: #999;
+          font-size: 14px;
+        }
+        .iconfont{
+          color:@color-main;
+          &:extend(.f20);
+          margin: 0 16px 0 0;
+        }
+      }
+      .protocol{
+        &:extend(.fr);
+        &:extend(.f14);
+        color: #41a6ed;
+      }
+    }
+    .info-main{
+      height: 200px;
+      padding-left: 80px;
+      border-bottom:solid 1px @cololr-bodybg;
+      ul{
+        li{
+          &:extend(.fl);
+          margin-top:48px;
+        }
+        s{
+          text-decoration: none;
+          &:extend(.f14);
+          color:#aaa;
+          display: block;
+          margin: 0 0 0 8px;
+        }
+        .profit{
+          width: 320px;
+          font-size: 30px;
+          color:@color-main;                  
+          span.text{
+            font-size: 60px;
+          }
+          s{
+            margin-top: -8px;
+          }
+        }
+        .time{
+          width: 200px;
+          font-size: 20px;
+          color:@color-main;
+          margin:70px 0 0 0;          
+          span.text{
+            font-size: 40px;
+          }
+        }
+        .min{
+          width: 200px;
+          font-size: 20px;
+          margin-top: 70px;
+          color:@color-p;
+          span.text{
+            font-size: 40px;
+          }          
+        }
+      } 
+    }
+    .info-basic{
+      padding:20px 0 0 50px;
+      ul{
+        overflow: hidden;
+        li{
+          line-height: 32px;
+          height:32px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          &:extend(.fl);
+          width: 250px;
+          &:extend(.f14);
+          color: @color-p;
+          span.title{
+            display: inline-block;
+            width: 68px;
+            color:@color-text;
+          }          
+        }
+      }
+    }
+  }  
+}
+.invest-main{
+  margin-top:20px; 
+  .invest-main-nav{      
+      min-height: 350px;    
+      background-color: #fff;
+      .noLoginText{
+        margin: 120px auto 0;
+        text-align: center;
+        a{
+          margin: 0 5px;
+          .f16();
+          color: @color-main;
+        }
+      }
+      .ant-tabs-bar{
+        margin-bottom: 0;
+        border-bottom: 1px solid @color-tipsbg;
+      }
+      .ant-tabs-nav .ant-tabs-tab{
+        margin-right: 0;
+        width: 150px;
+        height: 50px;
+        margin-left: -1px;
+        line-height: 35px;
+        text-align: center;
+        .ant-tabs-tab-inner{
+          color: #333;
+          .f16();
+        }
+      }
+      .account-tab();
+      .ant-tabs-tab-active{
+        background-color: #fff;
+        border-left: 1px solid @color-tipsbg;
+        border-right: 1px solid @color-tipsbg;
+      }
+      .ant-tabs-ink-bar{
+        top:0
+      }
+      .invest-detail-nav{
+        height: 50px;
+        &:extend(.fl);
+        li{
+          width: 150px;
+          text-align: center;
+          line-height:50px;
+          height: 50px;
+          cursor: pointer;
+          &:extend(.fl);
+          font-size: 16px;
+          color:@color-title;
+          border-right:solid 1px @color-tipsbg;
+          border-bottom:solid 1px @color-tipsbg;
+          &.on{
+          border-right:solid 1px @color-tipsbg;
+          border-top:solid 2px @color-main;
+          border-bottom:solid 1px #fff;
+          position: relative;
+          color: @color-main;
+          background-color: #fff;           
+          } 
+        }
+      }    
+    }
+    .invest-main-cont{
+      background-color: #fff;
+      min-height: 400px;
+      padding:20px 50px 0;
+      .module{
+        dt{
+          &:extend(.f18);
+          color:@color-title;
+          line-height: 60px;
+          border-bottom:solid 1px @color-tipsbg;
+        }
+        dd{
+          min-height: 100px;
+        }
+      } 
+    }
+}
+.detail-info {
+  padding-left: 50px;
+  label{
+    color: #999;
+    font-size: 14px;
+    float: left;
+    padding-right: 10px;
+  }
+}
+.ant-input:focus, .ant-input:hover, .has-success .ant-input:not([disabled]):hover {
+    border-color: #fff;
+    box-shadow: none;
+}
+
+.has-error .ant-input {
+    border-color: #f50;
+    box-shadow: none;
+}

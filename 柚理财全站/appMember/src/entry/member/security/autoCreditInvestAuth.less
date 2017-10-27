@@ -1,0 +1,79 @@
+@import  (reference)'../../../style/common.less';
+@import '../../../style/account.less';
+.account-content{
+  .submit-button{
+    .form-button(@padding: 0px,@width: 280px,@fontsize: 16px,@lineheight:40px);
+    background-image:-webkit-linear-gradient(to right, #ff794e, #ffb131);
+      background-image:linear-gradient(to right,#ff794e, #ffb131);
+      border: none;
+      border-radius: 5px;
+  }
+  .form-themes{
+    margin:17px 0 0 150px;
+  }
+  .remind{
+    line-height: 77px;
+    .f14();
+    color: #aaa;
+    em{
+      color: #66bef5;
+      vertical-align:middle;
+      margin-right: 6px;
+      padding: 0 0 0 170px;
+    }
+  }
+}
+.payaccount{
+    font-size: 18px;
+    padding: 30px 0px;
+    line-height: 30px;
+    text-align: center;
+  em{
+    font-size: 26px;
+    margin: 0 10px 0 0;
+    vertical-align: middle;    
+  }
+}
+
+.ant-modal-footer {
+    border-top: none;
+    padding: 0 0px 40px;
+    text-align: center;
+    button{
+      margin-right: 20px;
+    }
+}
+.ant-modal-content {
+    .ant-btn{
+      line-height: 36px
+    }
+    .ant-btn-lg{
+      padding: 0 15px;
+    }
+}
+.ant-modal-footer button + button {
+  margin-left: 0;
+  margin-bottom: 0;
+}
+
+p.txt{    
+  height: 42px;
+  line-height: 42px;
+  .f14();
+  font-weight: bold;
+}
+
+.countdown-btn{
+  width: 130px;
+  height: 40px;
+  border:1px solid #eaeaea;
+  background-color: #fafafa;
+  text-align: center;
+  line-height: 40px;
+  .border-radius(); 
+}
+.ant-select-selection--single{
+  padding: 6px 0;
+  height: 42px;
+  font-size: 14px;
+}

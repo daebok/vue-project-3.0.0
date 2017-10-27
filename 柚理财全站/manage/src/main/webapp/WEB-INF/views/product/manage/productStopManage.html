@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>下架管理</title>
+		<#include "include/resources.html">
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入产品名称">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/product/manage/productStopList.html">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form>
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							    <li class="input-group input-group-sm"><span>产品名称</span><input type="text" class="form-control" name="projectName" /></li>
+							    <li class="input-group input-group-sm"><span>产品期限</span><@linkage name="timeCondition" nid="timeCondition" noselect="不限" class="form-control"/> </li>							    
+							    <li class="input-group input-group-sm"><span>还款方式</span><@linkage name="repayStyle" nid="repayStyle"  noselect="全部" class="form-control"/></li>
+							    <li><button class="btn btn-sm btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/product/manage/productStopList.html">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+ 					</div>					
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"  class="table-td-NoOverflow"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+			    <@dictFormatter  type = "interestStyle" />
+				<@dictFormatter  type = "repayStyle" />
+					$(document).ready(function() {												
+						//表格初始化
+						$("#jqGrid").jqTreeGrid({
+							url: '/product/manage/productStopList.html',
+							multiselect:false,				
+							  colModel: [
+			                    { label: 'id', name: 'uuid', width: 65, hidden:true},
+			                    { label: '产品名称', name: 'projectName',index:"borrow_name",width: 40},
+								{ label: '年利率(%)', name: 'apr',index:"apr", width: 15},			
+								{ label: '产品金额', name: 'account',index:"account",  width: 20},
+								{ label: '募集期(天)', name: 'raiseTimeLimit',index:"raise_time_limit",  width: 20},
+								{ label: '产品期限', name: 'timeLimit',index:"time_limit", width: 15,sortable:false,  formatter: function(val, options, rowObject){	
+						            		   if (rowObject.timeType == 1){
+							  						return val + "天";
+							  					} else {
+							  						return val + "个月";
+							  					}
+						              }},
+								{ label: '计息方式', name: 'interestStyle',index:"interest_style", width: 20, formatter: interestStyleFormatter},
+								{ label: '还款方式', name: 'repayStyle',index:"repay_style", width: 20, formatter: repayStyleFormatter},
+								{ label: '其他信息', name: 'others',sortable:false,width : 25, title : false, align : "center",formatter : function(value, options,rowObject) {
+										var content = '<a href="javascript:void(0);" class="j-showInfo">其他信息</a>'
+												+ '<div class="showInfoSingleDiv">'
+												+ '<div class="showInfo">'
+												+ '<ul>';
+												if(rowObject.saleStyle && rowObject.saleStyle == 2){
+													content+= '<li>'
+												+ '<span>最低起投份数：</span>'
+												+ (rowObject.lowestCopies ? rowObject.lowestCopies : "--" )
+												+ '</li>'
+												+ '<li>'
+												+ '<span>最高投资份数：</span>'
+												+ (rowObject.mostCopies?rowObject.mostCopies  : rowObject.totalCopies)
+												+ '</li>'
+												+ '<li>'
+												+ '<span>总份数：</span>'
+												+ rowObject.totalCopies
+												+ '</li>'
+												}else{
+												content+= '<li>'
+												+ '<span>最低起投金额：</span>'
+												+  (rowObject.lowestAccount? rowObject.lowestAccount+"元" : "--")
+												+ '</li>'
+												+ '<li>'
+												+ '<span>递增金额：</span>'
+												+ ( rowObject.stepAccount ? rowObject.stepAccount+"元" : "--")
+												+ '</li>'
+												+ '<li>'
+												+ '<span>最高投资金额：</span>'
+												+ ( rowObject.mostAccount ? rowObject.mostAccount +"元" : "--")
+												+ '</li>'
+												}
+												content+= '</ul></div></div>';
+										return content;
+									}},
+								{ label: '上架时间', name: 'showTime',index:"show_time", width: 25, formatter: datetimeFormatter},
+								{ label: '投资进度(%)', name: 'scales',sortable:false,width: 25,formatter : function(val, options,rowObject) {
+										return (val?val:0) ;
+									}},
+								{ label: '操作', name: '',sortable:false,width: 20,formatter:function(val, options, rowObject){	
+								   var id = rowObject.id;
+								   var btn = '';
+								   <@shiro.hasPermission name="project:product:stop:stop">
+								     btn += '<a href="javascript:;" onclick=$.fn.treeGridOptions.lineEditFun(this,"'+id+'") data-tid="jqGrid" data-title="下架" data-url="/product/manage/productStopPage.html">下架</a>';
+								   </@shiro.hasPermission>
+								   return btn
+								}}
+			                ]
+						}) ;			
+					});
+			</script>
+		</div>
+	</body>
+</html>

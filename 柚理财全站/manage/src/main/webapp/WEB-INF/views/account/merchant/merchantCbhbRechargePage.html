@@ -1,0 +1,72 @@
+<div class="form-tips-content">
+  <form class="form-horizontal" action="/account/merchant/cbhbMerchantRecharge.html" id="form" role="form">
+        <ul class="form-item">
+            <li>
+                <div class="form-group">
+                    <label for="userName" class="control-label form-label"><span style="color:red;">*</span>账户类型：</label>
+                    <div class="input-box">
+                        <select name="merAccTyp" class="form-control">
+                            <option value="810">营销账户</option>
+                            <option value="820">预付费账户</option>
+                        </select>
+                    </div>
+                </div>               
+            </li>
+            <li>
+                <div class="form-group">
+                    <label for="userName" class="control-label form-label"><span style="color:red;">*</span>充值金额：</label>
+                    <div class="input-box">
+                        <input type="text" name="money" class="form-control" precision="2" required maxlength="12"/>
+                    </div>
+                </div>               
+            </li>            
+        </ul>
+  </form>
+</div>
+<script>
+    $("#form").validate({
+        rules: {
+            money:{
+                required:true,
+                moneyArea:true
+            }
+        },
+        messages:{
+            money:{
+            	required:'金额不能为空',
+                moneyArea:'请输入范围为大于等于0.01小于100000000的数值'
+            }
+        },
+        submitHandler: function(form) {        	
+        	$(form).ajaxSubmit({
+	    		type:"post",
+	    		dataType:"json",
+	    		success:function(data){
+					if (data.result) {
+						layer.alert(data.msg, {
+							icon: 6,
+							cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+						}, function() {
+							layer.closeAll();
+							//刷新当前页面
+							//window.location.href = window.location.href;
+							gridobj.trigger("reloadGrid"); //重新载入  
+						});
+					} else {
+						layer.alert(data.msg, {
+							icon: 5
+						}, function() {
+							layer.closeAll();
+							//刷新当前页面
+							//window.location.href = window.location.href;
+							gridobj.trigger("reloadGrid"); //重新载入  
+						});
+					} 			        	
+		    	}
+	    	});     	
+        }
+    });
+</script>

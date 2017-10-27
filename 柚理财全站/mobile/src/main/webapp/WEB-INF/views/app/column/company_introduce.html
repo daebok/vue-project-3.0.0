@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>融都介绍</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
+    <meta content="telephone=no" name="format-detection" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <!-- <link rel="stylesheet" type="text/css" href="../css/light.css" /> -->
+    <link rel="stylesheet" href="https://unpkg.com/mint-ui/lib/style.css">
+    <link rel="stylesheet" type="text/css" href="${mobileUrl}/themes/app/css/common.css" />
+    <link rel="stylesheet" type="text/css" href="${mobileUrl}/themes/app/css/theme.css" />
+    <link rel="stylesheet" type="text/css" href="${mobileUrl}/themes/app/css/base.css" />
+    <script type="text/javascript" src="${mobileUrl}/themes/app/js/get_client_width.min.js"></script>
+	<script type="text/javascript" src="${mobileUrl}/themes/app/js/jquery-3.1.1.min.js"></script>
+</head>
+<style>
+    .intro{
+        padding: 0 .15rem;
+    }
+    .title-img{
+        text-align: center;
+    }
+    .title-img img{
+        width: 40%;
+    }
+    .intro-content p{
+        font-family: arial;
+        line-height: .24rem;
+        color: #333;
+        text-indent: .28rem;
+    }
+    .intro-content img{
+    	width: 100%;
+    }
+</style>
+<body>
+    <div class="page" id="intro">
+        <mt-header class="bar-nav aui-border-b" title="企业介绍" >
+            <mt-button slot="left" icon="back"></mt-button>
+        </mt-header>
+        <div class="intro">
+            <div class="title-img margin-t-25 margin-b-25">
+                <img src="${mobileUrl}/themes/app/images/me/introduce_logo.png" />
+            </div>
+            <div class="intro-content">
+              ${content!""}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

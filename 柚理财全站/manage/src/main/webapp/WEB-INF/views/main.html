@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>${webBackName!"后台管理-互联网金融资产交易系统"}</title>
+    <#include "include/resources.html">
+        </head>
+        <style>
+            .layui-layer-tips .layui-layer-content{
+                line-height: 35px;
+                border-radius: 0;
+                padding: 5px 20px;
+                opacity: 0.9;
+            }
+            .layui-layer-tips i.layui-layer-TipsL, .layui-layer-tips i.layui-layer-TipsR{
+                top: 16px;
+                border-top: 6px solid transparent !important;
+                border-right: 12px solid #3d4a57 !important;
+                border-bottom: 6px solid transparent !important;
+            }
+            .layui-layer-tips i.layui-layer-TipsR{
+                left: -16px;
+            }
+        </style>
+<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+<div id="wrapper">
+    <!--左侧导航开始-->
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="nav-close"><i class="fa fa-times-circle"></i>
+        </div>
+        <div class="sidebar-collapse">
+            <div class="logo"></div>
+            <div id="side-menu">
+
+            </div>
+        </div>
+    </nav>
+    <!--左侧导航结束-->
+    <!--右侧部分开始-->
+    <div id="page-wrapper" class="gray-bg dashbard-1">
+        <div class="row border-bottom">
+            <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                <div class="navbar-header"><a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="javascript:;"><i class="fa fa-bars"></i> </a>
+                    <div id="topMenu">
+
+                    </div>
+                    <span class="pull-right" style="color: #fff;margin-top: 15px;">${loginUser.loginName!} 欢迎您！<a href="/admin/logout.html" class="roll-nav roll-right J_tabExit"><i class="fa fa fa-sign-out"></i> 退出</a></span>
+                </div>
+            </nav>
+        </div>
+        <div class="row content-tabs">
+            <button class="roll-nav roll-left J_tabLeft"><i class="fa fa-backward"></i>
+            </button>
+            <nav class="page-tabs J_menuTabs">
+                <div class="page-tabs-content">
+                    <a href="javascript:;" class="active J_menuTab" data-id="index_v1.html">首页</a>
+                </div>
+            </nav>
+            <button class="roll-nav roll-right J_tabRight"><i class="fa fa-forward"></i>
+            </button>
+            <div class="btn-group roll-nav roll-right">
+                <button class="dropdown J_tabClose" data-toggle="dropdown">关闭操作<span class="caret"></span>
+
+                </button>
+                <ul role="menu" class="dropdown-menu dropdown-menu-right">
+                    <!-- <li class="J_tabShowActive"><a>定位当前选项卡</a>
+                    </li>
+                    <li class="divider"></li> -->
+                    <li class="J_tabCloseAll"><a>关闭全部选项卡</a>
+                    </li>
+                    <li class="J_tabCloseOther"><a>关闭其他选项卡</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row J_mainContent" id="content-main">
+            <iframe id="j-iframe-main" class="J_iframe" name="iframe0" width="100%" height="100%"  src="index.html" frameborder="0" data-id="index_v1.html" seamless></iframe>
+        </div>
+        <div class="footer">
+            <div class="pull-right">&copy; 融都科技 <a href="http://www.erongdu.com/" target="_blank"> </a>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+
+
+
+<!--   <a href="/admin/logout.html">退出</a>-->
+<!--<h2 id="msg">welcome ${loginOperator.name}!!</h2>
+<h2><@shiro.authenticated>账户已认证!</@shiro.authenticated> </h2>-->
+<!-- <input type="button" onclick="testPost();" /> -->
+
+<div id="menuContainer">
+
+</div>
+
+<input type="hidden" name="currentUserId" id="currentUserId" value="${loginUser.uuid}"/>
+<input type="hidden" id="defaultSelected" value="${defaultSelected}"/>
+<!--<script src="${theme_dir}/static/js/plugins/metisMenu/jquery.metisMenu.js"></script>-->
+<script src="${theme_dir}/static/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="${theme_dir}/static/js/hplus.min.js"></script>
+<script src="${theme_dir}/static/js/contabs.js"></script>
+<script type="text/javascript">
+//    $(function () {
+//        $('#side-menu').metisMenu();
+//    });
+    var rauthMenu  =  ${menuMap};
+    var rauthModel =  ${authModel};
+    var leftMenuStr ="";
+    var topMenustr ="";
+    var defaultSelected = $("#defaultSelected").val();
+    for(var elem in rauthMenu){
+        for(var i=0;i<rauthMenu[elem].length;i++){
+            if(rauthMenu[elem][i].node.icon){
+                var iconval = String(rauthMenu[elem][i].node.icon).replace("&amp;","&");
+            }
+            else{
+                iconval ="";
+            }
+            if(rauthMenu[elem][i].isLeaf!=1){
+                leftMenuStr +="<li><a href='#' class='fistNav'><i class='fa iconfont'>"+iconval+"</i><span class='nav-label'>"+rauthMenu[elem][i].node.name+"</span><span class='fa arrow'></span></a><ul class='nav nav-second-level' style='display: none'>"
+                for(var inElem in rauthMenu[elem][i].childNode ){
+                    if(rauthMenu[elem][i].childNode[inElem].name!=undefined){
+                    leftMenuStr +="<li> <a class='J_menuItem' href='javascript:;'  title='"+rauthMenu[elem][i].childNode[inElem].name+"' id='"+rauthMenu[elem][i].childNode[inElem].id+"' data-href='"+rauthMenu[elem][i].childNode[inElem].url+"' data-index='"+inElem+"'>"+rauthMenu[elem][i].childNode[inElem].name+"</a></li>";}
+                }
+                leftMenuStr +=" </ul></li>";
+            }
+            else{
+                leftMenuStr +="<li><a class='J_menuItem nav' title='"+rauthMenu[elem][i].node.name+"' id='"+rauthMenu[elem][i].node.id+"' style='padding-left:45px;' href='javascript:;' data-href='"+rauthMenu[elem][i].node.url+"'><i class='fa iconfont iconclass'>"+iconval+"</i><span class='nav-label'>"+rauthMenu[elem][i].node.name+"</span></a></li>"
+            }
+        }
+            $('#side-menu').append('<ul class="nav" style="display: none" id='+elem+'>'+leftMenuStr+'</ul>')
+            leftMenuStr=''
+    }
+    for(var elem in rauthModel){
+        if(rauthModel[elem].menuName){
+            if(elem==0){
+                topMenustr +="<a href='javascript:;' class='top-a hover' data-val='"+rauthModel[elem].id+"'>"+rauthModel[elem].menuName+"</a>"
+            }
+            else{
+                topMenustr +="<a href='javascript:;' class='top-a' data-val='"+rauthModel[elem].id+"'>"+rauthModel[elem].menuName+"</a>"
+            }
+        }
+    }
+
+    $('#topMenu').html(topMenustr);
+    var select_id=$('#topMenu a.hover').attr("data-val");
+    $('#'+select_id).show()
+    function setMainHeight(){
+        var bodyHeight = $("body").height(),
+                mainIframe = $("#j-iframe-main"),
+                styleDisplay="";
+        $("#content-main").height(bodyHeight- 140);
+        styleDisplay = mainIframe.css('display') == "none" ? "none" : "block";
+        mainIframe.css({display:styleDisplay,height:bodyHeight- 140});
+    }
+
+    $(function(){
+        setMainHeight();
+        window.onresize = function(){
+            setMainHeight();
+        }
+    });
+    $(document).ready(function() {
+        // Store variables
+        var accordion_head = $('.fistNav'),
+            accordion_body = $('.nav li > .nav-second-level');
+        // Open the first tab on load
+        // Click function
+        accordion_head.on('click', function(event) {
+            // Disable header links
+            event.preventDefault();
+            // Show and hide the tabs on click
+            if ($(this).parent().attr('class') != 'active'){
+                accordion_body.slideUp('normal');
+                $(this).next().stop(true,true).slideToggle('normal');
+                accordion_head.parent().removeClass('active');
+                $(this).parent().addClass('active');
+            }else{
+                $(this).parent().removeClass('active');
+                accordion_body.slideUp('normal');
+            }
+        });
+    });
+
+
+$(document).on("click",'#topMenu a',function(e){
+        $(this).addClass("hover").siblings().removeClass("hover");
+        var id=$(this).attr("data-val")
+       $('#'+id).fadeIn().siblings().hide()
+    })
+    $(document).on('click','#side-menu .nav>li',function () {
+        $('body').removeClass('mini-navbar')
+    })
+
+    $(document).ready(function(){
+        var dd
+        $("#side-menu").on({
+            mouseenter: function(){
+                if($('nav').width()<180){
+                    var that = this;
+                    var text =$(this).find('.nav-label').text()
+                    dd = layer.tips(text, that, {
+                        tips: [2, '#3d4a57'],
+                        time: 0
+                    });
+                }
+            },
+            mouseleave: function(){
+                layer.close(dd)
+            }
+        }, "li");
+
+    });
+</script>
+
+</body>
+</html>

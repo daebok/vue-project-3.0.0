@@ -1,0 +1,31 @@
+<div class="wrapper">
+	<div class="row mt20">
+		<div class="col-md-12">
+			<h3  class="mt10 mb10">菜单树</h3>
+			<div class="treegridbox"  id="tree_tips"></div>
+		</div>
+	</div>
+	<input type="hidden" name="id" id="id" value="${parentId}">
+</div>	
+<script type="text/javascript">
+	$.ajax({
+	   type: "POST",
+	   url: "/sys/menu/getMenuTree.html?parentId="+$("#id").val(),
+	   success: function(tree){     
+			$('#tree_tips').treeview({
+				data: tree,   
+				icon: "glyphicon glyphicon-stop",
+				selectedIcon: "glyphicon glyphicon-stop",
+				color: "#000000",
+				backColor: "#FFFFFF",
+				showTags:true,
+				onNodeSelected: function(e, o) {
+						$("#parentId").val(o.id);
+						$("#parentName").val(o.text);	
+						layer.close($("#parentName").data("index"));				
+				}
+			});
+			
+	   }
+	});
+</script>

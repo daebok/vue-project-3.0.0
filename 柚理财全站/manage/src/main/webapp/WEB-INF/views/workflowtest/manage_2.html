@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>审核</title>
+		<#include "include/resources.html">
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入模板名称或者模板标识">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/sys/logTemplate/list.html">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form>
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							    <li class="input-group input-group-sm"><span>类型</span><@linkage name="logType" nid="logTemplateType" class="form-control" noselect="全部"/></li>
+							    <li><button class="btn btn-sm btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/sys/logTemplate/list.html">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+						<button type="button" class="btn btn-primary" onclick="processVerify()" >审核</button>
+					</div>					
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+			    function processVerify(){
+			    	//$.ajax({url:"/workflowtest/toVerify_1.html",async:false})
+			    }
+			    
+				$(document).ready(function() {												
+					//表格初始化
+					$("#jqGrid").jqTreeGrid({
+						url: '/workflowtest/list.html?status=2',
+						colModel: [{
+							label: "id",
+							name: "id",
+							width: 450,
+						},{
+							label: "标题",
+							name: "title",
+							width: 450,
+						},
+						
+						{
+							label: "processId",
+							name: "processId",
+							width: 450,
+						},{
+							label: "taskId",
+							name: "taskId",
+							width: 450,
+						},
+						{
+							label: "status",
+							name: "status",
+							width: 450,
+						}],
+					}).jqGrid("setFrozenColumns").navGrid('#jqGridPager',
+						// the buttons to appear on the toolbar of the grid
+						{
+							edit: false,
+							add: false,
+							del: false,
+							search: false,
+							refresh: true,
+							view: false,
+							position: "left",
+							cloneToTop: false
+						}
+					);
+					$("#search_btn").click(function() {
+						//此处可以添加对查询数据的合法验证  
+						var orderId = $("#search_input").val();
+						$("#jqGrid").jqGrid("setGridParam", {
+							datatype: "json",
+							postData: {
+								"orderId": orderId
+							}, //发送数据  
+							page: 1
+						}).trigger("reloadGrid"); //重新载入  
+					});
+				});
+			</script>
+		</div>
+	</body>
+</html>

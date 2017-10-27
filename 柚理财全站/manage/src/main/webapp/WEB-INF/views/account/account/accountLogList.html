@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>产品列表</title>
+		<#include "include/resources.html">
+	</head>
+	<style>
+		.layui-layer-loading .layui-layer-loading3{width:200px!important;padding-left: 66px;color: #fff;line-height: 24px;}
+	</style>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入用户名">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" id="keywordsSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/account/account/logList.html">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form id="advSearchForm">
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							    <li class="input-group input-group-sm"><span>用户名</span><input type="text" class="form-control" name="userName" /></li>
+							    <li class="input-group input-group-sm"><span>资金类型</span><@linkage name="accountType" nid="accountType" noselect="不限" class="form-control"/></li>
+							    <li class="input-group input-group-sm"><span>交易对方</span><input type="text" class="form-control" name="toUserName" /></li>		
+							    <li class="input-group input-group-sm"><span>操作时间</span>
+							     <input type="text" name="startTime" id="startTime" class="form-control"placeholder="开始时间"/> 
+							     <input type="text" name="endTime" id="endTime"   class="form-control" placeholder="结束时间"/>  
+							     </li>
+							    <li><button class="btn btn-sm btn-primary" type="button"  id="conditionSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/account/account/logList.html">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+							 <@shiro.hasPermission name="account:accountList:export">
+						     	<a href="javascript:" target="_blank" class="btn btn-info" onclick="exportExcel(this)" data-title='资金记录列表' data-url="/account/account/logExportExcel.html" data-tid="jqGrid">导出</a>
+							</@shiro.hasPermission>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					</div>					
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid" class="table-td-NoOverflow"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+			//设置开始时间控件
+			var startTime= {
+				elem:'#startTime',
+				format: 'YYYY-MM-DD', //日期格式
+				istime: false, //是否开启时间选择
+				max:$('#endTime').val(),
+				event:'focus',
+				choose: function(dates){
+				    endTime.min=dates;
+				    endTime.start=dates;
+				}
+			};
+			
+			//设置发放结束时间
+			var endTime=  {
+					elem:'#endTime',
+					format: 'YYYY-MM-DD', //日期格式
+					istime: false, //是否开启时间选择
+					min: $('#startTime').val(), //最小日期
+					event:'focus',
+					choose: function(dates){
+						startTime.max=dates;
+				   }
+			};
+			laydate(startTime);
+			laydate(endTime);
+			
+			<@dictFormatter type = "accountType" />
+					$(document).ready(function() {												
+						//表格初始化
+						$("#jqGrid").jqTreeGrid({
+							url: '/account/account/logList.html',	
+							  multiselect : false,	
+							  colModel: [
+			                    { label: 'id', name: 'uuid', width: 20, hidden:true},
+			                    { label: '用户名', name: 'userName',index:"user_name",width: 28},
+			                    { label: '用户姓名', name: 'realName',index:"real_name",width: 16},
+								{ label: '类型', name: 'accountType',index:"account_type", width: 15,formatter: accountTypeFormatter},
+			                    { label: '操作金额(元)', name: 'moneyStr',index:"moneyStr",width: 16 },
+			                    { label: '可用余额(元)', name: 'useMoney',index:"use_money",width: 20},
+			                    { label: '冻结余额(元)', name: 'noUseMoney',index:"no_use_money",width: 16},
+								{ label: '收支类型', name: 'paymentsType',index:"payments_type", width: 20,hidden:true,
+									formatter: function(value,index,row){
+				            		   if (value == '0'){
+					  						return "不变";
+					  					} else if (value == '1'){
+					  						return "收入";
+					  					} else if (value == '2'){
+					  						return "支出";
+					  					} else {
+					  						return "不变";
+					  					}
+					  				}
+								
+								},
+								{ label: '操作时间', name: 'createTime',index:"create_time", width: 20,formatter: datetimeFormatter},
+								{ label: '交易对方', name: 'toTppUserCustId',index:"to_tpp_user_cust_id",width: 28,
+									formatter: function(value,row,index){
+										if(index.accountType=='recharge_success_log'||index.accountType=='cash_success'||index.accountType=='cash_fail'||index.accountType=='cash_audit_success'||index.accountType=='cash_audit'
+											||index.accountType=='cash_apply_success'	||index.accountType=='cash_apply'|| index.accountType=='cash_notify_fail' ){
+											return "--";
+											}
+										else return value ;
+										}
+								},
+								{ label: '备注', name: 'remark',index:"remark",width: 40},
+			                ]
+						}) ;			
+					});
+			</script>
+		</div>
+	</body>
+</html>

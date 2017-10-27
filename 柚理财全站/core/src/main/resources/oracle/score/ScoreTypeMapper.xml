@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.score.mapper.ScoreTypeMapper">
+	<resultMap type="com.rd.ifaes.core.score.domain.ScoreType" id="scoreTypeResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="typeName" column="TYPE_NAME"/>
+		<result property="typeCode" column="TYPE_CODE"/>
+		<result property="grantType" column="GRANT_TYPE"/>
+		<result property="grantValue" column="GRANT_VALUE"/>
+		<result property="grantRate" column="GRANT_RATE"/>
+		<result property="grantMin" column="GRANT_MIN"/>
+		<result property="grantMax" column="GRANT_MAX"/>
+		<result property="grantUp" column="GRANT_UP"/>
+		<result property="remark" column="REMARK"/>
+		<result property="status" column="STATUS"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		TYPE_NAME,
+		TYPE_CODE,
+		GRANT_TYPE,
+		GRANT_VALUE,
+		GRANT_RATE,
+		GRANT_MIN,
+		GRANT_MAX,
+		GRANT_UP,
+		REMARK,
+		STATUS
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{typeName},
+		#{typeCode},
+		#{grantType},
+		#{grantValue},
+		#{grantRate},
+		#{grantMin},
+		#{grantMax},
+		#{grantUp},
+		#{remark},
+		#{status}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="typeName != null and typeName != ''">and TYPE_NAME = #{typeName}</if>
+            <if test="typeCode != null and typeCode != ''">and TYPE_CODE = #{typeCode}</if>
+            <if test="grantType != null and grantType != ''">and GRANT_TYPE = #{grantType}</if>
+			<if test="grantValue != null">and GRANT_VALUE = #{grantValue}</if>
+			<if test="grantRate != null">and GRANT_RATE = #{grantRate}</if>
+			<if test="grantMin != null">and GRANT_MIN = #{grantMin}</if>
+			<if test="grantMax != null">and GRANT_MAX = #{grantMax}</if>
+			<if test="grantUp != null">and GRANT_UP = #{grantUp}</if>
+            <if test="remark != null and remark != ''">and REMARK = #{remark}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.score.domain.ScoreType">
+		insert into score_type( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">	
+		BEGIN	
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into score_type( <include refid="table_columns" /> ) 
+		values 
+		( 
+		#{item.uuid},
+				#{item.typeName},
+				#{item.typeCode},
+				#{item.grantType},
+				#{item.grantValue},
+				#{item.grantRate},
+				#{item.grantMin},
+				#{item.grantMax},
+				#{item.grantUp},
+				#{item.remark},
+				#{item.status}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from score_type
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update score_type set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update score_type set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.score.domain.ScoreType">
+		update score_type 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="typeName != null and typeName != ''">TYPE_NAME = #{typeName},</if>
+            <if test="typeCode != null and typeCode != ''">TYPE_CODE = #{typeCode},</if>
+            <if test="grantType != null and grantType != ''">GRANT_TYPE = #{grantType},</if>
+			<if test="grantValue != null">GRANT_VALUE = #{grantValue},</if>
+			<if test="grantRate != null">GRANT_RATE = #{grantRate},</if>
+			<if test="grantMin != null">GRANT_MIN = #{grantMin},</if>
+			<if test="grantMax != null">GRANT_MAX = #{grantMax},</if>
+			<if test="grantUp != null">GRANT_UP = #{grantUp},</if>
+            <if test="remark != null and remark != ''">REMARK = #{remark},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="scoreTypeResultMap">
+        select <include refid="table_columns" />
+        from score_type
+    </select>
+
+    <select id="findList" resultMap="scoreTypeResultMap">
+        select <include refid="table_columns" />
+        from score_type
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from score_type
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="scoreTypeResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from score_type
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+    <select id="getScoreTypeByCode" resultMap="scoreTypeResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from score_type
+		where type_code = #{typeCode}
+	</select>
+
+</mapper>

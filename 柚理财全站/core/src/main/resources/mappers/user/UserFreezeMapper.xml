@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.user.mapper.UserFreezeMapper">
+	<resultMap type="com.rd.ifaes.core.user.domain.UserFreeze" id="userFreezeResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="operation" column="OPERATION"/>
+		<result property="createTime" column="CREATE_TIME"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		OPERATION,
+		CREATE_TIME
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{operation},
+		#{createTime}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="operation != null and operation != ''">and OPERATION = #{operation}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.user.domain.UserFreeze">
+		insert into user_freeze( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into user_freeze( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+			#{item.uuid},
+			#{item.userId},
+			#{item.operation},
+			#{item.createTime}
+		)
+		</foreach>
+	</insert>
+
+	<update id="update" parameterType="com.rd.ifaes.core.user.domain.UserFreeze">
+		update user_freeze 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="operation != null and operation != ''">OPERATION = #{operation}</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="userFreezeResultMap">
+        select <include refid="table_columns" />
+        from user_freeze
+    </select>
+
+    <select id="findList" resultMap="userFreezeResultMap">
+        select <include refid="table_columns" />
+        from user_freeze
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from user_freeze
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="userFreezeResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_freeze
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	
+	<!-- 根据用户id查询冻结信息 -->
+	<select id="getByUserId" resultMap="userFreezeResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_freeze
+		where user_id = #{userId}
+	</select>
+	
+	<!-- 根据用户id查询功能操作列表 -->
+    <select id="findOperationByUserId" resultType="String" parameterType="String">
+        select operation from user_freeze where user_id=#{userId}
+	</select>
+	
+	<!-- 根据用户id删除记录 -->
+	<delete id="deleteByUserId" parameterType="String">
+		delete from user_freeze where user_id = #{userId}
+	</delete>
+	
+	<!-- 根据用户列表获取冻结信息 -->
+	<select id="getUserFreezeByUserList" resultType="String">
+		select user_id
+		from user_freeze
+		where user_id in
+         <foreach collection="list" item="user" open="(" separator="," close=")">  
+            #{user.uuid} 
+        </foreach>
+	</select>
+
+</mapper>

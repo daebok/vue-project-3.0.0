@@ -1,0 +1,113 @@
+<style type="text/css">
+	.ui-jqgrid .ui-jqgrid-hdiv{
+			position: relative;
+		}
+		.ui-jqgrid .ui-jqgrid-bdiv{
+			margin-top: 0!important;
+		}
+      @media (max-height: 768px){
+        .ui-jqgrid .ui-jqgrid-bdiv {
+            margin-top: 39px;
+            padding-bottom: 0px;
+            max-height: 100px!important;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+      }
+      .ui-jqgrid .ui-jqgrid-pager {
+          position: relative;
+          bottom: 0px!important;
+          background: #fff;
+          border: 1px solid #EBEBEB;
+          border-radius: 3px;
+          z-index: 1000;
+      } 
+      @media (max-height: 1080px){
+        .ui-jqgrid .ui-jqgrid-bdiv {
+            margin-top: 39px;
+            padding-bottom: 0px;
+            max-height: 460px!important;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+      }
+</style>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="tool-btns">
+					</div>					
+				</div>
+			</div>
+			<!-- 列表信息 -->
+		<div class="row mt20">
+			<div class="col-md-12">
+				<table id="jqGrid" ></table>
+				<div id="jqGridPager" ></div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			<@dictFormatter type = "investType" />
+			<@dictFormatter type = "saleChannel" />
+			
+			$(document).ready(function() {	
+				//表格初始化		
+				$("#jqGrid").jqTreeGrid({
+						url : "/loan/invest/investRecordList.html?projectId=${projectId}&status=10",
+						multiselect : false,
+						 pager: "#jqGridPager",
+						height: $(window).height()*0.7*0.6,	
+						colModel : [
+								{
+									label : "投资人",
+									name : "userName",
+									width : 150
+								},
+								{
+									label : "投资金额(元)",
+									name : "amount",
+									width : 80
+								} ,
+								{
+									label : "回收本息(元)",
+									name : "repayedAmount",
+									formatter:function(val, options, rowObject){	
+										var total = val;
+										if(!total || total == 0){
+											total = 0;
+										}
+										return total;
+									},
+									width : 80
+								},
+								{
+									label : "投资方式",
+									name : "investType",
+									formatter : investTypeFormatter,
+									width : 80
+								},
+								{
+									label : "投资渠道",
+									name : "investChannel",
+									width : 100,
+									formatter : saleChannelFormatter
+								},
+								{
+									label : "投资时间",
+									name : "createTime",
+									width : 140,
+									formatter: 'date',
+									formatoptions: {
+										srcformat: 'u',
+										newformat: 'Y-m-d H:i:s'
+									}
+								}]
+					}) ;
+				});
+				
+				jQuery(function(){
+				//调整弹框上的分页组件位置
+				    $(".ui-jqgrid .ui-jqgrid-pager").css("bottom",$(window).height()*0.23);
+				});
+		</script>			
+		</div>

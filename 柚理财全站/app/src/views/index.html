@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<#assign pageFlag="home">
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>首页</title>
+    <link rel="stylesheet" type="text/css" href="../../common.css"/>
+    <link rel="stylesheet" type="text/css" href="../../index.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <#include "include/header.html">
+    <div class="homePage" id="homePage">
+        <div id="homeScroll">
+            <div class="scrollbox" id="scrollbox">
+                <div id="scrollContent"></div>
+                <div class="loginbox"></div>
+                <div class="login-index">
+                    <#if session_user?? >
+                        <div class="loginafter" >
+                            <div class="title">欢迎来到本平台！</div>
+                            <div class="phone"><p>当前您登录的是</p><p><font>${session_user.userName!}</font></p></div>
+                            <a class="btn" href="/member/account/main.html">进入我的账户</a>
+                            <a href="/user/logout.html" class="loginout">安全退出</a>
+                        </div>
+                     <#else>
+                           <ul>
+                            <li><span class="rate-tit">最高年化收益率可达</span></li>
+                            <li><div class="rate-number"><span>12.12</span><i>%</i></div></li>
+                            <li><span class="rate-msg">30 倍活期存款收益，3.27 倍定期存款收益</span></li>
+                            <li><a href="/user/register.html" class="btn">注册领红包</a><span class="login-hint">已有账户？<a href="/user/login.html">立即登录</a></span></li>
+                           </ul>
+                    </#if>
+                </div>
+            </div>
+        </div>
+        <div id="homeCon"></div>
+    </div> 
+    <div id="quickBtn"></div>   
+    <#include "include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="../../common.js"></script>
+<script src="../../index.js"></script>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>项目缓存管理</title>
+		<#include "include/resources.html">
+		<#assign dataUrl="/sys/cache/projectQueryList.html"  
+		                 clearProjectListUrl="/sys/cache/clearProjectList.html"
+		                clearProjectDetailUrl="/sys/cache/clearProjectDetail.html" 
+		              clearRemainAccountUrl="/sys/cache/clearRemainAccount.html" 
+		               >
+	</head>
+	<body>
+		 <div class="wrapper">
+			<div class="row pt20">			
+				<div class="col-md-6">
+					<div class="search-form">
+					        <form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入项目名称">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="${dataUrl!}">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form>
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							    <li class="input-group input-group-sm"><span>项目名称</span><input type="text" class="form-control" name="projectName" /></li>
+							    <li class="input-group input-group-sm"><span>项目期限</span><@linkage name="timeCondition" nid="timeCondition" noselect="不限" class="form-control"/> </li>							    
+							    <li class="input-group input-group-sm"><span>还款方式</span><@linkage name="repayStyle" nid="repayStyle"  noselect="全部" class="form-control"/></li>
+							     <li class="input-group input-group-sm"><span>状态</span> <@linkage name="status" nid="borrowStatus" noselect="不限" class="form-control"/>  </li>
+							    <li><button class="btn btn-sm btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="${dataUrl!}">查询</button></li>
+							  </ul>							  
+							</div>
+							 <button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+							  <button type="button" class="btn btn-info" style="left: 10px"  onclick='clearCache("${clearProjectListUrl!}","清除产品列表缓存成功!");' >清除产品列表缓存</button> 
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					</div>					
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+			    <@dictFormatter  type = "interestStyle" />
+				<@dictFormatter  type = "repayStyle" />
+			    <@dictFormatter   type = "borrowStatus" />
+			    /**
+			     * 异步提交共用函数
+			     * @param reqUrl 请求URL
+			     * @param  successMsg 成功提示
+			     */
+			    function  clearCache(reqUrl,successMsg){
+			        $.ajax({
+			        url:reqUrl,
+			        type: 'POST',
+			        success:function(){
+			            layer.msg(successMsg ,
+			             {
+							icon: 1,
+							shadeClose: true
+						});
+			        }
+			    });
+			    
+			    }
+			    
+					$(document).ready(function() {												
+						//表格初始化
+						$("#jqGrid").jqTreeGrid({
+							url: '${dataUrl!}',	
+							  multiselect : false,	
+							  colModel: [
+			                    { label: '项目名称',label: 'id', name: 'id', width: 65,sortable:false},
+			                    { label: '项目名称', name: 'projectName',index:"project_name",width: 40},
+			                    { label: '项目编号', name: 'projectNo',index:"project_no",width: 40},
+								{ label: '年利率(%)', name: 'apr',index:"apr", width: 15, hidden:true},			
+								{ label: '项目金额', name: 'account',index:"account",  width: 20},
+								{ label: '项目期限', name: 'timeLimit',index:"time_limit", width: 15, hidden:true,sortable:false,  formatter: function(val, options, rowObject){	
+						            		   if (rowObject.timeType == 1){
+							  						return val + "天";
+							  					} else {
+							  						return val + "个月";
+							  					}
+						              }},
+								{ label: '状态', name: 'status',index:"status", width: 20, formatter: borrowStatusFormatter},
+								{ label: '操作', name: '',sortable:false,width: 120,formatter:function(val, options, rowObject){	
+								   var btns = '';
+							        btns +='<a href="javascript:;" onclick="clearCache(\'${clearProjectDetailUrl!}?projectId='+ rowObject.id+'\',\'清除项目详情成功\')">清除项目详情</a>';
+							          btns +=" | "
+							         btns +='<a href="javascript:;" onclick="clearCache(\'${clearRemainAccountUrl}?projectId='+ rowObject.id+'\',\'清理项目剩余可投成功\')">清理项目剩余可投</a>';
+								   return btns;
+								}} 
+			                ]
+						}) ;			
+					});
+			</script>
+		</div>
+	</body>
+</html>

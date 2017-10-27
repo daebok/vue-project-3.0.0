@@ -1,0 +1,123 @@
+@import (reference)'./common.less';
+#quickBtn li.qqBtn:hover .qqOnline{
+  display: block;
+}
+.Quickbtn {
+    position: fixed;
+    right: 15px;
+    top: 370px;
+    z-index: 10;
+    width: 46px;
+    font-size: 0;
+    line-height: 0;
+
+    ul{
+      border: 1px solid #ebebeb;
+      li {
+        &:nth-child(1){
+          border-top:0;
+        }
+        position: relative;
+        height: 46px;
+        line-height:46px;
+        background:#fff;
+        text-align: center;
+        border-top:1px solid #ebebeb;
+        cursor: pointer;
+        &:hover{
+          background:#ededed;
+        }
+        .qqOnline {
+          display: none;
+          width: 120px;
+          background: #fff;
+          border-radius: 3px;
+          padding: 18px;
+          position: absolute;
+          right: 100%;
+          top: 0;
+          margin-right: 10px;
+          i.sj{
+            width: 0;
+            height: 0;
+            border-top: 5px solid transparent;
+            border-left: 10px solid #fff;
+            border-bottom: 5px solid transparent;
+            position: absolute;
+            left: 100%;
+          }
+          h3{
+            font-size: 12px;
+            color: #666;
+            text-align: left;
+            line-height: 25px;
+          }
+          ul{
+            border: none;
+          }
+          li{
+            border: none;
+            line-height: 30px;
+            height: 30px;
+            text-align: left;
+            span{
+              display: inline-block;
+              line-height: 30px;
+              height: 30px;
+              color: #999;
+            }
+            i{
+              color: #66bef5;
+              vertical-align: -2px;
+              margin-right: 5px;
+            }
+          }
+          li:hover {
+            background: #fff;
+          }
+        }
+        a{
+          display:none;
+          span{
+            display:block;
+            color:@color-text;
+            line-height:33px;
+            height:23px;
+            .f12();
+          }
+          font{
+            display:block;
+            color:@color-text;
+            height:23px;
+            line-height:17px;
+            .f12();
+          }
+        }
+      }
+    }
+}
+.calculator-fix {
+ position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 9;
+  .cal-btn {
+    display: block;
+    position: absolute;
+    top: -40px;
+    margin-left:1180px;
+    width: 120px;
+    height: 40px;
+    background: #393939;
+    color: #fff;
+    line-height: 40px;
+    font-size: 14px;
+    i{
+      width: 30px;
+      line-height: 41px;
+      text-align: center;
+      background: #ff7c53;
+      margin-right: 10px;
+    }
+  }
+}

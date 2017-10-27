@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.operate.mapper.RateCouponRuleDetailMapper">
+	<resultMap type="com.rd.ifaes.core.operate.domain.RateCouponRuleDetail" id="RateCouponRuleDetailResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="ruleId" column="RULE_ID"/>
+		<result property="upApr" column="UP_APR"/>
+		<result property="useTenderMoney" column="USE_TENDER_MONEY"/>
+		<result property="tenderMin" column="TENDER_MIN"/>
+		<result property="tenderMax" column="TENDER_MAX"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="minUpApr" column="MIN_UP_APR"/>
+		<result property="maxUpApr" column="MAX_UP_APR"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		RULE_ID,
+		UP_APR,
+		USE_TENDER_MONEY,
+		TENDER_MIN,
+		TENDER_MAX,
+		CREATE_TIME
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{ruleId},
+		#{upApr},
+		#{useTenderMoney},
+		#{tenderMin},
+		#{tenderMax},
+		#{createTime}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="ruleId != null and ruleId != ''">and RULE_ID = #{ruleId}</if>
+			<if test="upApr != null">and UP_APR = #{upApr}</if>
+			<if test="useTenderMoney != null">and USE_TENDER_MONEY = #{useTenderMoney}</if>
+			<if test="tenderMin != null">and TENDER_MIN = #{tenderMin}</if>
+			<if test="tenderMax != null">and TENDER_MAX = #{tenderMax}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort==null">
+        	order by  TENDER_MIN,UP_APR ASC
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.operate.domain.RateCouponRuleDetail">
+		insert into rate_coupon_rule_detail( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		BEGIN
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into rate_coupon_rule_detail( <include refid="table_columns" /> ) 
+		values 
+		( 
+		#{item.uuid},
+				#{item.ruleId},
+				#{item.upApr},
+				#{item.useTenderMoney},
+				#{item.tenderMin},
+				#{item.tenderMax},
+				#{item.createTime}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from rate_coupon_rule_detail
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update rate_coupon_rule_detail set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{uuid} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update rate_coupon_rule_detail set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.operate.domain.RateCouponRuleDetail">
+		update rate_coupon_rule_detail 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="upApr != null">UP_APR = #{upApr},</if>
+			<if test="useTenderMoney != null">USE_TENDER_MONEY = #{useTenderMoney},</if>
+			<if test="tenderMin != null">TENDER_MIN = #{tenderMin},</if>
+			<if test="tenderMax != null">TENDER_MAX = #{tenderMax},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="RateCouponRuleDetailResultMap">
+        select <include refid="table_columns" />
+        from rate_coupon_rule_detail
+    </select>
+
+    <select id="findList" resultMap="RateCouponRuleDetailResultMap">
+        select <include refid="table_columns" />
+        from rate_coupon_rule_detail
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from rate_coupon_rule_detail
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="RateCouponRuleDetailResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from rate_coupon_rule_detail
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<!-- 根据规则id删除 -->
+	<delete id="deleteByRuleId" parameterType="String">
+		delete from rate_coupon_rule_detail
+		where rule_id = #{ruleId}
+	</delete>
+	
+	
+	<select id="collectByRuleId" resultType="map" parameterType="String" >
+		select min(up_apr) minRate, max(up_apr) maxRate
+		from rate_coupon_rule_detail
+		where rule_id = #{ruleId}
+	</select>
+	
+	<!-- 根据加息券规则id获取加息的最大最小值 -->
+	<select id="getIntervalAprByRuleId" resultType="map" parameterType="String">
+        select max(up_apr) maxApr, min(up_apr) minApr
+        from rate_coupon_rule_detail a,rate_coupon_rule b
+        where a.rule_id = b.uuid and a.rule_id = #{ruleId} and b.delete_flag = 0 and b.status = 1
+	</select>
+	
+	<select id="getTenderGroup" resultType="map" parameterType="String">
+       select DISTINCT tender_min as tenderMin, tender_max as tenderMax
+       from rate_coupon_rule_detail 
+       where rule_id = #{ruleId} ORDER BY tender_min ASC
+	</select>
+</mapper>

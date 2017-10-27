@@ -1,0 +1,109 @@
+<div class="form-tips-content">
+	<form class="form-horizontal"  action="/loan/repayment/doRepayUrge.html" id="form" >
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label for="userName" class="control-label form-label">用户名：</label>
+					<div class="input-box-read">						
+						<p>${repayment.userName!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="userName" class="control-label form-label">借款方：</label>
+					<div class="input-box-read">						
+						<p>${repayment.realName!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="projectName" class="control-label form-label">借款名称：</label>
+					<div class="input-box-read">
+						<p>${repayment.projectName!}</p>						
+					</div>
+				</div>
+			</li>
+		   <li>
+				<div class="form-group">
+					<label for="account" class="control-label form-label">期数：</label>
+					<div class="input-box-read">
+						<p>${repayment.period!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="apr" class="control-label form-label">本金：</label>
+					<div class="input-box-read">
+						<p>${repayment.capital!}</p>						
+					</div>					
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="apr" class="control-label form-label">利息：</label>
+					<div class="input-box-read">
+						<p>${repayment.interest!}</p>						
+					</div>					
+				</div>
+			</li>
+		     <li>
+				<div class="form-group">
+					<label for="apr" class="control-label form-label">逾期天数：</label>
+					<div class="input-box-read">
+						<p>${repayment.lateDays!}</p>						
+					</div>					
+				</div>
+			</li>
+		    <li>
+				<div class="form-group">
+					<label for="apr" class="control-label form-label">罚息：</label>
+					<div class="input-box-read">
+						<p>${repayment.lateInterestSum!}</p>						
+					</div>					
+				</div>
+			</li>
+		   <li>
+				<div class="form-group">
+			      <label for="repaymentAbility" class="control-label form-label">备注：</label>
+			      <div class="input-box">
+			      <input type="text" class="form-control" name="remark" id="remark" value="" required="required" maxlength="512" placeholder="催收备注" >
+			      </div>
+			    </div>	
+		    </li>
+		</ul>
+      	<input type="hidden" name="repaymentId" value="${repayment.uuid!}"/>
+		
+		<@token/>
+	</form>
+	<script type="text/javascript">
+	$("#form").validate({
+		submitHandler: function(form) {
+			$(form).ajaxSubmit({
+				type: "post",
+				dataType: "json",
+				success: function(data) {
+					if (data.result) {
+						layer.alert(data.msg, {
+							icon: 6,
+							cancel: function(index){
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入 
+  						}
+						}, function() {
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入  
+						});
+					} else {
+						layer.alert(data.msg, {
+							icon: 5
+						});
+					}
+				}
+			});
+		}
+	});
+</script>
+</div>

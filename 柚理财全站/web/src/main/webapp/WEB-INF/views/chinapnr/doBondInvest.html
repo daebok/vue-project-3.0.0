@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>债权投资跳转页面</title>
+</head>
+<body>
+<div align="center">债权投资页面跳转中，请不要关闭页面...</div>
+	<form action="${ufxCreditModel.ufxSubmitUrl!}" method="post" id="frm1" style="display: none;">
+		<input type="hidden" value="${ufxCreditModel.service!}" name="service" />
+		<input type="hidden" value="${ufxCreditModel.orderNo!}" name="orderNo" />
+		<input type="hidden" value="${ufxCreditModel.ufxCustomerId!}" name="ufxCustomerId" />
+		<input type="hidden" value="${ufxCreditModel.businessWay!}" name="businessWay" />
+		<input type="hidden" value="${ufxCreditModel.signInfo!}" name="signInfo" />
+		<input type="hidden" value="${ufxCreditModel.projectId!}" name="projectId" />
+		<input type="hidden" value="${ufxCreditModel.sponsorer!}" name="sponsorer" />
+		<input type="hidden" value="${ufxCreditModel.projectAmount!}" name="projectAmount" />
+		<input type="hidden" value="${ufxCreditModel.assignorCustId!}" name="assignorCustId" />
+		<input type="hidden" value="${ufxCreditModel.assignAmount!}" name="assignAmount" />
+		<input type="hidden" value="${ufxCreditModel.investNo!}" name="investNo" />
+		<input type="hidden" value="${ufxCreditModel.investDate!}" name="investDate" />
+		<input type="hidden" value="${ufxCreditModel.userCustId!}" name="userCustId" />
+		<input type="hidden" value="${ufxCreditModel.amount!}" name="amount" />
+		<input type="hidden" value="${ufxCreditModel.creditFee!}" name="creditFee" />
+		<input type="hidden" value="${ufxCreditModel.portion!}" name="portion" />
+		<input type="hidden" value="${ufxCreditModel.userId!}" name="userId" />
+		<input type="hidden" value="${ufxCreditModel.idNo!}" name="idNo" />
+		<input type="hidden" value="${ufxCreditModel.endAmt!}" name="endAmt" />
+		<input type="hidden" value="${ufxCreditModel.apr!}" name="apr" />
+		<input type="hidden" value="${ufxCreditModel.authCode!}" name="authCode" />
+		<input type="hidden" value="${ufxCreditModel.superviseNo!}" name="superviseNo" />
+		<input type="hidden" value="${ufxCreditModel.repaymentYesAccount!}" name="repaymentYesAccount" />
+		<input type="hidden" value="${ufxCreditModel.phone!}" name="phone" />
+		<input type="hidden" value="${ufxCreditModel.reqExt!}" name="reqExt" />
+		<input type="hidden" value="${ufxCreditModel.merPriv!}" name="merPriv" />
+		<input type="hidden" value="${ufxCreditModel.returnUrl!}" name="returnUrl" />
+		<input type="hidden" value="${ufxCreditModel.notifyUrl!}" name="notifyUrl" />
+	</form>
+	<script language="javascript">
+		document.getElementById("frm1").submit();
+	</script>
+</body>
+</html>

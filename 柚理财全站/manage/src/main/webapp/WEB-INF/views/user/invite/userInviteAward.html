@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>好友邀请管理</title>
+<#include "include/resources.html">
+</head>
+<body>
+<div class="wrapper">
+	<div class="row pt20">		
+		<div class="col-md-6">
+			<div class="search-form">
+				<form>
+					<div class="input-group">
+						<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入邀请人用户名/投资产品名">
+						<input type="hidden" class="form-control search-input" name="inviteUserId" id="inviteUserId"  value='${inviteUserId}'>
+						<span class="input-group-btn search-span">
+					    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/user/invite/userInviteAwardList.html">搜索</button>
+					    </span>						    
+				    </div>
+			    </form>	
+			</div>
+			<div class="search-form-adv ml10">
+				<form id="advSearchForm">
+					<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+					  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+					  <ul class="dropdown-menu search-menu">
+					  
+					    <li class="input-group input-group-sm"><span>邀请人</span><input type="text" class="form-control" name="userName" />
+					    <input type="hidden" class="form-control search-input" name="inviteUserId" id="inviteUserId"  value='${inviteUserId}'>
+					    </li>
+					    <li class="input-group input-group-sm"><span>投资产品</span><input type="text" class="form-control" name="projectName" /></li>
+					    <li class="input-group input-group-sm"><span>奖励类型</span>
+					    	<@linkage name="awardType" nid="awardType" noselect="不限" class="form-control"/>
+					    </li>	  
+					    <li class="input-group input-group-sm"><span>活动方案</span><input type="text" class="form-control" name="activityName" /></li>	  
+					    <li class="input-group input-group-sm"><span>状态</span>
+					    	<@linkage name="status" nid="activityLogStatus" noselect="不限" class="form-control"/>
+					    </li>
+					    <li class="input-group input-group-sm"><span>获得日期</span><input type="text" name="startTime" id="startTime" class="form-control"placeholder="开始日期"/><input type="text" name="endTime" id="endTime" class="form-control" placeholder="结束日期"/>  
+					    <li><button class="btn btn-sm btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/user/invite/userInviteAwardList.html">查询</button></li>
+					  </ul>							  
+					</div>
+					<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+				</form>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="tool-btns">
+			</div>			
+		</div>
+	</div>
+	<div class="row mt20">
+		<div class="col-md-12">
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+	</div>
+    <script type="text/javascript"> 
+  //设置开始时间控件
+	var startTime= {
+		elem:'#startTime',
+		format: 'YYYY-MM-DD', //日期格式
+		istime: false, //是否开启时间选择
+		max:$('#endTime').val(),
+		event:'focus',
+		choose: function(dates){
+		    endTime.min=dates;
+		    endTime.start=dates;
+		}
+	};
+	
+	//设置发放结束时间
+	var endTime=  {
+			elem:'#endTime',
+			format: 'YYYY-MM-DD', //日期格式
+			istime: false, //是否开启时间选择
+			min: $('#startTime').val(), //最小日期
+			event:'focus',
+			choose: function(dates){
+				startTime.max=dates;
+		   }
+	};
+	laydate(startTime);
+	laydate(endTime);
+	
+    	<@dictFormatter type = "awardType" />	
+    	<@dictFormatter type = "activityLogStatus" />	
+        $(document).ready(function () {
+        	//表格初始化
+        	$("#jqGrid").jqTreeGrid({
+        		url: '/user/invite/userInviteAwardList.html',
+        		idField:"id",
+				multiselect:false,
+                colModel: [
+                    { label: 'id', name: 'uuid', width: 10,hidden:true },
+					{ label: '邀请人', name: 'userName', width: 50 },
+					{ label: '奖励', name: 'award', width: 30,
+						formatter: awardTypeFormatter
+					},
+					{ label: '奖励类型', name: 'awardType', width: 30,
+						formatter: awardTypeFormatter
+			  		},
+					{ label: "活动方案",name: "activityName",width: 50},
+					{ label: '被邀请人', name: 'inviteUserName', width: 50 },
+					{ label: '投资产品', name: 'projectName', width: 80, align:'center', formatter:function(value, row, index){
+						return value || '--';
+					}},
+					{ label: '投资金额', name: 'amount', width: 30, formatter:function(value, row, index){
+						return value || '--';
+					} },
+					{ label: '状态', name: 'status', width: 30,
+						formatter: activityLogStatusFormatter
+					},
+					{ label: '获得时间', name: 'createTime', width: 80, align:'center', formatter: datetimeFormatter}
+					],
+        	}).jqGrid("setFrozenColumns").navGrid('#jqGridPager',		            
+		            { edit: false, add: false, del: false, search: false, refresh: true, view: false, position: "left", cloneToTop: false }
+		   	);
+       });
+  </script>	
+</body>
+</html>

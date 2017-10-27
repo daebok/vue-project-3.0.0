@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>vip等级管理页面</title>
+		<#include "include/resources.html">
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+					</div>					
+					<div class="search-form-adv ml10">
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+						<@shiro.hasPermission name="oper:vip:vipMan:add">
+						<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.addFun(this)" data-tid="jqGrid" data-url="/operate/vip/vipLevelAddPage.html">新增</button>
+						</@shiro.hasPermission>
+						<@shiro.hasPermission name="oper:vip:vipMan:edit">
+						<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.editFun(this)" data-tid="jqGrid" data-url="/operate/vip/vipLevelEditPage.html">编辑</button>
+						</@shiro.hasPermission>
+						<@shiro.hasPermission name="oper:vip:vipMan:del">
+						<button type="button" class="btn btn-warning" onclick="$.fn.treeGridOptions.deleteFun(this)" data-tid="jqGrid" data-url="/operate/vip/vipLevelDel.html">删除</button>						
+						</@shiro.hasPermission>
+					</div>					
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+					$(document).ready(function() {												
+						//表格初始化
+						$("#jqGrid").jqTreeGrid({
+							url: '/operate/vip/vipLevelList.html',multiselect : true,	
+							  colModel: [ 
+			                    { label: 'id', name: 'uuid', width: 65, hidden:true},
+			                    { label: '等级', name: 'vipLevel',index:"vip_level",width: 10,
+			                    	formatter: function(value,row,index){
+			                    		return "VIP"+value;
+						  			}
+			                    },
+			                    { label: '所需成长值', name: 'growthValueStr',index:"growth_value",width: 20,
+			                    	formatter: function(value,row,index){
+			                    		return Math.floor(value)
+						  			}},
+								{ label: '年扣除成长值', name: 'yearDeductionStr',index:"year_deduction",width: 25,
+			                    	formatter: function(value,row,index){
+			                    		return Math.floor(value)
+						  			}},
+								{ label: '赠送红包金额', name: 'redTotal',index:"red_total", width: 20,
+									formatter: function(value,row,index){
+										if(value>0){
+											return value+" 元";
+										}
+										else{
+											return "无";
+										}
+						  			}
+								},
+								{ label: '加息率', name: 'upApr',index:"upApr", width: 20,
+									formatter: function(value,row,index){
+			                    		if(index.minRate!=null && index.maxRate!=null && index.minRate>0){
+			                    			if(index.minRate==index.maxRate){
+			                    				return index.minRate+"%";
+			                    			}
+			                    			return index.minRate+"%"+"-"+index.maxRate+"%";
+			                    		}
+			                    		else{
+			                    			return "无";
+			                    		}
+						  			}
+								},
+								{ label: '生日礼包', name: 'birthdayGiftName',index:"birthday_gift_name", width: 20,
+									formatter: function(value,row,index){
+										if(value!=null){
+											return value;
+										}
+										else{
+											return "无礼包";
+										}
+						  			}
+								},
+								{ label: '专享礼包', name: 'exclusiveGiftName',index:"exclusive_gift_name", width: 20,
+									formatter: function(value,row,index){
+										if(value!=null){
+											return value;
+										}
+										else{
+											return "无礼包";
+										}
+			                    		
+						  			}
+								},
+								{ label: '更新时间', name: 'updateTime',index:"update_time", width: 60,formatter: datetimeFormatter
+								}
+			                ]
+						}) ;			
+					});
+			</script>
+		</div>
+	</body>
+</html>

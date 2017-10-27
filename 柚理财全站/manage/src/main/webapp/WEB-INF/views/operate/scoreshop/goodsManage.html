@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>商品管理页面</title>
+		<#include "include/resources.html">
+	</head>
+	<body>
+		<style>
+			.layui-layer-loading .layui-layer-loading3{width:200px!important;padding-left: 66px;color: #fff;line-height: 24px;}
+		</style>
+		<div class="wrapper">
+			<div class="row pt20">
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="商品名称">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/operate/scoreshop/goodsList.html">搜索</button>
+							    </span>
+						    </div>
+					    </form>
+					</div>
+					<div class="search-form-adv ml10">
+						<form>
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							    <li class="input-group input-group-sm"><span>所属类别</span>
+							    <select name="goodsCategoryId" class="form-control">
+							    	<option value="">不限</option>
+							    	<#if category??>
+							    		<#list category as item>
+							    			 <option value =${item.uuid}>${item.goodsCategoryName}</option>
+							    		</#list>
+							    	</#if>
+							    </select>
+							    </li>
+							    <li class="input-group input-group-sm"><span>商品状态</span><@linkage name="status" nid="goodsStatus" noselect="不限" class="form-control"/> </li>							    
+							    <li><button class="btn btn-sm btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/operate/scoreshop/goodsList.html">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+					<div class="col-md-6">
+						<div class="tool-btns">
+							<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.addFun(this)"data-tid="jqGrid" data-url="/operate/scoreshop/addGoodsPage.html">新增</button>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.DiscounteditFun(this)" data-tid="jqGrid" data-url="/operate/scoreshop/editGoodsPage.html">修改</button>
+						</div>
+					</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+					$(document).ready(function() {
+						//表格初始化
+						$("#jqGrid").jqTreeGrid({
+							url: '/operate/scoreshop/goodsList.html',
+							  multiselect : true,
+							  colModel: [
+			                    { label: 'id', name: 'uuid', width: 45, hidden:true},
+			                    { label: '商品名称', name: 'goodsName',index:"goods_name",width: 30,align:"center"},
+			                    { label: '供货商', name: 'supplier',index:"supplier",width: 30,align:"center"},
+			                    { label: '类别名称', name: 'goodsCategoryName',index:"goods_category_name",width: 30,align:"center"},
+			                    { label: '采购价格', name: 'costPrice',index:"cost_price",width: 30,align:"center",
+			                    	formatter: function(value,row,index){
+					            		   if (value == null || value == 0){
+						  						return "-";
+						  					}else {
+						  						return value;
+						  					}
+						  				}
+			                    },
+			                    { label: '市场价', name: 'marketPrice',index:"market_price",width: 30,align:"center",
+			                    	formatter: function(value,row,index){
+					            		   if (value == null || value == 0){
+						  						return "-";
+						  					}else {
+						  						return value;
+						  					}
+						  				}	
+			                    },
+			                  //  { label: '限兑数量', name: 'exchangeLimit',index:"exchange_limit",width: 30,align:"center"},
+			                  	{ label: '库存量', name: 'store',index:"store",width: 30,align:"center"},
+			                  	{ label: '商品状态', name: 'status',index:"status",width: 30,align:"center",
+			                    	formatter: function(value,row,index){
+					            		   if (value == '1'){
+						  						return "审核成功";
+						  					} else if (value == '2'){
+						  						return "审核失败";
+						  					}else if (value == '3'){
+						  						return "已上架";
+						  					}else if (value == '4'){
+						  						return "已下架";
+						  					}else {
+						  						return "待审核";
+						  					}
+						  				}
+
+			                    },
+			                  //  { label: '上架时间', name: 'saleTime',index:"sale_time",width: 30,align:"center",
+			                  //  	formatter: datetimeFormatter
+			                  //  },
+			                    { label: '添加时间', name: 'createTime',index:"create_time",width: 30,align:"center",
+			                    	formatter: datetimeFormatter
+			                    },
+			                   // { label: '添加者', name: 'createOperatorId',index:"create_operator_id",width: 30,align:"center"},
+			                    { label: '修改时间', name: 'updateTime',index:"update_time",width: 30,align:"center",
+			                    	formatter: datetimeFormatter
+			                    },
+			                  //  { label: '修改者', name: 'updateOperatorId',index:"update_operator_id",width: 30,align:"center"},
+			                  //  { label: '所需积分', name: 'score',index:"score",width: 30,align:"center"},
+			                    { label: '商品详情', name: 'content',index:"content",width: 30,align:"center"},
+			                    { label: '备注', name: 'notes',index:"notes",width: 30,align:"center"}
+			                  //  { label: '商品属性信息', name: 'goodsAttribute',index:"goods_attribute",width: 30,align:"center"},
+			                  //  { label: '备注', name: 'remark',index:"remark",width: 15,align:"center"},
+			                   /*  { label: '是否虚拟商品', name: 'isVirtual',index:"is_virtual",width: 15,align:"center",
+			                    	formatter: function(value,row,index){
+					            		   if (value == '1'){
+						  						return "是";
+						  					} else if (value == '0'){
+						  						return "否";
+						  					}else {
+						  						return "否";
+						  					}
+						  				}
+			                    }, */
+			                  //  { label: '审核人ID', name: 'verifyOperatorId',index:"verify_operator_Id",width: 15,align:"center"},
+			                   /*  { label: '审核备注', name: 'verifyRemark',index:"verify_remark",width: 15,align:"center"},
+			                    { label: '审核时间', name: 'verifyTime',index:"verify_time",width: 15,align:"center",
+			                    	formatter: datetimeFormatter
+			                    },
+			                    { label: '是否推荐', name: 'recommend',index:"recommend",width: 15,align:"center",
+			                    	formatter: function(value,row,index){
+					            		   if (value == '1'){
+						  						return "是";
+						  					} else if (value == '0'){
+						  						return "否";
+						  					}else {
+						  						return "否";
+						  					}
+						  				}
+			                    } */
+
+			                ]
+						}) ;
+					});
+			</script>
+		</div>
+	</body>
+</html>

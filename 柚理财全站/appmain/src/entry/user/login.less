@@ -1,0 +1,68 @@
+@import '../../style/basecolor.less';
+.login-body{
+    height: 600px;
+    background: url(../../style/images/logbg.jpg) #d73f3d center center no-repeat;
+  .login-content{
+    height: 600px;
+    position: relative;
+    background: url(../../style/images/logbg.jpg) center center no-repeat;
+    .loginbox{
+      position: absolute;
+      width: 330px;
+      background-color: #fff;
+      border-radius: 5px;
+      top: 100px;
+      right: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      #j-capsLock{
+        position: absolute;
+        top: 89px;
+        left: 226px;
+        display: none;
+        z-index: 2;
+      }
+      .login-title{
+        margin: 10px 0 0 27px;
+        line-height: 56px;
+        font-size: 16px;
+        color: @color-p;
+        font-weight: bold;
+      }
+      .forget-reg-link{
+        margin:0;
+        &-cont{ 
+          line-height: 45px;
+          a{
+            font-size: 14px;
+            color:@color-text;
+            &:hover{
+              color:@color-main;
+            }
+            &.fr{
+              color: #ffb200;
+            }
+          }
+        }
+      }
+      .ant-btn-lg{
+        background-image:-webkit-linear-gradient(to right, #ff794e, #ffb131);
+        background-image:linear-gradient(to right,#ff794e, #ffb131);
+        font-size: 16px;
+        line-height: 40px;
+        width: 275px;
+        padding: 0;
+        box-shadow: 0 0 10px rgba(163, 37, 36, 0.3);
+        border: none;
+      }
+      .codeimg{
+        display: block;
+        height: 42px;
+        cursor: pointer;
+      }
+    }
+  }
+}
+.ant-tooltip-inner{
+  padding: 6px 8px;
+  min-height: 28px;
+}

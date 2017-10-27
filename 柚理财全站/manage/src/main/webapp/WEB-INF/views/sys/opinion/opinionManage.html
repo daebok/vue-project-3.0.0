@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>意见反馈管理</title>
+<#include "include/resources.html">
+</head>
+<body>
+<div class="wrapper">
+	<div class="row pt20">		
+		<div class="col-md-6">
+			<div class="row">		
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入标题">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid_01" data-url="/sys/opinion/opinionList.html">搜索</button>
+							    </span>						    
+						    </div>
+					    </form>	
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row mt20">
+		<div class="col-md-12">
+			<table id="jqGrid_01"></table>
+			<div id="jqGridPager_01"></div>
+		</div>
+	</div>
+    <script type="text/javascript"> 	
+        $(document).ready(function () {
+        	//表格初始化
+        	$("#jqGrid_01").jqTreeGrid({
+        		url: '/sys/opinion/opinionList.html',
+        		pager: "#jqGridPager_01",
+        		multiselect:false,
+                colModel: [
+                	{ label: 'id', name: 'id', hidden: true},
+                	{ label: '标题', name: 'title', width: 100},
+                	{ label: '反馈用户', name: 'mobile', width: 100},
+                	{ 	label: '状态', 
+                		name: 'status', 
+                		width:100,
+                		formatter:function(val, options, rowObject) {
+                			if(val == '0') {
+                				return '未处理';
+                			}else if(val == '1') {
+                				return '已处理';
+                			}else if(val == '2') {
+                				return '忽略';
+                			}
+                		}
+                	},
+					{ label: '时间', name: 'createTime', width: 100, formatter: 'date',
+						formatoptions: {
+							srcformat: 'u',
+							newformat: 'Y-m-d H:m:s'
+						} 
+                	},	
+                	{ label: '操作', name:'', width: 100,
+                		formatter:function(val, options, rowObject){
+                			var uuid=rowObject.id;
+                			var ret = '<a href="javascript:;" onclick=$.fn.treeGridOptions.checkFun(this,"'+uuid+'") data-tid="jqGrid_01" data-url="/sys/opinion/checkOpinionPage.html" data-title="查看">查看</a>';
+					  		if(rowObject.status == '0') {
+					  			ret += '&nbsp;|&nbsp;<a href="javascript:;" onclick=$.fn.treeGridOptions.addFun(this,"'+uuid+'") data-tid="jqGrid_01" data-url="/sys/opinion/opinionReply.html?uuid='+uuid+'" data-title="答复">答复</a>';
+					  			ret += '&nbsp;|&nbsp;<a href="#" onclick=ignore("'+uuid+'")>忽略</a>';
+					  		}
+                			return ret;
+                		}
+                	}
+                ]
+        	}).jqGrid("setFrozenColumns").navGrid('#jqGridPager_01',		            
+		            { edit: false, add: false, del: false, search: false, refresh: true, view: false, position: "left", cloneToTop: false }
+		   	);		   	
+        });
+        
+        function ignore(uuid) {
+        	$.ajax({
+				url:"/sys/opinion/opinionIgnore.html",
+				type:"post",
+				data:{"uuid":uuid},
+				dataType:"json",
+				success:function(result) {
+					if(result.result) {
+						top.layer.alert(result.msg, {
+							icon:6,
+							cancel:function(index){
+								top.layer.closeAll();
+								$("#jqGrid_01").trigger("reloadGrid"); //重新载入 
+							}
+						},function() {
+							top.layer.closeAll();
+							$("#jqGrid_01").trigger("reloadGrid"); //重新载入  
+						});
+					}else {
+						top.layer.alert("提交失败!", {
+							icon: 5
+						});
+					}
+				}
+			});
+		}
+  </script>	
+</body>
+</html>

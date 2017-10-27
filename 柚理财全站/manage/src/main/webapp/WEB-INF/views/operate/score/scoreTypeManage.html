@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>积分类别管理</title>
+    <#include "include/resources.html"/>
+</head>
+<body>
+<style>
+    .layui-layer-loading .layui-layer-loading3 {
+        width: 200px !important;
+        padding-left: 66px;
+        color: #fff;
+        line-height: 24px;
+    }
+</style>
+<div class="wrapper">
+    <div class="row pt20">
+        <div class="col-md-6">
+            <div class="search-form">
+                <form>
+                    <div class="input-group">
+                        <input class="form-control search-input" name="keywords" id="keywords" placeholder="类别名称">
+                        <span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/operate/scoreshop/goodsCategoryList.html">搜索</button>
+							    </span>
+                    </div>
+                </form>
+            </div>
+            <div class="search-form-adv ml10">
+                <form>
+                    <button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="tool-btns">
+                <!--<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.addFun(this)" data-tid="jqGrid" data-url="/operate/scoreshop/addGoodsCategoryPage.html">新增</button>-->
+                <button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.DiscounteditFun(this)" data-tid="jqGrid" data-url="/operate/score/scoreTypeEditPage.html">修改</button>
+                <!--<button type="button" class="btn btn-warning" onclick="$.fn.treeGridOptions.deleteFun(this)" data-tid="jqGrid" data-url="/operate/scoreshop/deleteGoodsCategory.html">删除</button>-->
+            </div>
+        </div>
+    </div>
+    <div class="row mt20">
+        <div class="col-md-12">
+            <table id="jqGrid"></table>
+            <div id="jqGridPager"></div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //表格初始化
+            $("#jqGrid").jqTreeGrid({
+                url: '/operate/score/scoreTypeList.html',
+                multiselect: true,
+                colModel: [
+                    {label: 'id', name: 'uuid', width: 45, hidden: true},
+                    {label: '类别名称', name: 'typeName', width: 30, align: "center"},
+                    {label: '发放类型', name: 'grantTypeStr', width: 15, align: "center"},
+                    {label: '发放积分', name: 'grantValue', width: 15, align: "center"},
+                    {label: '发放比例', name: 'grantRate', width: 15, align: "center"},
+                    {label: '发放最小值', name: 'grantMin', width: 15, align: "center"},
+                    {label: '发放最大值', name: 'grantMax', width: 15, align: "center"},
+                    {label: '发放递增值', name: 'grantUp', width: 15, align: "center"}
+                ]
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

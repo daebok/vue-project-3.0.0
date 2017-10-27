@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>用户基本信息</title>
+<#include "include/resources.html">
+</head>
+<body>
+<div class="wrapper">
+	<div class="row pt20">		
+		<div class="col-md-18">
+					<div class="search-form" style="width:293px;float:right;margin-right: 18px;">
+						<form>
+							<div class="input-group" id="yearselsct">
+							    <span>年份: </span>
+							    <select name="year" class="form-control search-input" style="width:180px;float:left;">
+								    <#list years as y>
+							      		<option value="${y}"  <#if currentYear==y>selected="selected"</#if> >${y}</option>
+							        </#list>
+								</select>	
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/user/customer/getSaleStatistics.html">搜索</button>
+							    </span>    
+						    </div>
+					    </form>	
+					</div>
+		</div>
+	</div>
+	<div class="row mt20">
+		<div class="col-md-12">
+			<table id="jqGrid"></table>
+		</div>
+	</div>
+    <script type="text/javascript"> 	
+        $(document).ready(function () {
+        	var totalField = "总计";
+        	//表格初始化
+        	$("#jqGrid").jqTreeGrid({
+        		url: '/user/customer/getSaleStatistics.html',
+        		idField:"id",
+        		multiselect:false,
+        		footerrow:true,             //加这个标识
+                colModel: [
+					{ label: '月份', name: 'saleMonth', width: 30, formatter:function(value, row, index){
+							if(value != totalField){
+								return value + "月";
+							}else{
+								return value;
+							}
+					    }
+                    },
+					{ label: '投资金额', name: 'saleAmount', width: 70 }
+                ],
+                gridComplete:function(){
+            var rowNum=parseInt($(this).getGridParam("records"));
+            if(rowNum>0){
+                $(".ui-jqgrid-sdiv").show();
+                var saleAmount=$(this).getCol("saleAmount",false,"sum");
+                $(this).footerData("set",{"saleMonth":totalField, "saleAmount":saleAmount + "元"});
+            }else{
+                $(".ui-jqgrid-sdiv").hide();
+            }
+        }
+        	}).jqGrid("setFrozenColumns").navGrid('#jqGridPager',		            
+		            { edit: false, add: false, del: false, search: false, refresh: true, view: false, position: "left", cloneToTop: false }
+		   	);
+       });
+  </script>	
+</body>
+</html>

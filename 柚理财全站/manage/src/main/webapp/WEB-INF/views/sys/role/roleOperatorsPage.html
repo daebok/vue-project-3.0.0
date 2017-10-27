@@ -1,0 +1,167 @@
+<style type="text/css">
+	.layui-layer-page .layui-layer-content{
+		overflow: hidden;
+	}
+	.ui-jqgrid .ui-jqgrid-pager{
+    bottom: 150px;
+	}
+</style>
+<div class="wrapper">
+	<div class="row pt10">
+		<div class="col-md-6">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入用户名/姓名">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid_03" data-url="/sys/operator/findRoleOperators.html?roleEq=0&roleId=${id}">搜索</button>
+							    </span>
+							</div>
+						</form>							
+					</div>
+					<div class="search-form-adv ml10">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row mt10">
+		<div class="col-md-7">
+			<h5 class="mt10 mb10">可选用户 </h5>
+			<table id="jqGrid_03"></table>
+			<div id="jqGridPager_03"></div>
+		</div>
+		<div class="col-md-1 switch-btn">
+			<span class="glyphicon glyphicon-circle-arrow-right"></span>
+			<span class="glyphicon glyphicon-circle-arrow-left"></span>
+		</div>
+		<div class="col-md-4">
+			<h5 class="mt10 mb10">已选用户 </h5>
+			<form class="form-horizontal" action="/sys/operator/saveRoleOperators.html" id="form" role="form">
+				<table id="jqGrid_04"></table>
+				<input type="hidden" name="userIds" />
+				<input type="hidden" name="id" value="${id}"/>
+			</form>			
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function() {	
+	//表单提交
+	$("#form").submit(function(){		
+		var ids = $('#jqGrid_04').jqGrid("getDataIDs").toString();		
+		$("input[name='userIds']").val(ids);
+		$("#form").ajaxSubmit({
+				type:"get",
+				dataType:"json",
+				success:function(resultMsg){
+		        	if(resultMsg.result){
+		        		layer.alert(resultMsg.msg, {
+		        			icon: 6,
+		        			cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+		        		}, function(){
+		        			gridobj.trigger("reloadGrid"); //重新载入 
+		        			layer.closeAll();		        			
+		        		});
+		        	}
+		        	else
+		        	{
+		        		layer.alert(resultMsg.msg, {icon: 5});
+		        	} 			        	
+	    	     }
+		});
+		return false;
+	});	
+	
+	  var span_right = $(".switch-btn span:first"),
+	    span_left = $(".switch-btn span:last");
+	    span_right.click(function(){//添加
+	      var ids = $('#jqGrid_03').jqGrid('getGridParam','selarrrow'),
+	        jqGrid_04_datas = $('#jqGrid_04').jqGrid("getDataIDs");	            
+	      $.each(ids, function(k,v) {
+	        var flag = true,
+	          thisuuid = "";
+	        thisuuid = $('#jqGrid_03').getRowData(v).id;
+	        $.each(jqGrid_04_datas, function(key,vl) {
+	          if(thisuuid === vl){
+	            flag = false;
+	          }
+	        });
+	        if(flag){
+	          $("#jqGrid_04").jqGrid('addRowData', thisuuid, $('#jqGrid_03').getRowData(v));
+	        }       
+	      });
+	    });
+		span_left.click(function(){			
+			var ids = $('#jqGrid_04').jqGrid('getGridParam','selarrrow'),
+			len = ids.length;
+			for(var i = len-1;i>=0 ;i--) {
+				$("#jqGrid_04").jqGrid("delRowData", ids[i]);  
+			}  
+		});
+
+	var url = '/sys/operator/findRoleOperators.html?roleId=${id}';
+	//表格初始化
+	$("#jqGrid_03").jqTreeGrid({
+		url: url +"&roleEq=0",
+		height: $(window).height()*0.8*0.55,
+		multiselect: true,
+		rowNum: 15,
+		pager: "#jqGridPager_03",
+		colModel: [{
+			label: '用户名',
+			name: 'loginName',
+			width: 100
+		}, {
+			label: '姓名',
+			name: 'realName',
+			width: 100
+		}, {
+			label: 'id',
+			name: 'id',
+			width: 150,
+			hidden:true
+		}],
+		ondblClickRow: function(rowid,iRow,iCol,e) {
+			span_right[0].click();
+		}
+	}).jqGrid("setFrozenColumns").navGrid('#jqGridPager_03',
+		            // the buttons to appear on the toolbar of the grid
+		    	{ edit: false, add: false, del: false, search: false, refresh: true, view: false, position: "left", cloneToTop: false }
+		   	);
+	
+	$("#jqGrid_04").jqTreeGrid({
+		url:url +"&roleEq=1",
+		loadonce: true,
+		height: $(window).height()*0.8*0.5,
+		//datatype: "local",
+		rowNum: 500000,
+		colModel: [{
+			label: '用户名',
+			name: 'loginName',
+			width: 100
+		}, {
+			label: '姓名',
+			name: 'realName',
+			width: 100
+		}, {
+			label: 'id',
+			name: 'id',
+			width: 150,
+			hidden:true
+		}],
+		ondblClickRow: function(rowid,iRow,iCol,e) {
+			span_left[0].click();
+		}
+	});
+	$(window).bind('resize', function() {				
+		$("#jqGrid_03").setGridHeight($(window).height()*0.8*0.55);
+		$("3#jqGrid_04").setGridHeight($(window).height()*0.8*0.5);
+	});
+});
+</script>

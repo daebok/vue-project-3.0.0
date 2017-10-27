@@ -1,0 +1,199 @@
+@import  (reference)'../../style/common.less';
+/*注册页面*/
+.ant-modal-body{
+	padding: 15px;
+}
+.register-content{
+	 .hasId{
+    .f12();
+    color: @color-text;
+    a{
+      color: @color-main;
+    }
+  } 
+	.title{
+		padding: 0 30px;
+		height: 50px;
+		line-height: 50px;
+		border-bottom: 1px solid #eef2f4;
+		background: #fafbfc;
+		h2{
+			font-size: 14px;
+			font-weight: 100;
+			color: @color-p;
+		}
+		.logo_fr{
+			.fr();
+			color: @color-text;
+			.f14();
+			a{
+				color: #ff9545;
+			}
+		}
+	}
+	.reg_step{
+		width: 870px;
+		margin: 50px auto 0;
+		height: 50px;
+		padding-top: 20px;
+		line-height: 30px;
+		background: url(../../style/images/reg_step.png) no-repeat;
+		&.step01{
+			background-position: center 0;
+		}
+		&.step02{
+			background-position: center -84px;
+		}
+		&.step03{
+			background-position: center -168px;
+		}
+		em{
+			display: block;
+			width: 290px;
+			text-align: center;
+			color: #aaa;
+			font-size: 12px;
+			float: left;
+			&.one{
+				width: 272px;
+			}
+			&.two{
+				width: 320px;
+			}
+			&.three{
+				width: 80px;
+				margin-left: 106px;
+			}
+			&.active{
+				color: @color-title;
+			}
+		}
+	}
+	.register-form{
+
+		.form-themes{
+			width: 400px;
+			margin: 30px 0 40px 330px;
+			.form-laber{
+				color: #666;
+			}
+		}
+		.choiceNo{
+			.lab{
+				height: 30px;
+				line-height: 30px;
+			}
+			a{
+				display: block;
+				float: left;
+				width: 50%;
+				height: 30px;
+				line-height: 30px;
+				background: #f8f8f8;
+				text-align: center;
+				font-size: 14px;
+				color: #666;
+				&.active{
+					background: #e8e8e8;
+				}
+			}
+		}
+		label.ant-form-item-required{
+			margin-right: 20px;
+		}
+		.secondStep-btn{
+			.ant-form-item{
+				margin-bottom: 0;
+			}
+			.error-msg{
+				margin: 10px 0;
+				padding-left: 30px;
+				color: #f50;
+			}
+		}
+	}
+	.register-img{
+		height: 540px;
+		background: url(../../style/images/register-img.jpg) no-repeat 20px 70px;		
+	}
+	.ant-btn-lg{		
+		.form-button(@padding: 0px,@width: 280px,@fontsize: 16px,@lineheight:40px);
+		background-image:-webkit-linear-gradient(to right, #ff794e, #ffb131);
+    background-image:linear-gradient(to right,#ff794e, #ffb131);
+    border: none;
+    border-radius: 5px;
+	}
+	.register-ok{
+		height: 540px;
+	}
+	.ok-text{
+		display: block;
+		font-size: 24px;
+		color:@color-p;
+		text-align: center;
+	}
+	.register-right{
+		display: block;
+		height: 135px;
+		padding: 70px 0 0 0;
+		color:@color-right;
+		font-size: 50px;
+		text-align: center;
+	}
+	.btn{
+		display: block;
+		padding: 20px 0 0;
+		text-align: center;
+		a{
+			background-image:-webkit-linear-gradient(to right, #ff794e, #ffb131);
+      background-image:linear-gradient(to right,#ff794e, #ffb131);
+	    font-size: 16px;
+	    line-height: 44px;
+	    padding: 0 75px;
+	    display: inline-block;
+	    text-align: center;
+	    color: #fff;
+	    border-radius: 6px;
+	    border: none;
+		}
+	}
+	.remind-text{
+		color:@color-text;
+		text-align: center;
+		line-height: 32px;
+		s{
+			color:@color-main;
+			text-decoration: none;
+		}
+	}
+	.other{
+		margin: 80px 0 0 0;
+		text-align: center;
+		border-top:@color-pagebg solid 1px;
+		line-height: 52px;
+		font-size: 14px;
+		color:@color-text;
+		a{
+			color:@color-main;
+			margin: 0 0 0 10px;
+		}
+	}
+	.codeimg{
+		cursor: pointer;
+	}
+	.countdown-btn{
+		.countdown-btn();
+	}
+	.agreementbox{
+		position: relative;
+    z-index: 10;
+    display: block;
+    width: 360px;
+	}
+}
+.form-themes .agreement .ant-form-item-control{
+	line-height: 31px;
+}
+.form-themes .agreement a,.form-themes .agreement a:hover{
+	color: #41a6ed;
+}

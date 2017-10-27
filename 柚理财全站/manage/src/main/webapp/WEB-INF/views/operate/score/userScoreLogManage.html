@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>用户积分日志页面</title>
+		<#include "include/resources.html">
+	</head>
+	<body>
+		<style>
+			.layui-layer-loading .layui-layer-loading3{width:200px!important;padding-left: 66px;color: #fff;line-height: 24px;}
+		</style>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="用户名">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" id="keywordsSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/operate/score/userScoreLogList.html">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form id="advSearchForm">
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							   <li class="input-group input-group-sm"><span>用户名</span><input type="text" class="form-control" name="userName" /></li>
+							   <li class="input-group input-group-sm"><span>类型</span><input type="text" class="form-control" name="typeName" /></li>
+							   <li class="input-group input-group-sm"><span>行为</span>
+							   	<select name="optType" class="form-control">
+							   			<option value="">请选择</option>
+							    		<option value="0">消耗</option>
+							    		<option value="1">获取</option>	
+							    </select>
+							   </li>
+							   <li class="input-group input-group-sm"><span>操作开始时间</span><input type="text" class="form-control layer-date" name="createTimeBegin" id="startTime"/></li>
+							   <li class="input-group input-group-sm"><span>操作截止时间</span><input type="text" class="form-control layer-date" name="createTimeEnd" id="endTime"/></li>
+							   <li><button class="btn btn-sm btn-primary" type="button" id="conditionSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/operate/score/userScoreLogList.html">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+							<@shiro.hasPermission name="oper:score:scoreList:export">
+							  <a href="javascript:" class="btn btn-info" onclick="exportExcel(this)" data-title='用户积分' data-url="/operate/score/exportScoreLog.html" data-tid="jqGrid">导出</a>
+						    </@shiro.hasPermission>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					</div>					
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+			 <@dictFormatter type = "optType" />
+					$(document).ready(function() {		
+						//设置投资时间
+						var startTime= {
+							elem:'#startTime',
+							format: 'YYYY-MM-DD', //日期格式
+							istime: false, //是否开启时间选择
+							max:$('#endTime').val(),
+							event:'focus',
+							choose: function(dates){
+							    endTime.min=dates;
+							    endTime.start=dates;
+							}
+						};
+						//设置截止时间
+						var endTime=  {
+								elem:'#endTime',
+								format: 'YYYY-MM-DD', //日期格式
+								istime: false, //是否开启时间选择
+								min: $('#startTime').val(), //最小日期大于当前时间
+								event:'focus',
+								choose: function(dates){
+								    startTime.max=dates;
+							   }
+						};				
+						laydate(startTime);
+						laydate(endTime);
+						//表格初始化
+						$("#jqGrid").jqTreeGrid({
+							url: '/operate/score/userScoreLogList.html',	
+							  multiselect : false,	
+							  colModel: [
+			                    { label: 'id', name: 'uuid', width: 65, hidden:true},
+			                    { label: '用户名', name: 'userName',index:"user_name",width: 20,align:"center"},
+			                    { label: '用户姓名', name: 'realName',index:"real_name",width: 20,align:"center"},
+			                    { label: '类型', name: 'typeName',index:"type_name",width: 20,align:"center"},
+								{ label: '行为', name: 'optType',index:"opt_type", width: 15, formatter:optTypeFormatter,align:"center"},
+			                    { label: '操作积分', name: 'optValue',index:"opt_value",width: 10,align:"center"},
+			                    { label: '有效积分', name: 'useScore',index:"use_score",width: 10,align:"center"},
+			                    { label: '冻结积分', name: 'noUseScore',index:"no_use_score",width: 10,align:"center"},
+								{ label: '操作时间', name: 'createTime',index:"create_time", width: 30,formatter: datetimeFormatter,align:"center"},
+								{ label: '备注', name: 'remark',index:"remark",width: 30,align:"left"}
+			                ]
+						}) ;			
+					});
+			</script>
+		</div>
+	</body>
+</html>

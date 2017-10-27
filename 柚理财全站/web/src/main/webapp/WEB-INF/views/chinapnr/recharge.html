@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <title>汇付天下充值跳转中......</title>
+	    <meta http-equiv="content-Type" content="text/html; charset=utf-8" />
+	</head>
+	
+	<body>
+	    <div>汇付天下充值跳转中,请您不要关闭页面......</div>
+	    <form action="${recharge.ufxSubmitUrl!}" method="post" id="frm1" style="display: none;">
+	        <input type="hidden" name="service" value="${recharge.service!}" />
+	        <input type="hidden" name="orderNo" value="${recharge.orderNo!}" />
+	        <input type="hidden" name="ufxCustomerId" value="${recharge.ufxCustomerId!}" />
+	        <input type="hidden" name="businessWay" value="${recharge.businessWay!}" />
+	        <input type="hidden" name="signInfo" value="${recharge.signInfo!}" />
+	        <input type="hidden" name="userCustId" value="${recharge.userCustId!}" />
+	        <input type="hidden" name="amount" value="${recharge.amount!}" />
+	        <input type="hidden" name="idNo" value="${recharge.idNo!}" />
+	        <input type="hidden" name="userType" value="${recharge.userType!}" />
+	        <input type="hidden" name="userId" value="${recharge.userId}" />
+	        <input type="hidden" name="realName" value="${recharge.realName!}" />
+	        <input type="hidden" name="payWay" value="${recharge.payWay!}" />
+	        <input type="hidden" name="returnUrl" value="${recharge.returnUrl!}" />
+	        <input type="hidden" name="notifyUrl" value="${recharge.notifyUrl!}" />
+	    </form>
+	
+	    <script type="text/javascript">
+	    	document.getElementById("frm1").submit();
+	    </script>
+	</body>
+</html>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.user.mapper.UserLoginLogMapper">
+	<resultMap type="com.rd.ifaes.core.user.domain.UserLoginLog" id="userLoginLogResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="loginTime" column="LOGIN_TIME"/>
+		<result property="loginIp" column="LOGIN_IP"/>
+		<result property="userName" column="USER_NAME"/>
+		<result property="realName" column="REAL_NAME"/>
+		<result property="mobile" column="MOBILE"/>
+		<result property="email" column="EMAIL"/>
+		<result property="userNature" column="USER_NATURE"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		LOGIN_TIME,
+		LOGIN_IP
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{loginTime},
+		#{loginIp}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="loginIp != null and loginIp != ''">and LOGIN_IP = #{loginIp}</if>
+        	<if test="keywords != null and keywords != ''">
+	        	and (u.USER_NAME like concat('%',#{keywords},'%') 
+	        		or u.REAL_NAME like concat('%',#{keywords},'%') 
+	        		or u.MOBILE like concat('%',#{keywords},'%') )
+	       </if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.user.domain.UserLoginLog">
+		insert into user_login_log( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into user_login_log( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+			#{item.uuid},
+			#{item.userId},
+			#{item.loginTime},
+			#{item.loginIp}
+		)
+		</foreach>
+	</insert>
+
+	<update id="update" parameterType="com.rd.ifaes.core.user.domain.UserLoginLog">
+		update user_login_log 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="loginTime != null">LOGIN_TIME = #{loginTime},</if>
+            <if test="loginIp != null and loginIp != ''">LOGIN_IP = #{loginIp}</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="userLoginLogResultMap">
+        select <include refid="table_columns" />
+        from user_login_log
+    </select>
+
+    <select id="findList" resultMap="userLoginLogResultMap">
+        select u.user_name, u.real_name, u.mobile, u.email, u.user_nature, ul.uuid, ul.user_id, ul.login_time, ul.login_ip
+        from user_login_log ul inner join user u on ul.user_id = u.uuid 
+        <include refid="page_where" />
+        <if test="page == null or page.sort == null or page.sort == ''">order by ul.LOGIN_TIME desc </if>
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from user_login_log
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="userLoginLogResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_login_log
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+
+    <!-- 获取最近一次登录记录 -->
+    <select id="getLastLoginTime" resultType="date" parameterType="String" >
+		select login_time
+		from user_login_log
+		where user_id = #{userId} order by login_time desc limit 1
+	</select>
+
+</mapper>

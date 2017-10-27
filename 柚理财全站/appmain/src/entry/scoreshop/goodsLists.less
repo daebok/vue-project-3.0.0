@@ -1,0 +1,302 @@
+@import '../../style/common.less';
+@import '../../style/account.less';
+
+#j-goodsList{
+  min-height:350px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  overflow: hidden;
+  .ant-tabs-bar{background-color: #fff;}    
+  .ant-tabs{
+    overflow: initial;
+  }
+  .nolist{
+    color: #aaa;
+    .f14();
+    .iconfont{
+      display: block;
+      font-size: 34px;
+    }
+  }   
+  .ant-tabs-nav .ant-tabs-tab-active .ant-tabs-tab-inner{
+    border-bottom: none;
+    color: #f95a28;      
+  }
+  .ant-tabs-nav .ant-tabs-tab{
+      height: 50px;
+      line-height: 35px;        
+    }
+    .account-tab();
+    .ant-tabs-tab-active{
+      background-color: #fff;
+      border-left: 1px solid #d9d9d9;
+      border-right: 1px solid #d9d9d9;      
+    }
+    .ant-tabs-ink-bar{
+      top:0
+    }
+  .bond-index-select{
+    position: relative;
+    z-index: 2;
+    float:left;
+    .filter-btn{
+      color:@color-text;
+      font-size: 12px;
+      cursor: pointer;
+      width: 78px;
+      margin: 0 58px 0 0;
+      em{
+        position: absolute;
+        font-size: 12px;
+        margin: 0 0 0 5px;
+        transition: transform .1s ease-in 0s;
+        -webkit-transition: -webkit-transform .1s ease-in 0s;
+      }
+    }
+    &:extend(.fr);
+    .bond-index-filter-cont{
+      background-color: #fff;
+      dl{
+        clear: both;
+        dt,dd{
+          &:extend(.fl);
+          line-height: 52px;
+        }
+        dt{
+          font-size: 14px;
+          color: @color-text;
+          width: 115px;
+          padding: 0 0 0 20px;
+        }
+        dd{
+          span{
+              font-size: 14px;
+              display: inline-block;
+              padding: 0 12px;
+              border-radius: 3px;
+              line-height: 22px; 
+              color: @color-p;
+              margin: 0 30px 0 0;
+              cursor: pointer;               
+            &.on,&:hover{
+              background-color:@color-main;                
+              color:#fff;
+            }
+          }
+        }
+      }
+    }
+    &.on{
+      .filter-btn{
+        em{
+            transform: rotate(180deg);
+            -webkit-transform: rotate(180deg);
+        }
+      }
+      .bond-index-filter-cont{
+        padding: 8px 0;
+        display: block;
+      }
+    }
+  }
+  .bond-index-cont{
+    padding-bottom: 40px;
+    margin: 10px 0 0;
+    .sort{
+      margin-bottom:30px;
+      background:@cololr-bodybg;
+      .left{
+      	float:left;
+      	width:880px;
+      	background:#fff;
+        .searchDom {
+          border-bottom:1px solid @cololr-bodybg;
+        }
+        ul{
+          background:#fafafd;
+          i {
+            font-size: 12px;
+            color: #c8c8c8;
+            margin-left: 5px;
+          }
+        }
+      }
+      .right{
+      	float:right;
+      	width:280px;
+      	background:#fff;
+      	padding:25px 0 20px 35px;
+      	.scoreNews{
+      		margin-bottom:25px;
+	      	.img{
+	      		width:70px;
+	      		height:70px;
+	      		background:#f2f2f2;
+	      		border-radius:70px;
+	      		float:left;	
+	      	}
+	      	.score{
+	      		width:145px;
+	      		float:left;
+	      		margin-left:20px;
+	      		em{
+	      			font-size:24px;
+	      			color:@color-p;
+	      		}
+	      		p{
+	      			font-size:14px;
+	      			color:@color-text;
+	      		}
+	      	}
+      	}
+      	.btns{
+      		a{
+      			display:block;
+      			width:90px;
+      			height:30px;
+      			border:1px solid @color-error;
+      			border-radius:3px;
+      			color:@color-error;
+      			float:left;
+      			margin-right:20px;
+      			text-align:center;
+      			line-height:30px;
+      		}
+	      	}
+      }
+      ul{
+        padding-left:20px;
+        li{
+          &:extend(.fl);
+          line-height: 50px;
+          height: 50px;
+          span{
+            position:relative;
+            font-size: 14px;
+            display: inline-block;
+            cursor: pointer;
+            em{
+              color: #c8c8c8;
+              font-size: 20px;
+              &.desc,&.asc{
+                color:@color-main;
+              }
+            }
+          }
+          &.w2{width: 150px; padding-left:20px;}
+          &.w3{width: 105px;}
+        }
+      }
+    }
+    .result{
+      ul {
+        li{
+          width:280px;
+          height:300px;
+          float:left;
+          background:#fff;
+          margin-right:20px;
+          margin-bottom:20px;
+          img{
+              display:block;
+              width:240px;
+              height:150px;
+              margin: 20px auto 20px;
+            }
+            p{
+              .f14();
+              color:@color-p;
+              padding-left:20px;
+            }
+            .ptitle{
+              font-weight:bold;
+              padding-top:0;
+              a{
+                color:@color-p;
+                &:hover{
+                  color:@color-main;
+                }
+              }
+            }
+            .score{
+              .f12();
+              color:@color-p;
+              font{
+                color:@color-error;
+                font-size:20px;
+                padding-right:5px;
+              }
+            }
+            .num{
+              .f12();
+              color:@color-text;
+            }
+        }
+        li.sellOut{
+          width:280px;
+          height:300px;
+          float:left;
+          background:#fff;
+          margin-right:20px;
+          margin-bottom:20px;
+          position:relative;
+          img{
+              display:block;
+              width:240px;
+              height:150px;
+              margin: 20px auto 20px;
+              -webkit-filter: grayscale(100%);
+              -moz-filter: grayscale(100%);
+              -ms-filter: grayscale(100%);
+              -o-filter: grayscale(100%);
+              filter: grayscale(100%);
+              filter: gray;
+            }
+            .sellOutbg{
+              width:73px;
+              height:72px;
+              background: url(../../style/images/sellOutImg.png) no-repeat;
+              position:absolute;
+              top:30px;
+              right:30px;
+            }
+            p{
+              .f14();
+              color:#c8c8c8;
+              padding-left:20px;
+            }
+            .ptitle{
+              font-weight:bold;
+              padding-top:0;
+              a{
+                color:#c8c8c8;
+                &:hover{
+                  color:@color-main;
+                }
+              }
+            }
+            .score{
+              .f12();
+              color:#c8c8c8;
+              font{
+                color:#c8c8c8;
+                font-size:20px;
+                padding-right:5px;
+              }
+            }
+            .num{
+              .f12();
+              color:#c8c8c8;
+            }
+        }
+      }
+
+    }
+  }
+}
+
+.bond-index-main .bond-index-cont .sort i {
+  font-size: 12px;
+  color: #c8c8c8;
+  margin-left: 5px;
+}

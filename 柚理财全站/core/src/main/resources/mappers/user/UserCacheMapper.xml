@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.user.mapper.UserCacheMapper">
+	<resultMap type="com.rd.ifaes.core.user.domain.UserCache" id="userCacheResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="userNature" column="USER_NATURE"/>
+		<result property="certType" column="CERT_TYPE"/>
+		<result property="idNo" column="ID_NO"/>
+		<result property="sex" column="SEX"/>
+		<result property="postCode" column="POST_CODE"/>
+		<result property="province" column="PROVINCE"/>
+		<result property="city" column="CITY"/>
+		<result property="area" column="AREA"/>
+		<result property="address" column="ADDRESS"/>
+		<result property="riskLevel" column="RISK_LEVEL"/>
+		<result property="avatarPhoto" column="AVATAR_PHOTO"/>
+		<result property="loginFailTimes" column="LOGIN_FAIL_TIMES"/>
+		<result property="lockType" column="LOCK_TYPE"/>
+		<result property="lockTime" column="LOCK_TIME"/>
+		<result property="lockRemark" column="LOCK_REMARK"/>
+		<result property="renameFlag" column="RENAME_FLAG"/>
+		<result property="signAccount" column="SIGN_ACCOUNT"/>
+		<result property="signSealData" column="SIGN_SEAL_DATA"/>
+		<result property="regMode" column="REG_MODE"/>
+		<result property="investNum" column="INVEST_NUM"/>
+		<result property="resetPwdFlag" column="RESET_PWD_FLAG"/>
+		<result property="firstAwardFlag" column="FIRST_AWARD_FLAG"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		USER_NATURE,
+		CERT_TYPE,
+		ID_NO,
+		SEX,
+		POST_CODE,
+		PROVINCE,
+		CITY,
+		AREA,
+		ADDRESS,
+		RISK_LEVEL,
+		AVATAR_PHOTO,
+		LOGIN_FAIL_TIMES,
+		LOCK_TYPE,
+		LOCK_TIME,
+		LOCK_REMARK,
+		RENAME_FLAG,
+		SIGN_ACCOUNT,
+		SIGN_SEAL_DATA,
+		REG_MODE,
+		INVEST_NUM,
+		RESET_PWD_FLAG,
+		FIRST_AWARD_FLAG
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{userNature},
+		#{certType},
+		#{idNo},
+		#{sex},
+		#{postCode},
+		#{province},
+		#{city},
+		#{area},
+		#{address},
+		#{riskLevel},
+		#{avatarPhoto},
+		#{loginFailTimes},
+		#{lockType},
+		#{lockTime},
+		#{lockRemark},
+		#{renameFlag},
+		#{signAccount},
+		#{signSealData},
+		#{regMode},
+		#{investNum},
+		#{resetPwdFlag},
+		#{firstAwardFlag}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="userNature != null and userNature != ''">and USER_NATURE = #{userNature}</if>
+            <if test="certType != null and certType != ''">and CERT_TYPE = #{certType}</if>
+            <if test="idNo != null and idNo != ''">and ID_NO = #{idNo}</if>
+            <if test="sex != null and sex != ''">and SEX = #{sex}</if>
+            <if test="postCode != null and postCode != ''">and POST_CODE = #{postCode}</if>
+            <if test="province != null and province != ''">and PROVINCE = #{province}</if>
+            <if test="city != null and city != ''">and CITY = #{city}</if>
+            <if test="area != null and area != ''">and AREA = #{area}</if>
+            <if test="address != null and address != ''">and ADDRESS = #{address}</if>
+            <if test="riskLevel != null and riskLevel != ''">and RISK_LEVEL = #{riskLevel}</if>
+            <if test="avatarPhoto != null and avatarPhoto != ''">and AVATAR_PHOTO = #{avatarPhoto}</if>
+			<if test="loginFailTimes != null">and LOGIN_FAIL_TIMES = #{loginFailTimes}</if>
+			<if test="lockType != null and lockType != ''">and LOCK_TYPE = #{lockType}</if>
+			<if test="lockTime != null">and LOCK_TIME = #{lockTime}</if>
+            <if test="lockRemark != null and lockRemark != ''">and LOCK_REMARK = #{lockRemark}</if>
+            <if test="renameFlag != null and renameFlag != ''">and RENAME_FLAG = #{renameFlag}</if>
+            <if test="signAccount != null and signAccount != ''">and SIGN_ACCOUNT = #{signAccount}</if>
+            <if test="signSealData != null and signSealData != ''">and SIGN_SEAL_DATA = #{signSealData}</if>
+            <if test="regMode != null and regMode != ''">and REG_MODE = #{regMode}</if>
+            <if test="investNum != null and investNum != ''">and INVEST_NUM = #{investNum}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.user.domain.UserCache">
+		insert into user_cache( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into user_cache( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+			#{item.uuid},
+			#{item.userId},
+			#{item.userNature},
+			#{item.certType},
+			#{item.idNo},
+			#{item.sex},
+			#{item.postCode},
+			#{item.province},
+			#{item.city},
+			#{item.area},
+			#{item.address},
+			#{item.riskLevel},
+			#{item.avatarPhoto},
+			#{item.loginFailTimes},
+			#{item.lockType},
+			#{item.lockTime},
+			#{item.lockRemark},
+			#{item.renameFlag},
+			#{item.signAccount},
+			#{item.signSealData},
+			#{item.regMode},
+			#{item.investNum},
+			#{item.resetPwdFlag},
+			#{item.firstAwardFlag}
+		)
+		</foreach>
+	</insert>
+
+	<update id="update" parameterType="com.rd.ifaes.core.user.domain.UserCache">
+		update user_cache 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="certType != null and certType != ''">CERT_TYPE = #{certType},</if>
+            <if test="idNo != null and idNo != ''">ID_NO = #{idNo},</if>
+            <if test="sex != null and sex != ''">SEX = #{sex},</if>
+            <if test="postCode != null and postCode != ''">POST_CODE = #{postCode},</if>
+            <if test="province != null and province != ''">PROVINCE = #{province},</if>
+            <if test="city != null and city != ''">CITY = #{city},</if>
+            <if test="province != null and province != '' and city != null and city != ''">AREA = #{area},</if>
+            <if test="address != null and address != ''">ADDRESS = #{address},</if>
+            <if test="riskLevel != null and riskLevel != ''">RISK_LEVEL = #{riskLevel},</if>
+            <if test="avatarPhoto != null and avatarPhoto != ''">AVATAR_PHOTO = #{avatarPhoto},</if>
+			<if test="loginFailTimes != null">LOGIN_FAIL_TIMES = #{loginFailTimes},</if>
+			<if test="lockType != null and lockType != ''">LOCK_TYPE = #{lockType},</if>
+			<if test="lockTime != null">LOCK_TIME = #{lockTime},</if>
+            <if test="lockRemark != null and lockRemark != ''">LOCK_REMARK = #{lockRemark},</if>
+            <if test="renameFlag != null and renameFlag != ''">RENAME_FLAG = #{renameFlag},</if>
+            <if test="signAccount != null and signAccount != ''">SIGN_ACCOUNT = #{signAccount},</if>
+            <if test="signSealData != null and signSealData != ''">SIGN_SEAL_DATA = #{signSealData},</if>
+            <if test="regMode != null and regMode != ''">REG_MODE = #{regMode},</if>
+            <if test="investNum != null">INVEST_NUM = #{investNum},</if>
+            <if test="resetPwdFlag != null and resetPwdFlag != ''">RESET_PWD_FLAG = #{resetPwdFlag},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+	
+	<update id="updateBatch" parameterType="java.util.List">
+		<foreach collection="list" item="item" open="" separator=";" close="">  
+			update user_cache 
+			<trim prefix="set" suffixOverrides=",">
+	            <if test="item.certType != null and item.certType != ''">CERT_TYPE = #{item.certType},</if>
+	            <if test="item.idNo != null and item.idNo != ''">ID_NO = #{item.idNo},</if>
+	            <if test="item.sex != null and item.sex != ''">SEX = #{item.sex},</if>
+	            <if test="item.postCode != null and item.postCode != ''">POST_CODE = #{item.postCode},</if>
+	            <if test="item.province != null and item.province != ''">PROVINCE = #{item.province},</if>
+	            <if test="item.city != null and item.city != ''">CITY = #{item.city},</if>
+	            <if test="item.province != null and item.province != '' and city != null and city != ''">AREA = #{item.area},</if>
+	            <if test="item.address != null and item.address != ''">ADDRESS = #{item.address},</if>
+	            <if test="item.riskLevel != null and item.riskLevel != ''">RISK_LEVEL = #{item.riskLevel},</if>
+	            <if test="item.avatarPhoto != null and item.avatarPhoto != ''">AVATAR_PHOTO = #{item.avatarPhoto},</if>
+				<if test="item.loginFailTimes != null">LOGIN_FAIL_TIMES = #{item.loginFailTimes},</if>
+				<if test="item.lockType != null and item.lockType != ''">LOCK_TYPE = #{item.lockType},</if>
+				<if test="item.lockTime != null">LOCK_TIME = #{lockTime},</if>
+	            <if test="item.lockRemark != null and item.lockRemark != ''">LOCK_REMARK = #{item.lockRemark},</if>
+	            <if test="item.renameFlag != null and item.renameFlag != ''">RENAME_FLAG = #{item.renameFlag},</if>
+	            <if test="item.signAccount != null and item.signAccount != ''">SIGN_ACCOUNT = #{item.signAccount},</if>
+	            <if test="item.signSealData != null and item.signSealData != ''">SIGN_SEAL_DATA = #{item.signSealData},</if>
+	            <if test="item.regMode != null and item.regMode != ''">REG_MODE = #{item.regMode},</if>
+	            <if test="item.investNum != null">INVEST_NUM = #{item.investNum},</if>
+			</trim>
+			<where>uuid = #{item.uuid}</where>
+		</foreach>	
+	</update>
+
+    <select id="findAll" resultMap="userCacheResultMap">
+        select <include refid="table_columns" />
+        from user_cache
+    </select>
+
+    <select id="findList" resultMap="userCacheResultMap">
+        select <include refid="table_columns" />
+        from user_cache
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from user_cache
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="userCacheResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_cache
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+
+	<!-- 根据UserId查找对象-->
+    <select id="findByUserId" resultMap="userCacheResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_cache
+		where user_id = #{userId}
+	</select>
+	
+	<update id="updateLockRemark" parameterType="com.rd.ifaes.core.user.domain.UserCache">
+		update user_cache set LOCK_REMARK = #{lockRemark}, LOCK_TIME = #{lockTime}, LOCK_TYPE = #{lockType} where uuid = #{uuid}
+	</update>
+	
+    <update id="updateUserInfo" parameterType="com.rd.ifaes.core.user.domain.UserCache">
+		update user_cache set RENAME_FLAG = #{renameFlag}, PROVINCE = #{province},CITY = #{city},AREA = #{area},ADDRESS = #{address} where uuid = #{uuid}
+	</update>
+	
+	<select id="countCardId" resultType="int" >
+		select count(uuid) from user_cache where id_no = #{idNo}
+	</select>
+	
+		<!-- 用户首投成功处理 -->
+	<update id="userFirstInvest" >
+	    update user_cache set first_award_flag='1'  where user_id= #{userId}   and (first_award_flag is null or  first_award_flag ='0')
+	</update>
+	
+	<!-- 用户在投 投资成功的 投资次数+1 -->
+	<update id="addUserInvestNum">
+	   update user_cache set invest_num=invest_num+1  where user_id=#{userId} 
+	</update>
+	
+	 <!-- 用户在投 投资成功的 投资次数-1 -->
+	<update id="subUserInvestNum">
+	   update user_cache set invest_num=invest_num-1  where user_id=#{userId}  
+	</update>
+	
+	<select id="getUserCacheByUserList" resultType="map">
+		select user_id,sex,id_no
+		from user_cache
+		where user_id in
+         <foreach collection="list" item="user" open="(" separator="," close=")">  
+            #{user.uuid} 
+        </foreach>
+	</select>
+</mapper>

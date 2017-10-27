@@ -1,0 +1,91 @@
+<style>
+	.form-item li{line-height:55px; height:55px;}
+	.form-item li .form-label{line-height:22px; }
+</style>
+<div class="form-tips-content">
+	<form class="form-horizontal" action="/sys/config/configEdit.html" id="form" role="form">
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">标识：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="code" id="code" maxLength="50" value="${config.code}" placeholder="请输入标识" required readonly=true>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="configName" class="control-label form-label">名称：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="configName" id="configName" maxLength="50" value="${config.configName}" placeholder="请输入名称" required>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="configValue" class="control-label form-label">值：</label>
+					<div class="input-box">
+						<input type="text" max-length="128" class="form-control" name="configValue" id="configValue" value="${config.configValue}" placeholder="请输入值" required>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="configType" class="control-label form-label">类型：</label>
+					<div class="input-box input-radio">
+						<@linkage name="configType" nid="configType" default="${config.configType}" class="form-control"/>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="status" class="control-label form-label">状态：</label>
+					<div class="input-box input-radio">
+						<@linkage name="status" nid="enable" default="${config.status}" class="form-control" />
+					</div>
+				</div>
+			</li>
+
+			<li>
+				<div class="form-group">
+					<label for="remark" class="control-label form-label">备注：</label>
+					<div class="input-box input-radio">
+						<textarea name="remark" class="form-control" rows="" cols="" required maxLength="512">${config.remark}</textarea>
+					</div>
+				</div>
+			</li>
+
+		</ul>
+		<input type="hidden" name="uuid" value="${config.uuid}" />
+		<@token/>
+
+	</form>
+</div>
+<script>
+$("#form").validate({
+	submitHandler: function(form) {	
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						icon: 6,
+						cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+					}, function() {
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入  
+					});
+				} else {
+					layer.alert(data.msg, {
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+})
+</script>

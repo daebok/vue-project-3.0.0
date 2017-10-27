@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="format-detection" content="telephone=no">
+    <title>头像上传-${web_name!""}</title>
+    <link rel="stylesheet" type="text/css" href="/common.css"/>
+    <link rel="stylesheet" type="text/css" href="/face.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+    <script src="/themes/js/jquery.min.js"></script>
+    <script src="/themes/plugins/layer-v1.8.4/layer.min.js"></script>
+</head>
+<body data-vouch="${isVouch!}">
+    <#include "/include/header.html">
+    <div class="site-row account-content clearfix">
+        <div class="site-col-4 account-side" id="j-sider-menu">
+            <div class="loading"></div>
+        </div>
+        <div class="site-col-20 site-col-last">
+            <div class="account-main">
+                <div class="main-title">头像上传</div>
+                <div class="face_conts">
+                    <embed tplayername="SWF" splayername="SWF"
+                        type="application/x-shockwave-flash"
+                        src="/themes/flash/face.swf" mediawrapchecked="true"
+                        pluginspage="http://www.macromedia.com/go/getflashplayer"
+                        id="tagcloudflash" name="tagcloudflash" bgcolor="#ffffff"
+                        quality="high" wmode="transparent" allowscriptaccess="always"
+                        FlashVars="uploadServerUrl=${imageServerUrl}/upload/avatar.html?nid=avatar&userId=${(session_user.userId)?c}"
+                        width="500" height="500" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>         
+        function avatar_success(){
+             var url = "${returnUrl}";
+             $.layer({
+                    type: 1,
+                    closeBtn: [0,true],
+                    title: "&nbsp;",
+                    area: ['384px', '186px'],
+                    border: [1, 1, '#cecfd0'],
+                    time:3,
+                    page: {
+                        html: '<div class="tipsWrap w384"><div class="tipsTxt"><i class="iconfont okIco">&#xe62d;</i><span>头像修改成功</span></div><div class="tipsMsg"><i class="tipsTime">3</i>秒后窗口自动关闭</div></div>'
+                    },
+                    close: function(index){
+                        window.location.href = url;
+                    },
+                    end: function(){
+                        window.location.href = url;
+                    },
+                    success:function(){
+                        var time = 3;
+                        function tipsTime(){
+                         time--;
+                         $(".tipsTime").html(time)
+                         if(time == 0)
+                         {
+                          clearInterval(timeCount)
+                         }
+                        }
+                        var timeCount = setInterval(function(){tipsTime()},1000);
+                       }
+            });
+        }
+
+    </script>
+    <#include "/include/footer.html">
+</body>
+<script src="/common.js"></script>
+<script src="/face.js"></script>
+</html>

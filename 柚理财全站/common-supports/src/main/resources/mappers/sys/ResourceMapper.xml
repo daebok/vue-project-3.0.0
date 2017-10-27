@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.sys.mapper.ResourceMapper">
+	<resultMap type="com.rd.ifaes.core.sys.domain.Resource" id="resourceResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="resName" column="RES_NAME"/>
+		<result property="resText" column="RES_TEXT"/>
+		<result property="resLanguage" column="RES_LANGUAGE"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		RES_NAME,
+		RES_TEXT,
+		RES_LANGUAGE
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{resName},
+		#{resText},
+		#{resLanguage}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="resName != null and resName != ''">and RES_NAME like concat('%',#{resName},'%') </if>
+            <if test="resText != null and resText != ''">and RES_TEXT like concat('%',#{resText},'%')</if>
+            <if test="resLanguage != null and resLanguage != ''">and RES_LANGUAGE = #{resLanguage}</if>
+            <if test="keywords != null and keywords != ''">and ( RES_NAME like concat('%',#{keywords},'%') or RES_TEXT like concat('%',#{keywords},'%') )</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.sys.domain.Resource">
+		insert into sys_resource( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into sys_resource( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+		#{item.uuid},
+				#{item.resName},
+				#{item.resText},
+				#{item.resLanguage}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from sys_resource
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update sys_resource set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update sys_resource set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.sys.domain.Resource">
+		update sys_resource 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="resName != null and resName != ''">RES_NAME = #{resName},</if>
+            <if test="resText != null and resText != ''">RES_TEXT = #{resText},</if>
+            <if test="resLanguage != null and resLanguage != ''">RES_LANGUAGE = #{resLanguage},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="resourceResultMap">
+        select <include refid="table_columns" />
+        from sys_resource
+    </select>
+
+    <select id="findList" resultMap="resourceResultMap">
+        select <include refid="table_columns" />
+        from sys_resource
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from sys_resource
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="resourceResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from sys_resource
+		where uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+    <select id="getByName" resultMap="resourceResultMap" >
+		select <include refid="table_columns" />
+		from sys_resource
+		where RES_NAME = #{name} and RES_LANGUAGE = #{language}
+	</select>
+
+
+</mapper>

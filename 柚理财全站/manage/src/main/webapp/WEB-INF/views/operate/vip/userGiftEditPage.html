@@ -1,0 +1,94 @@
+<div class="form-tips-content" id="redpackage">
+<input type="hidden" id="image_server_url" value="${image_server_url}">
+  <form class="form-horizontal" action="/operate/vip/userGiftEdit.html"   method="post" id="form" >
+  <ul class="form-item">
+       <li class="heightLimit">
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">名称：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control"  value="${userGift.giftName!}" name="giftName" id="giftName" maxlength="20" placeholder="礼包名称" required>
+		      </div>
+		    </div>	
+  		</li>
+  	     <li class="heightLimit">
+			<div class="form-group">
+		      <label for="giftType" class="control-label form-label">礼包类型：</label>
+			      <div class="input-box">
+					  <select name="giftType" id="giftType" class="form-control">
+						  <option value="0" <#if userGift??&&userGift.giftType == '0' > selected="selected" </#if> >生日礼包</option>
+						  <option value="1" <#if userGift??&&userGift.giftType == '1' > selected="selected" </#if> >专享礼包</option>
+					  </select>			     
+				  </div>
+		    </div>	
+  		</li>
+  	     <li class="heightLimit">
+			<div class="form-group">
+		      <label for="redenvelopeRuleId" class="control-label form-label">红包规则：</label>
+			      <div class="input-box">
+					  <select name="redenvelopeRuleId" id="redenvelopeRuleId" class="form-control">
+						  <option value="">无</option>
+						   <#if redRuleList??>
+						    <#list redRuleList as item>
+						     <option value="${item.uuid!''}"  <#if userGift??&&userGift.redenvelopeRuleId == item.uuid > selected="selected"  </#if> >${item.ruleName!''}</option>
+						    </#list>
+						   </#if>
+					  </select>			     
+				  </div>
+		    </div>	
+  		</li>
+  	   <li class="heightLimit">
+			<div class="form-group">
+		      <label for="rateCouponRuleId" class="control-label form-label">加息券规则：</label>
+			      <div class="input-box">
+					  <select name="rateCouponRuleId" id="rateCouponRuleId" class="form-control">
+						  <option value="">无</option>
+						   <#if rateRuleList??>
+						    <#list rateRuleList as item>
+						     <option value="${item.uuid!''}" <#if userGift??&&userGift.rateCouponRuleId == item.uuid > selected="selected"  </#if> >${item.ruleName!''}</option>
+						    </#list>
+						   </#if>
+					  </select>			     
+				  </div>
+		    </div>	
+  		</li>
+  		<li class="heightLimit">
+			<div class="form-group">
+		      <label for="name" class="control-label form-label">礼包详情：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control"  value="${userGift.remark!}" name="remark" id="remark" maxlength="20" placeholder="礼包详情" required>
+		      </div>
+		    </div>	
+  		</li>
+  		     	<input type="hidden" name="uuid" value="${userGift.uuid!}"></input>
+  		   </ul>		
+</form>    	
+ </div>
+<script src="${theme_dir}/static/js/plugins/jquery.suggest.js"></script>
+<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+<script src="${theme_dir}/static/js/upload.js"></script>
+<script type="text/javascript">
+$("#form").validate({
+	  submitHandler:function(form){ 
+			$(form).ajaxSubmit({
+				type:"post",
+				dataType:"json",
+				success:function(data){
+		        	if(data.result){
+		        		layer.alert(data.msg, {
+							icon : 6,
+							cancel: function(index){
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入 
+  						}
+						}, function() {
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入  
+						});
+		        	}else{
+		        		layer.alert(data.msg, {icon: 5});
+		        	} 			        	
+		    	}
+			});
+	    }    
+	});
+</script>

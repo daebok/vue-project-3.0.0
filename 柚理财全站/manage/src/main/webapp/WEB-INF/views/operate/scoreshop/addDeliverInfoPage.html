@@ -1,0 +1,150 @@
+<div class="form-tips-content">
+	<input type="hidden" id="image_server_url" value="${image_server_url}">
+	<form class="form-horizontal" action="/operate/scoreshop/enteringDeliverInfo.html" id="form" role="form">
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label for="userName" class="control-label form-label">用户名：</label>
+					<div class="input-box-read">
+						<p>${order.userName!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="goodsName" class="control-label form-label">商品名称：</label>
+					<div class="input-box-read">
+						<p>${order.goodsName!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="num" class="control-label form-label">兑换数量：</label>
+					<div class="input-box-read">
+						<p>${order.num!}</p>						
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="" class="control-label form-label">状态：</label>
+					<div class="input-box-read">						
+						<p>待审核</p>						
+					</div>
+				</div>
+			</li>			
+			<li>
+				<div class="form-group">
+					<label for="createTime" class="control-label form-label">兑换时间：</label>
+					<div class="input-box-read">
+						<p><#if order.createTime??> ${order.createTime?string("yyyy-MM-dd HH:mm:ss")}</#if></p>
+					</div>
+				</div>
+			</li>
+			 <li>
+				<div class="form-group">
+					<label for="score" class="control-label form-label">使用积分值：</label>
+					<div class="input-box-read">
+						<p>${order.score!}</p>						
+					</div>					
+				</div>
+			</li>	 		
+			<li>
+				<div class="form-group">
+					<label for="receiveAddress" class="control-label form-label">收货地址：</label>
+					<div class="input-box-read">
+						<p>${order.receiveAddress!}</p>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="receivePhone" class="control-label form-label">收货人电话：</label>
+					<div class="input-box-read">
+						<p>${order.receivePhone!}</p>
+					</div>					
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="receiveUserName" class="control-label form-label">收货人姓名：</label>
+					<div class="input-box-read">
+						<p>${order.receiveUserName!}</p>
+					</div>					
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="receiveRemark" class="control-label form-label">兑换留言：</label>
+					<div class="input-box-read">
+						<p>${order.receiveRemark!}</p>
+					</div>
+				</div>
+			</li>
+		<li class="heightLimit">
+			<div class="form-group">
+		      <label for="expressName" class="control-label form-label">物流名称：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="expressName" id="expressName"  required>
+		      </div>
+		    </div>
+  		</li>
+			<li class="heightLimit">
+			<div class="form-group">
+		      <label for="deliverUser" class="control-label form-label">发货人：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="deliverUser" id="deliverUser"  required>
+		      </div>
+		    </div>
+  		</li>
+  		<li class="heightLimit">
+			<div class="form-group">
+		      <label for="expressNo" class="control-label form-label">物流单号：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="expressNo" id="expressNo" data-rule-username="true" required>
+		      </div>
+		    </div>
+  		</li>
+  		<li class="heightLimit">
+			<div class="form-group">
+		      <label for="money" class="control-label form-label">费用：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="money" id="money" data-rule-digits="true" data-msg-digits="请输入正整数" required>
+		      </div>
+		    </div>
+  		</li>
+	 	<input type="hidden" name="uuid" id="uuid" value=${order.uuid}>
+	 	<input type="hidden" name="status" id="status" value="3">							
+	</form>
+</div>
+<script type="text/javascript">
+$("#form").validate({
+	submitHandler: function(form) {	
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						zIndex:100000,
+						icon: 6,
+						cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+					}, function() {						
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入  
+					});
+				} else {
+					layer.alert(data.msg, {
+						zIndex:100000,
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+});
+</script>

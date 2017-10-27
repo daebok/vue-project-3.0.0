@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>调度任务</title>
+		<#include "include/resources.html">
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入付款方、收款方或项目ID">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/tpp/ufx/list.html">搜索</button>
+							    </span>
+						    </div>
+					    </form>
+					</div>
+					<div class="search-form-adv ml10">
+						<form>
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>
+							  <ul class="dropdown-menu search-menu">
+							    <li class="input-group input-group-sm"><span>服务类型</span><@linkage name="tppType" nid="tppType" class="form-control" noselect="不限"/></li>
+							    <li class="input-group input-group-sm"><span>付款方</span><input type="text" class="form-control" name="realName" /></li>
+							    <li class="input-group input-group-sm"><span>收款方</span><input type="text" class="form-control" name="toRealName" /></li>
+							    <li class="input-group input-group-sm"><span>项目ID</span><input type="text" class="form-control" name="investProjectId" /></li>
+							    <li class="input-group input-group-sm"><span>三方流水号</span><input type="text" class="form-control" name="tradeNo" /></li>
+							    <li class="input-group input-group-sm"><span>状态</span> <@linkage name="status" nid="tppStatus" class="form-control" noselect="不限"/></li>
+							    <li><button class="btn btn-sm btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/tpp/ufx/list.html">查询</button></li>
+							  </ul>
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					<@shiro.hasPermission name="set:control:edit">
+						<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.lineOperFun(this)" data-tid="jqGrid" data-url="/tpp/jxbank/doJxTppTask.html">重新触发</button>	&nbsp;
+					</@shiro.hasPermission>
+					<div class="ulval hide"></div>
+					<input type="hidden" value="noval" class="noval">
+					</div>
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+					<@dictFormatter type = "tppStatus" />
+					<@dictFormatter type = "tppType" />
+					$(document).ready(function() {
+						//表格初始化
+						var Dids=[];
+						$("#jqGrid").jqTreeGrid({
+							url: '/tpp/ufx/list.html',
+							multiboxonly:true,
+							colModel: [{
+								label: "服务类型",
+								name: "tppType",
+								formatter: tppTypeFormatter,
+								width: 80
+							}, {
+								label: "付款方",
+								name: "realNameStr",
+								width: 80
+							}, {
+								label: "金额",
+								name: "money",
+								width: 80
+							},
+							{
+								label: "收款方",
+								name: "toRealNameStr",
+								width: 80
+							}, {
+								label: "状态",
+								name: "status",
+								width: 60,
+								formatter: tppStatusFormatter
+							}, {
+								label: "项目ID",
+								name: "investProjectId",
+								width: 150
+							}, {
+								label: "订单号",
+								name: "orderNo",
+								width: 130
+							},{
+								label: "回调信息",
+								name: "respDesc",
+								width: 150
+							},{
+								label: "操作时间",
+								name: "createTime",
+								formatter: datetimeFormatter,
+								width: 150
+							},{
+								label: "更新时间",
+								name: "updateTime",
+								formatter: datetimeFormatter,
+								width: 150
+							},{
+								label: "回调时间",
+								name: "notifyTime",
+								formatter: datetimeFormatter,
+								width: 150
+							}, { label: '操作', name: '',sortable:false,width: 60,formatter:function(val, options, rowObject){
+                                    var id = rowObject.id;
+                                    var ret ="--";
+                                    if(rowObject.status!=1&&rowObject.serviceType.indexOf('batch')!=-1){
+                                    <@shiro.hasPermission name="set:control:edit">
+                                        ret = '<a href="javascript:;" onclick=$.fn.treeGridOptions.lineSetFun(this,"'+id+'") data-tid="jqGrid" data-title="查询该批次交易明细状态？" data-url="/tpp/jxbank/batchDetailsQuery.html">查询</a>';
+                                    </@shiro.hasPermission>
+                                    }else{
+                                        ret ="--";
+                                    }
+                                    return ret;
+                                }
+                                },{
+                                    label: "处理类型",
+                                    name: "serviceType",
+                                    width: 10,
+                                    hidden:true
+								}
+							],
+							gridComplete: function() {
+							var rowIds = jQuery("#jqGrid").jqGrid('getDataIDs');
+							for(var k=0; k<rowIds.length; k++) {
+							var curRowData = jQuery("#jqGrid").jqGrid('getRowData', rowIds[k]);
+							if(curRowData.serviceType.indexOf('batch')==-1||curRowData.status=='成功'){
+							$("#jqGrid").find("input[id='jqg_jqGrid_" + rowIds[k] +
+							"']").parent().html("-");
+							}
+							}
+							},
+							beforeSelectRow: function (rowid, e) {
+							    var $myGrid = $(this),
+							        i = $.jgrid.getCellIndex($(e.target).closest('td')[0]),
+							        cm = $myGrid.jqGrid('getGridParam', 'colModel');
+							    return (cm[i].name === 'cb');
+							},onSelectAll:function (aRowids,status) {
+								if(status){
+									for(var index=0;index<aRowids.length;index++){
+										var str ;
+										var curRowData = jQuery("#jqGrid").jqGrid('getRowData', aRowids[index]);
+									if(curRowData.serviceType.indexOf('batch')!=-1){
+											Dids.push(aRowids[index])
+											str += "<input type='hidde' value='"+aRowids[index]+"'>"
+										}
+									}
+									$(".ulval").html(str)
+									$(".noval").val("0")
+								}else{
+									$(".ulval").html("")
+									$(".noval").val("1")
+								}
+							},
+							}).jqGrid("setFrozenColumns").navGrid('#jqGridPager',
+							// the buttons to appear on the toolbar of the grid
+							{
+								edit: false,
+								add: false,
+								del: false,
+								search: false,
+								refresh: true,
+								view: false,
+								position: "left",
+								cloneToTop: false
+							}
+						);
+					});
+
+
+			</script>
+		</div>
+	</body>
+</html>

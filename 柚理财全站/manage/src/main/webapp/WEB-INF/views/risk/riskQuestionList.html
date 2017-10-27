@@ -1,0 +1,61 @@
+<div class="row mt20">
+	<div class="col-md-12">
+		<table id="jqGrid" class="table-td-NoOverflow"></table>
+		<div id="jqGridPager"></div>
+	</div>
+</div>
+<script type="text/javascript">
+	<@dictFormatter type = "isSingle" />
+	$(document).ready(function() {		
+		var url_key = url_list.substring(url_list.lastIndexOf('/')+1,url_list.indexOf('.'));
+		//表格初始化		
+		$("#jqGrid").jqTreeGrid({
+				url : url_list,
+				colModel : [
+						
+						{
+							label : "所属问卷",
+							name : "papersName",
+							width : 100,
+						},
+						{
+							label : "试题序号",
+							name : "sort",
+							width : 50
+						},
+						{
+							label : "试题内容",
+							name : "questionName",
+							width : 150,
+						},
+						{
+							label : "试题分值",
+							name : "score",
+							width : 50,
+						},
+						{
+							label : "是否单选 ",
+							name : "isSingle",
+							width : 50,
+							formatter:isSingleFormatter
+						},
+						{
+							label : "创建时间",
+							name : "createTime",
+							width : 150,
+							formatter:datetimeFormatter
+						}],
+			}).jqGrid("setFrozenColumns").navGrid(
+			'#jqGridPager',
+			{
+				edit : false,
+				add : false,
+				del : false,
+				search : false,
+				refresh : true,
+				view : false,
+				position : "left",
+				cloneToTop : false
+			});
+		});
+</script>

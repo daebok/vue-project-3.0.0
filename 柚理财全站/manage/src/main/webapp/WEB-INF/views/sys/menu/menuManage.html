@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>菜单管理</title>
+<#include "include/resources.html">
+</head>
+<body data-flag="true">
+<div class="wrapper">
+	<div class="row pt20">
+		<div class="col-md-12">
+			<div class="tool-btns">
+				<@shiro.hasPermission name="set:sys:menu:add">
+				<button type="button" class="btn btn-primary" id="j-addurlbtn" onclick="$.fn.treeGridOptions.addFun(this,buildtree)" data-url="/sys/menu/menuAddPage.html" >新增</button>
+				</@shiro.hasPermission>
+				<@shiro.hasPermission name="set:sys:menu:edit">
+				<button type="button" class="btn btn-info"  onclick="$.fn.treeGridOptions.editFun(this,buildtree)" data-tid="jqGrid" data-url="/sys/menu/menuEditPage.html">编辑</button>
+				</@shiro.hasPermission>
+				<@shiro.hasPermission name="set:sys:menu:del">
+				<button type="button" class="btn btn-warning" onclick="$.fn.treeGridOptions.deleteFun(this,buildtree)" data-tid="jqGrid" data-url="/sys/menu/menuDel.html">删除</button>
+				</@shiro.hasPermission>
+			</div>			
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-3">
+			<h4  class="mt10 mb10">菜单栏</h4>
+			<div class="treegridbox"  id="tree"></div>
+		</div>
+		<div class="col-md-9">
+			<h4 class="mt10 mb10">菜单列表</h4>
+			<div id="showtreebox">
+				
+			</div>
+		</div>
+	</div>
+<script type="text/javascript">
+function buildtree(parentId){
+	$("#tree ul").remove();
+	var urls = "";
+	if(parentId){
+		urls = "?parentId=" + parentId;
+	}
+	$.ajax({
+	   type: "POST",
+	   url:"/sys/menu/getMenuTree.html"+urls,
+	   dataType:'json',
+	   success: function(tree){     
+			$('#tree').treeview({
+				data: tree,   
+				icon: "glyphicon glyphicon-stop",
+				//selectedIcon: "glyphicon glyphicon-stop",
+				color: "#000000",
+				backColor: "#FFFFFF",
+				showTags:true,
+				toggleSelect:true,
+				onNodeUnselected:function(e,o){
+				},
+				onNodeSelected: function(e, o) {
+					
+				        $("#showtreebox").html('<table id="jqGrid"></table><div id="jqGridPager"></div>');
+				        $("#jqGrid").jqTreeGrid({
+			        		url: '/sys/menu/list.html',
+			        		postData:{parentId:o.id},
+			                colModel: [
+			                    { label: 'id', name: 'uuid', width: 65, hidden:true},
+			                    { label: '菜单名称', name: 'menuName', width: 65},
+								{ label: '链接地址', name: 'url', width: 110},
+								{ label: '排序', name: 'sort', width: 15},			
+								{ label: '备注', name: 'remark', width: 65} 				
+			                ]
+			        	});
+			        	var addbtn = $("#j-addurlbtn");
+			        	addbtn.attr("data-url",addbtn.attr("data-url").split("?")[0] + "?parentId=" + o.id);
+			        	$(".btn-warning").attr("data-url",$(".btn-warning").attr("data-url").split("?")[0] + "?parentId=" + o.pid);
+				}
+			});
+			if($("body").data("flag")){
+				$(".list-group-item").eq(0).click();
+				$("body").data("flag",false);
+			}
+	   }
+	});
+}
+buildtree();
+</script>	
+</body>
+</html>

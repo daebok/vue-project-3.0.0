@@ -1,0 +1,412 @@
+  <!DOCTYPE html>
+  <html>
+  <head>
+  <title>welcome</title>
+    <#include "include/resources.html">
+  </head>
+  <body>
+   <style>
+     body {overflow-y: auto;background: #f3f3f4;}
+     h5 {font-weight: normal}
+     a {color: #676a6c;}
+     ul li {margin-bottom: 20px;}
+     ul li span {color: #cccccc;}
+     ul li:last-child {margin-bottom: 0;}
+     .tabs-container {-moz-border-bottom-colors: none;
+       -moz-border-left-colors: none;
+       -moz-border-right-colors: none;
+       -moz-border-top-colors: none;
+       background-color: #fff;
+       border-color: #e7eaec;
+       -webkit-border-image: none;
+       -o-border-image: none;
+       border-image: none;
+       border-style: solid solid none;
+       border-width: 4px 0 0;
+       color: inherit;
+      }
+     .tabs-container .panel-body {
+       border:none;
+     }
+     .tabs-container .nav-tabs>li.active>a,
+     .tabs-container .nav-tabs>li.active>a:focus,
+     .tabs-container .nav-tabs>li.active>a:hover {
+       border-bottom: 2px solid #999999;
+       border-width: 0 0 2px 0;
+     }
+     .nav-tabs>li>a {
+       font-weight: normal;
+       padding-top: 14px;
+       padding-bottom: 11px;
+     }
+     .tabs-container .panel-body {
+       padding-top: 16px;
+     }
+     .nopadding {padding-left: 0 !important;padding-right: 0 !important;}
+     .double-ul {border: 1px solid #eee;padding: 20px;margin-top: 20px;position: relative;}
+     .double-ul h3 {position: absolute;background: #fff;padding: 0 10px;top: -14px;left: 10px;}
+     .double-ul .more {position: absolute;background: #fff;padding: 0 10px;top: -9px;right: 10px;font-size: 12px;color: #ccc;}
+     input{font-size: 16px; text-align: center;border: 0; cursor: pointer;}
+     .index-center-box input{
+      text-align: left;font-size: 16px; line-height: 150px; color:#666;font-weight: bold;
+     }
+   </style>
+   <div>
+    <div class="wrapper wrapper-content">
+      <div class="row">
+        <div class="col-sm-3">
+          <div class="index-box box-1">
+            <div class="title">
+             注册用户(人)
+            </div>
+            <div class="content">
+             <h1 style="font-size: 32px;color: #ff7651;" id="registerTotal"></h1>
+             <p style="color: #bbb;" >昨日：<span id="registerYesterday"></span>人</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="index-box box-2">
+            <div class="title">
+             投资总额(万元)
+            </div>
+            <div class="content">
+              <h1 id="investTotal"></h1>
+              <p style="color: #bbb;" >昨日：<span id="investTotalYesterday"></span>万元</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="index-box box-3">
+            <div class="title">
+              累计为用户赚取收益(万元)
+            </div>
+            <div class="content">
+              <h1 id="totalEarnAmount"></h1>
+              <p style="color: #bbb;" >昨日：<span id="totalEarnAmountYesterday"></span>万元</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-3"> 
+          <div class="index-box box-4">
+            <div class="title">
+              借款总额(万元)
+            </div>
+            <div class="content">
+              <h1 id="totalProjectAccount"></h1>
+              <p style="color: #bbb;" >昨日：<span id="totalProjectAccountYesterday"></span>万元</p>
+            </div>
+          </div>
+        </div>
+         <div class="col-sm-3"> 
+          <div class="index-box box-4">
+            <div class="title">
+              冻结总额(万元)
+            </div>
+            <div class="content">
+              <h1 id="totalNoUseAccount"></h1>
+              <p style="color: #bbb;" ></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-3"> 
+          <div class="index-box box-4">
+            <div class="title">
+              可用总额(万元)
+            </div>
+            <div class="content">
+              <h1 id="totalUseAccount"></h1>
+              <p style="color: #bbb;" ></p>
+            </div>
+          </div>
+        </div>
+         <div class="col-sm-3"> 
+          <div class="index-box box-4">
+            <div class="title">
+              待收总额(万元)
+            </div>
+            <div class="content">
+              <h1 id="totalCollectionAccount"></h1>
+              <p style="color: #bbb;" >昨日：<span id="totalCollectionAccountYesterday"></span>万元</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mb20">
+            <div class="col-sm-9 index-border1">
+            	 <#if open_product?? && (open_product == '1' || open_product == '2')>
+                <div class="product-manage ">
+                    <div class="col-sm-3">
+                        <img src="/static/img/icon-index4.png" class="pull-left"> <h3 class="pull-left">产品管理</h3>
+                    </div>
+                    <@shiro.hasPermission name="project:product:productMan:query"><a href="/product/manage/newProductManage.html" class="more" ></@shiro.hasPermission>
+                    <div class="col-sm-2 text-center index-border <@shiro.lacksPermission name="project:product:productMan:query"> index-gray </@shiro.lacksPermission>">
+                        <p id="newProductListSize"></p>
+                        <h5 style="display:none;">产品维护</h5>
+                        <input type="text" value="待维护">
+                    </div>
+                    <@shiro.hasPermission name="project:product:productMan:query"></a></@shiro.hasPermission>
+                   	<@shiro.hasPermission name="project:product:publish:query"> <a href="/product/manage/productPublishManage.html" class="more" ></@shiro.hasPermission>
+                    <div class="col-sm-2 text-center index-border <@shiro.lacksPermission name="project:product:publish:query"> index-gray </@shiro.lacksPermission>">
+                        <p id="wpProductlistSize"></p>
+                        <h5 style="display:none;">发布审核</h5>
+                        <input type="text" value="发布待审">
+                    </div>
+                   	<@shiro.hasPermission name="project:product:publish:query"></a></@shiro.hasPermission>
+                    <@shiro.hasPermission name="project:product:sale:query"><a href="/product/manage/productSaleManage.html" class="more" ></@shiro.hasPermission>
+                    <div class="col-sm-2 text-center index-border <@shiro.lacksPermission name="project:product:sale:query"> index-gray </@shiro.lacksPermission>">
+                        <p id="productSaleListSize"></p>
+                        <h5 style="display:none;">上架管理</h5>
+                        <input type="text" value="上架待审">
+                    </div>
+                    <@shiro.hasPermission name="project:product:sale:query"></a></@shiro.hasPermission>
+                    <@shiro.hasPermission name="project:product:ev:query"><a href="/product/manage/productEstablishVerifyManage.html" class="more" ></@shiro.hasPermission>
+                    <div class="col-sm-2 text-center <@shiro.lacksPermission name="project:product:ev:query"> index-gray </@shiro.lacksPermission>">
+                        <p id="productFullListSize"></p>
+                        <h5 style="display:none;">成立审核</h5>
+                        <input type="text" value="成立待审">
+                    </div>
+                    <@shiro.hasPermission name="project:product:ev:query"></a></@shiro.hasPermission>
+                </div>
+                </#if>
+                <#if open_product?? && (open_product == '0' || open_product == '2')>
+                <div class="borrow-manage">
+                    <div class="col-sm-3">
+                        <img src="/static/img/icon-index5.png" class="pull-left"> <h3 class="pull-left">借贷管理</h3>
+                    </div>
+                    <@shiro.hasPermission name="project:borrow:borrowMan:query"><a href="/loan/borrow/borrowManage.html" class="more" ></@shiro.hasPermission>
+                    <div class="col-sm-2 text-center index-border <@shiro.lacksPermission name="project:borrow:borrowMan:query"> index-gray </@shiro.lacksPermission>">
+                        <p id="borrowListSize"></p>
+                        <h5 style="display:none;">借款维护</h5>
+                        <input type="text" value="待维护">
+                    </div>
+                    <@shiro.hasPermission name="project:borrow:borrowMan:query"></a></@shiro.hasPermission>
+                    <@shiro.hasPermission name="project:borrow:verify:query"><a href="/loan/borrow/borrowVerifyManage.html" class="more" ></@shiro.hasPermission>
+                    <div class="col-sm-2 text-center index-border <@shiro.lacksPermission name="project:borrow:verify:query"> index-gray </@shiro.lacksPermission>">
+                        <p id="waitPublishSize"></p>
+                        <h5 style="display:none;">借款审核</h5>
+                        <input type="text" value="发布待审">
+                    </div>
+                    <@shiro.hasPermission name="project:borrow:verify:query"></a></@shiro.hasPermission>
+                    <@shiro.hasPermission name="project:borrow:sale:query"><a href="/loan/borrow/borrowSaleManage.html" class="more" ></@shiro.hasPermission>
+                    <div class="col-sm-2 text-center index-border <@shiro.lacksPermission name="project:borrow:sale:query"> index-gray </@shiro.lacksPermission>">
+                        <p id="borrowSaleSize"></p>
+                        <h5 style="display:none;">上架管理</h5>
+                        <input type="text" value="上架待审">
+                    </div>
+                    <@shiro.hasPermission name="project:borrow:sale:query"></a></@shiro.hasPermission>
+                    <@shiro.hasPermission name="project:borrow:ev:query"><a href="/loan/borrow/borrowEstablishVerifyManage.html" class="more" ></@shiro.hasPermission>
+                    <div class="col-sm-2 text-center <@shiro.lacksPermission name="project:borrow:ev:query"> index-gray </@shiro.lacksPermission>">
+                        <p id="borrowFullListSize"></p>
+                        <h5 style="display:none;">成立审核</h5>
+                        <input type="text" value="成立待审">
+                    </div>
+                    <@shiro.hasPermission name="project:borrow:ev:query"></a></@shiro.hasPermission>
+                </div>
+                </#if>
+            </div>
+            <div class="col-sm-3 index-border1" style="height: 152px;">
+                <!-- <div class="index-center-box">
+                    <img src="/static/img/icon-index1.png" class="pull-left">
+                    <h3 class="pull-left">赎回待审</h3>
+                    <em class="pull-right">0</em>
+                </div> -->
+                <#-- <div class="index-center-box <@shiro.lacksPermission name="account:cashList:query"> index-gray </@shiro.lacksPermission>">
+                    <@shiro.hasPermission name="account:cashList:query"><a href="/account/cash/cashList.html" class="more" ></@shiro.hasPermission>
+                    <img src="/static/img/icon-index2.png" class="pull-left">
+                    <h3 class="pull-left" style="display:none;">提现记录</h3>
+                    <input type="text" value="提现待审">
+                    <em class="pull-right" id="cashVerifyListSize"></em>
+                    <@shiro.hasPermission name="account:cashList:query"></a></@shiro.hasPermission>
+                </div> -->
+              
+                <div class="index-center-box <@shiro.lacksPermission name="vip:qualification:query"> index-gray </@shiro.lacksPermission>" style="border-bottom:0;">
+                    <@shiro.hasPermission name="vip:qualification:query"><a href="/user/userQualification/manage.html" class="more" ></@shiro.hasPermission> 
+                    <img src="/static/img/icon-index3.png" class="pull-left">
+                    <h3 class="pull-left" style="display:none;">资质认证</h3>
+                    <input type="text" value="资质待审">
+                    <em class="pull-right" id="applyQualifyListSize"></em>
+                    <@shiro.hasPermission name="vip:qualification:query"></a></@shiro.hasPermission>
+                </div>
+               
+            </div>
+      </div>
+      <div class="row" id="functionRow">
+        <div class="col-sm-12 index-border1">
+          <div class="index-bottom">
+            <div class="title">
+             	快速入口
+            </div>
+            <div class="ibox-content">
+             <ul id="functionList" class="clearfix text-center pt10">
+             	<#if open_product?? && (open_product == '1' || open_product == '2')>
+				<@shiro.hasPermission name="project:product:add"><li class="pull-left ml10"><a href="/product/manage/productAddPage.html" class="more"><img src="/static/img/icon-index6.png"><p class="mt10" >新增产品</p></a></li></@shiro.hasPermission>
+				</#if>
+				<#if open_product?? && (open_product == '0' || open_product == '2')>
+				<@shiro.hasPermission name="project:borrow:add:add"><li class="pull-left ml30"><a href="/loan/borrow/borrowAddPage.html" class="more"><img src="/static/img/icon-index7.png"><p class="mt10" >新增借款</p></a></li></@shiro.hasPermission>
+				<@shiro.hasPermission name="project:borrow:bespeak:query"><li class="pull-left ml30"><a href="/loan/borrowBespeak/borrowBespeakManage.html" class="more"><img src="/static/img/icon-index8.png"><p class="mt10" >预约跟进</p></a></li></@shiro.hasPermission>
+				</#if>
+				<@shiro.hasPermission name="account:accountList:query"><li class="pull-left ml30"><a href="/account/account/accountLogList.html" class="more"><img src="/static/img/icon-index9.png"><p class="mt10" >资金记录</p></a></li></a></@shiro.hasPermission>
+				<@shiro.hasPermission name="set:operLog:query"><li class="pull-left ml30"><a href="/sys/log/logManage.html" class="more"><img src="/static/img/icon-index10.png" style="margin-top: 4px;"><p class="mt10" >操作日志</p></a></li></a></@shiro.hasPermission>
+             </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+
+//var data1 = {"investTotalYesterday":0.0,"investTotal":905.961,"totalProjectAccount":1508.3235,"totalEarnAmountYesterday":0.0,"totalEarnAmount":131.418674,"totalProjectAccountYesterday":1.0,"registerYesterday":81,"registerTotal":802651}
+
+$.ajax({
+  url: '/index/initStatistics.html',
+  type: 'POST',
+  dataType: 'json'
+})
+.done(function(data) {
+  $("#investTotalYesterday").html((data.investTotalYesterday).toFixed(2));
+  $("#investTotal").html(data.investTotal.toFixed(2));
+  $("#totalProjectAccount").html(data.totalProjectAccount.toFixed(2));
+  $("#totalEarnAmountYesterday").html(data.totalEarnAmountYesterday.toFixed(2));
+  $("#totalEarnAmount").html(data.totalEarnAmount.toFixed(2));
+  $("#totalProjectAccountYesterday").html(data.totalProjectAccountYesterday.toFixed(2));
+  $("#registerYesterday").html(data.registerYesterday);
+  $("#registerTotal").html(data.registerTotal);
+  $("#totalUseAccount").html((data.totalUseAccount).toFixed(2));
+  $("#totalUseAccountYesterday").html((data.totalUseAccountYesterday).toFixed(2));
+  $("#totalNoUseAccount").html((data.totalNoUseAccount).toFixed(2));
+  $("#totalNoUseAccountYesterday").html((data.totalNoUseAccountYesterday).toFixed(2));
+  $("#totalCollectionAccount").html((data.totalCollectionAccount).toFixed(2));
+  $("#totalCollectionAccountYesterday").html((data.totalCollectionAccountYesterday).toFixed(2));
+});
+
+// var data2 = {"borrowSaleSize":7,"borrowListSize":1,"wpProductlistSize":1,"newProductListSize":1,"productTotal":10,"borrowFullListSize":3,"borrowTotal":205480,"productSaleListSize":2,"waitPublishSize":205469,"productFullListSize":6};
+
+
+$.ajax({
+  url: '/index/initProjectInfo.html',
+  type: 'POST',
+  dataType: 'json'
+})
+.done(function(data) {
+  $("#borrowSaleSize").html(data.borrowSaleSize);
+  $("#borrowListSize").html(data.borrowListSize);
+  $("#wpProductlistSize").html(data.wpProductlistSize);
+  $("#newProductListSize").html(data.newProductListSize);
+  $("#productTotal").html(data.productTotal);
+  $("#borrowFullListSize").html(data.borrowFullListSize);
+  $("#borrowTotal").html(data.borrowTotal);
+  $("#productSaleListSize").html(data.productSaleListSize);
+  $("#waitPublishSize").html(data.waitPublishSize);
+  $("#productFullListSize").html(data.productFullListSize);
+});
+
+
+$.ajax({
+  url: '/index/initAuditInfo.html',
+  type: 'POST',
+  dataType: 'json'
+})
+.done(function(data) {
+  $("#cashVerifyListSize").html(data.cashVerifyListSize);
+  $("#applyQualifyListSize").html(data.applyQualifyListSize);
+});
+
+//    $('.more').click(function () {
+//            var url = $(this).attr('href');
+//            top.$('#side-menu').find('a.J_menuItem').each(function () {
+//                if($(this).attr('href')==url){
+//                    $(this)[0].click();
+//                }
+//            });
+//            return false;
+//        })
+
+if($("#functionList").children().length ==0){
+	$("#functionRow").hide();
+}
+
+$(".more").on("click", c);
+function f(l) {
+    var k = 0;
+    $(l).each(function() {
+        k += $(this).outerWidth(true)
+    });
+    return k
+}
+function g(n) {
+    var o = f($(n).prevAll()),
+            q = f($(n).nextAll());
+    var l = f(top.$(".content-tabs").children().not(".J_menuTabs"));
+    var k = top.$(".content-tabs").outerWidth(true) - l;
+    var p = 0;
+    if (top.$(".page-tabs-content").outerWidth() < k) {
+        p = 0
+    } else {
+        if (q <= (k - $(n).outerWidth(true) - $(n).next().outerWidth(true))) {
+            if ((k - $(n).next().outerWidth(true)) > q) {
+                p = o;
+                var m = n;
+                while ((p - $(m).outerWidth()) > ($(".page-tabs-content").outerWidth() - k)) {
+                    p -= $(m).prev().outerWidth();
+                    m = $(m).prev()
+                }
+            }
+        } else {
+            if (o > (k - $(n).outerWidth(true) - $(n).prev().outerWidth(true))) {
+                p = o - $(n).prev().outerWidth(true)
+            }
+        }
+    }
+    top.$(".page-tabs-content").animate({
+        marginLeft: 0 - p + "px"
+    }, "fast")
+}
+    function c() {
+        var o = $(this).attr("href"),
+                m = $(this).data("index"),
+                l = $.trim($(this).text().replace(/\d/g,'')),
+                k = true;
+        if (o == undefined || $.trim(o).length == 0) {
+            return false
+        }
+        top.$(".J_menuTab").each(function() {
+            if ($(this).data("id") == o) {
+                if (!$(this).hasClass("active")) {
+                    $(this).addClass("active").siblings(".J_menuTab").removeClass("active");
+                    g(this);
+                    top.$(".J_mainContent .J_iframe").each(function() {
+                        if ($(this).data("id") == o) {
+                            $(this).show().siblings(".J_iframe").hide();
+                            return false
+                        }
+                    })
+                } else {
+                    top.$(".J_mainContent .J_iframe").each(function() {
+                        if ($(this).data("id") == o) {
+                            $(this).attr("src", o);
+                            return false
+                        }
+                    })
+                }
+                k = false;
+                return false
+            }
+        });
+        if (k) {
+            var p = '<a href="javascript:;" class="active J_menuTab" data-id="' + o + '">' + l + ' <i class="fa fa-times-circle"></i></a>';
+            top.$(".J_menuTab").removeClass("active");
+            var n = '<iframe class="J_iframe" name="iframe' + m + '" width="100%" height="100%" src="' + o + '" frameborder="0" data-id="' + o + '" seamless></iframe>';
+            top.$(".J_mainContent").find("iframe.J_iframe").hide().parents(".J_mainContent").append(n);
+            top.$(".J_menuTabs .page-tabs-content").append(p);
+            g(top.$(".J_menuTab.active"))
+        }
+        return false
+    }
+
+  </script>
+
+  </body>
+
+  </html>

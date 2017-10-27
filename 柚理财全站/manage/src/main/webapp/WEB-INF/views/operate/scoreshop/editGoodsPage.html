@@ -1,0 +1,252 @@
+<div class="form-tips-content" id="redpackage">
+<input type="hidden" id="image_server_url" value="${image_server_url}">
+  <form class="form-horizontal" action="/operate/scoreshop/addGoods.html"   method="post" id="form" >
+  <ul class="form-item">
+  			<li class="heightLimit">
+				<div class="form-group">
+					<label for="isVirtual" class="control-label form-label">是否虚拟物品：</label>
+					<div class="input-checkbox-box" style="height:34px;">
+					    <#if scoreGoods.isVirtual==1><label for="">是</label></#if>
+					    <#if scoreGoods.isVirtual==0><label for="">否</label></#if>
+					</div>
+				</div>
+			</li>
+			<li class="heightLimit"><div class="input-checkbox-box" style="height:54px;"></div></li>
+        	<li class="heightLimit">
+			<div class="form-group">
+		      <label for="goodsCategoryId" class="control-label form-label">类别名称：</label>
+		      <div class="input-box">
+		      		<select name="goodsCategoryId" id="goodsCategoryId" class="form-control required" data-msg-required="请选择">
+		      		<option value="">请选择</option>
+		      			<#if goodsCategory??>
+		      				<#list goodsCategory as item>
+		      				<option value="${item.uuid}"
+		      				<#if scoreGoods.goodsCategoryId?? && (scoreGoods.goodsCategoryId == item.uuid)>
+		      					selected
+		      				</#if>
+		      				>${item.goodsCategoryName!''}</option>
+		      				</#list>
+		      			</#if>
+		      		</select>
+		      </div>
+		    </div>
+  		</li>
+  		
+  		<li class="heightLimit">
+			<div class="form-group">
+		      <label for=goodsName class="control-label form-label">商品名称：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="goodsName"  id="goodsName" value="${scoreGoods.goodsName}" maxlength="12" placeholder="" required>
+		      </div>
+		    </div>
+  		</li>
+  		<li class="heightLimit">
+			<div class="form-group">
+		      <label for=supplier class="control-label form-label">供货商：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="supplier"  id="supplier" value="${scoreGoods.supplier}" maxlength="12" placeholder="" required>
+		      </div>
+		    </div>
+  		</li>
+  		<li class="heightLimit xncp <#if scoreGoods.isVirtual==1>hide</#if>">
+			<div class="form-group">
+		      <label for="costPrice" class="control-label form-label">采购价格：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="costPrice" id="costPrice" value="${scoreGoods.costPrice}" data-rule-digits="true" data-msg-digits="" id="yearDeduction" maxlength="12" placeholder="" required>
+		      </div>
+		    </div>
+  		</li>
+  		<li class="heightLimit xncp <#if scoreGoods.isVirtual==1>hide</#if>">
+			<div class="form-group">
+		      <label for="marketPrice" class="control-label form-label">市场价：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="marketPrice" id="marketPrice" value="${scoreGoods.marketPrice}" data-rule-digits="true" data-msg-digits="" id="yearDeduction" maxlength="12" placeholder="" required>
+		      </div>
+		    </div>
+  		</li>
+  		<li class="heightLimit">
+			<div class="form-group">
+		      <label for="store" class="control-label form-label">商品库存：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="store" id="store" data-rule-digits="true" data-msg-digits="请输入正整数"  value="${scoreGoods.store}"  maxlength="12" placeholder="" required>
+		      </div>
+		    </div>
+  		</li>
+  		
+  		<!-- 红包还是加息券 -->
+  		<li class="heightLimit types <#if scoreGoods.isVirtual==0>hide</#if>">
+				<div class="form-group">
+					<label for="virtualType" class="control-label form-label">虚拟商品类型：</label>
+					<div class="input-checkbox-box" style="height:34px;">
+					    <#if scoreGoods.virtualType==1><label for="">加息券</label></#if>
+					    <#if scoreGoods.virtualType==0><label for="">红包</label></#if>					
+					</div>
+				</div>
+			</li>
+  		
+  		<!-- 红包模块 -->
+  		<li class="heightLimit redPacket <#if scoreGoods.isVirtual==0 || scoreGoods.virtualType!=0>hide</#if>">
+			<div class="form-group">
+		      <label for="ruleId" class="control-label form-label">红包名称：</label>
+		      <div class="input-box">
+	      			<#if redenvelopes??>
+	      				<#list redenvelopes as item>
+	      				   <#if item.uuid=scoreGoods.ruleId><label class="control-label">${item.ruleName!''}</label></#if>
+	      				</#list>
+	      			</#if>
+		      </div>
+		    </div>
+  		</li>
+  		
+  		
+  		<!-- 加息券模块 -->
+  		<li class="heightLimit rateCoupon  <#if scoreGoods.isVirtual==0 || scoreGoods.virtualType!=1>hide</#if>">
+			<div class="form-group">
+		      <label for="ruleId" class="control-label form-label">加息券名称：</label>
+		      <div class="input-box" style="line-height:34px;">
+	      			<#if rateCoupon??>
+	      				<#list rateCoupon as item>
+	      					<#if item.uuid=scoreGoods.ruleId>${item.ruleName!''}</#if>
+	      				</#list>
+	      			</#if>
+		      </div>
+		    </div>
+  		</li>
+  		
+  		<li class="full-width">
+  			<div class="form-group">
+		      <label for="name" class="control-label form-label" style="width:13%;">图片：</label>
+		       <div class="">
+					<div id="uploadArticle" class="uploadWrap" data-arr="picPath">
+						  <ul id="articlePagePic" class="photoUpload" style="overflow:hidden">
+					        	<li class="addFileBtn" style="left:0;">
+					            	<input type="file" name="picNames"  accept="image/gif, image/jpeg,image/png" class="uploadFileInput" id="articlePicPath" onchange="return ajaxFileUpload4('articlePicPath','/imageUp.jsp?editorid=goods','picPaths');" title="点击上传图片" />
+					            </li>
+					            <div class="imgdom">
+						            <#if picList??><#list picList as item>
+						            <li data-mum="${item.uuid!}">
+						               <img src="${image_server_url}${item.picPath!}"/>
+						               <input name="picPath" value="${item.picPath!}" type="hidden">
+						               <a class="closePic" style="float:left;" href="javascript:;" title="删除图片">x</a>
+						           	</li>
+									</#list></#if>
+								</div>
+					      </ul>
+					</div>
+				</div>
+		    </div>
+		</li>
+		
+  		<li class="heightLimit">
+			<div class="form-group">
+		      <label for="content" class="control-label form-label">商品详情：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="content"  id="content" value="${scoreGoods.content}" maxlength="12" placeholder="" required>
+		      </div>
+		    </div>
+  		</li>
+  		<li class="heightLimit">
+			<div class="form-group">
+		      <label for="notes" class="control-label form-label">备注：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="notes"  id="notes" value="${scoreGoods.notes}" maxlength="12" placeholder="" required>
+		      </div>
+		    </div>
+  		</li>
+		<div class="form-group" style="clear:both;">
+				<label for="loginName" class="control-label form-label" style="width:13%;float:left;">配送信息：</label>
+				<div class="input-box" style="width:87%;float:left;">
+					<textarea name="remark" id="remark" rows="4"  class="text" maxlength="256" style="width:100%;border:1px solid #e5e6e7;padding:10px;">${scoreGoods.remark!}</textarea>
+				</div>
+			</div>
+		</li>
+  		</ul>
+  		<input type="hidden" name="status" id="status" value=0>
+  		<input type="hidden" name="uuid" id="uuid" value=${scoreGoods.uuid}>
+  		</ul>
+</form>
+ </div>
+<script src="${theme_dir}/static/js/plugins/jquery.suggest.js"></script>
+<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+<script src="${theme_dir}/static/js/upload.js"></script>
+<script type="text/javascript">
+$("#form").validate({
+  submitHandler: function(form) { 
+    $(form).ajaxSubmit({
+      type: "post",
+      dataType: "json",
+      success: function(data) {
+        if (data.result) {
+          layer.alert(data.msg, {
+            zIndex:100000,
+            icon: 6,
+            cancel: function(index){
+                layer.closeAll();
+                gridobj.trigger("reloadGrid"); //重新载入 
+                }
+          }, function() {           
+            layer.closeAll();
+            gridobj.trigger("reloadGrid"); //重新载入  
+          });
+        } else {
+          layer.alert(data.msg, {
+            zIndex:100000,
+            icon: 5
+          });
+        }
+      }
+    });
+  }
+});
+
+$("input[name='isVirtual']").click(function(){
+	 switch($("input[name=isVirtual]:checked").attr("id")){
+		  case "isVirtual1":
+			   $(".types").css("display","block");
+			   $(".redPacket").css("display","none");
+			   $("input[name='virtualType']").removeAttr('disabled');
+			   //$("select[name='ruleId']").removeAttr('disabled');
+			   if($("input[name='virtualType']:checked").attr("id") == 'virtualType2'){
+					$("#goodsRedId").attr('disabled','true');
+					$("#goodsCouponId").removeAttr('disabled');
+				}else{
+					$("#goodsRedId").removeAttr('disabled');
+					$("#goodsCouponId").attr('disabled','true');
+				}
+			   $(".rateCoupon").css("display","block");
+			   $(".xncp").addClass("hide");
+			   $(".xncp").find("input").attr('disabled','true');
+			   break;
+		  case "isVirtual2":
+				$(".types").css("display","none");
+				$(".redPacket").css("display","none");
+				$(".rateCoupon").css("display","none");
+				$("input[name='virtualType']").attr('disabled','true');
+				$("select[name='ruleId']").attr('disabled','true');
+			   	$(".xncp").removeClass("hide");
+			   	$(".xncp").find("input").removeAttr('disabled');
+			   break;       
+	       default:
+		      break;
+		 }
+});
+$("input[name='virtualType']").click(function(){
+	 switch($("input[name=virtualType]:checked").attr("id")){
+		  case "virtualType1":
+			    $(".redPacket").css("display","block");
+				$(".rateCoupon").css("display","none");
+				$("#goodsRedId").removeAttr('disabled');
+				$("#goodsCouponId").attr('disabled','true');
+			   break;
+		  case "virtualType2":
+			  	
+				$(".redPacket").css("display","none");
+				$(".rateCoupon").css("display","block");
+				$("#goodsRedId").attr('disabled','true');
+				$("#goodsCouponId").removeAttr('disabled');
+			   break;       
+	       default:
+		      break;
+		 }
+});
+</script>

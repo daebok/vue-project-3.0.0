@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.operate.mapper.RedenvelopeRuleMapper">
+	<resultMap type="com.rd.ifaes.core.operate.model.RedenvelopeRuleModel" id="redenvelopeRuleResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="activityCode" column="ACTIVITY_CODE"/>
+		<result property="ruleName" column="RULE_NAME"/>
+		<result property="status" column="STATUS"/>
+		<result property="totalNum" column="TOTAL_NUM"/>
+		<result property="lssueNum" column="LSSUE_NUM"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="updateTime" column="UPDATE_TIME"/>
+		<result property="deleteFlag" column="DELETE_FLAG"/>
+		<result property="grantType" column="GRANT_TYPE"/>
+		<result property="grantUrl" column="GRANT_URL"/>
+		<result property="grantStartTime" column="GRANT_START_TIME"/>
+		<result property="grantEndTime" column="GRANT_END_TIME"/>
+		<result property="grantMax" column="GRANT_MAX"/>
+		<result property="grantMin" column="GRANT_MIN"/>
+		<result property="grantRate" column="GRANT_RATE"/>
+		<result property="useProjectType" column="USE_PROJECT_TYPE"/>
+		<result property="useValidDay" column="USE_VALID_DAY"/>
+		<result property="useExpireTime" column="USE_EXPIRE_TIME"/>
+		<result property="activityName" column="ACTIVITY_NAME"/>
+		<result property="grantProjectType" column="grant_project_type"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		ACTIVITY_CODE,
+		RULE_NAME,
+		STATUS,
+		TOTAL_NUM,
+		LSSUE_NUM,
+		CREATE_TIME,
+		UPDATE_TIME,
+		DELETE_FLAG,
+		GRANT_TYPE,
+		GRANT_URL,
+		GRANT_START_TIME,
+		GRANT_END_TIME,
+		GRANT_MAX,
+		GRANT_MIN,
+		GRANT_RATE,
+		USE_PROJECT_TYPE,
+		USE_VALID_DAY,
+		USE_EXPIRE_TIME,
+		grant_project_type
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{activityCode},
+		#{ruleName},
+		#{status},
+		#{totalNum},
+		#{lssueNum},
+		#{createTime},
+		#{updateTime},
+		#{deleteFlag},
+		#{grantType},
+		#{grantUrl},
+		#{grantStartTime},
+		#{grantEndTime},
+		#{grantMax},
+		#{grantMin},
+		#{grantRate},
+		#{useProjectType},
+		#{useValidDay},
+		#{useExpireTime},
+		#{grantProjectType}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="activityCode != null and activityCode != ''">and ACTIVITY_CODE = #{activityCode}</if>
+            <if test="ruleName != null and ruleName != ''">and RULE_NAME = #{ruleName}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+			<if test="totalNum != null">and TOTAL_NUM = #{totalNum}</if>
+			<if test="lssueNum != null">and LSSUE_NUM = #{lssueNum}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+			<if test="updateTime != null">and UPDATE_TIME = #{updateTime}</if>
+            <if test="deleteFlag != null and deleteFlag != ''">and DELETE_FLAG = #{deleteFlag}</if>
+            <if test="grantType != null and grantType != ''">and GRANT_TYPE = #{grantType}</if>
+            <if test="grantUrl != null and grantUrl != ''">and GRANT_URL = #{grantUrl}</if>
+			<if test="grantStartTime != null">and GRANT_START_TIME = #{grantStartTime}</if>
+			<if test="grantEndTime != null">and GRANT_END_TIME = #{grantEndTime}</if>
+			<if test="grantMax != null">and GRANT_MAX = #{grantMax}</if>
+			<if test="grantMin != null">and GRANT_MIN = #{grantMin}</if>
+			<if test="grantRate != null">and GRANT_RATE = #{grantRate}</if>
+            <if test="useValidDay != null and useValidDay != ''">and USE_VALID_DAY = #{useValidDay}</if>
+			<if test="useExpireTime != null">and USE_EXPIRE_TIME = #{useExpireTime}</if>
+			<if test="grantProjectType != null">and grant_project_type = #{grantProjectType}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by create_time desc </if> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.operate.domain.RedenvelopeRule">
+		insert into redenvelope_rule( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">
+		BEGIN		
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into redenvelope_rule( <include refid="table_columns" /> ) 
+		values 
+		( 
+				#{item.uuid},
+				#{item.activityCode},
+				#{item.ruleName},
+				#{item.status},
+				#{item.totalNum},
+				#{item.lssueNum},
+				#{item.createTime},
+				#{item.updateTime},
+				#{item.deleteFlag},
+				#{item.grantType},
+				#{item.grantUrl},
+				#{item.grantStartTime},
+				#{item.grantEndTime},
+				#{item.grantMax},
+				#{item.grantMin},
+				#{item.grantRate},
+				#{item.useProjectType},
+				#{item.useValidDay},
+				#{item.useExpireTime},
+				#{item.grantProjectType}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from redenvelope_rule
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update redenvelope_rule set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update redenvelope_rule set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.operate.domain.RedenvelopeRule">
+		update redenvelope_rule 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="activityCode != null and activityCode != ''">ACTIVITY_CODE = #{activityCode},</if>
+            <if test="ruleName != null and ruleName != ''">RULE_NAME = #{ruleName},</if>
+			<if test="totalNum != null">TOTAL_NUM = #{totalNum},</if>
+			<if test="updateTime != null">UPDATE_TIME = #{updateTime},</if>
+            <if test="deleteFlag != null and deleteFlag != ''">DELETE_FLAG = #{deleteFlag},</if>
+            <if test="grantType != null and grantType != ''">GRANT_TYPE = #{grantType},</if>
+			<if test="grantMax != null">GRANT_MAX = #{grantMax},</if>
+			<if test="grantMin != null">GRANT_MIN = #{grantMin},</if>
+			<if test="grantRate != null">GRANT_RATE = #{grantRate},</if>
+			<if test="grantProjectType != null">grant_project_type = #{grantProjectType},</if>
+            GRANT_URL = #{grantUrl},
+			GRANT_START_TIME = #{grantStartTime},
+			GRANT_END_TIME = #{grantEndTime},
+			USE_PROJECT_TYPE = #{useProjectType},
+            USE_VALID_DAY = #{useValidDay},
+			USE_EXPIRE_TIME = #{useExpireTime},
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="redenvelopeRuleResultMap">
+        select <include refid="table_columns" />
+        from redenvelope_rule
+    </select>
+
+    <select id="findList" resultMap="redenvelopeRuleResultMap" parameterType="com.rd.ifaes.core.operate.model.RedenvelopeRuleModel">
+        select 
+				rule.UUID,
+				rule.ACTIVITY_CODE,
+				rule.RULE_NAME,
+				rule.STATUS,
+				rule.TOTAL_NUM,
+				rule.LSSUE_NUM,
+				rule.CREATE_TIME,
+				rule.UPDATE_TIME,
+				rule.DELETE_FLAG,
+				rule.GRANT_TYPE,
+				rule.GRANT_URL,
+				rule.GRANT_START_TIME,
+				rule.GRANT_END_TIME,
+				rule.GRANT_MAX,
+				rule.GRANT_MIN,
+				rule.GRANT_RATE,
+				rule.USE_PROJECT_TYPE,
+				rule.USE_VALID_DAY,
+				rule.USE_EXPIRE_TIME,
+				rule.grant_project_type,
+                plan.activity_name
+        from redenvelope_rule rule  LEFT JOIN  activity_plan plan on    rule.activity_code=plan.activity_code
+        <include refid="find_list_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from redenvelope_rule
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="redenvelopeRuleResultMap" parameterType="String" >
+		select 
+				rule.UUID,
+				rule.ACTIVITY_CODE,
+				rule.RULE_NAME,
+				rule.STATUS,
+				rule.TOTAL_NUM,
+				rule.LSSUE_NUM,
+				rule.CREATE_TIME,
+				rule.UPDATE_TIME,
+				rule.DELETE_FLAG,
+				rule.GRANT_TYPE,
+				rule.GRANT_URL,
+				rule.GRANT_START_TIME,
+				rule.GRANT_END_TIME,
+				rule.GRANT_MAX,
+				rule.GRANT_MIN,
+				rule.GRANT_RATE,
+				rule.USE_PROJECT_TYPE,
+				rule.USE_VALID_DAY,
+				rule.USE_EXPIRE_TIME,
+				rule.grant_project_type,
+                plan.activity_name
+        from redenvelope_rule rule  LEFT JOIN  activity_plan plan on    rule.activity_code=plan.activity_code 
+        where rule.uuid = #{uuid}
+	</select>
+	
+	<sql id="find_list_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and rule.UUID = #{uuid}</if>
+            <if test="activityCode != null and activityCode != ''">and rule.ACTIVITY_CODE = #{activityCode}</if>
+            <if test="ruleName != null and ruleName != ''"> and rule.RULE_NAME like '%'||#{ruleName}||'%' </if>
+            <if test="activityName != null and activityName != ''">and plan.ACTIVITY_NAME like '%'||#{activityName}||'%' </if>
+            <if test="status != null and status != ''">and rule.STATUS = #{status}</if>
+            <if test="deleteFlag != null and deleteFlag != ''">and rule.DELETE_FLAG = #{deleteFlag}</if>
+            <if test="grantType != null and grantType != ''">and rule.GRANT_TYPE = #{grantType}</if>
+            <if test="grantProjectType != null and grantProjectType != ''">
+                and rule.grant_project_type like  '%'||#{grantProjectType}||'%'
+                and rule.lssue_num &lt; nvl(rule.TOTAL_NUM,rule.lssue_num+1)
+		        and (rule.use_expire_time is null or rule.use_expire_time &gt; sysdate)
+		        and (rule.grant_end_time is null or rule.grant_end_time &gt; sysdate)
+            </if>
+            <if test="ruleEnable != null and ruleEnable == 1">and rule.delete_flag=0 and (rule.grant_end_time is null or rule.grant_end_time &gt; sysdate)  </if>
+        </trim>
+        
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by <if test="page.sort!='activity_name'">rule.</if>${page.sort} ${page.order}
+        </if>
+    </sql>
+	<!-- 其他自定义SQL -->
+	 <!--  修改规则的状态，启用/禁用-->
+	<update id="updateStatus" parameterType="com.rd.ifaes.core.operate.domain.RedenvelopeRule">
+	    update redenvelope_rule set status = #{status} where uuid =#{uuid}
+	</update>
+	<!--  更新已经发放数量-->
+	<update id="updateLssueNum" parameterType="com.rd.ifaes.core.operate.domain.RedenvelopeRule">
+	      update redenvelope_rule set lssue_num=lssue_num+1 
+	      where uuid= #{uuid}
+	      <![CDATA[  and nvl(total_num,lssue_num+1) >= (lssue_num+1)   ]]>  	        
+	</update>
+	
+	<select id="findListForGrant" resultMap="redenvelopeRuleResultMap">
+        select 
+                rule.UUID,
+				rule.ACTIVITY_CODE,
+				rule.RULE_NAME,
+				rule.STATUS,
+				rule.TOTAL_NUM,
+				rule.LSSUE_NUM,
+				rule.CREATE_TIME,
+				rule.UPDATE_TIME,
+				rule.DELETE_FLAG,
+				rule.GRANT_TYPE,
+				rule.GRANT_URL,
+				rule.GRANT_START_TIME,
+				rule.GRANT_END_TIME,
+				rule.GRANT_MAX,
+				rule.GRANT_MIN,
+				rule.GRANT_RATE,
+				rule.USE_PROJECT_TYPE,
+				rule.USE_VALID_DAY,
+				rule.USE_EXPIRE_TIME,
+				rule.grant_project_type,
+                plan.activity_name
+        from redenvelope_rule rule  LEFT JOIN  activity_plan plan on    rule.activity_code=plan.activity_code
+        <include refid="find_list_where" />
+        and rule.lssue_num &lt; nvl(rule.TOTAL_NUM,rule.lssue_num+1)
+        and (rule.use_expire_time is null or rule.use_expire_time &gt; sysdate)
+        and (rule.grant_end_time is null or rule.grant_end_time &gt; sysdate)
+	</select>
+	
+	<!-- 查询可用发放条件的红包规则 -->
+	<select id="findByActivityCode" resultMap="redenvelopeRuleResultMap">
+        select 
+        	<include refid="table_columns" />
+        from 
+        	redenvelope_rule
+        where 
+        	activity_code=#{activityCode} 
+        	and delete_flag=0  
+        	and status = 1
+        	<![CDATA[ and lssue_num < nvl(TOTAL_NUM,lssue_num+1)  ]]>  
+       		<![CDATA[ and (grant_end_time is null or grant_end_time > sysdate)  ]]>  
+    </select>
+    
+    <select id="findRedenvelopeRuleIdByUrl" parameterType="String" resultType="String">
+      	select 
+      		uuid
+      	from 
+      		redenvelope_rule
+      	where 
+      		grant_url=#{grantUrl}
+      		and delete_flag=0
+      		and status=1
+    </select>
+    <select id="checkRedenvelopeRuleBeforeDelete" parameterType="String" resultType="int">
+    	select count(*)
+    	from 
+    		redenvelope_rule
+    	where
+    		 uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>
+        and status=1
+    </select>
+    
+    <select id="findInvestRedenvelopeRuleByProjectTypeId" parameterType="String" resultMap="redenvelopeRuleResultMap">
+    	select 
+    		<include refid="table_columns" />
+    	from 
+    		redenvelope_rule
+    	where
+    		delete_flag=0
+    		and status=1
+    		<![CDATA[ and lssue_num < nvl(TOTAL_NUM,lssue_num+1)  ]]>  
+       		<![CDATA[ and (grant_end_time is null or grant_end_time > sysdate)  ]]>  
+    		AND grant_project_type IS NOT NULL 
+    		AND grant_project_type like '%'||#{ProjectTypeId}||'%'
+			AND ROWNUM =1
+    </select>
+    
+    <select id="findRedenvelopeRuleCall" parameterType="String" resultType="String">
+    	select 
+    		<if test="tableName == 'user_gift'">gift_name from user_gift</if>
+    		<if test="tableName == 'user_vip_level'">vip_level from user_vip_level</if>
+    	where
+    		redenvelope_rule_id=#{RedenvelopeRuleId}
+    		and delete_flag=0
+    </select>
+    
+    <select id="countGrantProjectType" resultType="int">
+    	select count(uuid) from redenvelope_rule
+        <trim prefix="where" prefixOverrides="and | or ">
+        	and status=1 
+        	and delete_flag=0
+        	and  grant_project_type like '%'||#{projectTypeId}||'%'
+        </trim>
+    </select>
+</mapper>

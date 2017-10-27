@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>充值</title>
+    <link rel="stylesheet" type="text/css" href="/themes/css/common-22faacfd60.css"/>
+    <link rel="stylesheet" type="text/css" href="/themes/css/vouchDetail-fc8f9e9f5a.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <#include "/include/header.html">
+    <input type="hidden" id="j-realNameStatus" value="${realNameStatus}" />
+    <input type="hidden" id="j-rechargeMinAmount" value="${rechargeMinAmount}" />
+    <input type="hidden" id="money" name="money" value="${money}">
+    <div class="site-row account-content clearfix">        
+        <div class="site-col-4 account-side" id="j-sider-menu">
+            <div class="loading"></div>
+        </div>
+        <div class="site-col-20 site-col-last" id="j-rechargemain">
+            <div class="loading"></div>
+        </div>
+    </div> 
+    <#include "/include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/themes/js/common-81aa8d07d8.js"></script>
+<script src="/themes/js/vouchDetail-1bfc925986.js"></script>
+</html>

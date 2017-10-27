@@ -1,0 +1,110 @@
+@import '../../style/common.less';
+@import '../../style/account.less';
+
+#mallHelp{
+  width:1180px;
+  margin:30px auto 0;
+  .left{
+    width:170px;
+    background:#fff;
+    margin-right:10px;
+    float:left;
+    height:800px;
+    .title{
+      padding-left:58px;
+      color:@color-title;
+      height:60px;
+      line-height:60px;
+      .f16();
+      font-weight:bold;
+      border-bottom:1px solid @cololr-bodybg;
+    }
+    ul{
+      li{
+        .f14();
+        color:@color-p;
+        padding:25px 0 25px 20px;
+        em{
+          width:30px;
+          float:left;
+          font-size:28px;
+          display:block;
+        }
+        .con{
+          width:110px;
+          float:left;
+          padding-left:10px;
+        }
+      }
+      .serviceTime{
+        border-top:1px solid @cololr-bodybg;
+      }
+    }
+  }
+  .right{
+    float:left;
+    width:1000px;
+    background:#fff;
+    height:800px;
+    .title{
+      padding-left:30px;
+      color:@color-p;
+      height:60px;
+      line-height:60px;
+      .f16();
+      border-bottom:1px solid @cololr-bodybg;
+    }
+    .mallHelpList{
+      width:900px;
+      margin:0px auto;
+      li{
+        padding:20px 0;
+        border-bottom:1px dashed @cololr-bodybg;
+        .problem{
+          padding-bottom:10px;
+          em{
+            display:block;
+            width:20px;
+            height:20px;
+            .f14();
+            color:#fff;
+            font-weight:bold;
+            float:left;
+            background:#fdc77e;
+            margin-right:10px;
+            text-align:center;
+            border-radius:3px;
+          }
+          .con{
+            float:left;
+            .f14();
+            font-weight:bold;
+            color:@color-title;
+            width:870px;
+          }
+        }
+      .answer{
+        em{
+            display:block;
+            width:20px;
+            height:20px;
+            .f14();
+            color:#fff;
+            font-weight:bold;
+            float:left;
+            background:#fd7676;
+            margin-right:10px;
+            text-align:center;
+            border-radius:3px;
+          }
+          .con{
+            float:left;
+            .f14();
+            color:@color-p;
+            width:870px;
+          }
+      }
+      }
+    }
+  }
+}

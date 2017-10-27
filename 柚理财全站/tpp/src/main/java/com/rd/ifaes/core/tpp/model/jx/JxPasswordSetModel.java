@@ -1,0 +1,112 @@
+package com.rd.ifaes.core.tpp.model.jx;
+
+import com.rd.ifaes.core.core.util.ConfigUtils;
+import com.rd.ifaes.core.tpp.util.JxConfig;
+
+/**
+ * 
+ * 2.2.3密码设置
+ * @version 3.0
+ * @author jxx
+ * @date 2017年8月18日
+ */
+public class JxPasswordSetModel extends JxBaseModel {
+	private String accountId; //电子账号	A	19	M	存管平台分配的账号
+	private String idType; //证件类型	A	2	M	01-身份证（18位）
+	private String idNo; //证件号码	A	18	M	
+	private String name; //姓名	A	60	M	
+	private String mobile; //手机号	A	12	M	
+	private String retUrl; //前台跳转链接	A	200	C	交易后台跳转的前台URL
+	private String notifyUrl; //后台通知链接	A	200	M	【响应参数】会返回到该URL，平台收到后请返回“success”
+
+	/**
+	* 请求参数
+	*/
+    private String[] directRequestParamNames = new String[]{"accountId", "idType", "idNo", "name",
+    		"mobile", "retUrl", "notifyUrl"};
+    
+    /**
+     * 响应参数
+     */
+    private String[] directResponseParamNames = new String[]{"accountId"};
+
+	public JxPasswordSetModel() {
+		super();
+		super.setTxCode(JxConfig.PASSWORD_SET);
+		setRetUrl(ConfigUtils.getValue("notify_url")+ "/jxbank/setPayPwd/return.html");
+		setNotifyUrl(ConfigUtils.getValue("notify_url")+ "/jxbank/setPayPwd/notify.html");
+		setSummitUrl(getBaseUrl() + "/p2p/page/passwordset");
+	}
+
+	public String getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(String accountId) {
+		this.accountId = accountId;
+	}
+
+	public String getIdType() {
+		return idType;
+	}
+
+	public void setIdType(String idType) {
+		this.idType = idType;
+	}
+
+	public String getIdNo() {
+		return idNo;
+	}
+
+	public void setIdNo(String idNo) {
+		this.idNo = idNo;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+
+	public String getRetUrl() {
+		return retUrl;
+	}
+
+	public void setRetUrl(String retUrl) {
+		this.retUrl = retUrl;
+	}
+
+	public String getNotifyUrl() {
+		return notifyUrl;
+	}
+
+	public void setNotifyUrl(String notifyUrl) {
+		this.notifyUrl = notifyUrl;
+	}
+
+	public String[] getDirectRequestParamNames() {
+		return directRequestParamNames;
+	}
+
+	public void setDirectRequestParamNames(String[] directRequestParamNames) {
+		this.directRequestParamNames = directRequestParamNames;
+	}
+
+	public String[] getDirectResponseParamNames() {
+		return directResponseParamNames;
+	}
+
+	public void setDirectResponseParamNames(String[] directResponseParamNames) {
+		this.directResponseParamNames = directResponseParamNames;
+	}
+}

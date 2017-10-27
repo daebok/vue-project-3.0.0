@@ -1,0 +1,91 @@
+<style>
+.treegridbox ul {
+  max-height: none;   
+}
+</style>
+
+<div class="wrapper">
+	<form class="form-horizontal" action="/sys/role/saveRolePerms.html" id="form" role="form">		
+		<div class="row">
+			<div class="col-md-10 perms-conts">				
+				<div class="perms-name">
+					<h2>角色名称：<span>${role.roleName}</span></h2>
+				</div>
+				<div class="treegridbox perms-treegridbox">
+					<ul id="tree" class="ztree"></ul>
+				</div>
+			</div>
+		</div>
+    <input name="ids" id="ids" value="" type="hidden" />        
+    <input name="id" id="id" value="${role.uuid}" type="hidden" />        
+	</form>
+</div>
+<script type="text/javascript">
+    var setArray = function(){
+      var ids = [],checksId=[];
+      checksId = $.fn.zTree.getZTreeObj("tree").getCheckedNodes(true);
+      $.each(checksId,function(k, v) {
+        if( v.type == "3" )
+          {
+            ids.push(v.id);
+          }
+      });
+      $("#ids").val(ids);
+    }
+
+    var setting = {
+      check: {
+        enable: true
+      },
+      data: {
+        simpleData: {
+          enable: true
+        }
+      },
+      callback: {
+        onCheck: setArray
+      }
+    };
+
+    function treeGreat(){
+      $.ajax({
+        url: "/sys/role/rolePermsTree.html?id=" + $('#id').val(),
+        type: 'post',
+        dataType: 'json'
+      })
+      .done(function(data) {
+        $.fn.zTree.init($("#tree"), setting, data);
+        setArray();
+      });
+    }
+
+    treeGreat();
+
+		
+		$("#form").submit(function() {
+			$("#form").ajaxSubmit({
+				type: "post",
+				dataType: "json",
+				success: function(resultMsg) {					
+					if (resultMsg.result) {
+						layer.alert(resultMsg.msg, {
+							icon: 6,
+							cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+						}, function() {
+							layer.closeAll();
+							$("#jqGrid").trigger("reloadGrid"); //重新载入  
+						});
+					} else {
+						layer.alert(resultMsg.msg, {
+							icon: 5
+						});
+					}
+				}
+			});
+			return false;
+		});
+
+</script>

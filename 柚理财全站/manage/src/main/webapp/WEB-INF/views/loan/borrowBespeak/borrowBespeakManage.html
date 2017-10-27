@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>预约跟进</title>
+		<#include "include/resources.html">
+		<script type="text/javascript">
+			var url_list = "/loan/borrowBespeak/list.html";
+			$(document).ready(function() {	
+				$('#keywordsSearch').attr('data-url',url_list);
+				$('#conditionSearch').attr('data-url',url_list);				
+			});
+		</script>
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入联系人姓名/手机号码进行查询">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" id="keywordsSearch">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form>
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							    <li class="input-group input-group-sm"><span>联系人姓名</span><input type="text" class="form-control" name="contactName" /></li>
+							    <li class="input-group input-group-sm"><span>手机号码</span><input type="text" class="form-control" name="mobile" /></li>
+							    <li class="input-group input-group-sm"><span>状态</span><@linkage name="status" nid="bespeakStatus" noselect="全部" class="form-control"/></li>
+							    <li><button class="btn btn-sm btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" id="conditionSearch">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					</div>					
+				</div>
+			</div>
+			
+			<!-- 列表信息 -->
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid" class="table-td-NoOverflow"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+				<@dictFormatter type = "sex" />
+				<@dictFormatter type = "bespeakLimitTime" />
+				<@dictFormatter type = "bespeakStatus" />
+				$(document).ready(function() {		
+					var url_key = url_list.substring(url_list.lastIndexOf('/')+1,url_list.indexOf('.'));
+					//colModel = colModel.concat(downColumns);
+					//表格初始化		
+					$("#jqGrid").jqTreeGrid({
+							url : url_list,
+							multiselect: false,
+							colModel : [
+									{
+										label : "联系人姓名",
+										name : "contactName",
+										width : 100
+									},
+									{
+										label : "性别",
+										name : "sex",
+										width : 100,
+										formatter : sexFormatter
+									},
+									{
+										label : "手机号码",
+										name : "mobile",
+										width : 150
+									},
+									{
+										label : "借款金额（元）",
+										name : "money",
+										width : 100
+									},
+									{
+										label : "借款期限",
+										name : "limitTime",
+										width : 100,
+										formatter : bespeakLimitTimeFormatter
+									},
+									{
+										label : "添加时间",
+										name : "createTime",
+										width : 100,
+										formatter : datetimeFormatter
+									},
+									{
+										label : "状态",
+										name : "status",
+										width : 100,
+										formatter : bespeakStatusFormatter
+									},
+									{
+										label : "处理时间",
+										name : "handleTime",
+										width : 100,
+										formatter : datetimeFormatter
+									},
+									{
+										label : "IP归属地",
+										name : "address",
+										width : 150
+									},
+									{
+										label: "操作",
+										name: "cz",
+										width: 100,
+										align: "center",
+										formatter: function(val, options, rowObject){	
+											var btns = '';
+											var	id = rowObject.id;
+											if(url_key == 'list'){	//预约跟进
+												if(rowObject.status == "0"){
+													<@shiro.hasPermission name="project:borrow:bespeak:follow">
+													 btns = '<a href="javascript:;" onclick=$.fn.treeGridOptions.lineEditFun(this,"'+id+'") data-tid="jqGrid" data-url="/loan/borrowBespeak/borrowBespeakEditPage.html">编辑</a>';
+													</@shiro.hasPermission>
+												} else {
+													btns = '<a href="javascript:;" onclick=$.fn.treeGridOptions.checkFun(this,"'+id+'") data-tid="jqGrid" data-url="/loan/borrowBespeak/borrowBespeakViewPage.html">查看</a>';
+												}									
+											}	
+											return btns;
+										}
+										
+									} ],
+						}).jqGrid("setFrozenColumns").navGrid(
+						'#jqGridPager',
+						{
+							edit : false,
+							add : false,
+							del : false,
+							search : false,
+							refresh : true,
+							view : false,
+							position : "left",
+							cloneToTop : false
+						});
+					});
+			</script>
+			
+		</div>
+	</body>
+</html>

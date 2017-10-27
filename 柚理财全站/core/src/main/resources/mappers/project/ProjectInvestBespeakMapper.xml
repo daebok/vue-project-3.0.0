@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.project.mapper.ProjectInvestBespeakMapper">
+	<resultMap type="com.rd.ifaes.core.project.domain.ProjectInvestBespeak" id="projectInvestBespeakResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="saleTime" column="SALE_TIME"/>
+		<result property="remindStatus" column="REMIND_STATUS"/>
+		<result property="remindTime" column="REMIND_TIME"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="mobile" column="MOBILE"/>
+		<result property="email" column="EMAIL"/>
+		<result property="projectName" column="PROJECT_NAME"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		PROJECT_ID,
+		SALE_TIME,
+		REMIND_STATUS,
+		REMIND_TIME,
+		CREATE_TIME
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{projectId},
+		#{saleTime},
+		#{remindStatus},
+		#{remindTime},
+		#{createTime}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="projectId != null and projectId != ''">and PROJECT_ID = #{projectId}</if>
+			<if test="saleTime != null">and SALE_TIME = #{saleTime}</if>
+            <if test="remindStatus != null and remindStatus != ''">and REMIND_STATUS = #{remindStatus}</if>
+			<if test="remindTime != null">and REMIND_TIME = #{remindTime}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.project.domain.ProjectInvestBespeak">
+		insert into project_invest_bespeak( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into project_invest_bespeak( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+		#{item.uuid},
+				#{item.userId},
+				#{item.projectId},
+				#{item.saleTime},
+				#{item.remindStatus},
+				#{item.remindTime},
+				#{item.createTime}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from project_invest_bespeak
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update project_invest_bespeak set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="uuid" open="(" separator="," close=")">  
+            #{uuid} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update project_invest_bespeak set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.project.domain.ProjectInvestBespeak">
+		update project_invest_bespeak 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="userId != null and userId != ''">USER_ID = #{userId},</if>
+            <if test="projectId != null and projectId != ''">PROJECT_ID = #{projectId},</if>
+			<if test="saleTime != null">SALE_TIME = #{saleTime},</if>
+            <if test="remindStatus != null and remindStatus != ''">REMIND_STATUS = #{remindStatus},</if>
+			<if test="remindTime != null">REMIND_TIME = #{remindTime},</if>
+			<if test="createTime != null">CREATE_TIME = #{createTime},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="projectInvestBespeakResultMap">
+        select <include refid="table_columns" />
+        from project_invest_bespeak
+    </select>
+
+    <select id="findList" resultMap="projectInvestBespeakResultMap">
+        select bespeak.*,u.mobile,u.email,p.project_name from project_invest_bespeak  bespeak
+		LEFT JOIN user u on u.uuid=bespeak.user_id
+		LEFT JOIN project p on p.uuid= bespeak.project_id
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and bespeak.UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and bespeak.USER_ID = #{userId}</if>
+            <if test="projectId != null and projectId != ''">and bespeak.PROJECT_ID = #{projectId}</if>
+			<if test="saleTime != null">and bespeak.SALE_TIME = #{saleTime}</if>
+            <if test="remindStatus != null and remindStatus != ''">and bespeak.REMIND_STATUS = #{remindStatus}</if>
+			<if test="remindTime != null">and bespeak.REMIND_TIME = #{remindTime}</if>
+			<if test="createTime != null">and bespeak.CREATE_TIME = #{createTime}</if>
+			<if test="startSaleTime != null and startSaleTime != ''">and bespeak.SALE_TIME &gt;= #{startSaleTime}</if>
+		    <if test="endSaleTime != null and endSaleTime != ''">and bespeak.SALE_TIME &lt;= #{endSaleTime}</if>     
+       		<if test="nowTime != null and nowTime != ''"><![CDATA[and TIMESTAMPDIFF(MINUTE,#{nowTime},bespeak.SALE_TIME) < 35]]> </if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from project_invest_bespeak
+        <include refid="page_where" />
+    </select>
+	<update id="updateBatch" parameterType="java.util.List">
+		<foreach collection="list" item="item" open="" separator=";" close="">  
+			update project_invest_bespeak 
+			<trim prefix="set" suffixOverrides=",">
+	            <if test="item.remindStatus != null and item.remindStatus != ''">REMIND_STATUS = #{item.remindStatus},</if>
+	            <if test="item.remindTime != null and item.remindTime != ''">REMIND_TIME = #{item.remindTime},</if>
+			</trim>
+			where uuid = #{item.uuid} 
+        </foreach>	
+	</update>
+    <select id="get" resultMap="projectInvestBespeakResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from project_invest_bespeak
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+    <select   id="getUserBespeakProjectIds"   resultType="String">
+	 select   b.project_id
+      from project_invest_bespeak b,project p 
+   where b.project_id = p.uuid 
+       and b.user_id=#{userId}
+       and p.sale_time > now()
+	</select>
+
+</mapper>

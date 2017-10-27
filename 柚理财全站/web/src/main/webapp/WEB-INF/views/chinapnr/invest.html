@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>投资支付请求页面</title>
+</head>
+
+<body>
+    <div align="center">投资支付请求，页面跳转中，请不要关闭页面...</div>
+    <form action="${invest.ufxSubmitUrl!}" method="post" id="frm1"  style="display: none;">
+        <input type="text" value="${invest.service!}" name="service" />
+        <input type="text" value="${invest.orderNo!}" name="orderNo" />
+        <input type="text" value="${invest.ufxCustomerId!}" name="ufxCustomerId" />
+        <input type="text" value="${invest.businessWay!}" name="businessWay" />
+        <input type="text" value="${invest.signInfo!}" name="signInfo" />
+        
+        <input type="text" value="${invest.projectId!}" name="projectId" />
+        <input type="text" value="${invest.sponsorer!}" name="sponsorer" />
+        <input type="text" value="${invest.projectAmount!}" name="projectAmount" />
+        <input type="text" value="${invest.userCustId!}" name="userCustId" />
+         <input type="text" value="${invest.amount!}" name="amount" />
+        <input type="text" value="${invest.voucher!}" name="voucher" />
+         <input type="text" value="${invest.userId!}" name="userId" />
+         <input type="text" value="${invest.reqExt!}" name="reqExt" />
+         <input type="text" value="${invest.merPriv!}" name="merPriv" /> 
+         <input type="text" value="${invest.returnUrl!}" name="returnUrl" />
+         <input type="text" value="${invest.notifyUrl!}" name="notifyUrl" />
+       
+        <input type="submit" value="提交">
+    </form>
+    <script type="text/javascript">
+        document.getElementById("frm1").submit();
+    </script>
+</body>
+
+</html>

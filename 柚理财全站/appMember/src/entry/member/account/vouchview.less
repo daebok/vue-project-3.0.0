@@ -1,0 +1,50 @@
+@import (reference)'../../../style/common.less';
+@import './view.less';
+.companyheaderimg{
+  border:solid 1px @color-tipsbg;
+  width: 162px;
+  height: 112px;
+  display: block;
+  a{
+    display: table-cell;
+    vertical-align: middle;
+    width: 160px;
+    height: 110px;
+    text-align: center;
+    img{
+      max-height: 160px;
+      max-width: 160px;
+    }
+  }
+}
+.account-content{
+  .userinfo{
+      dl{
+        dt {
+          width: 190px;
+          height: 100px;
+        }
+        dd{
+          width: 600px;
+        }
+      }
+  }
+  .profit{     
+      dl{
+        &.loan{
+          height: 110px;
+          width: 279px;
+          .number{
+            .f26();
+            color: @color-main;
+            em{
+              color: @color-p;
+            }
+          }
+        }
+        &.last{
+          margin: 15px 0 0;
+        }
+      }
+  }    
+} 

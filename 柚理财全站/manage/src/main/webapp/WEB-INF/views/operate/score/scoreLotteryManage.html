@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>用户积分页面</title>
+		<#include "include/resources.html">
+	</head>
+	<body>
+		<style>
+			.layui-layer-loading .layui-layer-loading3{width:200px!important;padding-left: 66px;color: #fff;line-height: 24px;}
+		</style>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="奖品名称">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/operate/score/scoreLotteryList.html">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+						<@shiro.hasPermission name="oper:scorelottery:set:edit">
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.DiscounteditFun(this)" data-tid="jqGrid" data-url="/operate/score/scoreLotteryEdit.html">编辑</button>
+						</@shiro.hasPermission>
+					</div>					
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+					<@dictFormatter type = "lotteryType" />
+					$(document).ready(function() {												
+						//表格初始化
+						$("#jqGrid").jqTreeGrid({
+							url: '/operate/score/scoreLotteryList.html',	
+							  multiselect : true,
+							  colModel: [
+			                    { label: 'id', name: 'uuid', width: 45, hidden:true},
+			                    { label: '奖品', name: 'lotteryName',index:"lottery_name",width: 30,align:"center"},
+			                    { label: '中奖概率(%)', name: 'rate',index:"rate",width: 15,align:"center"},
+			                    { label: '中奖区域', name: 'lotteryArea',index:"lotteryArea",width: 15,align:"center"},
+			                    { label: '中奖类型', name: 'lotteryType',index:"lotteryType",width: 15,align:"center",formatter:lotteryTypeFormatter},
+			                    { label: '中奖值', name: 'lotteryValue',index:"lotteryValue",width: 15,align:"center"},
+			                    { label: '添加时间', name: 'createTime',index:"create_time",width: 15,align:"center",formatter: datetimeFormatter},
+			                    { label: '状态', name: 'status',index:"status",width: 15,align:"center",
+									formatter: function(value,row,index){
+				            		   if (value == '0'){
+					  						return "关闭";
+					  					} else  {
+					  						return "开启";
+					  					} 
+					  				}
+					  			},
+			                    { label: '备注', name: 'remark',index:"remark",width: 15,align:"center"}
+			                ]
+						}) ;			
+					});
+			</script>
+		</div>
+	</body>
+</html>

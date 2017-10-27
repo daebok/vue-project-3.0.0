@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>变现规则</title>
+<#include "include/resources.html">
+<style>
+	p{color:#109FFF;}
+	.con{position: relative;}
+	.notice{padding-top: 30px;}
+</style>
+</head>
+<body class="overflowY">
+<div class="wrapper" style="position: relative; z-index:5;">
+		<div class="row pt20">
+		<div class="col-md-12">
+			<div class="tool-btns">
+				<button type="button" class="btn btn-info" data-title="编辑">编辑</button>
+				<button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.viewHistory(this)" data-tid="jqGrid" data-url="/realize/rule/realizeRuleViewPage.html" data-title="历史记录">历史记录</button>				
+			</div>			
+		</div>
+	</div>
+</div>
+<div class="form-tips-content" id="realization" data-page="1" style="position: relative;top: -54px;">
+	<h3 class="borrowFormTitle">变现规则</h3>
+		<ul class="form-item">
+		<div>
+			<div class="title">一、申请变现期限制</div>
+			<div class="con">
+				<#if rule.holdDays!=0>
+					<div>
+						起息日后必须持有${rule.holdDays!}天
+					</div>
+				</#if>
+				<#if rule.remainDays!=0 >
+					<div>
+						距到期日${rule.remainDays!}天之前
+					</div>
+				</#if>
+				<#if rule.periodRemainDays!=0>
+					<div>
+						距本期还款日${rule.periodRemainDays}天之前
+					</div>
+				</#if>
+			</div>
+			<div class="title">二、变现时效</div>
+			<div class="con">
+				<div>
+					${rule.issueTime!}之前发布的变现，若在当天的${rule.raiseEndTime!}之前未变现成功则自动撤销变现申请,若变现成功则放款
+				</div>
+				<div>
+					<p>${rule.issueTime!}之后发布的变现，若在第二天的${rule.raiseEndTime!}之前未变现成功则自动撤销变现申请,若变现成功则放款</p>
+				</div>
+			</div>
+			<div class="title">三、变现金额限制</div>
+			<div class="con">
+				<#if rule.sellStyle=='1'>
+					<div>一次性全额转变现</div>
+				<#else>
+					<div>部分变现<span>最低变现金额 ${rule.sellAmountMin!}元</span></div>
+				</#if>
+			</div>
+			<div>
+				<p>最高可变现金额=（原投资产品剩余待收金额-已变现待还总额+已冻结金额）/（1+变现利率*变现借款的计息期限/${daysOfYear!365})
+				</p>
+			</div>
+			<div class="title">四、投资规则</div>
+			<div class="con">
+				<#if rule.buyStyle=='1'>
+					<div>全额投资</div>
+				<#else>
+					<div>
+						部分投资  ${rule.buyAmountMin!}元- ${rule.buyAmountMax!}元
+					</div>
+				</#if>
+			</div>
+			<div>
+				<p>剩余金额小于等于最低起投金额的2倍需一次性全部投资</p>
+			</div>
+			<div class="title">五、变现利率设置</div>
+			<div class="con input-box">
+				${rule.realizeRateMin!}% - ${rule.realizeRateMax!}%
+			</div>
+			<div class="title">六、变现服务费</div>
+			<div class="con">
+				按变现金额的${rule.feeRate!}%收取服务费,单次变现收取服务费总额不大于${rule.feeSingleMax!}元;
+			</div>
+			<div class="notice">注：
+				<p>1、申请变现期间及变现成功后原始项目的还款金额都需冻结；</p>
+				<p>2、当原始项目已有逾期则不允许申请变现；</p>
+				<p>3、若变现申请人有逾期借款，则不允许申请变现；</p>
+				<p>4、申请变现后不允许手动撤销变现；</p>
+			</div>
+		</div>
+	</ul>
+</div>
+<div class="form-tips-content hide" id="realization" data-page="2">
+	<form class="form-horizontal" action="/realize/rule/realizeRuleAdd.html" id="form" role="form" >
+		<h3 class="borrowFormTitle">变现规则</h3>
+		<ul class="form-item">
+		<div>
+			<div class="title">一、申请变现期限制</div>
+			<div class="con">
+				<div>
+					<input type="checkbox" name="isHoldDays" checked value="1">起息日后必须持有
+					<input type="text" name="holdDays" value="${rule.holdDays!0}"  style="width:40px;" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="3">天
+				</div>
+				<div>
+					<input type="checkbox" class="isRemainDays"  checked  value="1" disabled>距到期日
+					<input type="hidden" name="isRemainDays" value="1">
+					<input type="text" name="remainDays" value="${rule.remainDays!60}"  class="remainDays"  style="width:40px;" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="3">天之前
+				</div>
+				<div>
+					<input type="checkbox" name="isPeriodRemainDays"  checked  value="1">距本期还款日
+					<input type="text" name="periodRemainDays" value="${rule.periodRemainDays!3}"  style="width:40px;" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="3">天之前
+				</div>
+			</div>
+			<div class="title">二、变现时效</div>
+			<div class="con">
+				<div>
+					<select name="issueTimeHour" id="issueTimeHour">
+						<#list hourList as item>
+							<option value="${item}" <#if item == issueTimeHour >selected</#if>>${item}</option>
+						</#list>
+					</select> :
+					<select name="issueTimeMin" id="issueTimeMin">
+						<option value="00" <#if issueTimeMin == '00' >selected</#if>>00</option>
+						<option value="30" <#if issueTimeMin == '30' >selected</#if>>30</option>
+					</select>之前发布的变现，若在当天的
+					<select name="raiseEndTimeHour" id="raiseEndTimeHour">
+						<#list hourList as item>
+							<option value="${item}" <#if item == raiseEndTimeHour>selected</#if>>${item}</option>
+						</#list>
+					</select> :
+					<select name="raiseEndTimeMin" id="raiseEndTimeMin">
+						<option value="00" <#if raiseEndTimeMin == '00' >selected</#if>>00</option>
+						<option value="30" <#if raiseEndTimeMin == '30' >selected</#if>>30</option>
+					</select>之前未变现成功则自动撤销变现申请,若变现成功则放款
+				</div>
+				<div>
+					<p><b id="issueTimeHourText">${issueTimeHour!14}</b>:<b id="issueTimeMinText">${issueTimeMin!00}</b>之后发布的变现，若在第二天的
+						<b id="raiseEndTimeHourText">${raiseEndTimeHour!15}</b>:<b id="raiseEndTimeMinText">${raiseEndTimeMin!00}</b>之前未变现成功则自动撤销变现申请</p>
+				</div>
+				<input type="hidden" name="issueTime" value="${rule.issueTime!'10:00:00'}" style="width:40px;" >
+				<input type="hidden" name="raiseEndTime" value="${rule.issueTime!'18:00:00'}" style="width:40px;" >
+			</div>
+			
+			<div class="title">三、变现金额限制</div>
+			<div class="con">
+				<div>
+					<input type="radio" name="sellStyle" <#if rule.sellStyle=='1'>checked="checked"</#if> value="1" class="disposable">一次性全额转变现
+				</div>
+				<div>
+					<input type="radio" name="sellStyle" <#if rule.sellStyle=='0'>checked="checked"</#if> value="0" class="Part">部分变现
+					<span>最低变现金额 <input type="text" name="sellAmountMin" class="sellmoney" value=" ${rule.sellAmountMin!1000}" maxlength="8" <#if rule.sellStyle=='1'> disabled="disabled"</#if> onkeyup="value=value.replace(/[^\d]/g,'')">元</span>
+				</div>
+				
+			</div>
+			<div>
+					<p>最高可变现金额=（原投资产品剩余待收金额-已变现待还总额+已冻结金额）/（1+变现利率*变现借款的计息期限/${daysOfYear!365})
+					</p>
+				</div>
+			<div class="title">四、投资规则</div>
+			<div class="con">
+				<div>
+					<input type="radio" name="buyStyle" <#if rule.buyStyle=='1'>checked="checked"</#if> value="1" class="buyall">全额投资
+				</div>
+				<div>
+					<input type="radio" name="buyStyle" <#if rule.buyStyle=='0'>checked="checked"</#if> value="0" class="buypart">部分投资
+					<input type="text" name="buyAmountMin" value="${rule.buyAmountMin!1}"     style="width:100px;" class="buyAmountMin" id="buyAmountMin" placeholder="请输入最小投资金额" maxlength="8" <#if rule.buyStyle=='1'> disabled="disabled"</#if> required/>元
+					—
+					<input type="text" name="buyAmountMax" value="${rule.buyAmountMax!20000}" style="width:100px;" class="buyAmountMax" id="buyAmountMax" placeholder="请输入最大投资金额" maxlength="8" <#if rule.buyStyle=='1'> disabled="disabled"</#if> required/>元
+				</div>
+			</div>
+			<div>
+				<p>剩余金额小于等于最低起投金额的2倍需一次性全部投资</p>
+			</div>
+			<div class="title">五、变现利率设置</div>
+			<div class="con input-box">
+				<input type="text" style="width: auto; display: inline-block; vertical-align: middle;" maxlength="5" name="realizeRateMin" id="realizeRateMin" value="${rule.realizeRateMin!1}" placeholder="请输入变现最小利率" data-rule-rangeNumber="1, 24" data-msg-rangeNumber="输入的值在1~24之间" required />&nbsp;%
+				—
+				<input type="text" style="width: auto; display: inline-block; vertical-align: middle;" maxlength="5" name="realizeRateMax" id="realizeRateMax" value="${rule.realizeRateMax!10}" placeholder="请输入变现最大利率" data-rule-rangeNumber="1, 24" data-msg-rangeNumber="输入的值在1~24之间" required />&nbsp;%
+			</div>
+			<div class="title">六、变现服务费</div>
+			<div class="con">
+				按变现金额的
+				<input type="text" name="feeRate" id="feeRate" value="${rule.feeRate!0.1}"  style="width:40px;" required placeholder="请输入变现服务费" data-rule-rangeNumber="0.01, 24" data-msg-rangeNumber="输入的值在0.01~24之间"/>%收取服务费,单次变现收取服务费总额不大于
+				<input type="text" name="feeSingleMax" value="${rule.feeSingleMax!200}"  style="width:40px;" maxlength="5" onkeyup="value=value.replace(/[^\d]/g,'')" required placeholder="请输入服务费最大值"/>元;
+			</div>
+			<div class="notice">注：
+				<p>1、申请变现期间及变现成功后原始项目的还款金额都需冻结；</p>
+				<p>2、当原始项目已有逾期则不允许申请变现；</p>
+				<p>3、若变现申请人有逾期借款，则不允许申请变现；</p>
+				<p>4、申请变现后不允许手动撤销变现；</p>
+			</div>
+		</div>
+		<div  style="text-align:left;">
+      		<input type="submit" class="btn btn-primary"  id="submitBtn" value="提 交">
+      		<input type="reset" class="btn btn-warning"  id="resetBtn" value="取 消" style="margin-left: 20px;">
+       	</div>
+		</ul>
+		<@token name="addRealizeRuleToken"/>	
+	</form>
+</div>
+</body>
+<script>
+	$('#issueTimeHour').change(function () {
+		console.log($(this).val()+$('#issueTimeMin').val())
+		if($(this).val()+$('#issueTimeMin').val()>$("#raiseEndTimeHour").val()+$("#raiseEndTimeMin").val()){
+			$('#raiseEndTimeHour').val($("#issueTimeHour").val())
+			$('#raiseEndTimeMin').val($("#issueTimeMin").val())
+			$("#raiseEndTimeHourText").text($("#issueTimeHour").val());
+			$("#raiseEndTimeMinText").text($("#issueTimeMin").val());
+		}
+	})
+	$('#raiseEndTimeHour').change(function () {
+		if($(this).val()+$('#raiseEndTimeMin').val()<$("#issueTimeHour").val()+$("#issueTimeMin").val()){
+			var dd=layer.alert('不能选择早于发布时间的值', {
+				icon: 6
+			}, function() {
+				layer.close(dd)
+				$('#raiseEndTimeHour').val($("#issueTimeHour").val())
+				$('#raiseEndTimeMin').val($("#issueTimeMin").val())
+				$("#raiseEndTimeHourText").text($("#issueTimeHour").val());
+				$("#raiseEndTimeMinText").text($("#issueTimeMin").val());
+			});
+
+		}
+	})
+	$(".disposable").click(function(){
+		$(".sellmoney").attr("disabled",true)
+	})
+	$(".Part").click(function(){
+		$(".sellmoney").attr("disabled",false)
+		$(".sellmoney").attr("required",true)
+	})
+	$(".buyall").click(function(){
+		$(".buyAmountMin").attr("disabled",true)
+		$(".buyAmountMax").attr("disabled",true)
+	})
+	$(".buypart").click(function(){
+		$(".buyAmountMin").attr("disabled",false)
+		$(".buyAmountMax").attr("disabled",false)
+		$(".buyAmountMin").attr("required",true)
+	})
+	$(".isRemainDays").change(function(){
+		if($(".isRemainDays").prop("checked")){
+			
+		}else{
+			$(".remainDays").val(1);
+		}
+	})
+	$("#issueTimeHour").change(function(){
+		$("#issueTimeHourText").text($(this).val());
+	})
+	$("#issueTimeMin").change(function(){
+		$("#issueTimeMinText").text($(this).val());
+	})
+	$("#raiseEndTimeHour").change(function(){
+		$("#raiseEndTimeHourText").text($(this).val());
+	})
+	$("#raiseEndTimeMin").change(function(){
+		$("#raiseEndTimeMinText").text($(this).val());
+	})
+	$("input[name='remainDays']").on('blur',function () {
+		if($(this).val()<1){
+		    $(this).val(1)
+		}
+    })
+	$("#form").validate({
+		submitHandler: function(form) {
+			$(form).ajaxSubmit({
+				type: "post",
+				dataType: "json",
+				success: function(data) {
+					if (data.result) {
+						layer.alert(data.msg, {
+							icon: 6,
+						}, function() {
+							layer.closeAll();
+							window.location.reload();
+							//gridobj.trigger("reloadGrid"); //重新载入  
+						});
+					} else {
+						layer.alert(data.msg, {
+							icon: 5
+						});
+					}
+				}
+			});
+		}
+	});
+	
+	$("#realizeRateMin").on("keyup", function(){
+	if(!$(this).val()) return false;
+	var _this = $(this)[0];
+	_this.value = $.fn.page.decimalsNumber1(_this.value);
+	});
+	$("#realizeRateMax").on("keyup", function(){
+	if(!$(this).val()) return false;
+	var _this = $(this)[0];
+	_this.value = $.fn.page.decimalsNumber1(_this.value);
+	});
+	$("#interestManageRate").on("keyup", function(){
+	if(!$(this).val()) return false;
+	var _this = $(this)[0];
+	_this.value = $.fn.page.decimalsNumber1(_this.value);
+	});
+	$("#overdueFeeRate").on("keyup", function(){
+	if(!$(this).val()) return false;
+	var _this = $(this)[0];
+	_this.value = $.fn.page.decimalsNumber1(_this.value);
+	});
+	$("#buyAmountMin").on("keyup", function(){
+	if(!$(this).val()) return false;
+	var _this = $(this)[0];
+	_this.value = $.fn.page.decimalsNumber1(_this.value);
+	});
+	$("#buyAmountMax").on("keyup", function(){
+	if(!$(this).val()) return false;
+	var _this = $(this)[0];
+	_this.value = $.fn.page.decimalsNumber1(_this.value);
+	});
+	$("#feeRate").on("keyup", function(){
+	if(!$(this).val()) return false;
+	var _this = $(this)[0];
+	_this.value = $.fn.page.decimalsNumber1(_this.value);
+	});
+
+	$("#resetBtn").click(function(){
+		window.location.href=window.location.href;
+	});
+
+	$(".btn-info").click(function(event) {
+		$("[data-page='1']").hide();
+		$("[data-page='2']").removeClass('hide');
+		$(".wrapper").hide();
+	});
+</script>
+</html>

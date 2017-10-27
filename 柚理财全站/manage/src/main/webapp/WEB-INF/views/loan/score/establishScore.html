@@ -1,0 +1,53 @@
+
+<div class="form-tips-content" id="redpackage">
+	<form class="form-horizontal" action="/loan/score/handEstablishScore.html" id="form" role="form">
+		<input type="hidden" name="id" id="id" value="${userId}" >
+		<div class="form-group">
+			<label for="name" class="label-width"><em style="color:red">*</em> 发放积分</label>
+			<div class="input-box-width inputbox">
+				<input type="text" disabled="disabled" class="form-control" name="score" id="score" value="${handScore}">
+				<div class="msg_tip"></div>
+			</div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+var score = $("#score").val();
+var dd=0;
+$("#form").validate({
+	  submitHandler:function(form){
+		  dd++;
+		  if(dd>1){
+			  return false
+		  }
+			$(form).ajaxSubmit({
+				type:"post",
+				data:{"score":score},
+				dataType:"json",
+				success:function(data){
+		        	if(data.result){
+		        		layer.alert(data.msg, {
+		        			zIndex:50000,
+							icon : 6,
+							cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入
+								dd=0
+	  						}
+						}, function() {
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入
+							dd=0
+						});
+		        	}else{
+		        		layer.alert(data.msg, {zIndex:50000,icon: 5});
+						dd=0
+		        	} 			        	
+		    	}
+			});
+	    }    
+	});
+</script>
+		
+
+		

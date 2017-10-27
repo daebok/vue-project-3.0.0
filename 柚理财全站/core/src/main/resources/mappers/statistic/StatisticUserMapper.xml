@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.statistic.mapper.StatisticUserMapper">
+	<resultMap type="com.rd.ifaes.core.statistic.domain.StatisticUser" id="statisticUserResultMap">
+		<result property="userId" column="USER_ID"/>
+		<result property="registDate" column="REGIST_DATE"/>
+		<result property="realNameDate" column="REAL_NAME_DATE"/>
+		<result property="userNature" column="USER_NATURE"/>
+		<result property="registChannel" column="REGIST_CHANNEL"/>
+		<result property="sex" column="SEX"/>
+		<result property="year" column="YEAR"/>
+		<result property="realNameStatus" column="REAL_NAME_STATUS"/>
+		<result property="area" column="AREA"/>
+		<result property="isInvestor" column="IS_INVESTOR"/>
+		<result property="isBorrower" column="IS_BORROWER"/>
+		<result property="education" column="EDUCATION"/>
+		<result property="maritalStatus" column="MARITAL_STATUS"/>
+		<result property="monthIncomeRange" column="MONTH_INCOME_RANGE"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		USER_ID,
+		REGIST_DATE,
+		REAL_NAME_DATE,
+		USER_NATURE,
+		REGIST_CHANNEL,
+		SEX,
+		YEAR,
+		REAL_NAME_STATUS,
+		AREA,
+		IS_INVESTOR,
+		IS_BORROWER,
+		EDUCATION,
+		MARITAL_STATUS,
+		MONTH_INCOME_RANGE
+    </sql>
+	<sql id="entity_properties">
+		#{userId},
+		#{registDate},
+		#{realNameDate},
+		#{userNature},
+		#{registChannel},
+		#{sex},
+		#{year},
+		#{realNameStatus},
+		#{area},
+		#{isInvestor},
+		#{isBorrower},
+		#{education},
+		#{maritalStatus},
+		#{monthIncomeRange}
+	</sql>
+
+    <!-- 使用like用法：columnName like concat('%',#{columnName},'%') -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+			<if test="registDate != null">and REGIST_DATE = #{registDate}</if>
+			<if test="realNameDate != null">and REAL_NAME_DATE = #{realNameDate}</if>
+            <if test="userNature != null and userNature != ''">and USER_NATURE = #{userNature}</if>
+            <if test="registChannel != null and registChannel != ''">and REGIST_CHANNEL = #{registChannel}</if>
+            <if test="sex != null and sex != ''">and SEX = #{sex}</if>
+			<if test="year != null">and YEAR = #{year}</if>
+            <if test="realNameStatus != null and realNameStatus != ''">and REAL_NAME_STATUS = #{realNameStatus}</if>
+            <if test="area != null and area != ''">and AREA = #{area}</if>
+            <if test="isInvestor != null and isInvestor != ''">and IS_INVESTOR = #{isInvestor}</if>
+            <if test="isBorrower != null and isBorrower != ''">and IS_BORROWER = #{isBorrower}</if>
+            <if test="education != null and education != ''">and EDUCATION = #{education}</if>
+            <if test="maritalStatus != null and maritalStatus != ''">and MARITAL_STATUS = #{maritalStatus}</if>
+            <if test="monthIncomeRange != null and monthIncomeRange != ''">and MONTH_INCOME_RANGE = #{monthIncomeRange}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.statistic.domain.StatisticUser">
+		insert into statistic_user( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		insert into statistic_user( <include refid="table_columns" /> ) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">  
+		( 
+			#{item.userId},
+			#{item.registDate},
+			#{item.realNameDate},
+			#{item.userNature},
+			#{item.registChannel},
+			#{item.sex},
+			#{item.year},
+			#{item.realNameStatus},
+			#{item.area},
+			#{item.isInvestor},
+			#{item.isBorrower},
+			#{item.education},
+			#{item.maritalStatus},
+			#{item.monthIncomeRange}
+		)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from statistic_user
+		where user_id = #{userId}
+	</delete>
+	
+	<update id="deleteBatch">
+		update statistic_user set delete_flag = 1
+		where user_id in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update statistic_user set delete_flag = 1 
+		where user_id = #{userId}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.statistic.domain.StatisticUser">
+		update statistic_user 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="registDate != null">REGIST_DATE = #{registDate},</if>
+			<if test="realNameDate != null">REAL_NAME_DATE = #{realNameDate},</if>
+            <if test="userNature != null and userNature != ''">USER_NATURE = #{userNature},</if>
+            <if test="registChannel != null and registChannel != ''">REGIST_CHANNEL = #{registChannel},</if>
+            <if test="sex != null and sex != ''">SEX = #{sex},</if>
+			<if test="year != null">YEAR = #{year},</if>
+            <if test="realNameStatus != null and realNameStatus != ''">REAL_NAME_STATUS = #{realNameStatus},</if>
+            <if test="area != null and area != ''">AREA = #{area},</if>
+            <if test="isInvestor != null and isInvestor != ''">IS_INVESTOR = #{isInvestor},</if>
+            <if test="isBorrower != null and isBorrower != ''">IS_BORROWER = #{isBorrower},</if>
+            <if test="education != null and education != ''">EDUCATION = #{education},</if>
+            <if test="maritalStatus != null and maritalStatus != ''">MARITAL_STATUS = #{maritalStatus},</if>
+            <if test="monthIncomeRange != null and monthIncomeRange != ''">MONTH_INCOME_RANGE = #{monthIncomeRange},</if>
+		</trim>
+		<where>user_id = #{userId}</where>
+	</update>
+
+    <select id="findAll" resultMap="statisticUserResultMap">
+        select <include refid="table_columns" />
+        from statistic_user
+    </select>
+
+    <select id="findList" resultMap="statisticUserResultMap">
+        select <include refid="table_columns" />
+        from statistic_user
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(user_id) from statistic_user
+        <include refid="page_where" />
+    </select>
+
+    <select id="get" resultMap="statisticUserResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from statistic_user
+		where user_id = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	
+	<sql id="choose_date">
+		<choose>
+			<when test="realNameStatus != null and realNameStatus == 1">
+				real_name_date
+			</when>
+			<otherwise>
+            	regist_date
+            </otherwise>
+		</choose>
+	</sql>
+	
+	<sql id="select_dateType">
+		<choose>
+            <when test="3==dateType ">  
+                date_format(<include refid="choose_date" />,'%X%m')  
+            </when >  
+            <when test="2==dateType ">  
+                date_format(<include refid="choose_date" />,'%X%V')  
+            </when >  
+            <otherwise>
+                date_format(<include refid="choose_date" />,'%Y%m%d')  
+            </otherwise>
+		</choose>
+	</sql>
+
+	<resultMap type="com.rd.ifaes.core.statistic.model.StatisticResultModel" id="statisticResultModelResultMap">
+		<result property="statDate" column="STAT_DATE"/>
+		<result property="totalCount" column="TOTAL_COUNT"/>
+	</resultMap>
+
+	<select id="getStatisticUser" resultMap="statisticResultModelResultMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select <include refid="select_dateType" /> as statDate,count(user_id) as totalCount
+		from statistic_user
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="startDate != null and startDate != ''">and <include refid="select_dateType" /> &gt;= #{startDate}</if>
+        	<if test="endDate != null and endDate != ''">and <include refid="select_dateType" />  &lt;= #{endDate}</if>
+        	<include refid="queryConditionSql" />
+        </trim>
+        GROUP BY <include refid="select_dateType" />
+	</select>
+
+	<!-- 获取起始日期前一天数值 -->
+	<select id="getLastTotal" resultType="BigDecimal" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select count(user_id) as totalCount
+		from statistic_user
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="beforeStartDate != null and beforeStartDate != ''">and <include refid="select_dateType" /> = #{beforeStartDate}</if>
+            <include refid="queryConditionSql" />
+        </trim>
+	</select>
+
+	<!-- 统计借款地区  -->
+	<select id="getUserArea" resultType="map" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select area,count(user_id) as totalCount
+		from statistic_user
+		<trim prefix="where" prefixOverrides="and | or ">
+			and area is not null
+			<if test="startDate != null and startDate != ''">and <include refid="select_dateType" /> &gt;= #{startDate}</if>
+        	<if test="endDate != null and endDate != ''">and <include refid="select_dateType" />  &lt;= #{endDate}</if>
+        	<include refid="queryConditionSql" />
+        </trim>
+        group by area
+	</select>
+	
+	<!-- 查询条件  -->
+	<sql id="queryConditionSql">
+		<if test="realNameStatus != null and realNameStatus == 1">and real_name_status = #{realNameStatus}
+			<if test="userNatureArr != null and userNatureArr.length == 1 and userNatureArr[0] == '1'">
+		        <if test="sex != null and sex != ''">and sex = #{sex}</if>
+		        <if test="ageArr != null and ageArr.length &gt; 0">
+			        and 
+			        <trim prefixOverrides="or " prefix="(" suffix=")">
+				        <foreach collection="ageArr" item="age" >
+					        <foreach collection="dictList" item="data" separator=",">  
+					        	<if test="age==data.itemValue"> or 
+									<trim prefixOverrides="and " prefix="(" suffix=")">
+							        	<if test="data.minValue != null and data.minValue != ''">and year &lt;= DATE_FORMAT(NOW(),'%Y') - ${data.minValue}</if>
+							        	<if test="data.maxValue != null and data.maxValue != ''">and year &gt;= DATE_FORMAT(NOW(),'%Y') - ${data.maxValue}</if>
+						        	</trim>
+					        	</if> 
+							</foreach>
+				        </foreach>
+			        </trim>
+			        and year &gt; 0
+			    </if>
+		    </if>
+	    </if>
+        <if test="userNatureArr != null and userNatureArr.length &gt; 0">
+	        and user_nature in
+	        <foreach collection="userNatureArr" item="item" open="(" separator="," close=")">  
+	          #{item} 
+	        </foreach>	
+		</if>
+		<if test="channelArr != null and channelArr.length &gt; 0">
+	        and regist_channel in
+	        <foreach collection="channelArr" item="item" open="(" separator="," close=")">  
+	          #{item} 
+	        </foreach>	
+		</if>
+	</sql>
+	<!-- 用户总计列表  -->
+	<select id="getUserCountList" resultType="map" >
+		select
+		count(user_id) as total,
+		count(case when date_format(<include refid="choose_date" />,'%X%m') = date_format(#{lastMonth},'%X%m')  then 1 else null end) as lastMonth,
+		count(case when date_format(<include refid="choose_date" />,'%X%m') &gt;= date_format(#{lastThreeMonth},'%X%m')
+					and date_format(<include refid="choose_date" />,'%X%m') &lt; date_format(now(),'%X%m')  then 1 else null end) as lastThreeMonth,
+		count(case when date_format(<include refid="choose_date" />,'%X%m') &gt;= date_format(#{lastSixMonth},'%X%m')
+					and date_format(<include refid="choose_date" />,'%X%m') &lt; date_format(now(),'%X%m')  then 1 else null end) as lastSixMonth
+		from statistic_user
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="realNameStatus != null and realNameStatus == 1">and real_name_status = #{realNameStatus}</if>
+        </trim>
+	</select>
+	
+	<sql id="activeDateType">
+	   <choose> 
+            <when test="3==dateType ">  
+                date_format(log.login_time,'%X%m')  
+            </when >  
+            <when test="2==dateType ">  
+                date_format(log.login_time,'%X%V')  
+            </when >  
+            <otherwise>
+                date_format(log.login_time,'%Y%m%d')  
+            </otherwise> 
+	   </choose>
+	</sql>
+	
+	<!-- 用户活跃度列表  -->
+	<select id="getUserActiveByLogin" resultMap="statisticResultModelResultMap" >
+		select <include refid="activeDateType" /> as statDate,count(DISTINCT log.user_id) as totalCount
+		from user_login_log log 
+		inner join statistic_user su on log.user_id = su.user_id 
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="startDate != null and startDate != ''">and <include refid="activeDateType" /> &gt;= #{startDate}</if>
+        	<if test="endDate != null and endDate != ''">and <include refid="activeDateType" />  &lt;= #{endDate}</if>
+			<if test="channelArr != null and channelArr.length &gt; 0">
+		        and regist_channel in
+		        <foreach collection="channelArr" item="item" open="(" separator="," close=")">  
+		          #{item} 
+		        </foreach>	
+			</if>
+        </trim>
+         GROUP BY <include refid="activeDateType" />
+	</select>
+	
+	<!-- 用户活跃度地区列表  -->
+	<select id="getUserActiveAreaByLogin" resultType="map" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select su.area as area,count(DISTINCT log.user_id) as totalCount
+		from user_login_log log 
+		inner join statistic_user su on log.user_id = su.user_id 
+		<trim prefix="where" prefixOverrides="and | or ">
+				and su.area is not null
+			<if test="startDate != null and startDate != ''">and date_format(log.login_time,'%Y%m%d') &gt;= #{startDate}</if>
+        	<if test="endDate != null and endDate != ''">and date_format(log.login_time,'%Y%m%d')  &lt;= #{endDate}</if>
+        	<if test="channelArr != null and channelArr.length &gt; 0">
+		        and su.regist_channel in
+		        <foreach collection="channelArr" item="item" open="(" separator="," close=")">  
+		          #{item} 
+		        </foreach>	
+			</if>
+        </trim>
+        group by su.area
+	</select>
+	
+	<!-- 用户活跃度总计列表  -->
+	<select id="getUserActiveCountByLogin" resultType="map" >
+		select
+		count(DISTINCT log.user_id,case when login_time &gt; #{lastSevenDay}  then 1 else null end) as lastSevenDay,
+		count(DISTINCT log.user_id,case when login_time &gt; #{lastThirtyDay} then 1 else null end) as lastThirtyDay,
+		count(DISTINCT log.user_id,case when login_time &gt; #{lastNinetyDay}  then 1 else null end) as lastNinetyDay,
+		count(DISTINCT log.user_id,case when login_time &gt; #{lastHalfYear} then 1 else null end) as lastHalfYear
+		from user_login_log log 
+		left join statistic_user su on log.user_id = su.user_id
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="channelArr != null and channelArr.length &gt; 0">
+		        and su.regist_channel in
+		        <foreach collection="channelArr" item="item" open="(" separator="," close=")">  
+		          #{item} 
+		        </foreach>	
+			</if>
+        </trim>
+	</select>
+	<!-- 获取起始日期前数值 -->
+	<select id="sumLastUserNum" resultType="BigDecimal" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select count(user_id) as totalCount
+		from statistic_user
+		<trim prefix="where" prefixOverrides="and | or ">
+			<if test="beforeStartDate != null and beforeStartDate != ''">and <include refid="select_dateType" /> &lt;= #{beforeStartDate}</if>
+        </trim>
+	</select>
+	
+	<!-- 更新用户类型状态 -->
+	<update id="updateUserType">
+		update statistic_user set
+		<if test="userType != null and userType == 1"> is_investor = '1'</if>
+		<if test="userType != null and userType == 2"> is_borrower = '1'</if>
+		<trim prefix="where" prefixOverrides="and | or ">
+			and user_id = #{userId}
+			<if test="userType != null and userType == 1">and is_investor = '0'</if>
+			<if test="userType != null and userType == 2">and is_borrower = '0'</if>
+        </trim>
+	</update>
+	
+	<!-- 用户画像 -->
+	<!-- 统计不同性别的人数  -->
+	<select id="countUserSex" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select
+		<if test="dictList != null and dictList.size() &gt; 0">
+	        <foreach collection="dictList" item="data" separator="," >  
+				count(distinct su.user_id,case when sex = #{data.itemValue} then 1 else NULL end) as #{data.itemName} 
+			</foreach>
+		</if>
+		<include refid="queryUserSql" />
+	</select>
+	<!-- 统计不同年龄的人数  -->
+	<select id="countUserAge" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select
+		<if test="dictList != null and dictList.size() &gt; 0">
+	        <foreach collection="dictList" item="data" separator=",">  
+				count(distinct su.user_id,case when 
+				<trim prefixOverrides="and | or ">
+		        	<if test="data.minValue != null and data.minValue != ''">and year &lt;= DATE_FORMAT(NOW(),'%Y') - ${data.minValue}</if>
+		        	<if test="data.maxValue != null and data.maxValue != ''">and year &gt;= DATE_FORMAT(NOW(),'%Y') - ${data.maxValue}</if>
+	        	</trim>
+	        	then 1 ELSE null end) as #{data.itemName}
+			</foreach>
+		</if>
+		<include refid="queryUserSql" />
+	</select>
+	<!-- 统计不同学历的人数  -->
+	<select id="countUsereducation" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select
+		<if test="dictList != null and dictList.size() &gt; 0">
+	        <foreach collection="dictList" item="data" separator="," >  
+				count(distinct su.user_id,case when su.education = #{data.itemValue} then 1 else NULL end) as #{data.itemName}
+			</foreach>
+		</if>
+		<include refid="queryUserSql" />
+	</select>
+	<!-- 统计婚姻状态的人数  -->
+	<select id="countUserMarital" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select
+		<if test="dictList != null and dictList.size() &gt; 0">
+	        <foreach collection="dictList" item="data" separator="," >  
+				count(distinct su.user_id,case when su.marital_status = #{data.itemValue} then 1 else NULL end) as #{data.itemName}
+			</foreach>
+		</if>
+		<include refid="queryUserSql" />
+	</select>
+	<!-- 统计不同年收入人数  -->
+	<select id="countUserIncome" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select
+		<if test="dictList != null and dictList.size() &gt; 0">
+	        <foreach collection="dictList" item="data" separator="," >  
+				count(distinct su.user_id,case when su.month_income_range = #{data.itemValue} then 1 else NULL end) as #{data.itemName}
+			</foreach>
+		</if>
+		<include refid="queryUserSql" />
+	</select>
+	<!-- 统计不同用户类型的人数  -->
+	<select id="countUserNatrue" resultType="java.util.LinkedHashMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel" >
+		select
+		<if test="dictList != null and dictList.size() &gt; 0">
+	        <foreach collection="dictList" item="data" separator="," >
+	          	<if test="data != null and data.itemValue != 3"><!-- 剔除担保用户 -->
+					count(distinct su.user_id,case when user_nature = #{data.itemValue} then 1 else NULL end) as #{data.itemName}
+				</if>
+			</foreach>
+		</if>
+		<include refid="queryUserSql" />
+	</select>
+	
+	<!-- 用户画像查询语句 -->
+	<sql id="queryUserSql">
+		<choose> 
+			<when test="3==userType"><!-- 逾期人 -->
+				from project_repayment pr
+				left join statistic_user su on su.user_id = pr.user_id
+				<trim prefix="where" prefixOverrides="and | or ">
+					and pr.late_days &gt; 0 
+					and pr.repay_time &lt;= #{endDate}
+					and (pr.real_repay_time is null or pr.real_repay_time &gt; #{startDate}) 
+				</trim>
+			</when>
+			<when test="2==userType"><!-- 借款人 -->
+				from statistic_user su
+				<trim prefix="where" prefixOverrides="and | or ">
+					<if test="userType != null and userType != ''">and su.is_borrower ='1'</if>
+				</trim>
+			</when>
+			<otherwise><!-- 投资人 -->
+				from statistic_user su
+				<trim prefix="where" prefixOverrides="and | or ">
+					<if test="userType != null and userType != ''">and su.is_investor = '1'</if>
+				</trim>
+			</otherwise> 
+	  	</choose>
+	</sql>
+	
+</mapper>

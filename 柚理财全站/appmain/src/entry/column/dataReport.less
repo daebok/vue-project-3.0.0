@@ -1,0 +1,122 @@
+@import '../../style/common.less';
+@import '../../style/account.less';
+
+.nolist{
+    color: #aaa;
+    .f14();
+    .iconfont{
+      display: block;
+      font-size: 34px;
+    }
+  }
+
+.articlebox{
+  width: 100%;
+  min-width: 1180px;
+  .columnBanner{
+    width: 100%;
+    min-width: 1180px;
+    height: 280px;
+    background: url(../../style/images/bannerData.jpg) no-repeat; 
+  }
+  .columnmenu{
+    width: 100%;
+    min-width: 1180px;
+    position: relative;
+    height: 50px;
+   .columnBg{
+      width: 100%;
+      min-width: 1180px;
+      background: #000;
+      opacity: 0.3;
+      filter:alpha(opacity=30);
+      position: absolute;
+      left: 0;
+      top:0;
+      height: 50px;
+      z-index: 0;
+     }
+    ul{
+      width: 1180px;
+      margin: 0 auto;
+      z-index: 2;
+      position: relative;
+      li{
+        float: left;
+        line-height:50px;
+        color:#fff;
+        .f14();
+        padding: 0 10px;
+        margin: 0 10px;
+        text-align:center;
+        a{
+          display:block;
+          color:#fff;
+        }        
+      }
+      li:hover{
+        background:url(../../style/images/hoverBg.png) repeat-x;
+        a{
+          color:#fff;
+        }
+      }
+      li.active{
+         background:url(../../style/images/hoverBg.png) repeat-x;
+        a{
+          color:#fff;
+        }
+      }
+    }
+    }
+  .columnlist{
+    width: 1180px;
+    margin: -180px auto 0;
+    min-height:680px;
+    .singlePage{
+      line-height:30px;
+      color:@color-text;
+      img{
+        max-width: 900px;
+      }
+    }
+    .title{
+      line-height:60px;
+      color:#fff;
+      .f30();
+      font-weight: bold;
+    }
+    .small_title{
+      color: #fff;
+      font-size: 16px;
+      margin-bottom: 40px;
+    }
+    .listCon{
+      min-height: 500px;
+      .columnul{
+        li{
+          width: 380px;
+          height: 240px;
+          float: left;
+          border-radius: 10px;
+          margin-right: 20px;
+          margin-bottom: 20px;
+          img{
+            width: 380px;
+            height: 240px;
+            border-radius: 10px;
+            vertical-align: middle;
+          }
+          &:nth-child(3n+0){
+            margin-right: 0;
+          }
+          &:hover{
+             box-shadow: 0 0 10px rgba(46, 50, 53, 0.4);
+          }
+        }
+      }
+    }
+    
+  }
+
+}
+

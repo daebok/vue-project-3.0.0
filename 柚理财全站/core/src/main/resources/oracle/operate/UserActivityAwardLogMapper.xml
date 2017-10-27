@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.operate.mapper.UserActivityAwardLogMapper">
+	<resultMap type="com.rd.ifaes.core.operate.domain.UserActivityAwardLog" id="userActivityAwardLogResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="award" column="AWARD"/>
+		<result property="redRuleId" column="RED_RULE_ID"/>
+		<result property="rateRuleId" column="RATE_RULE_ID"/>
+		<result property="userRedId" column="USER_RED_ID"/>
+		<result property="userRateId" column="USER_RATE_ID"/>
+		<result property="tenderId" column="TENDER_ID"/>
+		<result property="inviteUserId" column="INVITE_USER_ID"/>
+		<result property="awardType" column="AWARD_TYPE"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="activityName" column="ACTIVITY_NAME"/>
+		<result property="ruleName" column="RULE_NAME"/>
+		<result property="activityCode" column="ACTIVITY_CODE"/>
+		<result property="userName" column="USER_NAME"/>
+		<result property="mobile" column="mobile"/>
+		<result property="status" column="status"/>
+		<result property="realName" column="REAL_NAME"/>
+		<result property="amount" column="amount"/>
+		<result property="projectName" column="PROJECT_NAME"/>
+		<result property="inviteUserName" column="INVITE_USER_NAME"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		AWARD,
+		RED_RULE_ID,
+		RATE_RULE_ID,
+		USER_RED_ID,
+		USER_RATE_ID,
+		TENDER_ID,
+		INVITE_USER_ID,
+		AWARD_TYPE,
+		CREATE_TIME,
+		ACTIVITY_NAME,
+		RULE_NAME,
+		ACTIVITY_CODE
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{award},
+		#{redRuleId},
+		#{rateRuleId},
+		#{userRedId},
+		#{userRateId},
+		#{tenderId},
+		#{inviteUserId},
+		#{awardType},
+		#{createTime},
+		#{activityName},
+		#{ruleName},
+		#{activityCode}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="award != null and award != ''">and AWARD = #{award}</if>
+            <if test="redRuleId != null and redRuleId != ''">and RED_RULE_ID = #{redRuleId}</if>
+            <if test="rateRuleId != null and rateRuleId != ''">and RATE_RULE_ID = #{rateRuleId}</if>
+            <if test="userRedId != null and userRedId != ''">and USER_RED_ID = #{userRedId}</if>
+            <if test="userRateId != null and userRateId != ''">and USER_RATE_ID = #{userRateId}</if>
+            <if test="tenderId != null and tenderId != ''">and TENDER_ID = #{tenderId}</if>
+            <if test="inviteUserId != null and inviteUserId != ''">and INVITE_USER_ID = #{inviteUserId}</if>
+            <if test="awardType != null and awardType != ''">and AWARD_TYPE = #{awardType}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="activityName != null and activityName != ''">and ACTIVITY_NAME = #{activityName}</if>
+            <if test="ruleName != null and ruleName != ''">and RULE_NAME = #{ruleName}</if>
+            <if test="activityCode != null and activityCode != ''">and ACTIVITY_CODE = #{activityCode}</if>
+            <if test="codeSet != null">
+	          and ACTIVITY_CODE in
+		         <foreach collection="codeSet" item="code" open="(" separator="," close=")">  
+		            #{code} 
+		        </foreach>	
+            </if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.operate.domain.UserActivityAwardLog">
+		insert into user_activity_award_log( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		BEGIN
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into user_activity_award_log( <include refid="table_columns" /> ) 
+		values 
+		( 
+		#{item.uuid},
+				#{item.userId},
+				#{item.award},
+				#{item.redRuleId},
+				#{item.rateRuleId},
+				#{item.userRedId},
+				#{item.userRateId},
+				#{item.tenderId},
+				#{item.inviteUserId},
+				#{item.awardType},
+				#{item.createTime},
+				#{item.activityName},
+				#{item.ruleName},
+				#{item.activityCode}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from user_activity_award_log
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update user_activity_award_log set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="uuid" open="(" separator="," close=")">  
+            #{uuid} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update user_activity_award_log set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.operate.domain.UserActivityAwardLog">
+		update user_activity_award_log 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="userId != null and userId != ''">USER_ID = #{userId},</if>
+            <if test="award != null and award != ''">AWARD = #{award},</if>
+            <if test="redRuleId != null and redRuleId != ''">RED_RULE_ID = #{redRuleId},</if>
+            <if test="rateRuleId != null and rateRuleId != ''">RATE_RULE_ID = #{rateRuleId},</if>
+            <if test="userRedId != null and userRedId != ''">USER_RED_ID = #{userRedId},</if>
+            <if test="userRateId != null and userRateId != ''">USER_RATE_ID = #{userRateId},</if>
+            <if test="tenderId != null and tenderId != ''">TENDER_ID = #{tenderId},</if>
+            <if test="inviteUserId != null and inviteUserId != ''">INVITE_USER_ID = #{inviteUserId},</if>
+            <if test="awardType != null and awardType != ''">AWARD_TYPE = #{awardType},</if>
+            <if test="activityCode != null and activityCode != ''">ACTIVITY_CODE = #{activityCode},</if>
+			<if test="createTime != null">CREATE_TIME = #{createTime},</if>
+            <if test="activityName != null and activityName != ''">ACTIVITY_NAME = #{activityName},</if>
+            <if test="ruleName != null and ruleName != ''">RULE_NAME = #{ruleName},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="userActivityAwardLogResultMap">
+        select <include refid="table_columns" />
+        from user_activity_award_log
+    </select>
+
+    <select id="findList" resultMap="userActivityAwardLogResultMap">
+		select a.uuid, a.user_id, a.award, a.red_rule_id, a.rate_rule_id, a.user_red_id, a.user_rate_id, a.tender_id,
+			 a.invite_user_id, a.award_type, a.create_time, a.activity_name, a.rule_name, a.activity_code, 
+			CASE WHEN a.award_type = 1 THEN red.status ELSE rate.status END AS status,
+			u.user_name, u.mobile, u.real_name, invest.amount, project.project_name,
+			(select u.user_name from users u where u.uuid = a.invite_user_id ) invite_user_name
+		FROM user_activity_award_log a
+			LEFT JOIN  users u on  u.uuid= a.user_id
+			LEFT JOIN user_redenvelope red ON red.uuid = a.user_red_id
+			LEFT JOIN user_rate_coupon  rate on  rate.uuid=a.user_rate_id
+			LEFT JOIN project_invest invest on  a.tender_id=invest.uuid
+			LEFT JOIN project project on  project.uuid=invest.project_id 
+      <where>
+		  <if test="codeSet != null and codeSet != ''">
+        	and a.activity_code in 
+        	<foreach collection="codeSet" item="code" open="(" separator="," close=")">#{code}</foreach>
+          </if>
+	         <if test="userId != null and userId != ''">and a.USER_ID = #{userId}</if>
+            <if test="award != null and award != ''"> and a.AWARD = #{award}</if>
+            <if test="redRuleId != null and redRuleId != ''"> and a.RED_RULE_ID = #{redRuleId} </if>
+            <if test="rateRuleId != null and rateRuleId != ''">and a.RATE_RULE_ID = #{rateRuleId} </if>
+            <if test="userRedId != null and userRedId != ''">and a.USER_RED_ID = #{userRedId} </if>
+            <if test="userRateId != null and userRateId != ''">and a.USER_RATE_ID = #{userRateId} </if>
+            <if test="tenderId != null and tenderId != ''">and a.TENDER_ID = #{tenderId} </if>
+            <if test="inviteUserId != null and inviteUserId != ''">and a.INVITE_USER_ID = #{inviteUserId} </if>
+            <if test="awardType != null and awardType != ''">and a.AWARD_TYPE = #{awardType} </if>
+            <if test="activityCode != null and activityCode != ''"> and a.ACTIVITY_CODE = #{activityCode} </if>
+            <if test="activityName != null and activityName != ''">and a.ACTIVITY_NAME like '%'||#{activityName}||'%' </if>
+            <if test="ruleName != null and ruleName != ''">and a.RULE_NAME = #{ruleName} </if>
+            <if test="userName != null and userName != ''">and u.USER_NAME like '%'||#{userName}||'%' </if>
+            <if test="projectName != null and projectName != ''">and project.project_name like '%'||#{projectName}||'%' </if>
+	 		<if test="startTime !=null and startTime !=''">and a.create_time &gt;= to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')</if>
+            <if test="endTime !=null and endTime !=''">and a.create_time &lt;= to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')</if>
+	 		<if test="status != null and status != ''">and (red.status = #{status} or rate.status = #{status})</if>
+	 		<if test="mobile != null and mobile != ''">and u.mobile like #{mobile}</if>
+	 	    <if test="keywords != null and keywords != ''">and (project.project_name like '%'||#{keywords}||'%' or u.USER_NAME like '%'||#{keywords}||'%' ) </if>
+       </where>
+        order by a.create_time desc
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from user_activity_award_log
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="userActivityAwardLogResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_activity_award_log
+		where uuid = #{uuid}
+	</select>
+	
+	
+	
+	<!-- 其他自定义SQL -->
+	<!-- 获取用户的奖励总额 -->
+	<select id="getAwardSum" resultType="BigDecimal" parameterType="com.rd.ifaes.core.operate.domain.UserActivityAwardLog" >
+       select nvl(sum(award),0) from user_activity_award_log
+       <include refid="page_where" />
+	</select>
+
+	<select id="countRate" resultType="BigDecimal" parameterType="com.rd.ifaes.core.operate.domain.UserActivityAwardLog" >
+       select count(uuid) from user_activity_award_log
+       <include refid="page_where" />
+	</select>
+
+</mapper>

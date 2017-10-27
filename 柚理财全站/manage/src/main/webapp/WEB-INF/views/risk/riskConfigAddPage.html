@@ -1,0 +1,87 @@
+<div class="form-tips-content">
+	<form class="form-horizontal" action="/risk/riskConfigAdd.html" id="form" role="form">
+		<ul class="form-item">
+			<li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">风险等级名称：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="riskLevelName" id="riskLevelName" maxlength="32" placeholder="请输入风险等级名称" required>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="configType" class="control-label form-label">风险承受能力：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="userRiskLevelName" id="userRiskLevelName" maxlength="32"  placeholder="请输入风险承受能力" required>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="configValue" class="control-label form-label">风险等级级别：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="riskLevelVal" id="riskLevelVal" onchange="changeToUserRiskLevelVal(this.value)" value="<#if config??>${config.riskLevelVal!}</#if>" maxlength="1" digits="true" placeholder="请输入风险等级级别" required>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="configValue" class="control-label form-label">风险承受能力级别：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="userRiskLevelVal" id="userRiskLevelVal" value="<#if config??>${config.userRiskLevelVal!}</#if>"  readonly placeholder="请输入风险承受能力级别" required>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="configValue" class="control-label form-label">风险等级含义：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="riskLevelDesc" id="riskLevelDesc" maxlength="512"  placeholder="请输入风险等级含义" required>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="remark" class="control-label form-label">风险承受能力含义：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="userRiskLevelDesc" id="userRiskLevelDesc" maxlength="512"  placeholder="请输入风险承受能力含义" required>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<@token/>
+	</form>
+</div>
+<script>
+function changeToUserRiskLevelVal(obj){
+	var result = parseInt(obj)-1;
+	$("#userRiskLevelVal").val(result);
+}
+$("#form").validate({
+	submitHandler: function(form) {	
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						icon: 6,
+						cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+					}, function() {
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入  
+					});
+				} else {
+					layer.alert(data.msg, {
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+})
+</script>

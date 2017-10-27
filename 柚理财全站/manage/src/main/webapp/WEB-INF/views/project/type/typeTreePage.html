@@ -1,0 +1,43 @@
+<div class="wrapper">
+	<div class="row mt20">
+		<div class="col-md-12">
+			<h3  class="mt10 mb10">产品类别树</h3>
+			<div class="treegridbox"  id="tree"></div>
+		</div>		
+</div>
+</div>
+<script type="text/javascript">
+function buildtree_tips(){
+	$.ajax({
+	   type: "POST",
+	   url: "/project/type/getTypeTree.html",
+	   success: function(tree){	   	
+			$('#tree').treeview({
+				data: tree,   
+				color: "#000000",
+			    showCheckbox: false,
+			    showIcon: false,
+				showBorder:false,
+				backColor: "#FFFFFF",
+				showTags:true,
+				onNodeSelected: function(e, o) {
+				  <#if   pageFlag!="parent">
+				       // 父节点不选择(上架)
+				      	if(!!o.nodes){
+							return false;
+						}
+					</#if>
+					$("#${pageFlag}Id").val(o.id);					
+					$("#${pageFlag}Name").val(o.text);
+			    	layer.close($("#${pageFlag}Name").data("index"));
+			    	if(typeTreePageSelectEnd){
+			    	   typeTreePageSelectEnd(o.id,o.text);
+			    	}
+				}
+			});
+			
+	   }
+	});
+}
+buildtree_tips();
+</script>	

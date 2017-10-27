@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.operate.mapper.UserRedenvelopeMapper">
+	<resultMap type="com.rd.ifaes.core.operate.domain.UserRedenvelope" id="userRedenvelopeResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="ruleId" column="RULE_ID"/>
+		<result property="ruleName" column="RULE_NAME"/>
+		<result property="activityName" column="ACTIVITY_NAME"/>
+		<result property="amount" column="AMOUNT"/>
+		<result property="useTime" column="USE_TIME"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="tenderId" column="TENDER_ID"/>
+		<result property="status" column="STATUS"/>
+		<result property="useTenderMoney" column="USE_TENDER_MONEY"/>
+		<result property="useProjectType" column="USE_PROJECT_TYPE"/>
+		<result property="useValidDay" column="USE_VALID_DAY"/>
+		<result property="useExpireTime" column="USE_EXPIRE_TIME"/>
+		<result property="grantType" column="GRANT_TYPE"/>
+		<result property="userName" column="USER_NAME"/>
+		<result property="mobile" column="MOBILE"/>
+		<result property="realName" column="REAL_NAME"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		RULE_ID,
+		RULE_NAME,
+		ACTIVITY_NAME,
+		AMOUNT,
+		USE_TIME,
+		CREATE_TIME,
+		TENDER_ID,
+		STATUS,
+		USE_TENDER_MONEY,
+		USE_PROJECT_TYPE,
+		USE_VALID_DAY,
+		USE_EXPIRE_TIME,
+		GRANT_TYPE 
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{ruleId},
+		#{ruleName},
+		#{activityName},
+		#{amount},
+		#{useTime},
+		#{createTime},
+		#{tenderId},
+		#{status},
+		#{useTenderMoney},
+		#{useProjectType},
+		#{useValidDay},
+		#{useExpireTime},
+		#{grantType} 
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+            <if test="ruleId != null and ruleId != ''">and RULE_ID = #{ruleId}</if>
+            <if test="tenderId != null and tenderId != ''">and TENDER_ID = #{tenderId}</if>
+            <if test="grantType != null and grantType != ''">and GRANT_TYPE = #{grantType}</if>
+            <if test="ruleName != null and ruleName != ''">and RULE_NAME = #{ruleName}</if>
+            <if test="activityName != null and activityName != ''">and ACTIVITY_NAME = #{activityName}</if>
+			<if test="amount != null">and AMOUNT = #{amount}</if>
+			<if test="useTime != null">and USE_TIME = #{useTime}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="useValidDay != null and useValidDay != ''">and USE_VALID_DAY = #{useValidDay}</if>
+			<if test="useExpireTime != null">and USE_EXPIRE_TIME = #{useExpireTime}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort == null or page.sort == ''">order by USER_ID,STATUS </if> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.operate.domain.UserRedenvelope">
+		insert into user_redenvelope( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">		
+		BEGIN
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into user_redenvelope( <include refid="table_columns" /> ) 
+		values 
+		( 
+				#{item.uuid},
+				#{item.userId},
+				#{item.ruleId},
+				#{item.ruleName},
+				#{item.activityName},
+				#{item.amount},
+				#{item.useTime},
+				#{item.createTime},
+				#{item.tenderId},
+				#{item.status},
+				#{item.useTenderMoney},
+				#{item.useProjectType},
+				#{item.useValidDay},
+				#{item.useExpireTime},
+				#{item.grantType}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from user_redenvelope
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update user_redenvelope set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update user_redenvelope set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.operate.domain.UserRedenvelope">
+		update user_redenvelope 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="useTime != null">USE_TIME = #{useTime},</if>
+            <if test="tenderId != null and tenderId != ''">TENDER_ID = #{tenderId},</if>
+			<if test="useExpireTime != null">USE_EXPIRE_TIME = #{useExpireTime},</if>
+			<if test="status != null">STATUS = #{status},</if>
+            <if test="grantType != null and grantType != ''">GRANT_TYPE = #{grantType},</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="userRedenvelopeResultMap">
+        select <include refid="table_columns" />
+        from user_redenvelope
+    </select>
+
+    <select id="findList" resultMap="userRedenvelopeResultMap">
+        select 		
+        	red.UUID,
+        	red.USER_ID,
+        	red.RULE_ID,
+        	red.RULE_NAME,
+        	red.ACTIVITY_NAME,
+        	red.AMOUNT,
+        	red.USE_TIME,
+        	red.CREATE_TIME,
+			red.TENDER_ID,
+			red.STATUS,
+			red.GRANT_TYPE,
+			red.USE_TENDER_MONEY,
+			red.USE_PROJECT_TYPE,
+			red.USE_VALID_DAY,
+			red.USE_EXPIRE_TIME,
+			u.user_name,
+			u.mobile,
+			u.real_name
+        from 
+        	user_redenvelope red, users u 
+        where 
+        	red.user_id=u.uuid 
+        <include refid="find_list_where" />
+	</select>
+	
+	<select id="viableUserRedenvelope" resultMap="userRedenvelopeResultMap">
+        select 		
+        	red.UUID,
+        	red.USER_ID,
+        	red.RULE_ID,
+        	red.RULE_NAME,
+        	red.ACTIVITY_NAME,
+        	red.AMOUNT,
+        	red.USE_TIME,
+        	red.CREATE_TIME,
+			red.TENDER_ID,
+			red.STATUS,
+			red.USE_TENDER_MONEY,
+			red.USE_PROJECT_TYPE,
+			red.USE_VALID_DAY,
+			red.USE_EXPIRE_TIME,
+			u.user_name,
+			u.mobile,
+			u.real_name
+        from 
+        	user_redenvelope red, users u 
+        where 
+        	red.user_id=u.uuid 
+            <if test="userId != null and userId != ''">and red.USER_ID = #{userId}</if>
+            <if test="status != null and status != ''">and red.STATUS = #{status}</if>
+        	<if test="tenderId != null and tenderId != ''">and TENDER_ID = #{tenderId}</if>
+        	<![CDATA[  and sysdate <= nvl(red.USE_EXPIRE_TIME,sysdate)   ]]>
+            <if test="tenderMoney!=null"> and <![CDATA[ nvl(red.USE_TENDER_MONEY,0) <= #{tenderMoney} ]]></if>
+             <if test="amount!=null"> and <![CDATA[ red.amount <= #{amount} ]]></if>
+            <if test="projectTypeId != null">and (red.USE_PROJECT_TYPE is null or red.USE_PROJECT_TYPE like '%'||#{projectTypeId}||'%') </if> 
+	       	order by nvl(red.use_expire_time,'2099-12-31 23:59:59') ASC, red.amount desc
+	</select>
+	
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from user_redenvelope
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="userRedenvelopeResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_redenvelope
+		where uuid = #{id}
+	</select>
+	
+    <sql id="find_list_where">
+    		<if test="uuid != null and uuid != ''">and red.UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and red.USER_ID = #{userId}</if>
+            <if test="status != null and status != ''">
+            	<if test="status==4">and red.STATUS in (2,3)
+            	</if>
+            	<if test="status!=4 and status!=-1">and red.STATUS=#{status}
+            	</if>
+            </if> 
+            <if test="tenderId != null and tenderId != ''">and TENDER_ID = #{tenderId}</if>
+            <if test="userName != null and userName != ''">and u.USER_NAME like '%'||#{userName}||'%'</if>
+            <if test="mobile != null and mobile != ''">and u.MOBILE like '%'||#{mobile}||'%'</if>
+            <if test="realName != null and realName != ''">and u.REAL_NAME like '%'||#{realName}||'%'</if>
+            <if test="ruleId != null and ruleId != ''">and red.RULE_ID = #{ruleId}</if>
+            <if test="ruleName != null and ruleName != ''">and red.RULE_NAME like '%'||#{ruleName}||'%'</if>
+            <if test="amount != null and amount != ''">and red.amount &lt;= #{amount}</if>
+            <if test="dateType == null or dateType == ''">
+			     <if test="startTime != null and startTime != ''">and red.create_time &gt;= to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')</if>
+			     <if test="endTime != null and endTime != ''">and red.create_time &lt;= to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')</if>        
+         	</if>
+         	<if test="dateUseType == null or dateUseType == ''">
+			     <if test="useStartTime != null and useStartTime != ''">and red.USE_TIME &gt;= #{useStartTime}</if>
+			     <if test="useEndTime != null and useEndTime != ''">and red.USE_TIME &lt;= #{useEndTime}</if>        
+         	</if>
+            <if test="keywords != null and keywords != ''">
+	        	and (red.RULE_NAME like '%'||#{keywords}||'%' 
+	        		or u.USER_NAME like '%'||#{keywords}||'%'
+	        		or u.MOBILE like '%'||#{keywords}||'%' )
+           </if>   
+           <if test="page!=null and page.sort!=null and page.sort!=''">
+	       		order by  ${page.sort} ${page.order} , red.AMOUNT DESC
+	       </if>
+	       <if test="page==null or page.sort==null or page.sort==''">
+	       		order by red.status, red.create_time desc
+	       </if>
+    </sql>
+   
+	<!-- 其他自定义SQL -->
+	<!-- 批量修改指定用户红包状态 -->
+	<update id="updateStatusBatch">
+		update  user_redenvelope set status = #{status},tender_id=#{investId},use_time = #{useTime} 
+		where  uuid in (${uuids}) and   status = #{preStatus}
+	</update>
+	
+	<update id="updateRedenvelopeTenderId">
+		update  user_redenvelope set tender_id = #{newInvestId}
+		where tender_id = #{oldInvestId}
+	</update>
+	
+	<!-- 查询过期红包 -->
+	<select id="findExpireList" resultType="String">
+		select uuid 
+		from user_redenvelope
+		where use_expire_time between to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss') and to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss') and status=#{preStatus} 
+	</select>
+	<!-- 批量更新过期红包的状态-->
+	<update id="updateBatchStatus" parameterType="java.util.List">
+		BEGIN
+		<foreach collection="list" item="item" open="" separator=";" close="">  
+			update user_redenvelope  set STATUS = #{item.status}  where uuid = #{item.uuid} 
+		</foreach>
+		; END ;
+	</update>
+	
+	<!-- 红包发放金额（数量）统计 -->
+ 	<resultMap type="com.rd.ifaes.core.statistic.model.StatisticResultModel" id="statisticResultModelResultMap">
+		<result property="statDate" column="STAT_DATE"/>
+		<result property="totalCount" column="TOTAL_COUNT"/>
+		<result property="totalAmnt" column="TOTAL_AMNT"/>
+		<result property="status" column="STATUS"/>
+	</resultMap>
+	
+	<!-- 根据统计类型查询统计信息 -->
+    <select id="findByStatDate" resultMap="statisticResultModelResultMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel">
+        select <include refid="select_dateType" /> as statDate, count(1) as totalCount, sum(amount) as totalAmnt 
+        from user_redenvelope
+        <include refid="queryConditionSql" />
+        group by <include refid="select_dateType" /> order by statDate
+	</select>
+	<!-- 根据状态统计信息 -->
+    <select id="findByStatStatus" resultMap="statisticResultModelResultMap" parameterType="com.rd.ifaes.core.statistic.model.StatisticModel">
+        select status, count(1) as totalCount, sum(amount) as totalAmnt 
+        from user_redenvelope
+        <include refid="queryConditionSql" />
+        group by status
+	</select>
+	<!-- 日期格式 -->
+	<sql id="select_dateType">
+	   <choose> 
+            <when test="3==dateType ">  
+                to_char(create_time,'yyyymm')  
+            </when >  
+            <when test="2==dateType ">  
+                to_char(create_time,'yyyyWW')  
+            </when >  
+            <otherwise>
+                to_char(create_time,'yyyymmdd')  
+            </otherwise> 
+	   </choose>
+	</sql>
+	<!-- 查询条件 -->
+	<sql id="queryConditionSql">
+	    <trim prefix="where" prefixOverrides="and | or ">
+            <if test="startDate != null and startDate != ''">and <include refid="select_dateType" /> &gt;= #{startDate}</if>
+			<if test="endDate != null and endDate != ''">and <include refid="select_dateType" /> &lt;= #{endDate}</if>
+        </trim>
+	    <if test="typeArr != null and typeArr.length &gt; 0">
+	        and grant_type in
+	        <foreach collection="typeArr" item="item" open="(" separator="," close=")">  
+	          #{item} 
+	        </foreach>	
+	    </if>
+	</sql>
+	
+    <!-- 根据tenderId计数 -->
+    <select id="getCountByTenderId" resultType="int" >
+        select count(uuid) from user_redenvelope where tender_id = #{tenderId}
+    </select>
+</mapper>

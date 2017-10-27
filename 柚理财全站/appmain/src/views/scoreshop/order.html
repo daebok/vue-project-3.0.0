@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <#assign pageFlag="scorelist">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="format-detection" content="telephone=no">
+    <title>积分商城-${web_name!""}</title>
+    <link rel="stylesheet" type="text/css" href="/common.css"/>
+    <link rel="stylesheet" type="text/css" href="/goodsorder.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+    <!--[if lte IE 7]>
+    	<script>
+    		window.location = "/browserUpgrade.html"
+    	</script>
+    <![endif]-->
+        <script type="text/javascript">
+           var areajson = ${areaJson};
+           //var areajson = [
+             //{"value":"110000","label":"北京市","children":[{"value":"110100","label":"东城区","children":[]},{"value":"110200","label":"西城区","children":[]},{"value":"110500","label":"朝阳区","children":[]},{"value":"110600","label":"丰台区","children":[]},{"value":"110700","label":"石景山区","children":[]},{"value":"110800","label":"海淀区","children":[]},{"value":"110900","label":"门头沟区","children":[]},{"value":"111100","label":"房山区","children":[]},{"value":"111200","label":"通州区","children":[]},{"value":"111300","label":"顺义区","children":[]},{"value":"111400","label":"昌平区","children":[]},{"value":"111500","label":"大兴区","children":[]},{"value":"111600","label":"怀柔区","children":[]},{"value":"111700","label":"平谷区","children":[]},{"value":"112800","label":"密云县","children":[]},{"value":"112900","label":"延庆县","children":[]}]},
+             //{"value":"120000","label":"天津市","children":[{"value":"120100","label":"和平区","children":[]},{"value":"120200","label":"河东区","children":[]},{"value":"120300","label":"河西区","children":[]},{"value":"120400","label":"南开区","children":[]},{"value":"120500","label":"河北区","children":[]},{"value":"120600","label":"红桥区","children":[]},{"value":"120900","label":"滨海新区","children":[]},{"value":"121000","label":"东丽区","children":[]},{"value":"121100","label":"西青区","children":[]},{"value":"121200","label":"津南区","children":[]},{"value":"121300","label":"北辰区","children":[]},{"value":"121400","label":"武清区","children":[]},{"value":"121500","label":"宝坻区","children":[]},{"value":"122100","label":"宁河县","children":[]},{"value":"122300","label":"静海县","children":[]},{"value":"122500","label":"蓟县","children":[]}]}
+             //];
+    </script>
+</head>
+<body>
+    <#include "include/header-score.html">
+      <input type="hidden" value="${goodsId}" class="goodsId">
+      <input type="hidden" value="${num}" class="num">
+      <input type="hidden" value="${web_maxReceiveNum}" class="Mnums">
+      <input class="serverUrl" value="${image_server_url}" type="hidden">
+      <div id="order">
+      </div>
+    <#include "include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/common.js"></script>
+<script src="/goodsorder.js"></script>
+</html>

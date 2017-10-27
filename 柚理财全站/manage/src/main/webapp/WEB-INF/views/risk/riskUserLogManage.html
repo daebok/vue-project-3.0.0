@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>评测记录</title>
+		<#include "include/resources.html">
+		<script type="text/javascript">
+			var url_list = "/risk/userLogList.html";
+			$(document).ready(function() {	
+				$('#keywordsSearch').attr('data-url',url_list);
+				$('#conditionSearch').attr('data-url',url_list);				
+			});
+		</script>
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入用户名和认证名称、问卷名称搜索">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" id="keywordsSearch">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form>
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							    <li class="input-group input-group-sm"><span>问卷名称</span><input type="text" class="form-control" name="papersName" /></li>
+							    <li class="input-group input-group-sm"><span>用户名</span><input type="text" class="form-control" name="userName" /></li>
+							    <li class="input-group input-group-sm"><span>风险承受能力</span>
+								     <select name="riskLevel" autocomplete="off" class="form-control">
+								     	<option value="-1">全部</option>
+									     <#if configList??>
+									     	<#list configList as item>
+									    		 <option value="${item.userRiskLevelVal!}">${item.userRiskLevelName!''}</option>
+									    	</#list>
+									     </#if>
+		                              </select>
+		                         </li>
+							    <li><button class="btn btn-sm btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" id="conditionSearch">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					</div>					
+				</div>
+			</div>
+			
+			<!-- 列表信息 -->
+			<div class="row mt20">
+					<div class="col-md-12">
+						<table id="jqGrid" class="table-td-NoOverflow"></table>
+						<div id="jqGridPager"></div>
+					</div>
+				</div>
+				<script type="text/javascript">
+					$(document).ready(function() {		
+						var url_key = url_list.substring(url_list.lastIndexOf('/')+1,url_list.indexOf('.'));
+						//表格初始化		
+						$("#jqGrid").jqTreeGrid({
+								url : url_list,
+								multiselect:false,
+								colModel : [
+								       		{
+												label : "用户名",
+												name : "userName",
+												align: "center",
+												width : 100
+											},
+											{
+												label : "认证名称",
+												name : "realName",
+												align: "center",
+												width : 100
+											},
+											{
+												label : "问卷名称",
+												name : "papersName",
+												align: "center",
+												width : 100
+											},
+											{
+												label : "得分",
+												name : "score",
+												align: "center",
+												width : 50,
+											},
+											{
+												label : "风险承受能力",
+												name : "riskLevelName",
+												align: "center",
+												width : 100
+											},
+											{
+												label : "评测时间",
+												name : "createTime",
+												align: "center",
+												width : 100,
+												formatter: datetimeFormatter
+											},
+											{
+												label : "操作",
+												name : "dtnr",
+												align: "center",
+												width : 100,
+												formatter: function(val, options, rowObject){	
+													var btns = '';
+													var	id = rowObject.id;
+													btns += '<a href="javascript:;" onclick=$.fn.treeGridOptions.checkFun(this,"'+id
+															+'") data-tid="jqGrid" data-url="/risk/riskUserLogLookPage.html" data-title="查看">查看</a>';
+													return btns;
+												}
+											}
+										 ],
+							}).jqGrid("setFrozenColumns").navGrid(
+							'#jqGridPager',
+							{
+								edit : false,
+								add : false,
+								del : false,
+								search : false,
+								refresh : true,
+								view : false,
+								position : "left",
+								cloneToTop : false
+							});
+						});
+				</script>
+			
+		</div>
+	</body>
+</html>

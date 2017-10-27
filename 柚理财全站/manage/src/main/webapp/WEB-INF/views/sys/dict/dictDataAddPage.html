@@ -1,0 +1,84 @@
+<div class="form-tips-content">
+  <form class="form-horizontal" action="/sys/dict/dictDataAdd.html" id="form" role="form">
+  	<ul class="form-item">
+  	    <li class="float-none">
+			<div class="form-group">
+		      <label for="typeName" class="control-label form-label">字典类型：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="typeName" id="typeName" value="${dictTypeModel.typeName}" disabled="disabled" required>
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="typeName" class="control-label form-label">字典名称：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="itemName" id="itemName" maxLength="64" placeholder="请输入字典名称" required>
+		      </div>
+		    </div>	
+  		</li>
+   		<li>
+			<div class="form-group">
+		      <label for="type" class="control-label form-label">字典值：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="itemValue" maxLength="128" id="itemValue" placeholder="请输入字典值" required>
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="sort" class="control-label form-label">排序值：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="sort" id="sort" maxLength="4" data-rule-number="true" placeholder="请输入排序值" required>
+		      </div>
+		    </div>	
+  		</li>
+  		<li>
+			<div class="form-group">
+		      <label for="enable" class="control-label form-label">状态：</label>
+		      <div class="input-box input-radio">
+		      <@linkage name="status" nid="enable" class="form-control"/>
+		      </div>
+		    </div>	
+  		</li>   	
+  		<li class="full-width">
+			<div class="form-group">
+		      <label for="description" class="control-label form-label">描述信息：</label>
+		      <div class="input-box">
+		      <textarea rows="" cols="" class="form-control" name="remark" id="remark" maxLength="512"></textarea>
+		      </div>
+		    </div>	
+  		</li>  		
+  		<input type="hidden" class="form-control" name="dictType" id="dictType" value="${dictTypeModel.dictType}"> 		
+  	</ul>
+  	<@token/>
+  </form>
+</div>
+<script>
+$("#form").validate({
+	submitHandler: function(form) {
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						icon: 6,
+						cancel: function(index){
+							layer.closeAll();
+							gridobj.trigger("reloadGrid"); //重新载入 
+  						}
+					}, function() {
+						gridobj.trigger("reloadGrid");//重新载入
+						layer.closeAll();							  
+					});
+				} else {
+					layer.alert(data.msg, {
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+});
+</script>

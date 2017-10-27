@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.score.mapper.ScoreGoodsOrderMapper">
+	<resultMap type="com.rd.ifaes.core.score.domain.ScoreGoodsOrder" id="scoreGoodsOrderResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="userName" column="USER_NAME"/>
+		<result property="goodsId" column="GOODS_ID"/>
+		<result property="goodsName" column="GOODS_NAME"/>
+		<result property="num" column="NUM"/>
+		<result property="score" column="SCORE"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="deliverTime" column="DELIVER_TIME"/>
+		<result property="deliverUser" column="DELIVER_USER"/>
+		<result property="expressName" column="EXPRESS_NAME"/>
+		<result property="expressNo" column="EXPRESS_NO"/>
+		<result property="money" column="money"/>
+		<result property="receiveAddress" column="RECEIVE_ADDRESS"/>
+		<result property="receivePhone" column="RECEIVE_PHONE"/>
+		<result property="receiveUserName" column="RECEIVE_USER_NAME"/>
+		<result property="receiveRemark" column="RECEIVE_REMARK"/>
+		<result property="status" column="STATUS"/>
+		<result property="verifyTime" column="VERIFY_TIME"/>
+		<result property="verifyUserId" column="VERIFY_USER_ID"/>
+		<result property="verifyUser" column="VERIFY_USER"/>
+		<result property="verifyRemark" column="VERIFY_REMARK"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		USER_NAME,
+		GOODS_ID,
+		GOODS_NAME,
+		NUM,
+		SCORE,
+		CREATE_TIME,
+		DELIVER_TIME,
+		DELIVER_USER,
+		EXPRESS_NAME,
+		EXPRESS_NO,
+		MONEY,
+		RECEIVE_ADDRESS,
+		RECEIVE_PHONE,
+		RECEIVE_USER_NAME,
+		RECEIVE_REMARK,
+		STATUS,
+		VERIFY_TIME,
+		VERIFY_USER_ID,
+		VERIFY_USER,
+		VERIFY_REMARK
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{userName},
+		#{goodsId},
+		#{goodsName},
+		#{num},
+		#{score},
+		#{createTime},
+		#{deliverTime},
+		#{deliverUser},
+		#{expressName},
+		#{expressNo},
+		#{money},
+		#{receiveAddress},
+		#{receivePhone},
+		#{receiveUserName},
+		#{receiveRemark},
+		#{status},
+		#{verifyTime},
+		#{verifyUserId},
+		#{verifyUser},
+		#{verifyRemark}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="keywords != null and keywords != ''">and (user_name like '%'||#{keywords}||'%' or goods_name like '%'||#{keywords}||'%')</if>
+            <if test="userId != null and userId != ''">and user_id = #{userId}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+            <if test="startTime != null and startTime != ''">and CREATE_TIME &gt;= to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')</if>
+        	<if test="endTime != null and endTime != ''">and CREATE_TIME &lt;= to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <if test="page == null or page.sort==null or page.sort==''">
+        	order by CREATE_TIME DESC,SCORE DESC
+        </if>
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.score.domain.ScoreGoodsOrder">
+		insert into score_goods_order( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">
+		BEGIN		
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into score_goods_order( <include refid="table_columns" /> ) 
+		values 
+		( 
+			<include refid="entity_properties" />
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from score_goods_order
+		where uuid = #{uuid}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from score_goods_order 
+		where uuid in
+		<foreach collection="array" item="id" open="(" separator="," close=")">  
+            #{id} 
+        </foreach>		
+	</delete>
+
+	<update id="update" parameterType="com.rd.ifaes.core.score.domain.ScoreGoodsOrder">
+		update score_goods_order 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="status !=null and status !='' ">STATUS = #{status}, </if>
+			<if test="verifyTime !=null and verifyTime !='' ">VERIFY_TIME = #{verifyTime}, </if>
+			<if test="verifyUserId !=null and verifyUserId !='' ">VERIFY_USER_ID = #{verifyUserId}, </if>
+			<if test="verifyUser !=null and verifyUser !='' ">VERIFY_USER = #{verifyUser}, </if>
+			<if test="verifyRemark !=null and verifyRemark !='' ">VERIFY_REMARK = #{verifyRemark}, </if>
+			<if test="expressName !=null and expressName !='' ">EXPRESS_NAME = #{expressName}, </if>
+			<if test="expressNo !=null and expressNo !='' ">EXPRESS_NO = #{expressNo}, </if>
+			<if test="deliverUser !=null and deliverUser !='' ">deliver_user = #{deliverUser}, </if>
+			<if test="deliverTime !=null and deliverTime !='' ">deliver_time = #{deliverTime}, </if>
+			<if test="money !=null and money !='' ">MONEY = #{money}, </if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="scoreGoodsOrderResultMap">
+        select <include refid="table_columns" />
+        from score_goods_order
+    </select>
+	
+	<select id="findList" resultMap="scoreGoodsOrderResultMap">
+        select <include refid="table_columns" />
+        from score_goods_order 
+        <include refid="page_where" />
+    </select>
+    <select id="findListExceptWaitVerify" resultMap="scoreGoodsOrderResultMap">
+        select <include refid="table_columns" />
+        from score_goods_order 
+        <trim prefix="where" prefixOverrides="and | or ">
+        	<if test="keywords != null and keywords != ''">and (user_name like '%'||#{keywords}||'%' or goods_name like '%'||#{keywords}||'%' )</if>
+    		and status &lt;&gt;0
+    	</trim>
+    	order by VERIFY_TIME DESC
+    </select>
+	
+    <select id="getCount" resultType="int" >
+        select count(uuid) from score_goods_order
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="scoreGoodsOrderResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+        from 
+        	score_goods_order sgo 
+		where 
+			sgo.uuid = #{id}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<select id="getNewOrders" resultMap="scoreGoodsOrderResultMap"  >	
+		SELECT * FROM ( 
+			SELECT ROW_NUMBER() OVER(order by sgo.create_time desc) RN,
+			sgo.UUID,
+			sgo.USER_ID,
+			sgo.USER_NAME,
+			GOODS_ID,
+			GOODS_NAME,
+			NUM,
+			SCORE,
+			CREATE_TIME,
+			DELIVER_TIME,
+			DELIVER_USER,
+			EXPRESS_NAME,
+			EXPRESS_NO,
+			MONEY,
+			RECEIVE_ADDRESS,
+			RECEIVE_PHONE,
+			RECEIVE_USER_NAME,
+			RECEIVE_REMARK,
+			STATUS,
+			VERIFY_TIME,
+			VERIFY_USER_ID,
+			VERIFY_USER,
+			VERIFY_REMARK,
+			uc.avatar_photo avatarPhoto
+	        from 
+	        	score_goods_order sgo 
+	        inner join
+	        	user_cache uc
+	        on
+	        	sgo.user_id = uc.user_id
+			where 
+				sgo.status in (1,3,4) 
+			
+		) WHERE RN &lt;= 10 
+	</select>
+	
+	<select id="countOrdersByStatus" resultType="Integer" parameterType="String">
+		select 
+			count(sgo.uuid) 
+		from 
+			score_goods_order sgo
+		where
+			sgo.status = #{status}
+		<if test="userId !=null and userId!=''">and sgo.user_id= #{userId}</if>
+	</select>
+	
+	<select id="countUserExchangeOrders" resultType="Integer" parameterType="String">
+		select 
+			sum(sgo.num) 
+		from 
+			score_goods_order sgo
+		where
+			sgo.user_id = #{userId} and sgo.goods_id=#{goodsId} and sgo.status &lt;&gt; 2 
+	</select>
+	
+</mapper>

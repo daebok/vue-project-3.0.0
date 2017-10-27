@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>消息模板</title>
+		<#include "include/resources.html">
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入模板名称或者模板标识">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/sys/logTemplate/list.html">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form>
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							    <li class="input-group input-group-sm"><span>类型</span><@linkage name="logType" nid="logTemplateType" class="form-control" noselect="全部"/></li>
+							    <li><button class="btn btn-sm btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/sys/logTemplate/list.html">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+						<@shiro.hasPermission name="set:logtemplate:add">
+							<!-- <button type="button" class="btn btn-primary" onclick="$.fn.treeGridOptions.addFun(this)" data-url="/sys/logTemplate/logTemplateAddPage.html">新增</button> -->
+						</@shiro.hasPermission>
+						<@shiro.hasPermission name="set:logtemplate:edit">
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.editFun(this)" data-tid="jqGrid" data-url="/sys/logTemplate/logTemplateEditPage.html">编辑</button>						
+					    </@shiro.hasPermission>
+					</div>					
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+				<@dictFormatter type = "enable" />
+				<@dictFormatter type = "logTemplateType" />
+				$(document).ready(function() {												
+					//表格初始化
+					$("#jqGrid").jqTreeGrid({
+						url: '/sys/logTemplate/list.html',
+													
+						colModel: [{
+							label: "模板名称",
+							name: "templateName",
+							width: 150,
+						},{
+							label: "模板类型",
+							name: "logType",
+							width: 70,
+							formatter: logTemplateTypeFormatter
+						}, {
+							label: "模板标识",
+							name: "code",
+							width: 200
+						}, {
+							label: "模板信息",
+							name: "templateContent",
+							width: 365
+						}, {
+							label: "备注",
+							name: "remark",
+							width: 220
+						},{
+							label: "id",
+							name: "uuid",
+							hidden:true
+						}],
+					}).jqGrid("setFrozenColumns").navGrid('#jqGridPager',
+						// the buttons to appear on the toolbar of the grid
+						{
+							edit: false,
+							add: false,
+							del: false,
+							search: false,
+							refresh: true,
+							view: false,
+							position: "left",
+							cloneToTop: false
+						}
+					);
+					$("#search_btn").click(function() {
+						//此处可以添加对查询数据的合法验证  
+						var orderId = $("#search_input").val();
+						$("#jqGrid").jqGrid("setGridParam", {
+							datatype: "json",
+							postData: {
+								"orderId": orderId
+							}, //发送数据  
+							page: 1
+						}).trigger("reloadGrid"); //重新载入  
+					});
+				});
+			</script>
+		</div>
+	</body>
+</html>

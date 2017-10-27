@@ -1,0 +1,74 @@
+@import (reference)'../../../style/common.less';
+@import '../../../style/account.less';
+.auto-nav{
+  line-height: 70px;
+  padding-bottom: 13px;
+  .clearfix();
+  .auto-control{
+    .control-status{
+      display: inline-block;
+      margin-right: 17px;
+    }
+    .fl();
+  }
+  .ranking{
+      .fr();   
+      color: @color-text;
+      .f14();
+      .ranking-num{
+        .f14();
+        color: @color-p;
+        margin: 0 0 0 14px;        
+      }   
+  }
+}
+.auto-form{
+  .lab-line{
+    text-align: center;
+  }
+  border-top: solid 1px @color-tipsbg;
+  padding:30px 0 0 150px;
+  .row{
+    height: 66px;
+  }
+  .money{
+    line-height: 38px;
+    color:@color-p;
+    .f14();
+    .money-num{
+      .f20();
+      margin: 0 4px;
+    }
+    a{
+      color: @color-main;
+      margin-left: 10px;
+    } 
+  }
+  .checkboxlist{
+    .clearfix();
+    li{
+      .fl();
+      width: 170px;
+      height: 42px;
+    }
+  }
+  .checkboxtext{
+    display: block;
+    height: 42px;
+    line-height: 42px;
+  }
+}
+.account-content{
+  .subbutton{
+    .form-button(@padding: 0px,@width: 280px,@fontsize: 16px,@lineheight:40px);
+  }
+}
+form.form-themes .input-sm{
+  height: 36px;
+  margin: 3px 0;
+}
+.ant-checkbox-group-item {
+    display: inline-block;
+    margin-left: 16px;
+    margin: 0 15px 0 0;
+}

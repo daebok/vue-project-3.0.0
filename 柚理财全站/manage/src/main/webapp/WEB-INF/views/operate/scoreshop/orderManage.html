@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>积分商品兑换订单管理页面</title>
+		<#include "include/resources.html">
+	</head>
+	<body>
+		<style>
+			.layui-layer-loading .layui-layer-loading3{width:200px!important;padding-left: 66px;color: #fff;line-height: 24px;}
+		</style>
+		<div class="wrapper">
+			<div class="row pt20">
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="用户名/商品名称">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/operate/scoreshop/getVerifyOrderList.html">搜索</button>
+							    </span>
+						    </div>
+					    </form>
+					</div>
+					<div class="search-form-adv ml10">
+						<form>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+					$(document).ready(function() {
+						//表格初始化
+						$("#jqGrid").jqTreeGrid({
+							url: '/operate/scoreshop/getVerifyOrderList.html',
+							  multiselect : true,
+							  colModel: [
+			                    { label: 'id', name: 'uuid', width: 45, hidden:true},
+			                    { label: '用户名', name: 'userName',index:"user_name",width: 30,align:"center"},
+			                    { label: '商品名称', name: 'goodsName',index:"goods_name",width: 30,align:"center"},
+			                    { label: '兑换数量', name: 'num',index:"num",width: 30,align:"center"},
+			                    { label: '使用积分值', name: 'score',index:"score",width: 30,align:"center"},
+			                    { label: '收货地址', name: 'receiveAddress',index:"receive_address",width: 30,align:"center"},
+			                    { label: '收货人电话', name: 'receivePhone',index:"receive_phone",width: 30,align:"center"},
+			                    { label: '收货人姓名', name: 'receiveUserName',index:"receive_user_name",width: 30,align:"center"},
+			                    { label: '兑换留言', name: 'receiveRemark',index:"receive_remark",width: 30,align:"center"},
+			                    { label: '状态', name: 'status',index:"status",width: 30,align:"center",
+			                    	formatter: function(value,row,index){
+					            		   if (value == '0'){
+						  						return "待审核";
+						  					} else if (value == '1'){
+						  						return "审核成功";
+						  					}else if (value == '2'){
+						  						return "审核失败";
+						  					}else if (value == '3'){
+						  						return "已发货";
+						  					}else {
+						  						return "已收货";
+						  					}
+						  				}
+
+			                    },
+			                    { label: '兑换时间', name: 'createTime',index:"create_time",width: 30,align:"center",
+			                    	formatter: datetimeFormatter
+			                    },
+			                    {
+									label: "操作",
+									name: "cz",
+									width: 16,
+									align: "center",
+									formatter: function(val, options, rowObject){
+										var btns = '';
+										var	id = rowObject.id;
+										btns += '<a href="javascript:;" onclick=$.fn.treeGridOptions.setFun(this,"'+id+'") data-tid="jqGrid" data-url="/operate/scoreshop/verifyOrder.html" data-title="审核">审核</a>';
+										return btns;
+									}
+								}
+			                ]
+						}) ;
+					});
+			</script>
+		</div>
+	</body>
+</html>

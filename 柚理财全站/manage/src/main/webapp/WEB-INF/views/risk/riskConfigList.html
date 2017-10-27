@@ -1,0 +1,71 @@
+<div class="row mt20">
+     
+	<div class="col-md-12">
+			<table id="jqGrid" class="table-td-NoOverflow"></table>
+			<div id="jqGridPager"></div>
+	</div>
+</div>
+<script type="text/javascript">
+	$(document).ready(function() {		
+		var url_key = url_list.substring(url_list.lastIndexOf('/')+1,url_list.indexOf('.'));
+		//表格初始化		
+		$("#jqGrid").jqTreeGrid({
+				url : url_list,
+				colModel : [
+						{
+							label : "风险等级名称",
+							name : "riskLevelName",
+							align: "center",
+							width : 150
+						},
+						{
+							label : "风险等级级别",
+							name : "riskLevelVal",
+							align: "center",
+							width : 100
+						},
+						{
+							label : "风险等级含义",
+							name : "riskLevelDesc",
+							align: "left",
+							width : 150
+						},
+						{
+							label : "风险承受能力",
+							name : "userRiskLevelName",
+							align: "center",
+							width : 150
+						},
+						{
+							label : "风险承受能力级别",
+							name : "userRiskLevelVal",
+							align: "center",
+							width : 100
+						},
+						{
+							label : "风险承受能力含义",
+							name : "userRiskLevelDesc",
+							align: "left",
+							width : 200,
+						},
+						{
+							label : "更新时间 ",
+							name : "createTime",
+							width : 100,
+							align: "center",
+							formatter: datetimeFormatter
+						}],
+			}).jqGrid("setFrozenColumns").navGrid(
+			'#jqGridPager',
+			{
+				edit : false,
+				add : false,
+				del : false,
+				search : false,
+				refresh : true,
+				view : false,
+				position : "left",
+				cloneToTop : false
+			});
+		});
+</script>

@@ -1,0 +1,106 @@
+.cal-bottom {
+  height: 0;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  background: #393939;
+  transition: all 0.3s ease-in;
+  overflow: hidden;
+}
+.cal-show{
+  height: 150px;
+}
+.calculator {
+  .input-box{
+    background: #494949;
+    padding-top: 29px;
+    height: 150px;
+    .ant-input {
+      height: 36px;
+    }
+    .ant-btn {
+      width: 150px;
+      height: 36px;
+      font-size: 14px;
+      margin-left: 25px;
+    }
+    li {
+      width:250px;
+      float: left;
+      height: 56px;
+      position: relative;
+    }
+    .icon {
+      position: absolute;
+      right: 7px;
+      top:8px;
+      font-size: 14px;
+      color: #999;
+    }
+    .input-tip{
+      width: 100px;
+      padding-right: 10px;
+      text-align: right;
+      font-size: 14px;
+      color: #fff;
+      float: left;
+      line-height: 35px;
+    }
+    .input-w {
+      width: 150px;
+      float: left;
+    }
+    .reset {
+      font-size: 14px;
+      color: #fff;
+      i{
+        font-size: 28px;
+        vertical-align: -5px;
+      }
+    }
+  }
+  .detail {
+    width: 480px;
+    padding-top: 25px;
+    h2{
+      font-size: 16px;
+      color: #fff;
+      font-weight: normal;
+      padding-left: 40px;
+      margin-bottom: 15px;
+      i{
+        font-size: 12px;
+        color: #9e9e9e;
+        font-style: normal;
+      }
+    }
+    li{
+      width: 240px;
+      float: left;
+      font-size: 14px;
+      color: #fff;
+      padding-left: 40px;
+      margin-bottom: 18px;
+      i{
+        float: right;
+        font-style: normal;
+      }
+    }
+  }
+  .form-themes .ant-select-lg .ant-select-selection--single{
+    height: 36px;
+  }
+  .form-themes .ant-form-item-control{
+    line-height: 35px;
+  }
+  .form-themes .ant-select-lg .ant-select-selection--single .ant-select-selection__rendered{
+    line-height: 36px;
+  }
+  .form-themes .has-success.has-feedback:after, .form-themes .has-warning.has-feedback:after, .form-themes .has-error.has-feedback:after, .form-themes .is-validating.has-feedback:after{
+    line-height: 36px;
+    height: 36px;
+  }
+  .has-success.has-feedback:after, .has-warning.has-feedback:after, .has-error.has-feedback:after, .is-validating.has-feedback:after{
+    right: 13px;
+  }
+}

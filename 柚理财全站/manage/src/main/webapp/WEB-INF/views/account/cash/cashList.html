@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>产品列表</title>
+		<#include "include/resources.html">
+	</head>
+	<style>
+		.layui-layer-loading .layui-layer-loading3{width:200px!important;padding-left: 66px;color: #fff;line-height: 24px;}
+	</style>
+	<body>
+	    <input id="cashNeedAudit" type="hidden" value="${cashNeedAudit}" >
+		<div class="wrapper">
+			<div class="row pt20">				
+				<div class="col-md-6">
+					<div class="search-form">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control search-input" name="keywords" id="keywords" placeholder="请输入用户名,认证名称,流水号">
+								<span class="input-group-btn search-span">
+							    	<button class="btn btn-primary" type="button" id="keywordsSearch"  onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/account/cash/list.html">搜索</button>
+							    </span>		    
+						    </div>
+					    </form>	
+					</div>					
+					<div class="search-form-adv ml10">
+						<form id="advSearchForm">
+							<div class="btn-group" onclick="$.fn.page.dropdownSelectHoverFun(this)">
+							  <button type="button" class="btn btn-info dropdown-select-toggle" data-toggle="#" aria-haspopup="true" aria-expanded="false"> 条件查询 <span class="caret"></span></button>							  
+							  <ul class="dropdown-menu search-menu">
+							    <li class="input-group input-group-sm"><span>用户名</span><input type="text" class="form-control" name="userName" /></li>
+							    <li class="input-group input-group-sm"><span>认证名称</span><input type="text" class="form-control" name="realName" /></li>
+							    <li class="input-group input-group-sm"><span>流水号</span><input type="text" class="form-control" name="cashNo" /></li>
+							    <li class="input-group input-group-sm"><span>状态</span> <@linkage name="status" nid="cashStatus" noselect="不限" class="form-control"/>  </li>
+							    <li class="input-group input-group-sm"><span>手续费承担方</span> <@linkage name="isAdvance" nid="cashFeeType" noselect="不限" class="form-control"/>  </li>
+							    <li class="input-group input-group-sm"><span>提现时间</span> <input type="text" name="startTime" id="startTime" class="form-control"placeholder="开始时间"/> <input type="text" name="endTime" id="endTime"   class="form-control" placeholder="结束时间"/>  
+							    <li><button class="btn btn-sm btn-primary" type="button" id="conditionSearch" onclick="$.fn.treeGridOptions.searchFun(this)" data-tid="jqGrid" data-url="/account/cash/list.html">查询</button></li>
+							  </ul>							  
+							</div>
+							<button type="button" class="btn btn-info" onclick="$.fn.treeGridOptions.refreshFun(this)" data-tid="jqGrid">刷新</button>
+							<@shiro.hasPermission name="account:cashList:export">
+							<button type="button" class="btn btn-info" onclick="exportExcel(this)" data-url="/account/cash/exportExcel.html" data-title="提现记录" data-tid="jqGrid">导出</button>
+							</@shiro.hasPermission>
+						</form>
+						
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="tool-btns">
+					</div>					
+				</div>
+			</div>
+			<div class="row mt20">
+				<div class="col-md-12">
+					<table id="jqGrid" class="table-td-NoOverflow"></table>
+					<div id="jqGridPager"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+			//导出相关 start
+			/*var exportTitle = '提现记录';
+			function getFieldsAndHearders(){
+				var hearders = '', fields = '';
+				var colModel = $("#jqGrid").jqGrid("getGridParam","colModel");				
+				$.each(colModel,function(index,obj){
+					if(obj.colmenu && !obj.hidden){//自定义非隐藏列
+						hearders += obj.label+",";
+						fields  += obj.name+",";
+					}
+				});		
+				return '&hearders='+hearders+"&fields="+fields;
+			}	
+
+			var exportData;
+
+			function progress(){
+				var url = "/account/cash/exportExcel.html";
+				$.ajax({
+	                type: "POST",
+	                url:"/sys/export/progress.html",
+	                data:{'exportUrl':url},
+	                async: false,
+	                error: function(request) {
+	                  	 clearTimeout(exportData)  
+	                },
+	                success: function(data) {
+	                	exportData=setTimeout("progress()",2000);
+	                   if(data.msg==100){
+	                   	 layer.closeAll('loading')
+	                   	 clearTimeout(exportData)
+	                   }
+	                }
+	            });
+			}
+
+			function exportExcel(){
+				var params = '?exportTitle=' + exportTitle + getFieldsAndHearders();				
+				var url = "/account/cash/exportExcel.html";
+				var keywords =  $("#keywords").val();
+				if(keywords != null && keywords != ''){
+					params += '&keywords='+keywords;
+				}else{
+					params += '&'+$('#advSearchForm').serialize();
+				}
+				var hrefval = url + params;
+				window.location.href=hrefval;
+				layer.load(3,{
+					shade: 0.5,
+					content:'<span>请等待，正在导出中...</span>'
+				});
+			    progress()
+			}					*/
+			//导出相关 end
+			
+			//设置开始时间控件
+			var startTime= {
+				elem:'#startTime',
+				format: 'YYYY-MM-DD', //日期格式
+				istime: false, //是否开启时间选择
+				max:$('#endTime').val(),
+				event:'focus',
+				choose: function(dates){
+				    endTime.min=dates;
+				    endTime.start=dates;
+				}
+			};
+			
+			//设置发放结束时间
+			var endTime=  {
+					elem:'#endTime',
+					format: 'YYYY-MM-DD', //日期格式
+					istime: false, //是否开启时间选择
+					min: $('#startTime').val(), //最小日期
+					event:'focus',
+					choose: function(dates){
+						startTime.max=dates;
+				   }
+			};
+			laydate(startTime);
+			laydate(endTime);
+			
+			var cashNeedAudit = $("#cashNeedAudit").val();
+			<@dictFormatter type = "accountBank" />
+			<@dictFormatter type = "userNature" />
+			<@dictFormatter type = "cashStatus" />
+			<@dictFormatter type = "cashFeeType" />
+					$(document).ready(function() {												
+						//表格初始化
+						$("#jqGrid").jqTreeGrid({
+							url: '/account/cash/list.html',	
+							  multiselect : false,	
+							  colModel: [
+			                    { label: 'id', name: 'uuid', width: 65, hidden:true},
+			                    { label: '用户名', name: 'userName',index:"user_name",width: 30},
+			                    { label: '认证名称', name: 'realName',index:"real_name",width: 15},
+			                    { label: '用户类型', name: 'userNature',index:"user_nature",width: 15,formatter: userNatureFormatter},
+								{ label: '提现金额', name: 'amount',index:"amount", width: 15},
+								{ label: '到账金额', name: 'realAmount',index:"real_amount", width: 15},			
+								{ label: '提现手续费', name: 'cashFee', width: 15},
+								{ label: '手续费承担方', name: 'isAdvance',index:"is_advance", width: 20,formatter: cashFeeTypeFormatter},
+								{ label: '服务费', name: 'servFee',index:"serv_fee",  width: 15},
+								{ label: '银行账号', name: 'cardId',index:"card_id",  width: 30},
+								{ label: '所属银行', name: 'bankCode',index:"bank_code",  width: 15,formatter: accountBankFormatter},
+			                    { label: '交易流水号', name: 'cashNo',index:"cashNo",width: 30},
+								{ label: '状态', name: 'status',index:"status", width: 20,formatter: cashStatusFormatter},
+								{ label: '提现时间', name: 'addTime',index:"add_time", width: 20,formatter: datetimeFormatter},
+								{ label : '其他信息',name: 'verify_remark', width :55,title:false, align:'center',fixed:true,colmenu:false,
+					                formatter : function(value, options, rowObject) {
+									if(rowObject.verifyRemark==undefined){
+										rowObject.verifyRemark="-";
+									}
+										var content = '<a href="javascript:void(0);" class="j-showInfo">查看</a>'
+											+ '<div class="showInfoSingleDiv">'
+											+ '<div class="showInfo">'
+											+ '<em></em><h2>备注</h2>'
+											+ '<ul>'
+											+ '<li>'
+					                		+ '<span>备注：</span>'
+											+ rowObject.verifyRemark
+											+ '</li>'
+											+ '</ul></div></div>';
+										return content;
+									}
+								},
+								{ label: '人工核查', name: 'rghc', width: 20, align: "center",colmenu:false,
+									formatter: function(val, options, rowObject){
+										var btns ="--";
+										if(rowObject.manHandle==1){
+										    <@shiro.hasPermission name="account:cashList:check">
+										    btns = '<a href="javascript:;" onclick=$.fn.treeGridOptions.setFun(this,"'+options.rowId+'") data-tid="jqGrid" data-url="/account/cash/checkPage.html" data-title="待处理">待处理</a>';
+										    </@shiro.hasPermission>
+										    return btns;
+										}else{
+											return '--';
+										}
+									}
+							    },
+								{ label: '操作', name: 'cz', width: 20, align: "center",colmenu:false,
+									formatter: function(val, options, rowObject){
+										var btns ="--";
+										if(cashNeedAudit == 1 && rowObject.status==2){
+										    <@shiro.hasPermission name="account:cashList:auditing">
+										    btns = '<a href="javascript:;" onclick=$.fn.treeGridOptions.setFun(this,"'+options.rowId+'") data-tid="jqGrid" data-url="/account/cash/auditPage.html" data-title="审核">审核</a>';
+										    </@shiro.hasPermission>
+										    if(rowObject.verifyTime!=undefined){
+										    	btns='处理中'
+										    }
+										    return btns;
+										}else{
+											return '--';
+										}
+									}
+							    }
+			                ]
+						}) ;			
+					});
+			</script>
+		</div>
+	</body>
+</html>

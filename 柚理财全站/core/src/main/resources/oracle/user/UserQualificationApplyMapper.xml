@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.user.mapper.UserQualificationApplyMapper">
+	<resultMap type="com.rd.ifaes.core.user.domain.UserQualificationApply" id="userQualificationApplyResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="qualificationType" column="QUALIFICATION_TYPE"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="verifyRemark" column="VERIFY_REMARK"/>
+		<result property="verifyUser" column="VERIFY_USER"/>
+		<result property="status" column="STATUS"/>
+		<result property="verifyTime" column="VERIFY_TIME"/>
+		<result property="addIp" column="ADD_IP"/>
+		<result property="userNature" column="user_nature"/>
+		<result property="certificateName" column="certificate_name"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		USER_ID,
+		QUALIFICATION_TYPE,
+		CREATE_TIME,
+		VERIFY_REMARK,
+		VERIFY_USER,
+		STATUS,
+		VERIFY_TIME,
+		ADD_IP
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{userId},
+		#{qualificationType},
+		#{createTime},
+		#{verifyRemark},
+		#{verifyUser},
+		#{status},
+		#{verifyTime},
+		#{addIp}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="userId != null and userId != ''">and USER_ID = #{userId}</if>
+            <if test="qualificationType != null and qualificationType != ''">and QUALIFICATION_TYPE = #{qualificationType}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+            <if test="verifyRemark != null and verifyRemark != ''">and VERIFY_REMARK = #{verifyRemark}</if>
+            <if test="verifyUser != null and verifyUser != ''">and VERIFY_USER = #{verifyUser}</if>
+            <if test="status != null and status != ''">and STATUS = #{status}</if>
+			<if test="verifyTime != null">and VERIFY_TIME = #{verifyTime}</if>
+            <if test="addIp != null and addIp != ''">and ADD_IP = #{addIp}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.user.domain.UserQualificationApply">
+		insert into user_qualification_apply( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">
+		BEGIN		
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into user_qualification_apply( <include refid="table_columns" /> ) 
+		values 
+		( 
+			#{item.uuid},
+			#{item.userId},
+			#{item.qualificationType},
+			#{item.createTime},
+			#{item.verifyRemark},
+			#{item.verifyUser},
+			#{item.status},
+			#{item.verifyTime},
+			#{item.addIp}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<update id="update" parameterType="com.rd.ifaes.core.user.domain.UserQualificationApply">
+		update user_qualification_apply 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="verifyRemark != null and verifyRemark != ''">VERIFY_REMARK = #{verifyRemark},</if>
+            <if test="verifyUser != null and verifyUser != ''">VERIFY_USER = #{verifyUser},</if>
+            <if test="status != null and status != ''">STATUS = #{status},</if>
+			<if test="verifyTime != null">VERIFY_TIME = #{verifyTime}</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+    <select id="findAll" resultMap="userQualificationApplyResultMap">
+        select <include refid="table_columns" />
+        from user_qualification_apply
+    </select>
+
+    <select id="findList" resultMap="userQualificationApplyResultMap">
+        select <include refid="table_columns" />
+        from user_qualification_apply
+        <include refid="page_where" />
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from user_qualification_apply
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="userQualificationApplyResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from user_qualification_apply
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	
+	  <select id="countByType" resultType="int" >
+		select count(uuid)
+		from user_qualification_apply
+		where user_id = #{userId} and qualification_type = #{qualificationType} and status != #{status}
+	</select>
+	
+	<!-- 获得最新的上传文件 -->
+	<select id="findNewestApply" resultMap="userQualificationApplyResultMap" parameterType="com.rd.ifaes.core.user.domain.UserQualificationApply" >
+		SELECT * FROM (
+			SELECT ROW_NUMBER() OVER(order by create_time desc) RN, <include refid="table_columns" /> 
+			from user_qualification_apply
+			where user_id = #{userId} and qualification_type = #{qualificationType} 
+		) WHERE RN = 1
+	</select>
+	
+	<!-- 获得资质证明列表 -->
+	<select id="getLogList" resultMap="userQualificationApplyResultMap" parameterType="com.rd.ifaes.core.user.domain.UserQualificationApply" >
+		select apply.uuid,u.user_name,u.real_name as certificate_name, u.user_nature,apply.qualification_type,apply.create_time,apply.verify_remark,apply.verify_time,apply.status
+		from users u, user_qualification_apply apply
+		where apply.user_id=u.uuid
+		<if test="keywords != null and keywords != ''">and (u.user_name like '%'||#{keywords}||'%' or u.real_name like '%'||#{keywords}||'%' or u.mobile like '%'||#{keywords}||'%')</if>
+		<if test="userNature != null and userNature != '' and userNature !=3 ">and u.user_nature=#{userNature} </if><!-- 担保机构的上传图片不做显示 -->
+		<if test="status != null and status != ''">and apply.status=#{status}</if>
+		<if test="startTime !=null and startTime !=''">and TRUNC(apply.create_time) &gt;= TRUNC(to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss'))</if>
+        <if test="endTime !=null and endTime !=''">and TRUNC(apply.create_time) &lt;= TRUNC(to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss'))</if>
+		order by status,create_time desc
+	</select>
+
+</mapper>

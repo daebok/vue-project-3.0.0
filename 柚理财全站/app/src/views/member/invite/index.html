@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>好友邀请</title>
+    <link rel="stylesheet" type="text/css" href="/common.css"/>
+    <link rel="stylesheet" type="text/css" href="/invite.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <#include "/include/header.html">
+    <div class="site-row account-content clearfix">
+        <div class="site-col-4 account-side" id="j-sider-menu">
+           <div class="loading"></div> 
+        </div>
+        <div class="site-col-20 site-col-last">
+            <div class="account-main">
+                <div class="main-title">好友邀请</div>
+                <div class="red-packet-info">
+                    <em class="iconfont">&#xe627;</em>已获红包奖励共<span class="num">${redCount!'0'}</span>张，合计<span class="num">${redAmount!'0'}</span>元,已获加息券奖励共<span class="num">${rateCount!'0'}</span>张
+                </div>
+                <div class="invite-link">
+                    <dl class="qrcode">
+                        <dt><em class="iconfont">&#xe623;</em><span class="text"><p>微信“扫一扫”</p>分享好友或朋友圈</span></dt>
+                        <dd><img src="http://www.atool.org/placeholder.png?size=116x116&text=%E4%BA%8C%E7%BB%B4%E7%A0%81" /></dd>
+                    </dl>
+                    <dl class="link">
+                        <dt><em class="iconfont">&#xe625;</em>通过社交网站推荐好友</dt>
+                        <dd><a href="#"><em class="iconfont weibo">&#xe609;</em></a><a href="#"><em class="iconfont qq">&#xe606;</em></a><a href="#"><em class="iconfont qzone">&#xe626;</em></a></dd>
+                    </dl>
+                    <dl class="copylink">
+                        <dt><em class="iconfont">&#xe624;</em>复制链接推荐给好友</dt>
+                        <dd>
+                            <input type="text" value="来**平台投资理财，持续高收益" />
+                            <span class="copy">一键复制</span>
+                        </dd>
+                    </dl>
+                    <input id="j-copy" type="hidden" value="${inviteUrl!''}" />
+                </div>
+                <div class="account-tab" id="j-invite-list">
+                   <div class="loading"></div> 
+                </div>
+                <div class="help">
+                  <div class="help-title"><em class="iconfont">&#xe639;</em>邀请奖励</div>
+                  <ul>
+                    <li>1、每邀请1位用户，累积投资5000元以上（含5000元），您可获得30元奖励，邀请人数越多赚得越多。</li>
+                    <li>2、奖励将以投资红包形式发放，投资红包等同现金，可在投资时选择抵扣，但不能用于提现。</li>
+                    <li>3、只有您的好友通过您的专属邀请链接注册投资，您才能获得投资红包。</li>
+                    <li>4、请不要将邀请链接发给不熟悉的人，避免给他人带来不必要的困扰。</li>
+                  </ul>
+                </div>                
+            </div>
+
+        </div>
+    </div> 
+    <#include "/include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/themes/js/zclip/jquery.zclip.min.js"></script>
+<script src="/common.js"></script>
+<script src="/invite.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $(".copy").zclip({
+            path:'/themes/js/zclip/ZeroClipboard.swf',
+            copy: function () { return $('#j-copy').val(); }
+        });
+    });
+</script>
+</html>

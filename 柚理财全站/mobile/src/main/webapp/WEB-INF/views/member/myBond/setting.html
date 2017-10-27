@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>转让设置</title>
+    <link rel="stylesheet" type="text/css" href="/themes/css/common-22faacfd60.css"/>
+    <link rel="stylesheet" type="text/css" href="/themes/css/mybondsetting-229552405e.css"/>
+    <!--[if lt IE 10]>
+    <script src="/themes/js/component.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <#include "/include/header.html">
+        <!-- 隐藏域    项目ID  -->
+        <input type="hidden" id="projectId" value="${data.projectId!''}"/>
+        <!-- 隐藏域    规则ID  -->
+        <input type="hidden" id="ruleId" value="${data.ruleId}"/>
+        <!-- 隐藏域   投资记录ID -->
+        <input type="hidden" id="investId" value="${data.investId!''}"/>
+        <!-- 隐藏域   转让人UserId -->
+        <input type="hidden" id="userId" value="${data.userId!''}"/>
+        <!-- 隐藏域   开始期数-->
+        <input type="hidden" id="startPeriod" value="${data.startPeriod!''}"/>        
+        <!--隐藏域    可转让债权-->
+        <input type="hidden" id="Money" value="${data.bondValue!''}"/>
+        <!--隐藏域    最高折溢价率-->
+        <input type="hidden" id="max" value="${data.max!''}"/>
+        <!--隐藏域    最低折溢价率-->
+        <input type="hidden" id="min" value="${data.min!''}"/>
+        <!--隐藏域    折溢价率属性-->
+    <div class="site-row account-content clearfix">
+        <div class="site-col-4 account-side" id="j-sider-menu">
+            <div class="loading"></div>
+        </div>
+        <div class="site-col-20 site-col-last">   
+            <div class="account-main">
+              <div class="main-title">转让设置<a class="backBtn" href="/member/myBond/list.html">返回</a></div>
+                <div class="account-tab" id="j-mybond-setting">
+                  <div class="loading"></div>     
+                </div>
+                <div class="help">
+                    <div class="help-title"><em class="iconfont">&#xe639;</em>温馨提示</div>
+                    <ol>
+                      <li>转让成功后可赎回金额=本金×（1 - 转让折让率）+当期应收收益 - 转让手续费。</li>
+                      <li>手续费将从转让后投资人支付的每笔成交额中扣除${data.fee!''}。</li>
+                      <li>当期应收收益将由投资人投资时支付。</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div> 
+    <#include "/include/footer.html">
+</body>
+<script src="/themes/js/jquery.min.js"></script>
+<script src="/themes/js/common-81aa8d07d8.js"></script>
+<script src="/themes/js/mybondsetting-73af34aa94.js"></script>
+</html>

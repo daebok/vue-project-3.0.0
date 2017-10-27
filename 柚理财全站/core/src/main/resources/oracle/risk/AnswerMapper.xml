@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rd.ifaes.core.risk.mapper.AnswerMapper">
+	<resultMap type="com.rd.ifaes.core.risk.domain.Answer" id="answerResultMap">
+		<result property="uuid" column="UUID"/>
+		<result property="questionId" column="QUESTION_ID"/>
+		<result property="answerNo" column="ANSWER_NO"/>
+		<result property="content" column="CONTENT"/>
+		<result property="score" column="SCORE"/>
+		<result property="sort" column="SORT"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="deleteFlag" column="DELETE_FLAG"/>
+	</resultMap>
+	
+	<sql id="table_columns">
+		UUID,
+		QUESTION_ID,
+		ANSWER_NO,
+		CONTENT,
+		SCORE,
+		SORT,
+		CREATE_TIME,
+		DELETE_FLAG
+    </sql>
+	<sql id="entity_properties">
+		#{uuid},
+		#{questionId},
+		#{answerNo},
+		#{content},
+		#{score},
+		#{sort},
+		#{createTime},
+		#{deleteFlag}
+	</sql>
+
+    <!-- 使用like用法：columnName like '%'||#{columnName}||'%' -->
+    <sql id="page_where">
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="uuid != null and uuid != ''">and UUID = #{uuid}</if>
+            <if test="questionId != null and questionId != ''">and QUESTION_ID = #{questionId}</if>
+            <if test="answerNo != null and answerNo != ''">and ANSWER_NO = #{answerNo}</if>
+            <if test="content != null and content != ''">and CONTENT = #{content}</if>
+			<if test="score != null">and SCORE = #{score}</if>
+			<if test="sort != null">and SORT = #{sort}</if>
+			<if test="createTime != null">and CREATE_TIME = #{createTime}</if>
+			<if test="deleteFlag != null">and DELETE_FLAG = #{deleteFlag}</if>
+        </trim>
+        <if test="page != null and page.sort!=null and page.sort!=''">
+        	order by ${page.sort} ${page.order}
+        </if>
+        <!-- <if test="page == null or page.sort == null or page.sort == ''">order by sort </if> --> 
+    </sql>
+
+	<insert id="insert" parameterType="com.rd.ifaes.core.risk.domain.Answer">
+		insert into risk_answer( <include refid="table_columns" /> ) 
+		values ( <include refid="entity_properties" /> )
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">
+		BEGIN
+		<foreach collection="list" item="item" index="index" separator=";">  
+		insert into risk_answer( <include refid="table_columns" /> ) 
+		values 
+		( 
+		#{item.uuid},
+				#{item.questionId},
+				#{item.answerNo},
+				#{item.content},
+				#{item.score},
+				#{item.sort},
+				#{item.createTime},
+				#{item.deleteFlag}
+		)
+		</foreach>
+		; END ;
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from risk_answer
+		where uuid = #{uuid}
+	</delete>
+	
+	<update id="deleteBatch">
+		update risk_answer set delete_flag = 1
+		where uuid in
+		<foreach collection="array" item="uuid" open="(" separator="," close=")">  
+            #{uuid} 
+        </foreach>		
+	</update>
+
+	<update id="deleteLogic" parameterType="String">
+		update risk_answer set delete_flag = 1 
+		where uuid = #{uuid}
+	</update>
+
+	<update id="update" parameterType="com.rd.ifaes.core.risk.domain.Answer">
+		update risk_answer 
+		<trim prefix="set" suffixOverrides=",">
+            <if test="questionId != null and questionId != ''">QUESTION_ID = #{questionId},</if>
+            <if test="content != null and content != ''">CONTENT = #{content},</if>
+			<if test="score != null">SCORE = #{score},</if>
+			<if test="sort != null">SORT = #{sort},</if>
+			<if test="deleteFlag != null">DELETE_FLAG = #{deleteFlag}</if>
+		</trim>
+		<where>uuid = #{uuid}</where>
+	</update>
+
+	<!-- 批量更新 -->
+	<update id="updateBatch" parameterType="java.util.List">
+		BEGIN
+		<foreach collection="list" item="item" open="" separator=";" close="">  
+			update risk_answer 
+			<trim prefix="set" suffixOverrides=",">
+	            <if test="item.content != null and item.content != ''">CONTENT = #{item.content},</if>
+				<if test="item.score != null">SCORE = #{item.score},</if>
+				<if test="item.sort != null">SORT = #{item.sort},</if>
+				<if test="item.deleteFlag != null">DELETE_FLAG = #{item.deleteFlag}</if>
+			</trim>
+			<where>uuid = #{item.uuid}</where>
+		</foreach>
+		; END ;
+	</update>
+
+
+    <select id="findAll" resultMap="answerResultMap">
+        select <include refid="table_columns" />
+        from risk_answer
+    </select>
+
+    <select id="findList" resultMap="answerResultMap">
+        select p1.delete_flag,p1.uuid,p1.question_id,p1.answer_no,p1.content,p1.score,p1.sort,p1.create_time,p2.question_name as questionName,p3.papers_name as papersName
+        from risk_answer p1 left join risk_question p2 on p1.question_id = p2.uuid 
+        left join risk_papers p3 on p2.papers_id = p3.uuid 
+       		 <trim prefix="where" prefixOverrides="and | or ">
+	            <if test="uuid != null and uuid != ''">and p1.UUID = #{uuid}</if>
+	            <if test="questionId != null and questionId != ''">and p1.QUESTION_ID = #{questionId}</if>
+	            <if test="content != null and content != ''">and p1.CONTENT = #{content}</if>
+				<if test="score != null">and p1.SCORE = #{score}</if>
+				<if test="sort != null">and p1.SORT = #{sort}</if>
+				<if test="deleteFlag != null">and p1.DELETE_FLAG = #{deleteFlag}</if>
+				<if test="papersName != null and papersName != ''">and p3.PAPERS_NAME = #{papersName}</if>
+				<if test="questionName != null and questionName != ''">and p2.QUESTION_NAME = #{questionName}</if>
+	        </trim>
+	        <if test="page != null and page.sort!=null and page.sort!=''">
+	        	order by ${page.sort} ${page.order}
+	        </if>
+	        <if test="page == null or page.sort == null or page.sort == ''">order by p1.sort asc </if>
+	</select>
+
+    <select id="getCount" resultType="int" >
+        select count(uuid) from risk_answer
+        <include refid="page_where" />
+    </select>
+
+
+    <select id="get" resultMap="answerResultMap" parameterType="String" >
+		select <include refid="table_columns" />
+		from risk_answer
+		where uuid = #{uuid}
+	</select>
+	
+	<!-- 其他自定义SQL -->
+	<!-- 根据问题的ID查询答案集合 -->
+	<select id="findListByQId" resultMap="answerResultMap">
+		select <include refid="table_columns" /> 
+		from risk_answer where question_id = #{questionId}  and delete_flag = #{deleteFlag} 
+		order by sort asc 
+	</select>
+	
+	<select id="findListByQIdAndAId" resultMap="answerResultMap">
+		select <include refid="table_columns" /> 
+		from risk_answer
+		<trim prefix="where" prefixOverrides="and | or ">
+	    	<if test="questionId != null and questionId != ''">and (question_id = #{questionId} and delete_flag = 0)</if>
+	    	<if test="answerIds != null and answerIds.length &gt; 0">or (delete_flag = 1 and uuid in 
+		    	<foreach collection="answerIds" item="answerId" index="index" open="(" close=")" separator=",">
+	            	#{answerId}
+	       		</foreach>
+	    	)</if>
+	    </trim>
+		order by sort asc 
+	</select>
+</mapper>

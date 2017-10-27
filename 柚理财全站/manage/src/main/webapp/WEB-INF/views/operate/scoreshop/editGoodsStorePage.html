@@ -1,0 +1,57 @@
+<div class="form-tips-content" id="redpackage">
+<input type="hidden" id="image_server_url" value="${image_server_url}">
+  <form class="form-horizontal" action="/operate/scoreshop/updateGoodsStore.html"   method="post" id="form" >
+  <ul class="form-item">
+        <li class="heightLimit">
+			<div class="form-group">
+		      <label for="goodsName" class="control-label form-label">商品名称：</label>
+		      <div class="input-box">
+		        <input type="text" class="form-control" name="goodsName" id="goodsName" value=${goodsStore.goodsName} readonly="readonly">
+		    </div>
+  		</li>
+  		<li class="heightLimit">
+			<div class="form-group">
+		      <label for="store" class="control-label form-label">库存量：</label>
+		      <div class="input-box">
+		      <input type="text" class="form-control" name="store" id="store" data-rule-digits="true" data-msg-digits="请输入正整数" value=${goodsStore.store} required>
+		      </div>
+		    </div>
+  		</li>
+  		</ul>
+  		<input type="hidden" name="uuid" id="uuid" value=${goodsStore.uuid}>
+  		<input type="hidden" name="goodsId" id="goodsId" value=${goodsStore.goodsId}>
+</form>
+ </div>
+<script src="${theme_dir}/static/js/plugins/jquery.suggest.js"></script>
+<script src="${theme_dir}/static/js/ajaxfileupload.js"></script>
+<script src="${theme_dir}/static/js/upload.js"></script>
+<script type="text/javascript">
+$("#form").validate({
+	submitHandler: function(form) {	
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						zIndex:100000,
+						icon: 6,
+						cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+					}, function() {						
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入  
+					});
+				} else {
+					layer.alert(data.msg, {
+						zIndex:100000,
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+});
+</script>

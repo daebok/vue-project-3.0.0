@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>渤海银行注册页面</title>
+</head>
+<body>
+
+    <div align="center">注册页面跳转中，请不要关闭页面...</div>
+	<form action="${reg.cbhbSubmitUrl!}" method="post" id="frm1" accept-charset="GBK" style="display: none;" />
+		<input type="text" name="char_set" value="${reg.charSet!}" />       	         
+		<input type="text" name="partner_id" value="${reg.partnerId!}" />
+		<input type="text" name="version_no" value="${reg.versionNo!}" />
+		<input type="text" name="biz_type" value="${reg.bizType!}" />
+		<input type="text" name="sign_type" value="${reg.signType!}" />
+		<input type="text" name="MerBillNo" value="${reg.merBillNo!}" />
+		<input type="text" name="OpenType" value="${reg.openType!}" />
+		<input type="text" name="IdentType" value="${reg.identType!}" />
+		<input type="text" name="IdentNo" value="${reg.identNo!}" />
+		<input type="text" name="UsrName" value="${reg.usrName!}" />
+		<input type="text" name="MobileNo" value="${reg.mobileNo!}" />
+		<input type="text" name="OpenBankId" value="${reg.openBankId!}" />
+		<input type="text" name="OpenAcctId" value="${reg.openAcctId!}" />
+		<input type="text" name="PageReturnUrl" value="${reg.pageReturnUrl!}" />
+		<input type="text" name="BgRetUrl" value="${reg.bgRetUrl!}" />						
+		<input type="text" name="MerPriv" value="${reg.merPriv!}" />
+		<input type="areatext" name="mac" value="${reg.mac!}" />
+		<!-- <input type="areatext" name="merchantCert" value="${reg.merchantCert!}" /> -->
+		
+	</form>
+	<script language="javascript">
+		document.getElementById("frm1").submit();
+	</script>
+</body>
+</html>

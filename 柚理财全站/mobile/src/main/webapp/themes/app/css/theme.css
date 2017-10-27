@@ -1,0 +1,35 @@
+.color-999 {
+	color:#999!important;
+}
+.color-333 {
+	color:#333!important;
+}
+.color-666 {
+	color:#666!important;
+}
+.color-ddd {
+	color:#DDD!important;
+}
+.color-green{
+    color: #4abe89;
+}
+.main-color {
+	color:#F95A28!important;
+}
+.main-btn-bg {
+	background-color:#F95A28!important;
+}
+.gray-btn-bg {
+	background-color:#DDD!important;
+}
+.current{
+	color:#F95A28;
+	border-bottom: 2px solid #F95A28;
+}
+.border-color{
+	border-color:#DDD!important;
+}
+/*辅色*/
+.secondary-color{
+	color:#48AFFB;
+}

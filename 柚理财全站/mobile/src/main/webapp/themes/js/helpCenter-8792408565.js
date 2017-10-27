@@ -1,0 +1,1 @@
+webpackJsonp([69],{0:function(n,s,i){"use strict";i(252),i(544),$(function(){$("#helpMainList").find("li").on("click",function(){return!$(this).hasClass("on")&&void $(this).addClass("on").siblings().removeClass("on")})})},544:534});

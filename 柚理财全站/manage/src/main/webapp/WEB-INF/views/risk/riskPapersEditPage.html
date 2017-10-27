@@ -1,0 +1,168 @@
+<div class="form-tips-content">
+	<form class="form-horizontal" action="/risk/riskPapersEdit.html" id="form" role="form">
+		<ul class="form-item">
+			<li style="display:none">
+				<div class="form-group">
+					<label for="code" class="control-label form-label">uuid：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="uuid" id="uuid" value="${papers.uuid}" placeholder="uuid" >
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="code" class="control-label form-label">问卷名称：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="papersName" id="papersName" value="${papers.papersName!''}" placeholder="问卷名称" required maxLength=50>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group">
+					<label for="configName" class="control-label form-label">问卷类型：</label>
+					<div class="input-box">
+					<#if papers.papersType??>
+						<@linkage name="papersType" id="papers_type" nid="papers_type" default="${papers.papersType}" class="form-control" />
+					<#else>
+						 <@linkage name="papersType" id="papers_type" nid="papers_type" class="form-control" />
+					</#if>
+					</div>
+				</div>
+			</li>
+			<#-- <li>
+				<div class="form-group">
+					<label for="configValue" class="control-label form-label">问卷问题数量：</label>
+					<div class="input-box">
+						<input type="text" class="form-control" name="questionCount" id="questionCount" value="${papers.questionCount!''}" placeholder="问卷问题数量" required>
+					</div>
+				</div>
+			</li> -->
+				<div class="questionType">
+						<div class="questionType-con">
+							<table class="table">
+							   <thead>
+							      <tr>
+							         <th>评估类型</th>
+							         <th>最低分值</th>
+							         <th>最高分值</th>
+							      </tr>
+							   </thead>
+							   <tbody>
+							   	  <#if psList??>
+							   	  <#list psList as item>
+							      <tr>
+							          <td>
+							          	<div class="input-box">
+							          		<input type="hidden" class="type form-control" name="scoreConfig" id="scoreConfig${item_index}" value="" >
+							          		<input type="hidden" class="type form-control" name="Luuid" id="uuid${item_index}" value="${item.uuid!''}" >
+							          		<input type="text" class="type form-control" name="userRiskLevelName" value="${item.userRiskName!''}" readonly>
+							          		<label class="error"></label>
+							         	</div>
+							      	  </td>
+							          <td>
+							          	<div class="input-box">
+								          	<input type="text" class=" form-control" data-risk  name="startScore"  id="startScore${item_index}" value="<#if item.startScore??>${item.startScore}</#if>"  placeholder="输入最低分值" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+				onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'0')}else{this.value=this.value.replace(/\D/g,'')}" maxLength=3>
+											<em class="span1"></em>
+											<em class="span2"></em>
+								          	<label class="error"></label>
+							         	</div>
+							          </td>
+							          <td>
+							          	<div class="input-box">
+								          	<input type="text" class=" form-control" data-risk  name="endScore"  id="endScore${item_index}"  value="<#if item.endScore??>${item.endScore}</#if>"   placeholder="输入最高分值" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+				onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'0')}else{this.value=this.value.replace(/\D/g,'')}" maxLength=3>
+											<em class="span1"></em>
+											<em class="span2"></em>
+											<label class="error"></label>
+							         	</div>
+							          </td>
+							      </tr>
+							      </#list>
+							      </#if>
+							   </tbody>
+							</table>
+						</div>
+					</div>
+		</ul>
+		<@token name="editPapersToken"/>
+	</form>
+</div>
+<script>
+	var  flag=[];
+	$('[data-risk]').on('input blur',function () {
+		var size=$('[data-risk]').size()
+		var index=$('[data-risk]').index($(this))
+		if(parseInt($(this).val())<=parseInt($('[data-risk]').eq(index-1).val())&& index!=0){
+			if(index%2==0){
+				flag[index]=1;
+				$(this).parent().find(".span1").html("最低分值要大于上一等级的最高分值");
+			}else{
+				flag[index]=1;
+				$(this).parent().find(".span1").html("最高分值要大于最低分值");
+			}
+		}else if(parseInt($(this).val())>=parseInt($('[data-risk]').eq(index+1).val())&& index!=size-1){
+			if(index%2==0){
+				flag[index]=1;
+				$(this).parent().find(".span1").html("最低分值要小于最高分值");
+			}else{
+				flag[index]=1;
+				$(this).parent().find(".span1").html("最高分要小于下一等级的最低分值");
+			}
+		}else{
+			flag[index]=0;
+			$(this).parent().find(".span1").html("");
+		}
+	})
+$("#form").validate({
+	submitHandler: function(form) {	
+		for (var i = 0; i < ${psList?size}; i++) {
+			var uuid = $("#uuid"+i).val();
+			var startScore =  $("#startScore"+i).val();
+			var endScore =  $("#endScore"+i).val();
+			var array = new Array();
+			array[0] = uuid;
+			array[1] = startScore;
+			array[2] = endScore;
+			$("#scoreConfig"+i).val(array);
+		}
+		var Bsize=$('[data-risk]').size()
+		for(var b=1;b<Bsize;b++){
+			if(parseInt($('[data-risk]').eq(b).val())<parseInt($('[data-risk]').eq(b+1).val())){
+				$('[data-risk]').eq(b).parent().find(".span1").html("");
+				flag[b]=0;
+			}
+		}
+		for(var i=0;i<flag.length;i++){
+			if(flag[i]==1){
+				layer.alert('分值填写有误，请重新填写', {
+					icon: 5
+				});
+				return false
+			}
+		}
+		$(form).ajaxSubmit({
+			type: "post",
+			dataType: "json",
+			success: function(data) {
+				if (data.result) {
+					layer.alert(data.msg, {
+						icon: 6,
+						cancel: function(index){
+								layer.closeAll();
+								gridobj.trigger("reloadGrid"); //重新载入 
+	  						}
+					}, function() {
+						layer.closeAll();
+						gridobj.trigger("reloadGrid"); //重新载入  
+					});
+				} else {
+					layer.alert(data.msg, {
+						icon: 5
+					});
+				}
+			}
+		});
+	}
+})
+</script>

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.rd.ifaes</groupId>
+		<artifactId>pom</artifactId>
+		<version>3.0.0.0</version>
+		<relativePath>../pom/pom.xml</relativePath>
+	</parent>
+	<artifactId>mobile</artifactId>
+	<packaging>war</packaging>
+	
+	<dependencies>
+		<dependency>
+            <groupId>com.rd.ifaes</groupId>
+			<artifactId>core</artifactId>
+			<version>3.0.0.0</version>
+		</dependency>
+		 
+		<!-- 接口依赖 ，含dubbo, zk 
+		<dependency>
+			<groupId>com.rd.ifaes</groupId>
+			<artifactId>account-api</artifactId>
+			<version>3.0.0.0</version>
+		</dependency>
+		-->
+	</dependencies>
+	
+	<build>
+    	<finalName>mobile</finalName>
+  	</build>
+</project>
