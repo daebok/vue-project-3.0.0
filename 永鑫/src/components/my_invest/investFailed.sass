@@ -1,0 +1,64 @@
+/* by fenglei */
+@import '../../assets/scss/border_1px'
+
+.invest-failed-list
+  li
+    position: relative
+    display: inline-block
+    width: 100%
+    margin-bottom: 0.1rem
+    padding: 0.15rem 5%
+    background: #FFFFFF
+    font-size: 0
+    .top
+      display: inline-block
+      width: 100%
+      padding-bottom: 0.1rem
+      @include hairline('bottom', #DDDDDD)
+      .left
+        display: inline-block
+        vertical-align: top
+        width: 70%
+        .name
+          display: -webkit-box
+          width: 100%
+          overflow: hidden
+          text-overflow: ellipsis
+          -webkit-line-clamp: 1
+          -webkit-box-orient: vertical
+          font-size: 0.16rem
+          color: #333333
+      .right
+        display: inline-block
+        width: 30%
+        text-align: right
+        .status
+          display: inline-block
+          width: 100%
+          font-size: 0.12rem
+          color: #DC5A5E
+        .success
+          color: #4abe89
+    .middle
+      display: inline-block
+      width: 100%
+      .item
+        display: inline-block
+        width: 100%
+        margin-top: 0.1rem
+        .text
+          display: inline-block
+          width: 40%
+          font-size: 0.12rem
+          color: #999999
+        .value
+          display: inline-block
+          width: 60%
+          font-size: 0.14rem
+          color: #666666
+          text-align: right
+
+.slide-enter-active,.slide-leave-active
+  transition: all .2s linear
+.slide-enter, .slide-leave-active
+  transform: translate3d(100%, 0, 0)

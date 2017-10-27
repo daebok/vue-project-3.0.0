@@ -1,0 +1,66 @@
+/* by fenglei */
+@import '../../assets/scss/border_1px'
+
+.withdraw-record-list
+  ul
+    background: #FFFFFF
+    .timeF
+      height: 0.3rem
+      line-height: 0.3rem
+      padding: 0 5%
+      background: #F5F5F5
+      color: #999
+    li
+      @include hairline('bottom', #DDDDDD)
+      .top
+        display: inline-block
+        width: 100%
+        margin-top: 0.12rem
+        padding: 0 5%
+        font-size: 0
+        span
+          display: inline-block
+          width: 50%
+          font-size: 0.14rem
+        .left
+          color: #333333
+        .right
+          color: #4ABE89
+          text-align: right
+      .middle
+        display: inline-block
+        width: 100%
+        margin-top: 0.15rem
+        margin-bottom: 0.12rem
+        padding: 0 5%
+        font-size: 0.14rem
+        color: #999999
+      .bottom
+        height: 0
+        padding: 0 5%
+        background: #F5F5F5
+        overflow: hidden
+        transition: height 0.5s
+        .more
+          padding: 0.12rem 0
+          .orderNo
+            height: 0.2rem
+            line-height: 0.2rem
+            margin-top: 0.1rem
+          .remark
+            margin-top: 0.1rem
+          .item
+            display: inline-block
+            width: 100%
+            font-size: 0.14rem
+            color: #333333
+            i
+              display: inline-block
+              vertical-align: top
+              width: 25%
+              height: 100%
+              color: #999999
+            span
+              display: inline-block
+              width: 75%
+              height: 100%

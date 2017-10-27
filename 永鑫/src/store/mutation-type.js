@@ -1,0 +1,3 @@
+export const SET_AL_ACTIVE_TYPE = 'SET_AL_ACTIVE_TYPE'; //激活状态命名
+export const SELECT_REDPACKET = 'SELECT_REDPACKET'; //选中红包
+export const SELECT_REDPACKET_TOTAL = 'SELECT_REDPACKET_TOTAL'; //选中红包总额

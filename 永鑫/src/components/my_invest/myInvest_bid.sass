@@ -1,0 +1,140 @@
+/* by fenglei */
+@import '../../assets/scss/border_1px'
+
+.count-time
+  display: inline-block
+  width: 100%
+  background: #FFFFFF
+  .text
+    display: inline-block
+    width: 100%
+    margin-top: 0.2rem
+    font-size: 0.13rem
+    color: #666666
+    text-align: center
+  .value
+    display: inline-block
+    width: 100%
+    margin-top: 0.1rem
+    margin-bottom: 0.2rem
+    font-size: 0.26rem
+    color: #333333
+    text-align: center
+
+.pay-money
+  display: inline-block
+  width: 100%
+  padding: 0.1rem 5%
+  background: #FFFFFF
+  @include hairline('top', #DDDDDD)
+  font-size: 0
+  .text
+    display: inline-block
+    width: 30%
+    font-size: 0.15rem
+    color: #333333
+  .value
+    display: inline-block
+    width: 70%
+    font-size: 0.17rem
+    color: #D73238
+    text-align: right
+
+.pay-style
+  display: inline-block
+  width: 100%
+  margin-top: 0.1rem
+  .title
+    display: inline-block
+    width: 100%
+    padding: 0.1rem 5%
+    background: #FFFFFF
+    @include hairline('bottom', #DDDDDD)
+    font-size: 0.14rem
+    color: #666666
+  ul
+    display: inline-block
+    width: 100%
+    padding: 0 5%
+    background: #FFFFFF
+    li
+      display: inline-block
+      width: 100%
+      height: 0.4rem
+      font-size: 0
+      @include hairline('bottom', #DDDDDD)
+      .select
+        display: inline-block
+        vertical-align: top
+        width: 10%
+        height: 0.4rem
+        line-height: 0.4rem
+        em
+          display: inline-block
+          width: 0.15rem
+          height: 0.15rem
+          margin-top: 0.125rem
+          background: url('../../assets/images/fund/btn_check_01.png') no-repeat center center
+          background-size: 100% 100%
+          &.current
+            background-image: url('../../assets/images/fund/btn_check_02.png')
+      .bank-card
+        display: inline-block
+        width: 70%
+        height: 0.4rem
+        line-height: 0.4rem
+        .bank-logo
+          display: inline-block
+          vertical-align: top
+          height: 0.4rem
+          img
+            width: 0.2rem
+            margin-top: 0.1rem
+        .bank-info
+          display: inline-block
+          height: 0.4rem
+          padding-left: 0.05rem
+          font-size: 0.14rem
+          color: #333333
+          i
+            color: #999999
+      .bank-declare
+        display: inline-block
+        width: 20%
+        height: 0.4rem
+        line-height: 0.4rem
+        font-size: 0.14rem
+        color: #67748D
+        text-align: right
+      .other
+        display: inline-block
+        width: 90%
+        height: 0.4rem
+        .text
+          display: inline-block
+          width: 20%
+          height: 0.4rem
+          line-height: 0.4rem
+          font-size: 0.14rem
+          color: #333333
+        .value
+          display: inline-block
+          width: 80%
+          height: 0.4rem
+          line-height: 0.4rem
+          font-size: 0.14rem
+          color: #666666
+          text-align: right
+    li:last-child
+      @include hairline('bottom', #FFFFFF)
+
+.operator
+  padding: 0.2rem 5%
+
+.slide-bottom-enter-active,.slide-bottom-leave-active
+  transition: all .2s linear
+.slide-bottom-enter, .slide-bottom-leave-active
+  transform: translate3d(0, 100%, 0)
+
+
+

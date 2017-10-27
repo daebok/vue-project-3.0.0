@@ -1,0 +1,322 @@
+/* by fenglei */
+@import '../scss/border_1px'
+
+.treasure-coupons-color
+  background: #25C970
+.recommended-invest-color
+  background: #F95A28
+.bill-financing-color
+  background: #F1AC25
+.dynamic-information-color
+  background: #D73238
+.no-border
+  border: none!important
+.saleOut
+  *
+    color: #999!important
+
+.mint-swipe
+  height: 1.64rem
+  color: #fff
+  font-size: 30px
+  text-align: center
+  .mint-swipe-item
+    display: block
+    height: 100%
+    background: #ccc center no-repeat
+    background-size: contain
+    line-height: 1.64rem
+    img
+      width: 100%
+      height: 100%
+  .mint-swipe-indicators
+    bottom: 0
+
+.rolling-notice
+  width: 100%
+  padding: 0.1rem 5%
+  background: #fff
+  img
+    display: inline-block
+    vertical-align: top
+    width: 0.16rem
+    height: 0.16rem
+    margin-top: 0.015rem
+  .scroll-wrap
+    display: inline-block
+    vertical-align: top
+    width: 90%
+    height: 0.2rem
+    margin-left: 0.1rem
+    overflow: hidden
+    .scroll-content
+      position: relative
+      transition: top 0.5s
+      font-size: 0.13rem
+      color: #333
+      ul
+        height: 0.2rem
+      li
+        display: inline-block
+        width: 100%
+        height: 0.2rem
+        line-height: 0.2rem
+
+.header-title
+  position: relative
+  width: 100%
+  height: 0.4rem
+  background: #FFFFFF
+  padding: 0 5%
+  border-bottom: 1px solid #EAEAEA
+  line-height: 0.4rem
+  i
+    position: absolute
+    top: 0.14rem
+    left: 5%
+    width: 0.03rem
+    height: 0.11rem
+  span
+    display: inline-block
+    margin-left: 0.1rem
+    vertical-align: top
+    font-size: 0.17rem
+    color: #333
+  b
+    display: inline-block
+    width: 0.01rem
+    height: 0.12rem
+    margin-top: 0.13rem
+    margin-left: 0.075rem
+    margin-right: 0.075rem
+    background: #DDD
+    font-size: 0
+  label
+    display: inline-block
+    vertical-align: top
+    font-size: 0.13rem
+    color: #999
+
+.footer-more
+  display: block
+  width: 100%
+  padding-top: 0.1rem
+  padding-bottom: 0.1rem
+  border-top: 1px solid #ECECEC
+  text-align: center
+  span
+    display: inline-block
+    vertical-align: top
+    font-size: 0.14rem
+    color: #999
+  img
+    margin-top: 0.04rem
+    width: 0.12rem
+    height: 0.12rem
+    vertical-align: top
+
+.dynamic-information
+  width: 100%
+  margin-top: 0.1rem
+  background: #fff
+  .list
+    padding: 0 5% 0.1rem 5%
+    li
+      width: 100%
+      padding: 0.1rem 0.1rem
+      border-bottom: 1px solid #ECECEC
+      span
+        display: -webkit-box
+        width: 100%
+        overflow: hidden
+        text-overflow: ellipsis
+        -webkit-line-clamp: 1
+        -webkit-box-orient: vertical
+      .title
+        margin-bottom: 0.05rem
+        font-size: 0.15rem
+        color: #333
+      .time
+        font-size: 0.12rem
+        color: #999
+
+.promotion-content
+  li
+    width: 100%
+    margin-top: 0.1rem
+    padding: 0.1rem 5%
+    background: #fff
+    font-size: 0
+    .left
+      display: inline-block
+      width: 60%
+      height: 0.81rem
+      vertical-align: top
+      span
+        display: -webkit-box
+        width: 100%
+        overflow: hidden
+        text-overflow: ellipsis
+        -webkit-line-clamp: 1
+        -webkit-box-orient: vertical
+      .title
+        margin-top: 0.15rem
+        font-size: 0.18rem
+        font-weight: bold
+        color: #5A5656
+      .introduction
+        margin-top: 0.05rem
+        font-size: 0.14rem
+        color: #A4A3A3
+      u
+        text-decoration: none
+        color: #D6565A
+    .right
+      display: inline-block
+      width: 40%
+      height: 0.81rem
+      vertical-align: top
+      text-align: right
+      img
+        width: 1.05rem
+        height: 0.81rem
+
+.treasure-coupons
+  width: 100%
+  margin-top: 0.1rem
+  background: #FFF
+  .data
+    width: 100%
+    padding: 0.2rem 5%
+    font-size: 0
+    span
+      display: inline-block
+      width:  100%
+    .left
+      display: inline-block
+      width: 60%
+      height: 0.6rem
+      padding-left: 0.1rem
+      .sevenProfit-value
+        font-size: 0.28rem
+        color: #D73238
+        i
+          font-size: 0.16rem
+      .sevenProfit-text
+        margin-top: 0.05rem
+        font-size: 0.14rem
+        color: #666
+    .right
+      display: inline-block
+      vertical-align: top
+      width: 40%
+      height: 0.6rem
+      .minx-investment
+        margin-top: 0.1rem
+        font-size: 0.14rem
+        color: #656565
+      .fundName
+        width: auto
+        height: 0.17rem
+        line-height: 0.17rem
+        margin-top: 0.05rem
+        padding: 0 0.1rem
+        font-size: 0.1rem
+        color: #EF9C00
+        text-align: center
+        @include hairline('all', #EF9C00, 20px)
+
+.recommended-invest
+  width: 100%
+  margin-top: 0.1rem
+  background: #FFF
+  .list
+    width: 100%
+    padding: 0 5%
+    li
+      width: 100%
+      padding: 0.1rem 0.1rem
+      border-bottom: 1px solid #EEE
+      font-size: 0
+      .projectName
+        display: -webkit-box
+        width: 100%
+        overflow: hidden
+        text-overflow: ellipsis
+        -webkit-line-clamp: 1
+        -webkit-box-orient: vertical
+        font-size: 0.15rem
+        color: #333
+      .invest-tag
+        display: inline-block
+        width: 100%
+        margin-bottom: 0.1rem
+        label
+          display: inline-block
+          width: 0.58rem
+          height: 0.2rem
+          margin-right: 0.08rem
+          margin-top: 0.05rem
+          background-repeat: no-repeat
+          background-size: 100% 100%
+        .tag-remen
+          width: 0.7rem
+          background-image: url('../assets/images/index/tag_remen.png')
+        .tag-xinshou
+          width: 0.77rem
+          background-image: url('../assets/images/index/tag_xinshou.png')
+        .tag-youhui
+          background-image: url('../assets/images/index/tag_keyong.png')
+        .tag-dingxiang
+          width: 0.45rem
+          background-image: url('../assets/images/index/tag_dingxiang.png')
+        .tag-bainxian
+          background-image: url('../assets/images/index/tag_bianxian.png')
+        .tag-vip
+          width: 0.2rem
+          height: 0.2rem
+        .tag-vip1
+          background-image: url('../assets/images/index/tag_v1.png')
+        .tag-vip2
+          background-image: url('../assets/images/index/tag_v2.png')
+        .tag-vip3
+          background-image: url('../assets/images/index/tag_v3.png')
+        .tag-vip4
+          background-image: url('../assets/images/index/tag_v4.png')
+        .tag-vip5
+          background-image: url('../assets/images/index/tag_v5.png')
+        .tag-vip6
+          background-image: url('../assets/images/index/tag_v6.png')
+        .tag-vip7
+          background-image: url('../assets/images/index/tag_v7.png')
+      span
+        display: inline-block
+        width:  100%
+      .left
+        display: inline-block
+        width: 60%
+        .apr-value
+          font-size: 0.28rem
+          color: #D73238
+          i
+            font-size: 0.16rem
+        .apr-text
+          margin-top: 0.05rem
+          font-size: 0.14rem
+          color: #656565
+      .right
+        display: inline-block
+        vertical-align: top
+        width: 40%
+        height: 0.6rem
+        .lowestAccount
+          margin-top: 0.1rem
+          font-size: 0.14rem
+          color: #656565
+        .timeLimit
+          margin-top: 0.08rem
+          font-size: 0.14rem
+          color: #656565
+
+
+

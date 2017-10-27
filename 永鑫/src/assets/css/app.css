@@ -1,0 +1,20 @@
+/*第三方mint-ui库样式*/
+/*@import './mint-ui.css';*/
+
+/*基础样式*/
+@import './base.css';
+
+/*共有的样式*/
+@import './common.css';
+
+/*主题颜色样式*/
+@import './theme.css';
+
+/*修改第三方UI库的样式
+*需要重新run才生效
+*/
+@import './modify-mint.css';
+
+[v-cloak] {
+  display:none;
+}
